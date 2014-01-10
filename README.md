@@ -13,6 +13,6 @@ LOCKSS-O-Matic does not deploy LOCKSS networks - currently that must be done by 
 Background and Roadmap
 ======================
 
-LOCKSS-O-Matic is being developed primarily at [Simon Fraser University Library](http://www.lib.sfu.ca/). Development has already begun and early versions of LOCKSS-O-Matic should be available for testing in early spring of 2014. If you would like to participate in testing or development, please contact mjordan - sfu.ca.
+LOCKSS-O-Matic is being developed primarily at [Simon Fraser University Library](http://www.lib.sfu.ca/). Development has already begun and early versions of LOCKSS-O-Matic should be available for testing in spring of 2014. If you would like to participate in testing or development, please contact mjordan - sfu.ca.
 
 
