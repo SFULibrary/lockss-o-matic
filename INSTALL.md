@@ -12,12 +12,13 @@ Installation
 
 or
 
-clone (git@github.com:mjordan/lockss-o-matic.git) into your webroot.
+clone the repo at https://github.com/mjordan/lockss-o-matic into your webroot.
 
 2) From within the lockss-o-matic directory, issue the following commands:
 
-```cd app/config
-cp parameters.yml.dist parameters.yml```
+```cd app/config```
+
+```cp parameters.yml.dist parameters.yml```
 
 Also, make sure the user running your web server needs to have write permissions to the app/cache and app/logs directories.
 
