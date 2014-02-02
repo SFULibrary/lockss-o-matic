@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mjordan/lockss-o-matic.png?branch=master)](https://travis-ci.org/mjordan/lockss-o-matic)
+
 Overview
 ========
 
