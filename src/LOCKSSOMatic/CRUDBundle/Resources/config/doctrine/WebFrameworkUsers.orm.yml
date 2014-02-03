@@ -1,0 +1,32 @@
+LOCKSSOMatic\CRUDBundle\Entity\WebFrameworkUsers:
+    type: entity
+    table: web_framework_users
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        foo:
+            type: string
+            nullable: true
+            length: 45
+            fixed: false
+            comment: ''
+        bar:
+            type: string
+            nullable: true
+            length: 45
+            fixed: false
+            comment: ''
+        etc:
+            type: string
+            nullable: true
+            length: 45
+            fixed: false
+            comment: ''
+    lifecycleCallbacks: {  }

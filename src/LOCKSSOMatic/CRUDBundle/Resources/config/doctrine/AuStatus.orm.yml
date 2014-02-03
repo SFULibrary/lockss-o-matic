@@ -1,0 +1,50 @@
+LOCKSSOMatic\CRUDBundle\Entity\AuStatus:
+    type: entity
+    table: au_status
+    indexes:
+        aus_id_idx:
+            columns:
+                - aus_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        ausId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: aus_id
+        boxHostname:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: box_hostname
+        queryDate:
+            type: datetime
+            nullable: true
+            comment: ''
+            column: query_date
+        propertyKey:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: property_key
+        propertyValue:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: property_value
+    lifecycleCallbacks: {  }

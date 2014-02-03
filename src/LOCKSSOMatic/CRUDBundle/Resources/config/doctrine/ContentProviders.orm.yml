@@ -1,0 +1,36 @@
+LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
+    type: entity
+    table: content_providers
+    indexes:
+        content_owners_id_idx:
+            columns:
+                - content_owners_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        contentOwnersId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: content_owners_id
+        type:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        name:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+    lifecycleCallbacks: {  }

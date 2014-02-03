@@ -1,0 +1,44 @@
+LOCKSSOMatic\CRUDBundle\Entity\Deposits:
+    type: entity
+    table: deposits
+    indexes:
+        content_providers_id_idx:
+            columns:
+                - content_providers_id
+        uuid:
+            columns:
+                - uuid
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        contentProvidersId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: content_providers_id
+        uuid:
+            type: string
+            nullable: true
+            length: 36
+            fixed: false
+            comment: ''
+        title:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        dateDeposited:
+            type: datetime
+            nullable: true
+            comment: ''
+            column: date_deposited
+    lifecycleCallbacks: {  }

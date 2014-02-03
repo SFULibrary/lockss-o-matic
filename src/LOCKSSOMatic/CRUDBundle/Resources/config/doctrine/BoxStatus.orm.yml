@@ -1,0 +1,43 @@
+LOCKSSOMatic\CRUDBundle\Entity\BoxStatus:
+    type: entity
+    table: box_status
+    indexes:
+        boxes_id_idx:
+            columns:
+                - boxes_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        boxesId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: boxes_id
+        queryDate:
+            type: datetime
+            nullable: true
+            comment: ''
+            column: query_date
+        propertyKey:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: property_key
+        propertyValue:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: property_value
+    lifecycleCallbacks: {  }

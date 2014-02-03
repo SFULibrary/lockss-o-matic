@@ -1,0 +1,20 @@
+LOCKSSOMatic\CRUDBundle\Entity\Plugins:
+    type: entity
+    table: plugins
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+    lifecycleCallbacks: {  }

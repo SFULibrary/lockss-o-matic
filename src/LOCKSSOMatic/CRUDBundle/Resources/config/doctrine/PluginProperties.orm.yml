@@ -1,0 +1,53 @@
+LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
+    type: entity
+    table: plugin_properties
+    indexes:
+        aus_id_idx:
+            columns:
+                - aus_id
+        plugins_id_idx:
+            columns:
+                - plugins_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        pluginsId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: plugins_id
+        ausId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: aus_id
+        parentId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: parent_id
+        propertyKey:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: property_key
+        propertyValue:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: property_value
+    lifecycleCallbacks: {  }

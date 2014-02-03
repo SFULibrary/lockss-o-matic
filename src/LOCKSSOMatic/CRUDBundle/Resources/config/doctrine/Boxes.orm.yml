@@ -1,0 +1,37 @@
+LOCKSSOMatic\CRUDBundle\Entity\Boxes:
+    type: entity
+    table: boxes
+    indexes:
+        plns_id_idx:
+            columns:
+                - plns_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        plnsId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: plns_id
+        hostname:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        ipAddress:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: ip_address
+    lifecycleCallbacks: {  }

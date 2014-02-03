@@ -3,3 +3,4 @@
 /app/logs/*
 !app/logs/.gitkeep
 /app/config/parameters.yml
+*.php~
