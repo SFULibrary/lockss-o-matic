@@ -1,0 +1,4 @@
+locksso_matic_sword:
+    resource: "@LOCKSSOMaticSWORDBundle/Resources/config/routing.yml"
+    prefix:   /
+

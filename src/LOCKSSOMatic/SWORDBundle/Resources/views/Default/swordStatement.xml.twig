@@ -1,0 +1,21 @@
+<atom:feed xmlns:sword="http://purl.org/net/sword/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:lom="http://purl.org/lockssomatic/terms/SWORD">
+  <atom:entry>
+    <atom:category scheme="http://purl.org/net/sword/terms/" term="http://purl.org/net/sword/terms/originalDeposit" label="Orignal Deposit"/>
+
+    <!-- This content node is for a chunk. -->
+    <lom:content id="http://archivematica.example.org/archival-storage/download/aip/dd3e3247-8466-4f2a-bb32-22a210cfce60.001">
+      <lom:serverlist>
+        <lom:server id="1" state="agreement" src="http://lockss1.example.org:8083/ServeContent?url=http://archivematicastorage.example.com/lockssomatic/dd3e3247-8466-4f2a-bb32-22a210cfce60.001" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d" />
+        <lom:server id="2" state="failed" src="http://lockss2.example.org:8083/ServeContent?url=http://archivematicastorage.example.com/lockssomatic/dd3e3247-8466-4f2a-bb32-22a210cfce60.001" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d" />
+      </lom:serverlist>
+    </lom:content>
+
+    <lom:content id="http://archivematica.example.org/archival-storage/download/aip/dd3e3247-8466-4f2a-bb32-22a210cfce60.002">
+      <lom:serverlist>
+        <lom:server id="1" state="agreement" src="http://lockss1.example.org:8083/ServeContent?url=http://archivematicastorage.example.com/lockssomatic/dd3e3247-8466-4f2a-bb32-22a210cfce602.002" checksumType="md5" checksumValue="226190d94b21d1b0c7b1a42d855e419d" />
+        <lom:server id="2" state="disagreement" src="http://lockss2.example.org:8083/ServeContent?url=http://archivematicastorage.example.com/lockssomatic/dd3e3247-8466-4f2a-bb32-22a210cfce602.002" checksumType="md5" checksumValue="226190d94b21d1b0c7b1a42d855e419d" />
+       </lom:serverlist>
+    </lom:content>
+
+  </atom:entry>
+</atom:feed>

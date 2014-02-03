@@ -1,0 +1,14 @@
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:sword="http://purl.org/net/sword/">
+    <sword:treatment>Required, "a human-readable statement describing treatment the deposited resource has received"</sword:treatment>
+    <content type="application/x-7z-compressed" src="http://lockssomatic.example.org/api/sword/2.0/cont-IRI/12/dd3e3247-8466-4f2a-bb32-22a210cfce60" />
+    <!-- EM-IRI. The EM-IRI and Cont-IRI can (and in LOCKSS-O-Matic, will) have the same value.-->
+    <link rel="edit-media" href="http://lockssomatic.example.org/api/sword/2.0/cont-IRI/12/dd3e3247-8466-4f2a-bb32-22a210cfce60" />
+
+    <!-- SE-IRI (can be same as Edit-IRI) -->
+    <link rel="http://purl.org/net/sword/terms/add" href="http://lockssomatic.example.org/api/sword/2.0/cont-IRI/12/dd3e3247-8466-4f2a-bb32-22a210cfce60/edit" />
+    <!-- Edit-IRI -->
+    <link rel="edit" href="http://lockssomatic.example.org/api/sword/2.0/cont-IRI/12/dd3e3247-8466-4f2a-bb32-22a210cfce60/edit" />
+    <!-- In LOCKSS-O-Matic, the State-IRI will be the EM-IRI/Cont-IRI with the string ‘/state’ appended. -->
+    <link rel="http://purl.org/net/sword/terms/statement" type="application/atom+xml;type=feed" href="http://lockssomatic.example.org/api/sword/2.0/cont-IRI/12/dd3e3247-8466-4f2a-bb32-22a210cfce60/state" />
+</entry>
+
