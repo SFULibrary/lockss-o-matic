@@ -1,0 +1,30 @@
+contentproviders:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentProviders:index" }
+
+contentproviders_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentProviders:show" }
+
+contentproviders_new:
+    pattern:  /new
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentProviders:new" }
+
+contentproviders_create:
+    pattern:  /create
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentProviders:create" }
+    requirements: { _method: post }
+
+contentproviders_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentProviders:edit" }
+
+contentproviders_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentProviders:update" }
+    requirements: { _method: post|put }
+
+contentproviders_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentProviders:delete" }
+    requirements: { _method: post|delete }

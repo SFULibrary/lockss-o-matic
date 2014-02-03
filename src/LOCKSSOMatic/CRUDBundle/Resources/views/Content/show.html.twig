@@ -1,0 +1,58 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Content</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Contentprovidersid</th>
+                <td>{{ entity.contentProvidersId }}</td>
+            </tr>
+            <tr>
+                <th>Depositsid</th>
+                <td>{{ entity.depositsId }}</td>
+            </tr>
+            <tr>
+                <th>Ausid</th>
+                <td>{{ entity.ausId }}</td>
+            </tr>
+            <tr>
+                <th>Url</th>
+                <td>{{ entity.url }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ entity.title }}</td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <td>{{ entity.size }}</td>
+            </tr>
+            <tr>
+                <th>Dateaddedtoau</th>
+                <td>{{ entity.dateAddedToAu|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Checksumtype</th>
+                <td>{{ entity.checksumType }}</td>
+            </tr>
+            <tr>
+                <th>Checksumvalue</th>
+                <td>{{ entity.checksumValue }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('content') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock %}

@@ -1,0 +1,30 @@
+contentowners:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentOwners:index" }
+
+contentowners_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentOwners:show" }
+
+contentowners_new:
+    pattern:  /new
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentOwners:new" }
+
+contentowners_create:
+    pattern:  /create
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentOwners:create" }
+    requirements: { _method: post }
+
+contentowners_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentOwners:edit" }
+
+contentowners_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentOwners:update" }
+    requirements: { _method: post|put }
+
+contentowners_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ContentOwners:delete" }
+    requirements: { _method: post|delete }

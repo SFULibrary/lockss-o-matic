@@ -1,0 +1,37 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>BoxStatus list</h1>
+
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Boxesid</th>
+                <th>Querydate</th>
+                <th>Propertykey</th>
+                <th>Propertyvalue</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('boxstatus_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.boxesId }}</td>
+                <td>{% if entity.queryDate %}{{ entity.queryDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ entity.propertyKey }}</td>
+                <td>{{ entity.propertyValue }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('boxstatus_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% endblock %}

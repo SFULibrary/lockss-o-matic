@@ -1,0 +1,10 @@
+austatus:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:index" }
+
+austatus_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:show" }
+
+
+

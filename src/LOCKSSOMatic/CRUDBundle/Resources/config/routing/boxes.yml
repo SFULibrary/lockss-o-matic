@@ -1,0 +1,30 @@
+boxes:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Boxes:index" }
+
+boxes_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Boxes:show" }
+
+boxes_new:
+    pattern:  /new
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Boxes:new" }
+
+boxes_create:
+    pattern:  /create
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Boxes:create" }
+    requirements: { _method: post }
+
+boxes_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Boxes:edit" }
+
+boxes_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Boxes:update" }
+    requirements: { _method: post|put }
+
+boxes_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Boxes:delete" }
+    requirements: { _method: post|delete }

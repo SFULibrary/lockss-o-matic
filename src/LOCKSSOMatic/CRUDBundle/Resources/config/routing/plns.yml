@@ -1,0 +1,30 @@
+plns:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plns:index" }
+
+plns_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plns:show" }
+
+plns_new:
+    pattern:  /new
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plns:new" }
+
+plns_create:
+    pattern:  /create
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plns:create" }
+    requirements: { _method: post }
+
+plns_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plns:edit" }
+
+plns_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plns:update" }
+    requirements: { _method: post|put }
+
+plns_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plns:delete" }
+    requirements: { _method: post|delete }

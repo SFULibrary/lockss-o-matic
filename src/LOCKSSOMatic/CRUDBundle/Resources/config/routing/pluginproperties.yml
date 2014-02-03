@@ -1,0 +1,30 @@
+pluginproperties:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PluginProperties:index" }
+
+pluginproperties_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PluginProperties:show" }
+
+pluginproperties_new:
+    pattern:  /new
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PluginProperties:new" }
+
+pluginproperties_create:
+    pattern:  /create
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PluginProperties:create" }
+    requirements: { _method: post }
+
+pluginproperties_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PluginProperties:edit" }
+
+pluginproperties_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PluginProperties:update" }
+    requirements: { _method: post|put }
+
+pluginproperties_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PluginProperties:delete" }
+    requirements: { _method: post|delete }

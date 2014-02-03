@@ -1,0 +1,10 @@
+boxstatus:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:index" }
+
+boxstatus_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:show" }
+
+
+

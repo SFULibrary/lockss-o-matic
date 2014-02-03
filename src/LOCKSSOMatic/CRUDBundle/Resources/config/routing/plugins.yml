@@ -1,0 +1,30 @@
+plugins:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plugins:index" }
+
+plugins_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plugins:show" }
+
+plugins_new:
+    pattern:  /new
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plugins:new" }
+
+plugins_create:
+    pattern:  /create
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plugins:create" }
+    requirements: { _method: post }
+
+plugins_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plugins:edit" }
+
+plugins_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plugins:update" }
+    requirements: { _method: post|put }
+
+plugins_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Plugins:delete" }
+    requirements: { _method: post|delete }

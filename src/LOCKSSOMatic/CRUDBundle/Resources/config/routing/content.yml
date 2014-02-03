@@ -1,0 +1,10 @@
+content:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Content:index" }
+
+content_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Content:show" }
+
+
+

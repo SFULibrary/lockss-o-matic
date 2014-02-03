@@ -1,0 +1,30 @@
+plnproperties:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PlnProperties:index" }
+
+plnproperties_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PlnProperties:show" }
+
+plnproperties_new:
+    pattern:  /new
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PlnProperties:new" }
+
+plnproperties_create:
+    pattern:  /create
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PlnProperties:create" }
+    requirements: { _method: post }
+
+plnproperties_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PlnProperties:edit" }
+
+plnproperties_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PlnProperties:update" }
+    requirements: { _method: post|put }
+
+plnproperties_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:PlnProperties:delete" }
+    requirements: { _method: post|delete }

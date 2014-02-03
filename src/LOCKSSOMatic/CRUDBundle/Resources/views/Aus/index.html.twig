@@ -1,0 +1,45 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Aus list</h1>
+
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Plnsid</th>
+                <th>Auid</th>
+                <th>Manifesturl</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('aus_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.plnsId }}</td>
+                <td>{{ entity.auid }}</td>
+                <td>{{ entity.manifestUrl }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('aus_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('aus_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('aus_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

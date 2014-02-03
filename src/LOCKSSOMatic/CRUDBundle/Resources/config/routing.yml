@@ -1,3 +1,57 @@
-locksso_matic_crud_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: LOCKSSOMaticCRUDBundle:Default:index }
+LOCKSSOMaticCRUDBundle_plns:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plns.yml"
+    prefix:   /plns
+
+LOCKSSOMaticCRUDBundle_plnproperties:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plnproperties.yml"
+    prefix:   /plnproperties
+
+LOCKSSOMaticCRUDBundle_contentowners:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/contentowners.yml"
+    prefix:   /contentowners
+
+LOCKSSOMaticCRUDBundle_contentproviders:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/contentproviders.yml"
+    prefix:   /contentproviders
+
+LOCKSSOMaticCRUDBundle_plugins:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plugins.yml"
+    prefix:   /plugins
+
+LOCKSSOMaticCRUDBundle_pluginproperties:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/pluginproperties.yml"
+    prefix:   /pluginproperties
+
+LOCKSSOMaticCRUDBundle_aus:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/aus.yml"
+    prefix:   /aus
+
+LOCKSSOMaticCRUDBundle_auproperties:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/auproperties.yml"
+    prefix:   /auproperties
+
+# Read only.
+LOCKSSOMaticCRUDBundle_austatus:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/austatus.yml"
+    prefix:   /austatus
+
+
+LOCKSSOMaticCRUDBundle_boxes:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/boxes.yml"
+    prefix:   /boxes
+
+# Read only.
+LOCKSSOMaticCRUDBundle_boxstatus:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/boxstatus.yml"
+    prefix:   /boxstatus
+
+# Read only.
+LOCKSSOMaticCRUDBundle_deposits:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/deposits.yml"
+    prefix:   /deposits
+
+# Read only.
+LOCKSSOMaticCRUDBundle_content:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/content.yml"
+    prefix:   /content
+

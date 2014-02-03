@@ -1,0 +1,30 @@
+auproperties:
+    pattern:  /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuProperties:index" }
+
+auproperties_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuProperties:show" }
+
+auproperties_new:
+    pattern:  /new
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuProperties:new" }
+
+auproperties_create:
+    pattern:  /create
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuProperties:create" }
+    requirements: { _method: post }
+
+auproperties_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuProperties:edit" }
+
+auproperties_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuProperties:update" }
+    requirements: { _method: post|put }
+
+auproperties_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuProperties:delete" }
+    requirements: { _method: post|delete }
