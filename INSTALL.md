@@ -22,7 +22,11 @@ clone the repo at https://github.com/mjordan/lockss-o-matic into your webroot.
 
 Also, make sure the user running your web server needs to have write permissions to the app/cache and app/logs directories.
 
-3) Test the installation by going to the followint URL:
+3) Test your PHP configuration by going to the following URL:
+
+http://localhost/lockss-o-matic/web/config.php
+
+4) After addressing any issues identified in step 3, test the installation by going to the followint URL:
 
 http://localhost/lockss-o-matic/web/app_dev.php/demo/hello/LOCKSS-O-Matic
 
