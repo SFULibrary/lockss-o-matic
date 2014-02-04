@@ -18,6 +18,8 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new LOCKSSOMatic\SWORDBundle\LOCKSSOMaticSWORDBundle(),
             new LOCKSSOMatic\CRUDBundle\LOCKSSOMaticCRUDBundle(),
+            new LOCKSSOMatic\PLNExporterBundle\LOCKSSOMaticPLNExporterBundle(),
+            new LOCKSSOMatic\PLNImporterBundle\LOCKSSOMaticPLNImporterBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
