@@ -1,0 +1,3 @@
+locksso_matic_pln_exporter_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: LOCKSSOMaticPLNExporterBundle:Default:index }
