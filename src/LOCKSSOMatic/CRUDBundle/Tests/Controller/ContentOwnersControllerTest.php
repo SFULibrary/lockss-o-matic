@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ContentOwnersControllerTest extends WebTestCase
 {
-    /*
     public function testCompleteScenario()
     {
         // Create a new client to browse the application
@@ -19,37 +18,35 @@ class ContentOwnersControllerTest extends WebTestCase
 
         // Fill in the form and submit it
         $form = $crawler->selectButton('Create')->form(array(
-            'lockssomatic_crudbundle_contentownerstype[field_name]'  => 'Test',
-            // ... other fields to fill
+            'lockssomatic_crudbundle_contentowners[name]'  => 'Owner name',
+            'lockssomatic_crudbundle_contentowners[emailAddress]'  => 'me@example.com',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
         // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
+        $this->assertGreaterThan(0, $crawler->filter('td:contains("me@example.com")')->count(), 'Missing element td:contains("me@example.com")');
 
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
-        $form = $crawler->selectButton('Edit')->form(array(
-            'lockssomatic_crudbundle_contentownerstype[field_name]'  => 'Foo',
-            // ... other fields to fill
+        $form = $crawler->selectButton('Update')->form(array(
+            'lockssomatic_crudbundle_contentowners[emailAddress]'  => 'mynewaddress@foo.com',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
+        // Check the html contains the updated email adddress
+        $this->assertGreaterThan(0, $crawler->filter('html:contains("mynewaddress")')->count(), 'Missing string "mynewaddress"');
 
         // Delete the entity
         $client->submit($crawler->selectButton('Delete')->form());
         $crawler = $client->followRedirect();
 
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
+        // Check the entity has been deleted from the list
+        $this->assertNotRegExp('/mynewaddress/', $client->getResponse()->getContent());
     }
 
-    */
 }

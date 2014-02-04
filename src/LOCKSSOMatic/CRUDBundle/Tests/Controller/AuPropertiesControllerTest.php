@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AuPropertiesControllerTest extends WebTestCase
 {
-    /*
     public function testCompleteScenario()
     {
         // Create a new client to browse the application
@@ -19,37 +18,38 @@ class AuPropertiesControllerTest extends WebTestCase
 
         // Fill in the form and submit it
         $form = $crawler->selectButton('Create')->form(array(
-            'lockssomatic_crudbundle_aupropertiestype[field_name]'  => 'Test',
-            // ... other fields to fill
+            'lockssomatic_crudbundle_auproperties[ausId]' => '1',
+            'lockssomatic_crudbundle_auproperties[parentId]' => '1',
+            'lockssomatic_crudbundle_auproperties[propertyKey]' => 'new key',
+            'lockssomatic_crudbundle_auproperties[propertyValue]' => 'new value',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
         // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
+        $this->assertGreaterThan(0, $crawler->filter('td:contains("new key")')->count(), 'Missing element td:contains("new key")');
 
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
-        $form = $crawler->selectButton('Edit')->form(array(
-            'lockssomatic_crudbundle_aupropertiestype[field_name]'  => 'Foo',
-            // ... other fields to fill
+        $form = $crawler->selectButton('Update')->form(array(
+            'lockssomatic_crudbundle_auproperties[propertyKey]' => 'updated key',
+            'lockssomatic_crudbundle_auproperties[propertyValue]' => 'updated value',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
+        // Check the element contains the string 'updated value'
+        $this->assertGreaterThan(0, $crawler->filter('html:contains("updated value")')->count(), 'Missing string "updated value"');
 
         // Delete the entity
         $client->submit($crawler->selectButton('Delete')->form());
         $crawler = $client->followRedirect();
 
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
+        // Check the entity has been deleted from the list
+        $this->assertNotRegExp('/updated\value/', $client->getResponse()->getContent());
     }
 
-    */
 }

@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class PluginsControllerTest extends WebTestCase
 {
-    /*
     public function testCompleteScenario()
     {
         // Create a new client to browse the application
@@ -19,8 +18,7 @@ class PluginsControllerTest extends WebTestCase
 
         // Fill in the form and submit it
         $form = $crawler->selectButton('Create')->form(array(
-            'lockssomatic_crudbundle_pluginstype[field_name]'  => 'Test',
-            // ... other fields to fill
+            'lockssomatic_crudbundle_plugins[name]' => 'Test plugin'
         ));
 
         $client->submit($form);
@@ -32,24 +30,22 @@ class PluginsControllerTest extends WebTestCase
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
-        $form = $crawler->selectButton('Edit')->form(array(
-            'lockssomatic_crudbundle_pluginstype[field_name]'  => 'Foo',
-            // ... other fields to fill
+        $form = $crawler->selectButton('Update')->form(array(
+            'lockssomatic_crudbundle_plugins[name]' => 'Test plugin updated'
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
+        // Check the element contains the string 'Test plugin updated'
+        $this->assertGreaterThan(0, $crawler->filter('html:contains("Test plugin updated")')->count(), 'Missing string "Test string updated"');
 
         // Delete the entity
         $client->submit($crawler->selectButton('Delete')->form());
         $crawler = $client->followRedirect();
 
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
+        // Check the entity has been deleted from the list
+        $this->assertNotRegExp('/Test\splugin\supdated/', $client->getResponse()->getContent());
     }
 
-    */
 }

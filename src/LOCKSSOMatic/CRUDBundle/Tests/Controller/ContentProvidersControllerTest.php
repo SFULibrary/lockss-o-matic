@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ContentProvidersControllerTest extends WebTestCase
 {
-    /*
     public function testCompleteScenario()
     {
         // Create a new client to browse the application
@@ -19,8 +18,9 @@ class ContentProvidersControllerTest extends WebTestCase
 
         // Fill in the form and submit it
         $form = $crawler->selectButton('Create')->form(array(
-            'lockssomatic_crudbundle_contentproviderstype[field_name]'  => 'Test',
-            // ... other fields to fill
+            'lockssomatic_crudbundle_contentproviders[contentOwnersId]'  => '1',
+            'lockssomatic_crudbundle_contentproviders[type]'  => 'Test type',
+            'lockssomatic_crudbundle_contentproviders[name]'  => 'Test name',
         ));
 
         $client->submit($form);
@@ -32,24 +32,23 @@ class ContentProvidersControllerTest extends WebTestCase
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
-        $form = $crawler->selectButton('Edit')->form(array(
-            'lockssomatic_crudbundle_contentproviderstype[field_name]'  => 'Foo',
-            // ... other fields to fill
+        $form = $crawler->selectButton('Update')->form(array(
+            'lockssomatic_crudbundle_contentproviders[type]'  => 'Updated test type',
+            'lockssomatic_crudbundle_contentproviders[name]'  => 'Updated test name',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
+        // Check the element contains the updated value.
+        $this->assertGreaterThan(0, $crawler->filter('html:contains("Updated test name")')->count(), 'Missing text "Updated test name"');
 
         // Delete the entity
         $client->submit($crawler->selectButton('Delete')->form());
         $crawler = $client->followRedirect();
 
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
+        // Check the entity has been deleted from the list
+        $this->assertNotRegExp('/Updated\stest\sname/', $client->getResponse()->getContent());
     }
 
-    */
 }

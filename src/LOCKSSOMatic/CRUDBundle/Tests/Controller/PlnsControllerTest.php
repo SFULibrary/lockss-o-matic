@@ -35,13 +35,12 @@ class PlnsControllerTest extends WebTestCase
         $form = $crawler->selectButton('Update')->form(array(
             'lockssomatic_crudbundle_plns[name]'  => 'Updated name',
             'lockssomatic_crudbundle_plns[propsPath]'  => 'Updated path',
-            // ... other fields to fill
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
-        // Check the element contains text "Update path"
+        // Check the element contains text "Updated path"
         $this->assertGreaterThan(0, $crawler->filter('html:contains("Updated path")')->count(), 'Missing text "Updated path"');
 
         // Delete the entity
@@ -49,7 +48,7 @@ class PlnsControllerTest extends WebTestCase
         $crawler = $client->followRedirect();
 
         // Check the entity has been deleted from the list
-        $this->assertNotRegExp('/Baz/', $client->getResponse()->getContent());
+        $this->assertNotRegExp("/Updated\spath/", $client->getResponse()->getContent());
     }
 
 }
