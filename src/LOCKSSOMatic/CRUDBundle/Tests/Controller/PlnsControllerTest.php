@@ -41,8 +41,8 @@ class PlnsControllerTest extends WebTestCase
         $client->submit($form);
         $crawler = $client->followRedirect();
 
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('html:contains("Updated path")')->count(), 'Missing element [value="Updated"]');
+        // Check the element contains text "Update path"
+        $this->assertGreaterThan(0, $crawler->filter('html:contains("Updated path")')->count(), 'Missing text "Updated path"');
 
         // Delete the entity
         $client->submit($crawler->selectButton('Delete')->form());
