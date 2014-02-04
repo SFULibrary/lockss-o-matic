@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class PlnsControllerTest extends WebTestCase
 {
-    /*
     public function testCompleteScenario()
     {
         // Create a new client to browse the application
@@ -19,7 +18,8 @@ class PlnsControllerTest extends WebTestCase
 
         // Fill in the form and submit it
         $form = $crawler->selectButton('Create')->form(array(
-            'lockssomatic_crudbundle_plnstype[field_name]'  => 'Test',
+            'lockssomatic_crudbundle_plns[name]'  => 'Test name',
+            'lockssomatic_crudbundle_plns[propsPath]'  => 'Test props path',
             // ... other fields to fill
         ));
 
@@ -27,13 +27,14 @@ class PlnsControllerTest extends WebTestCase
         $crawler = $client->followRedirect();
 
         // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
+        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test name")')->count(), 'Missing element td:contains("Test name")');
 
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
-        $form = $crawler->selectButton('Edit')->form(array(
-            'lockssomatic_crudbundle_plnstype[field_name]'  => 'Foo',
+        $form = $crawler->selectButton('Update')->form(array(
+            'lockssomatic_crudbundle_plns[name]'  => 'Updated name',
+            'lockssomatic_crudbundle_plns[propsPath]'  => 'Updated path',
             // ... other fields to fill
         ));
 
@@ -41,15 +42,14 @@ class PlnsControllerTest extends WebTestCase
         $crawler = $client->followRedirect();
 
         // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
+        $this->assertGreaterThan(0, $crawler->filter('html:contains("Updated path")')->count(), 'Missing element [value="Updated"]');
 
         // Delete the entity
         $client->submit($crawler->selectButton('Delete')->form());
         $crawler = $client->followRedirect();
 
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
+        // Check the entity has been deleted from the list
+        $this->assertNotRegExp('/Baz/', $client->getResponse()->getContent());
     }
 
-    */
 }
