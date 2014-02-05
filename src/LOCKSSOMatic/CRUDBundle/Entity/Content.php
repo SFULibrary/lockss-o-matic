@@ -302,4 +302,32 @@ class Content
     {
         return $this->checksumValue;
     }
+    /**
+     * @var tinyint
+     */
+    private $reharvest;
+
+
+    /**
+     * Set reharvest
+     *
+     * @param \tinyint $reharvest
+     * @return Content
+     */
+    public function setReharvest(\tinyint $reharvest)
+    {
+        $this->reharvest = $reharvest;
+
+        return $this;
+    }
+
+    /**
+     * Get reharvest
+     *
+     * @return \tinyint 
+     */
+    public function getReharvest()
+    {
+        return $this->reharvest;
+    }
 }

@@ -71,5 +71,12 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             length: null
             fixed: false
             comment: ''
-            column: checksum_value        
+            column: checksum_value
+        reharvest:
+            type: tinyint
+            nullable: false
+            length: null
+            fixed: false
+            comment: ''
+            column: reharvest
     lifecycleCallbacks: {  }
