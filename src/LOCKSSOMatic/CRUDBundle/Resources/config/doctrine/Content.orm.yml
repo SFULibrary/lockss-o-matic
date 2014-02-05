@@ -71,5 +71,5 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             length: null
             fixed: false
             comment: ''
-            column: checksum_value
+            column: checksum_value        
     lifecycleCallbacks: {  }
