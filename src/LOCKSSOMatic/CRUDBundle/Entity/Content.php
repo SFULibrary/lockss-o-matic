@@ -311,10 +311,10 @@ class Content
     /**
      * Set reharvest
      *
-     * @param \tinyint $reharvest
+     * @param \boolean $reharvest
      * @return Content
      */
-    public function setReharvest(\tinyint $reharvest)
+    public function setReharvest(\boolean $reharvest)
     {
         $this->reharvest = $reharvest;
 
@@ -324,7 +324,7 @@ class Content
     /**
      * Get reharvest
      *
-     * @return \tinyint 
+     * @return \boolean
      */
     public function getReharvest()
     {

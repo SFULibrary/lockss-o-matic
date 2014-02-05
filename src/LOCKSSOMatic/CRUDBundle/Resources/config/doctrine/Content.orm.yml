@@ -73,7 +73,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             comment: ''
             column: checksum_value
         reharvest:
-            type: tinyint
+            type: boolean
             nullable: false
             length: null
             fixed: false
