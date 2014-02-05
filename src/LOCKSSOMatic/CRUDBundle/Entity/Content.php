@@ -83,6 +83,13 @@ class Content
      * @ORM\Column(name="checksum_value", type="text", nullable=true)
      */
     private $checksumValue;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="reharvest", type="boolean", nullable=false)
+     */
+    private $reharvest;
 
 
 
@@ -302,11 +309,6 @@ class Content
     {
         return $this->checksumValue;
     }
-    /**
-     * @var tinyint
-     */
-    private $reharvest;
-
 
     /**
      * Set reharvest

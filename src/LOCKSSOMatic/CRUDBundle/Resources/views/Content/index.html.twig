@@ -16,6 +16,7 @@
                 <th>Dateaddedtoau</th>
                 <th>Checksumtype</th>
                 <th>Checksumvalue</th>
+                <th>Reharvest</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -32,6 +33,7 @@
                 <td>{% if entity.dateAddedToAu %}{{ entity.dateAddedToAu|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{{ entity.checksumType }}</td>
                 <td>{{ entity.checksumValue }}</td>
+                <td>{{ entity.reharvest }}</td>
                 <td>
                 <ul>
                     <li>
