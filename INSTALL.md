@@ -36,11 +36,7 @@ These commands are the easiest way to allow your web server to write to these di
 
 ```cp parameters.yml.dist parameters.yml```
 
-5) Configure the database
-
-Edit app/config/paramters.yml and enter the database_name, database_user, and database_password you used in your grant command.
-
-From within the lockss-o-matic directory, run:
+5) Configure the database by editing app/config/paramters.yml: enter the database_name, database_user, and database_password you used in your grant command. Then, from within the lockss-o-matic directory, run:
 
 ```php app/console doctrine:schema:update --force```
 
