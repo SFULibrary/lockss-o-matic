@@ -122,4 +122,35 @@ class ContentProviders
     {
         return $this->name;
     }
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ip_address", type="text", nullable=true)
+     */
+    private $ipAddress;
+
+
+    /**
+     * Set ipAddress
+     *
+     * @param string $ipAddress
+     * @return ContentProviders
+     */
+    public function setIpAddress($ipAddress)
+    {
+        $this->ipAddress = $ipAddress;
+
+        return $this;
+    }
+
+    /**
+     * Get ipAddress
+     *
+     * @return string 
+     */
+    public function getIpAddress()
+    {
+        return $this->ipAddress;
+    }
 }

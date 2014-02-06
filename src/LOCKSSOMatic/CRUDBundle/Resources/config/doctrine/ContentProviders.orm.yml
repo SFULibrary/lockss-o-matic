@@ -33,4 +33,11 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             length: null
             fixed: false
             comment: ''
+        ipAddress:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: ip_address
     lifecycleCallbacks: {  }
