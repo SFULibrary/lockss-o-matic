@@ -21,13 +21,14 @@ class ContentProvidersControllerTest extends WebTestCase
             'lockssomatic_crudbundle_contentproviders[contentOwnersId]'  => '1',
             'lockssomatic_crudbundle_contentproviders[type]'  => 'Test type',
             'lockssomatic_crudbundle_contentproviders[name]'  => 'Test name',
+            'lockssomatic_crudbundle_contentproviders[name]'  => '123.456.789.111',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
         // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
+        $this->assertGreaterThan(0, $crawler->filter('td:contains("123.456")')->count(), 'Missing element td:contains("123.456")');
 
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
@@ -35,13 +36,14 @@ class ContentProvidersControllerTest extends WebTestCase
         $form = $crawler->selectButton('Update')->form(array(
             'lockssomatic_crudbundle_contentproviders[type]'  => 'Updated test type',
             'lockssomatic_crudbundle_contentproviders[name]'  => 'Updated test name',
+            'lockssomatic_crudbundle_contentproviders[name]'  => '999.222.111.555',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
         // Check the element contains the updated value.
-        $this->assertGreaterThan(0, $crawler->filter('html:contains("Updated test name")')->count(), 'Missing text "Updated test name"');
+        $this->assertGreaterThan(0, $crawler->filter('html:contains("999.222")')->count(), 'Missing text "999.222"');
 
         // Delete the entity
         $client->submit($crawler->selectButton('Delete')->form());
