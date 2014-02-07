@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new LOCKSSOMatic\CRUDBundle\LOCKSSOMaticCRUDBundle(),
             new LOCKSSOMatic\PLNExporterBundle\LOCKSSOMaticPLNExporterBundle(),
             new LOCKSSOMatic\PLNImporterBundle\LOCKSSOMaticPLNImporterBundle(),
+            new LOCKSSOMatic\PLNMonitorBundle\LOCKSSOMaticPLNMonitorBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
