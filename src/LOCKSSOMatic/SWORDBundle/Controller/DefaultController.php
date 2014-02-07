@@ -14,23 +14,20 @@ class DefaultController extends Controller
         // Get value of 'On-Behalf-Of' HTTP header and include it as
         // the collection ID in the service document's col-iri parameter.
         $onBehalfOf = $request->headers->get('on_behalf_of');
- /*               
-        $repository = $this->getDoctrine()->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders');
-        $qb = $repository->createQueryBuilder('cp');
-        $qb = select('cp.name')
-            ->from('cp')
-            ->where('cp.id = ?1');
-        $contentProvider = $query->getSingleResult();
-*/
+ 
+        // Query the ContentProvider entity so we can get its name.
+        $contentProvider = $this->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders')
+            ->find($onBehalfOf);       
         
-        
-        
-        $request = Request::createFromGlobals();
-        // Get value of 'On-Behalf-Of' HTTP header and include it as
-        // the collection ID in the service document's col-iri parameter.
+        if (!$contentProvider) {
+            throw $this->createNotFoundException(
+                'No Content Provider found for id ' . $onBehalfOf
+            );
+        }
+
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
-            // array('onBehalfOf' => $onBehalfOf, 'name' => $contentProvider->getName()));
-            array('onBehalfOf' => $onBehalfOf, 'name' => 'test content provider'));
+            array('onBehalfOf' => $onBehalfOf, 'name' => $contentProvider->getName()));
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
