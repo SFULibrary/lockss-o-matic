@@ -3,14 +3,34 @@
 namespace LOCKSSOMatic\SWORDBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 
 class DefaultController extends Controller
 {
     public function serviceDocumentAction()
     {
-        // @todo: Get value of proposed 'LOM-Content-Provider' HTTP header and include it as
+        $request = Request::createFromGlobals();
+        // Get value of 'On-Behalf-Of' HTTP header and include it as
         // the collection ID in the service document's col-iri parameter.
-        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig', array());
+        $onBehalfOf = $request->headers->get('on_behalf_of');
+ /*               
+        $repository = $this->getDoctrine()->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders');
+        $qb = $repository->createQueryBuilder('cp');
+        $qb = select('cp.name')
+            ->from('cp')
+            ->where('cp.id = ?1');
+        $contentProvider = $query->getSingleResult();
+*/
+        
+        
+        
+        $request = Request::createFromGlobals();
+        // Get value of 'On-Behalf-Of' HTTP header and include it as
+        // the collection ID in the service document's col-iri parameter.
+        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
+            // array('onBehalfOf' => $onBehalfOf, 'name' => $contentProvider->getName()));
+            array('onBehalfOf' => $onBehalfOf, 'name' => 'test content provider'));
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
