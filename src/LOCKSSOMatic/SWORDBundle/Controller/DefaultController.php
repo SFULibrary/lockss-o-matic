@@ -4,6 +4,7 @@ namespace LOCKSSOMatic\SWORDBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 
 class DefaultController extends Controller
@@ -14,6 +15,12 @@ class DefaultController extends Controller
         // Get value of 'On-Behalf-Of' HTTP header and include it as
         // the collection ID in the service document's col-iri parameter.
         $onBehalfOf = $request->headers->get('on_behalf_of');
+        if (!is_numeric($onBehalfOf)) {
+            $response = new Response();
+            // Return a "Precondition Failed" response.
+            $response->setStatusCode(412);
+            return $response;
+        }
  
         // Query the ContentProvider entity so we can get its name.
         $contentProvider = $this->getDoctrine()
@@ -21,9 +28,10 @@ class DefaultController extends Controller
             ->find($onBehalfOf);       
         
         if (!$contentProvider) {
-            throw $this->createNotFoundException(
-                'No Content Provider found for id ' . $onBehalfOf
-            );
+            $response = new Response();
+            // Return a "Not Found" response.
+            $response->setStatusCode(404);
+            return $response;
         }
 
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
