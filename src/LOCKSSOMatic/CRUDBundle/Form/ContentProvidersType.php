@@ -18,6 +18,7 @@ class ContentProvidersType extends AbstractType
             ->add('contentOwnersId')
             ->add('type')
             ->add('name')
+            ->add('ipAddress')
         ;
     }
     

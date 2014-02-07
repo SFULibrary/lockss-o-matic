@@ -83,6 +83,13 @@ class Content
      * @ORM\Column(name="checksum_value", type="text", nullable=true)
      */
     private $checksumValue;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="reharvest", type="boolean", nullable=false)
+     */
+    private $reharvest;
 
 
 
@@ -301,5 +308,28 @@ class Content
     public function getChecksumValue()
     {
         return $this->checksumValue;
+    }
+
+    /**
+     * Set reharvest
+     *
+     * @param \boolean $reharvest
+     * @return Content
+     */
+    public function setReharvest(\boolean $reharvest)
+    {
+        $this->reharvest = $reharvest;
+
+        return $this;
+    }
+
+    /**
+     * Get reharvest
+     *
+     * @return \boolean
+     */
+    public function getReharvest()
+    {
+        return $this->reharvest;
     }
 }

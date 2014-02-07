@@ -5,17 +5,18 @@
     xmlns="http://www.w3.org/2007/app">
 
     <sword:version>2.0</sword:version>
-    <!-- maxUploadSize is configurable in LOCKSS-O-Matic. -->
+    <!-- @todo: maxUploadSize should configurable in LOCKSS-O-Matic. -->
     <sword:maxUploadSize>102400</sword:maxUploadSize>
-    <!-- uploadChecksumType chosen from a list - suggested: md5, sha1, sha256 -->
+    <!-- @todo: uploadChecksumType to be chosen from a list - suggested: md5, sha1, sha256 -->
     <lom:uploadChecksumType>md5</lom:uploadChecksumType>
 
     <workspace>
         <atom:title>LOCKSS-O-Matic at Simon Fraser University</atom:title>     
-        <!-- Each LOCKSS-O-Matic content provider will have its own SWORD collection; 
-            in this case, http://archivematica.example.org  is collection 12. -->
-        <collection href="http://lockssomatic.example.org/api/sword/2.0/col-iri/12">
-            <atom:title>SFU Archivematica content provider</atom:title>
+        <!-- Each LOCKSS-O-Matic content provider will have its own SWORD collection,
+            identified in the 'On-Behalf-Of' header sent along with the GET request
+            for this document. -->
+        <collection href="http://lockssomatic.example.org/api/sword/2.0/col-iri/{{onBehalfOf}}">
+            <atom:title>{{name}}</atom:title>
             <accept>*/*</accept>
             <accept alternate="multipart-related">*/*</accept>
             <sword:mediation>false</sword:mediation>

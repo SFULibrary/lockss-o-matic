@@ -14,19 +14,37 @@ or
 
 clone the repo at https://github.com/mjordan/lockss-o-matic into your webroot.
 
-2) From within the lockss-o-matic directory, issue the following commands:
+2) Make sure the user running your web server needs to have write permissions to the app/cache and app/logs directories. From within the lockss-o-matic directory, issue the following commands:
+
+```sudo chmod -R app/cache```
+
+```sudo chmod -R app/logs```
+
+These commands are the easiest way to allow your web server to write to these directories, but they are also the least secure. You may want to consult the "Setting up Permissions" section of the Symfony documentation at http://symfony.com/doc/current/book/installation.html.
+
+3) Create the database and grant permissions on it:
+
+```mysqladmin -uroot -p create lomtest```
+
+```mysql -uroot -p```
+
+```mysql>grant all on lomtest.* to lomtest@localhost identified by "lomtest";```
+
+4) From within the lockss-o-matic directory, issue the following commands:
 
 ```cd app/config```
 
 ```cp parameters.yml.dist parameters.yml```
 
-Also, make sure the user running your web server needs to have write permissions to the app/cache and app/logs directories.
+5) Configure the database by editing app/config/paramters.yml: enter the database_name, database_user, and database_password you used in your grant command. Then, from within the lockss-o-matic directory, run:
 
-3) Test your PHP configuration by going to the following URL:
+```php app/console doctrine:schema:update --force```
+
+6) Test your PHP configuration by going to the following URL:
 
 http://localhost/lockss-o-matic/web/config.php
 
-4) After addressing any issues identified in step 3, test the installation by going to the followint URL:
+7) After addressing any issues identified in step 3, test the installation by going to the followint URL:
 
 http://localhost/lockss-o-matic/web/app_dev.php/demo/hello/LOCKSS-O-Matic
 
