@@ -66,6 +66,13 @@ class Content
     /**
      * @var \DateTime
      *
+     * @ORM\Column(name="date_deposited", type="datetime", nullable=true)
+     */
+    private $dateDeposited;
+
+    /**
+     * @var \DateTime
+     *
      * @ORM\Column(name="date_added_to_au", type="datetime", nullable=true)
      */
     private $dateAddedToAu;
@@ -85,9 +92,9 @@ class Content
     private $checksumValue;
     
     /**
-     * @var boolean
+     * @var integer
      *
-     * @ORM\Column(name="reharvest", type="boolean", nullable=false)
+     * @ORM\Column(name="reharvest", type="integer", nullable=true)
      */
     private $reharvest;
 
@@ -242,6 +249,29 @@ class Content
     }
 
     /**
+     * Set dateDeposited
+     *
+     * @param \DateTime $dateDeposited
+     * @return Content
+     */
+    public function setDateDeposited($dateDeposited)
+    {
+        $this->dateDeposited = new \DateTime();
+
+        return $this;
+    }
+
+    /**
+     * Get dateDeposited
+     *
+     * @return \DateTime 
+     */
+    public function getDateDeposited()
+    {
+        return $this->dateDeposited;
+    }
+
+    /**
      * Set dateAddedToAu
      *
      * @param \DateTime $dateAddedToAu
@@ -249,7 +279,7 @@ class Content
      */
     public function setDateAddedToAu($dateAddedToAu)
     {
-        $this->dateAddedToAu = $dateAddedToAu;
+        $this->dateAddedToAu = NULL;
 
         return $this;
     }
@@ -313,10 +343,10 @@ class Content
     /**
      * Set reharvest
      *
-     * @param \boolean $reharvest
+     * @param integer $reharvest
      * @return Content
      */
-    public function setReharvest(\boolean $reharvest)
+    public function setReharvest($reharvest)
     {
         $this->reharvest = $reharvest;
 
@@ -326,7 +356,7 @@ class Content
     /**
      * Get reharvest
      *
-     * @return \boolean
+     * @return integer
      */
     public function getReharvest()
     {

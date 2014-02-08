@@ -5,7 +5,10 @@ namespace LOCKSSOMatic\SWORDBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
+use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\CRUDBundle\Entity\Content;
 
 class DefaultController extends Controller
 {
@@ -25,7 +28,7 @@ class DefaultController extends Controller
         // Query the ContentProvider entity so we can get its name.
         $contentProvider = $this->getDoctrine()
             ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders')
-            ->find($onBehalfOf);       
+            ->find($onBehalfOf);
         
         if (!$contentProvider) {
             $response = new Response();
@@ -41,11 +44,57 @@ class DefaultController extends Controller
     }
 
     public function createSubmissionAction($collectionId)
-    {
-        // @todo: Parse the Atom entry document and 1) add lom:content URLs to database,
-        // 2) parse the Atom entry's <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
-        // element and add that to the deposits.uuid field, 3) return the deposit receipt.
-        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig', array());
+    {        
+        // Get the request body.
+        $request = new Request();
+        $createResourceXml = $request->getContent();
+        
+        // Parse the Atom entry's <id> element, which will contain the deposit's UUID.
+        $atomEntry = new \SimpleXMLElement($createResourceXml);
+        $depositUuid = $atomEntry->id[0];
+        $depositTitle = $atomEntry->title[0];
+        // Remove the 'urn:uuid:'.
+        $depositUuid = preg_replace('/^urn:uuid:/', '', $depositUuid);
+        
+        // Create a Deposit entity.
+        $deposit = new Deposits();
+        $deposit->setContentProvidersId($collectionId);
+        $deposit->setUuid($depositUuid);
+        $deposit->setTitle($depositTitle);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($deposit);
+        $em->flush();
+        
+        // 2) Parse lom:content elements. We need the checksum type, checksum value,
+        // file size, and URL.
+        foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
+            // $logger->info('URL: ' . $content);
+            foreach ($contentChunk[0]->attributes() as $key => $value) {
+                // Create a new Content entity.
+                $content = new Content();
+                // @todo: Content Provider must exist to get this value; use 1 for now.
+                $content->setContentProvidersId(1);
+                $content->setDepositsId($deposit->getId());
+                // @todo: AU must exist to get this value; use 1 for now.
+                $content->setAusId(1);
+                $content->setUrl($contentChunk);                
+                $content->setTitle('Some generatic title');
+                $content->setSize($contentChunk[0]->attributes()->size);                
+                // Date Added to AU will be empty until added to an AU.
+                // $content->setDateAddedToAu();
+                $content->setChecksumType($contentChunk[0]->attributes()->checksumType);
+                $content->setChecksumValue($contentChunk[0]->attributes()->checksumValue);
+                $content->setReharvest(1);
+                $cem = $this->getDoctrine()->getManager();
+                $cem->persist($content);
+                $cem->flush();
+            }
+        }
+
+        // 3) Return the deposit receipt.
+        // @todo: Get the Content Provider ID. For now we use 1.
+        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
+            array('contentProviderId' => '1', 'depositUuid' => $deposit->getUuid()));
         $response->headers->set('Content-Type', 'text/xml');
         $response->setStatusCode(201);
         return $response;
@@ -53,9 +102,9 @@ class DefaultController extends Controller
 
     public function swordStatementAction($collectionId, $uuid)
     {
-        // @todo: Parse the Atom entry document, look up the content URLs for the deposit UUID
-        // in the request, and add these URLs to the lom:content URLs in the returned statement.
-        // Also, get checksums from each box for the content.url.
+        // @todo: Look up the content URLs for the deposit UUID in the request, and add these URLs
+        // to the lom:content URLs in the returned statement. Also, get checksums from each box for
+        // the content.url.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig', array());
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
@@ -63,7 +112,7 @@ class DefaultController extends Controller
 
     public function editSubmissionAction($collectionId, $uuid)
     {
-        // @todo: Parse the 'localVersion' (note: confirm this with Holly and Justin) and
+        // @todo: Parse the 'recrawl' attribute of each lom:content element and
         // determine if all of the files in the AU(s) have been previously flaggged as
         // ready to delete. If all files in the AU(s) have been flagged as ready to delete,
         // add a 'pub_down' attribute to the au_properties table for those AU(s).
