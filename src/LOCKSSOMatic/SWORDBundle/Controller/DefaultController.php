@@ -126,15 +126,31 @@ class DefaultController extends Controller
      */
     public function swordStatementAction($collectionId, $uuid)
     {
-        // @todo: Look up the content URLs for the deposit UUID in the request, and add these URLs
-        // to the lom:content URLs in the returned statement. Also, get checksums from each box for
-        // the content.url.
+        // @todo: Get checksums from each box for each content.url.
         
         // Need to do a join here (select content.url from content, deposits where content.deposits_id =
         // deposits.id and deposits.uuid = $uuid.
+        // SELECT content.url FROM content, deposits WHERE content.deposits_id = deposits.id AND
+        // deposits.uuid = '1225c695-cfb8-4ebb-aaaa-80da344efa6a'
+        $stmt = $this->getDoctrine()
+                    ->getManager()
+                    ->getConnection()
+                    ->prepare('SELECT content.url FROM content, deposits WHERE content.deposits_id = deposits.id
+                    AND deposits.uuid = :uuid');
+        $stmt->bindValue('uuid', $uuid);
+        $stmt->execute();
+        $urls = $stmt->fetchAll();
         
-        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig', array());
-        $response->headers->set('Content-Type', 'text/xml');
+        if (count($urls)) {
+            $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
+                array('urls' => $urls));
+            $response->headers->set('Content-Type', 'text/xml');            
+        }
+        else {
+            // Return a "Not Found" response.
+            $response = new Response();
+            $response->setStatusCode(404);
+        }
         return $response;
     }
 
