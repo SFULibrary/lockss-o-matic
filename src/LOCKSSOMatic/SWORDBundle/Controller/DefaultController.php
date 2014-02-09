@@ -96,9 +96,6 @@ class DefaultController extends Controller
                 $content->setUrl($contentChunk);                
                 $content->setTitle('Some generatic title');
                 $content->setSize($contentChunk[0]->attributes()->size);                
-                // Date Added to AU will be empty until added to an AU.
-                // Would that ever happen at any time other than on content creation?
-                // $content->setDateAddedToAu();
                 $content->setChecksumType($contentChunk[0]->attributes()->checksumType);
                 $content->setChecksumValue($contentChunk[0]->attributes()->checksumValue);
                 $content->setReharvest(1);
@@ -167,12 +164,44 @@ class DefaultController extends Controller
      */
     public function editSubmissionAction($collectionId, $uuid)
     {
-        // @todo: Parse the 'recrawl' attribute of each lom:content element and
-        // determine if all of the files in the AU(s) have been previously flaggged as
-        // ready to delete. If all files in the AU(s) have been flagged as ready to delete,
-        // add a 'pub_down' attribute to the au_properties table for those AU(s).
-        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig', array());
-        $response->headers->set('Content-Type', 'text/xml');
+         $logger = $this->get('logger');
+        
+        // Get the request body.
+        $request = new Request();
+        $editIriXml = $request->getContent();
+        $logger->info($editIriXml);
+
+        // Parse the 'recrawl' attribute of each lom:content element and update
+        // the Content entity's 'recrawl' property if the value is false.
+        // $atomEntry = new \SimpleXMLElement($editIriXml);
+        $atomEntry = simplexml_load_string($editIriXml);
+        foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
+            foreach ($contentChunk[0]->attributes() as $key => $value) {
+                // Get the value of 'recrawl'.
+                $recrawl = $contentChunk[0]->attributes()->recrawl;
+                $logger->info('url is ' . $contentChunk);
+                $logger->info('recrawl value is ' . $recrawl);
+                if ($recrawl == 'false') {
+                    $em = $this->getDoctrine()->getManager();
+                    // Update the Content entity by finding its url value.
+                    $content = $em
+                        ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Content')
+                        ->find($contentChunk);
+                        if ($content) {
+                            $logger->info('We found content');
+                            $content->setRecrawl('0');
+                            $em->flush();
+                        }
+                }
+            }
+        }
+        
+        // @todo: Each time a request is made to the Edit-IRI, check to see if all of the content
+        // in the relevant AUs has a false is their recrawl properties, and if so, update
+        // the AU properties with a 'pub_down' property and regenerate the AU's configuration
+        // block in the title db file.
+        
+        $response = new Response();
         $response->setStatusCode(200);
         return $response;
     }

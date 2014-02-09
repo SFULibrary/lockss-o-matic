@@ -71,13 +71,6 @@ class Content
     private $dateDeposited;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date_added_to_au", type="datetime", nullable=true)
-     */
-    private $dateAddedToAu;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="checksum_type", type="text", nullable=true)
@@ -94,9 +87,9 @@ class Content
     /**
      * @var integer
      *
-     * @ORM\Column(name="reharvest", type="integer", nullable=true)
+     * @ORM\Column(name="recrawl", type="integer", nullable=true)
      */
-    private $reharvest;
+    private $recrawl;
 
 
 
@@ -272,29 +265,6 @@ class Content
     }
 
     /**
-     * Set dateAddedToAu
-     *
-     * @param \DateTime $dateAddedToAu
-     * @return Content
-     */
-    public function setDateAddedToAu($dateAddedToAu)
-    {
-        $this->dateAddedToAu = NULL;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAddedToAu
-     *
-     * @return \DateTime 
-     */
-    public function getDateAddedToAu()
-    {
-        return $this->dateAddedToAu;
-    }
-
-    /**
      * Set checksumType
      *
      * @param string $checksumType
@@ -341,25 +311,25 @@ class Content
     }
 
     /**
-     * Set reharvest
+     * Set recrawl
      *
-     * @param integer $reharvest
+     * @param integer $recrawl
      * @return Content
      */
-    public function setReharvest($reharvest)
+    public function setRecrawl($recrawl)
     {
-        $this->reharvest = $reharvest;
+        $this->recrawl = $recrawl;
 
         return $this;
     }
 
     /**
-     * Get reharvest
+     * Get recrawl
      *
      * @return integer
      */
-    public function getReharvest()
+    public function getRecrawl()
     {
-        return $this->reharvest;
+        return $this->recrawl;
     }
 }

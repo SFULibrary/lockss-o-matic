@@ -1,12 +1,12 @@
 # Route to the SWORD Service Document.
-locksso_matic_sword_service_document:
+lockssomatic_sword_service_document:
     path: /api/sword/2.0/sd-iri
     defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:serviceDocument }
     methods: [GET]
 
 # Route to the SWORD Col-IRI. The SWORD client POSTs to this URL to create
 # a submission.
-locksso_matic_sword_collection_iri:
+lockssomatic_sword_collection_iri:
     path: /api/sword/2.0/col-iri/{collectionId}
     defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:createSubmission }
     methods: [POST]
@@ -14,7 +14,7 @@ locksso_matic_sword_collection_iri:
         collectionId: \d+
 
 # Route to the SWORD State-IRI.
-locksso_matic_sword_state_iri:
+lockssomatic_sword_state_iri:
     path: /api/sword/2.0/cont-iri/{collectionId}/{uuid}/state
     defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:swordStatement }
     methods: [GET]
@@ -24,11 +24,11 @@ locksso_matic_sword_state_iri:
         # uuid: .{36}
 
 # Route to the SWORD Edit-IRI.
-locksso_matic_sword_edit_iri:
+lockssomatic_sword_edit_iri:
     path: /api/sword/2.0/cont-iri/{collectionId}/{uuid}/edit
     defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:editSubmission }
     methods: [PUT]
     requirements:
         collectionId: \d+
         # UUIDs are 36 characters long.
-        uuid: .{36}
+        # uuid: .{36}

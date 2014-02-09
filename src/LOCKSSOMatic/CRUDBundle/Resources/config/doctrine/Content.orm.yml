@@ -58,11 +58,6 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             nullable: true
             comment: ''
             column: date_deposited           
-        dateAddedToAu:
-            type: datetime
-            nullable: true
-            comment: ''
-            column: date_added_to_au
         checksumType:
             type: text
             nullable: true
@@ -77,10 +72,10 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             fixed: false
             comment: ''
             column: checksum_value
-        reharvest:
+        recrawl:
             type: integer
             nullable: true
             unsigned: false
             comment: ''
     lifecycleCallbacks:
-        prePersist: [setDateDeposited, setDateAddedToAu]
+        prePersist: [setDateDeposited]
