@@ -12,6 +12,15 @@ use LOCKSSOMatic\CRUDBundle\Entity\Content;
 
 class DefaultController extends Controller
 {
+    /**
+     * Controller for the SWORD Service Document request.
+     * 
+     * The 'On-Behalf-Of' request header identifies the content provider.
+     * This value is also used for the collection ID (in other words, each
+     * content provider has its own SWORD collection).
+     * 
+     * @return The Service Document.
+     */
     public function serviceDocumentAction()
     {
         $request = Request::createFromGlobals();
@@ -43,6 +52,12 @@ class DefaultController extends Controller
         return $response;
     }
 
+    /**
+     * Controller for the Col-IRI (create resource) request.
+     * 
+     * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
+     * @return The Deposit Receipt response.
+     */
     public function createSubmissionAction($collectionId)
     {        
         // Get the request body.
@@ -68,19 +83,21 @@ class DefaultController extends Controller
         // 2) Parse lom:content elements. We need the checksum type, checksum value,
         // file size, and URL.
         foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
-            // $logger->info('URL: ' . $content);
             foreach ($contentChunk[0]->attributes() as $key => $value) {
                 // Create a new Content entity.
                 $content = new Content();
-                // @todo: Content Provider must exist to get this value; use 1 for now.
-                $content->setContentProvidersId(1);
+                // @todo: Check to verify the content provider identified by
+                // $collectionId exists. If not, return an appropriate error code.
+                $content->setContentProvidersId($collectionId);
                 $content->setDepositsId($deposit->getId());
-                // @todo: AU must exist to get this value; use 1 for now.
+                // @todo: Determine which AU the content should go into.
+                // For now, use 1.
                 $content->setAusId(1);
                 $content->setUrl($contentChunk);                
                 $content->setTitle('Some generatic title');
                 $content->setSize($contentChunk[0]->attributes()->size);                
                 // Date Added to AU will be empty until added to an AU.
+                // Would that ever happen at any time other than on content creation?
                 // $content->setDateAddedToAu();
                 $content->setChecksumType($contentChunk[0]->attributes()->checksumType);
                 $content->setChecksumValue($contentChunk[0]->attributes()->checksumValue);
@@ -92,32 +109,52 @@ class DefaultController extends Controller
         }
 
         // 3) Return the deposit receipt.
-        // @todo: Get the Content Provider ID. For now we use 1.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
-            array('contentProviderId' => '1', 'depositUuid' => $deposit->getUuid()));
+            array('contentProviderId' => $collectionId, 'depositUuid' => $deposit->getUuid()));
         $response->headers->set('Content-Type', 'text/xml');
         $response->setStatusCode(201);
         return $response;
     }
 
+    /**
+     * Controller for the SWORD Statement request.
+     * 
+     * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
+     * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
+     * 
+     * @return The Statement response.
+     */
     public function swordStatementAction($collectionId, $uuid)
     {
         // @todo: Look up the content URLs for the deposit UUID in the request, and add these URLs
         // to the lom:content URLs in the returned statement. Also, get checksums from each box for
         // the content.url.
+        
+        // Need to do a join here (select content.url from content, deposits where content.deposits_id =
+        // deposits.id and deposits.uuid = $uuid.
+        
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig', array());
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
 
+    /**
+     * Controller for the Edit-IRI request.
+     * 
+     * LOCKSS-O-Matic supports only one edit operation: content providers can change the
+     * value of the 'recrawl' attribute to indicate that LOM should not recrawl the content.
+     * 
+     * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
+     * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
+     * 
+     * @return The Edit-IRI response.
+     */
     public function editSubmissionAction($collectionId, $uuid)
     {
         // @todo: Parse the 'recrawl' attribute of each lom:content element and
         // determine if all of the files in the AU(s) have been previously flaggged as
         // ready to delete. If all files in the AU(s) have been flagged as ready to delete,
         // add a 'pub_down' attribute to the au_properties table for those AU(s).
-        // Figure out how to return an empty body. swordStatement.xml.twig template
-        // only here as placeholder.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig', array());
         $response->headers->set('Content-Type', 'text/xml');
         $response->setStatusCode(200);
