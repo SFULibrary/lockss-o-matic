@@ -91,7 +91,7 @@ class Aus
     {
         return $this->externalTitleDbsId;
     }
-
+    
     /**
      * Set externalTitleDbsId
      *

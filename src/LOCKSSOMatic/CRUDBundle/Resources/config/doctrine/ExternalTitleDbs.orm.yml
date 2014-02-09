@@ -2,9 +2,9 @@ LOCKSSOMatic\CRUDBundle\Entity\ExternalTitleDbs:
     type: entity
     table: external_title_dbs
     indexes:
-        external_title_dbs_id_idx:
+        plns_id_idx:
             columns:
-                - external_title_dbs_id
+                - plns_id
     id:
         id:
             type: integer
