@@ -12,9 +12,11 @@ Networks
 
 LOCKSS-O-Matic does not deploy LOCKSS networks - currently that must be done by system administrators. However, LOCKSS-O-Matic will provide tools to generate configuration files for the boxes in the network. Once a network is operational, getting content into it will be as easy as registering a list of URLs to harvest, provided they are compatible with the included LOCKSS plugins (which, initially, means that the files are compressed archives such as ZIP, 7z, or tgz formats). Additional types of content will be possible with the appropraite LOCKSS plugins. Archivematica will include a plugin to enable integration with LOCKSS-O-Matic.
 
-Background and Roadmap
-======================
+Roadmap
+=======
 
-LOCKSS-O-Matic is being developed primarily at [Simon Fraser University Library](http://www.lib.sfu.ca/). Development has already begun and early versions of LOCKSS-O-Matic should be available for testing in spring of 2014. If you would like to participate in testing or development, please contact mjordan - sfu.ca.
+LOCKSS-O-Matic is being developed primarily at [Simon Fraser University Library](http://www.lib.sfu.ca/). Development has already begun and early versions of LOCKSS-O-Matic should be available for testing in spring of 2014. [Details](https://github.com/mjordan/lockss-o-matic/wiki/Roadmap) are available on the project wiki.
+
+If you would like to participate in testing or development, please contact mjordan - sfu.ca.
 
 
