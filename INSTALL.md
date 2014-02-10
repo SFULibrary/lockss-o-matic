@@ -18,7 +18,7 @@ clone the repo at https://github.com/mjordan/lockss-o-matic into your webroot.
 
 ```sudo chmod -R 777 app/cache```
 
-```sudo chmod -R 777app/logs```
+```sudo chmod -R 777 app/logs```
 
 These commands are the easiest way to allow your web server to write to these directories, but they are also the least secure. You may want to consult the "Setting up Permissions" section of the Symfony documentation at http://symfony.com/doc/current/book/installation.html.
 
