@@ -1,15 +1,15 @@
 <atom:feed xmlns:sword="http://purl.org/net/sword/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:lom="http://purl.org/lockssomatic/terms/SWORD">
   <atom:entry>
     <atom:category scheme="http://purl.org/net/sword/terms/" term="http://purl.org/net/sword/terms/originalDeposit" label="Orignal Deposit"/>
-
-    {% for url in urls %}
-    <!-- This content node is for a chunk. -->
-    <lom:content id="{{ url.url }}">
+    {% for detailsForContentItem in contentDetails %}
+    <!-- This lom:content node is for a chunk (i.e. a specific file). During initial testing, details such as LOCKSS box URL and checksums are placeholders. -->
+    <lom:content id="{{ detailsForContentItem.contentUrl }}">
       <lom:serverlist>
-        <lom:server id="1" state="agreement" src="{{contentDetails.boxServeContentUrl }}{{ url.url }}" checksumType="{{ contentDetails.checksumType }}" checksumValue="{{ contentDetails.checksumValue }}" />
+        {% for box in detailsForContentItem.boxes %}
+        <lom:server id="{{ box.serverId }}" state="{{ box.state }}" src="{{box.boxServeContentUrl }}{{ box.contentUrl }}" checksumType="{{ box.checksumType }}" checksumValue="{{ box.checksumValue }}" />
+        {% endfor %}
       </lom:serverlist>
     </lom:content>
     {% endfor %}
-
   </atom:entry>
 </atom:feed>

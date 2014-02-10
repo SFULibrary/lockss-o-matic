@@ -128,23 +128,37 @@ class DefaultController extends Controller
         $stmt = $this->getDoctrine()
                     ->getManager()
                     ->getConnection()
-                    ->prepare('SELECT content.id, content.url FROM content, deposits WHERE
+                    ->prepare('SELECT DISTINCT content.id, content.url FROM content, deposits WHERE
                     content.deposits_id = deposits.id AND deposits.uuid = :uuid');
         $stmt->bindValue('uuid', $uuid);
         $stmt->execute();
-        $urls = $stmt->fetchAll();
+        $content = $stmt->fetchAll();
         
-        if (count($urls)) {
-            // @todo: Get the real values - these are placeholders.
-            $contentDetails = array(
-                'boxServeContentUrl' => 'http://lockss1.example.org:8083/ServeContent?url=',
-                'checksumType' => 'md5',
-                'checksumValue' => 'bd4a9b642562547754086de2dab26b7d',
-                'state' => 'agreement'
+        if (count($content)) {
+            $contentDetails = array();
+            foreach ($content as $contentItem) {
+                $detailsForContentItems = array();
+                // Generate placeholder values for 6 servers in the PLN.
+                // @todo: Query each server in the PLN for the real values.
+                for ($i = 1; $i <= 6; $i++) {
+                    $boxDetails = array(
+                        'contentUrl' => $contentItem['url'],
+                        'serverId' => $i,
+                        'boxServeContentUrl' => 'http://lockss' . $i . '.example.org:8083/ServeContent?url=',
+                        'checksumType' => 'md5',
+                        'checksumValue' => 'fake9b64256fake754086de2fake6b7d',
+                        'state' => 'agreement'
+                    );
+                    $detailsForContentItems['boxes'][] = $boxDetails;
+                }
+                $contentDetails[] = array(
+                    'contentUrl' => $contentItem['url'],
+                    'boxes' => $detailsForContentItems['boxes']
                 );
+            }
             $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
-                array('urls' => $urls, 'contentDetails' => $contentDetails));
-            $response->headers->set('Content-Type', 'text/xml');            
+                array('contentDetails' => $contentDetails));
+            $response->headers->set('Content-Type', 'text/xml');                        
         }
         else {
             // Return a "Not Found" response.
