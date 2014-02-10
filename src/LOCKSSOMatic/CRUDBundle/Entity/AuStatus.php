@@ -122,7 +122,7 @@ class AuStatus
      */
     public function setQueryDate($queryDate)
     {
-        $this->queryDate = $queryDate;
+        $this->queryDate = new \DateTime();
 
         return $this;
     }

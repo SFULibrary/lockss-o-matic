@@ -29,6 +29,13 @@ class Aus
     private $plnsId;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="exteranl_title_dbs_id", type="integer", nullable=true)
+     */
+    private $externalTitleDbsId;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="auid", type="text", nullable=true)
@@ -41,8 +48,6 @@ class Aus
      * @ORM\Column(name="manifest_url", type="text", nullable=true)
      */
     private $manifestUrl;
-
-
 
     /**
      * Get id
@@ -75,6 +80,29 @@ class Aus
     public function getPlnsId()
     {
         return $this->plnsId;
+    }
+
+    /**
+     * Get externalTitleDbsId
+     *
+     * @return integer 
+     */
+    public function getExternalTitleDbsId()
+    {
+        return $this->externalTitleDbsId;
+    }
+    
+    /**
+     * Set externalTitleDbsId
+     *
+     * @param integer $exteralTitleDbsId
+     * @return Aus
+     */
+    public function setExternalTitleDbsId($externalTitleDbsId)
+    {
+        $this->plnsId = $plnsId;
+
+        return $this;
     }
 
     /**

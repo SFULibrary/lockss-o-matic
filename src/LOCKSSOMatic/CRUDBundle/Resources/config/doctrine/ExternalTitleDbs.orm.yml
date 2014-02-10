@@ -1,6 +1,6 @@
-LOCKSSOMatic\CRUDBundle\Entity\Aus:
+LOCKSSOMatic\CRUDBundle\Entity\ExternalTitleDbs:
     type: entity
-    table: aus
+    table: external_title_dbs
     indexes:
         plns_id_idx:
             columns:
@@ -21,23 +21,10 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             unsigned: false
             comment: ''
             column: plns_id
-        externalTitleDbsId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: ''
-            column: external_title_dbs_id            
-        auid:
+        path:
             type: text
             nullable: true
             length: null
             fixed: false
             comment: ''
-        manifestUrl:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
-            comment: ''
-            column: manifest_url
     lifecycleCallbacks: {  }

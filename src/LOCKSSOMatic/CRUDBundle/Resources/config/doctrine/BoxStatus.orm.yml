@@ -40,4 +40,5 @@ LOCKSSOMatic\CRUDBundle\Entity\BoxStatus:
             fixed: false
             comment: ''
             column: property_value
-    lifecycleCallbacks: {  }
+    lifecycleCallbacks:
+            prePersist: [setQueryDate]

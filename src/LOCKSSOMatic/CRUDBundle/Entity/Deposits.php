@@ -138,7 +138,7 @@ class Deposits
      */
     public function setDateDeposited($dateDeposited)
     {
-        $this->dateDeposited = $dateDeposited;
+        $this->dateDeposited = new \DateTime();
 
         return $this;
     }

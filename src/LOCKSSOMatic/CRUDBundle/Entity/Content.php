@@ -66,9 +66,9 @@ class Content
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_added_to_au", type="datetime", nullable=true)
+     * @ORM\Column(name="date_deposited", type="datetime", nullable=true)
      */
-    private $dateAddedToAu;
+    private $dateDeposited;
 
     /**
      * @var string
@@ -85,11 +85,11 @@ class Content
     private $checksumValue;
     
     /**
-     * @var boolean
+     * @var integer
      *
-     * @ORM\Column(name="reharvest", type="boolean", nullable=false)
+     * @ORM\Column(name="recrawl", type="integer", nullable=true)
      */
-    private $reharvest;
+    private $recrawl;
 
 
 
@@ -242,26 +242,26 @@ class Content
     }
 
     /**
-     * Set dateAddedToAu
+     * Set dateDeposited
      *
-     * @param \DateTime $dateAddedToAu
+     * @param \DateTime $dateDeposited
      * @return Content
      */
-    public function setDateAddedToAu($dateAddedToAu)
+    public function setDateDeposited($dateDeposited)
     {
-        $this->dateAddedToAu = $dateAddedToAu;
+        $this->dateDeposited = new \DateTime();
 
         return $this;
     }
 
     /**
-     * Get dateAddedToAu
+     * Get dateDeposited
      *
      * @return \DateTime 
      */
-    public function getDateAddedToAu()
+    public function getDateDeposited()
     {
-        return $this->dateAddedToAu;
+        return $this->dateDeposited;
     }
 
     /**
@@ -311,25 +311,25 @@ class Content
     }
 
     /**
-     * Set reharvest
+     * Set recrawl
      *
-     * @param \boolean $reharvest
+     * @param integer $recrawl
      * @return Content
      */
-    public function setReharvest(\boolean $reharvest)
+    public function setRecrawl($recrawl)
     {
-        $this->reharvest = $reharvest;
+        $this->recrawl = $recrawl;
 
         return $this;
     }
 
     /**
-     * Get reharvest
+     * Get recrawl
      *
-     * @return \boolean
+     * @return integer
      */
-    public function getReharvest()
+    public function getRecrawl()
     {
-        return $this->reharvest;
+        return $this->recrawl;
     }
 }

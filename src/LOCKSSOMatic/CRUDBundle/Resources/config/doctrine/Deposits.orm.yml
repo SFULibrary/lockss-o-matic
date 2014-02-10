@@ -41,4 +41,5 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             nullable: true
             comment: ''
             column: date_deposited
-    lifecycleCallbacks: {  }
+    lifecycleCallbacks:
+        prePersist: [setDateDeposited]
