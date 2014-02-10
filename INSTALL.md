@@ -48,10 +48,6 @@ These commands are the easiest way to allow your web server to write to these di
 
 http://localhost/lockss-o-matic/web/config.php
 
-8) After addressing any issues identified in step 3, test the installation by going to the followint URL:
+You do not need to configure the application. However, if Symfony reports any issues with your PHP configuration, or with file/directory permissions, you should fix those before testing the SWORD server.
 
-http://localhost/lockss-o-matic/web/app_dev.php/demo/hello/LOCKSS-O-Matic
-
-You should see the standard Symfony (AcmeDemoBundle) test page.
-
-9) You are now ready to test the SWORD server as described in RESTTesting/README.txt.
+8) You are now ready to test the SWORD server as described in RESTTesting/README.txt.
