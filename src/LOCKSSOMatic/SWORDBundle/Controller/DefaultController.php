@@ -64,7 +64,7 @@ class DefaultController extends Controller
         $request = new Request();
         $createResourceXml = $request->getContent();
         
-        // Parse the Atom entry's <id> element, which will contain the deposit's UUID.
+        // Parse the Atom entry's <id> element, which will contain the submission's UUID.
         $atomEntry = new \SimpleXMLElement($createResourceXml);
         $depositUuid = $atomEntry->id[0];
         $depositTitle = $atomEntry->title[0];
@@ -76,9 +76,9 @@ class DefaultController extends Controller
         $deposit->setContentProvidersId($collectionId);
         $deposit->setUuid($depositUuid);
         $deposit->setTitle($depositTitle);
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($deposit);
-        $em->flush();
+        $dem = $this->getDoctrine()->getManager();
+        $dem->persist($deposit);
+        $dem->flush();
         
         // 2) Parse lom:content elements. We need the checksum type, checksum value,
         // file size, and URL.
@@ -123,24 +123,27 @@ class DefaultController extends Controller
      */
     public function swordStatementAction($collectionId, $uuid)
     {
-        // @todo: Get checksums from each box for each content.url.
-        
-        // Need to do a join here (select content.url from content, deposits where content.deposits_id =
-        // deposits.id and deposits.uuid = $uuid.
-        // SELECT content.url FROM content, deposits WHERE content.deposits_id = deposits.id AND
-        // deposits.uuid = '1225c695-cfb8-4ebb-aaaa-80da344efa6a'
+        // Get the URLs for all the Content chunks added in the deposit identifed
+        // by $uuid.
         $stmt = $this->getDoctrine()
                     ->getManager()
                     ->getConnection()
-                    ->prepare('SELECT content.url FROM content, deposits WHERE content.deposits_id = deposits.id
-                    AND deposits.uuid = :uuid');
+                    ->prepare('SELECT content.id, content.url FROM content, deposits WHERE
+                    content.deposits_id = deposits.id AND deposits.uuid = :uuid');
         $stmt->bindValue('uuid', $uuid);
         $stmt->execute();
         $urls = $stmt->fetchAll();
         
         if (count($urls)) {
+            // @todo: Get the real values - these are placeholders.
+            $contentDetails = array(
+                'boxServeContentUrl' => 'http://lockss1.example.org:8083/ServeContent?url=',
+                'checksumType' => 'md5',
+                'checksumValue' => 'bd4a9b642562547754086de2dab26b7d',
+                'state' => 'agreement'
+                );
             $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
-                array('urls' => $urls));
+                array('urls' => $urls, 'contentDetails' => $contentDetails));
             $response->headers->set('Content-Type', 'text/xml');            
         }
         else {
