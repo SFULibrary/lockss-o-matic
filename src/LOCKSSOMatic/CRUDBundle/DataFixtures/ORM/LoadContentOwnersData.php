@@ -4,21 +4,20 @@ namespace LOCKSSOMatic\CRUDBundle\DataFixtures\ORM;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use LOCKSSOMatic\CRUDBundle\Entity\Aus;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentOwners;
 
-class LoadAusData implements FixtureInterface
+class LoadContentOwnersData implements FixtureInterface
 {
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $au = new Aus();
-        $au->setPlnsId('1');
-        $au->setAuid('TestAuId');
-        $au->setManifestUrl('http://foo.example.com/manifest.htm');
+        $owner = new ContentOwners();
+        $owner->setName('Test Content Owner');
+        $owner->setEmailAddress('admin@foo.org');
 
-        $manager->persist($au);
+        $manager->persist($owner);
         $manager->flush();
     }
 }
