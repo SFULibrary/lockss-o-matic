@@ -98,7 +98,7 @@ class DefaultController extends Controller
                 $content->setSize($contentChunk[0]->attributes()->size);                
                 $content->setChecksumType($contentChunk[0]->attributes()->checksumType);
                 $content->setChecksumValue($contentChunk[0]->attributes()->checksumValue);
-                $content->setReharvest(1);
+                $content->setRecrawl(1);
                 $cem = $this->getDoctrine()->getManager();
                 $cem->persist($content);
                 $cem->flush();
@@ -189,11 +189,16 @@ class DefaultController extends Controller
                     // Update the Content entity by finding its url value.
                     $content = $em
                         ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Content')
-                        ->find($contentChunk);
+                        ->findOneByUrl($contentChunk);
                         if ($content) {
                             $logger->info('We found content');
                             $content->setRecrawl('0');
                             $em->flush();
+                        }
+                        else {
+                            $response = new Response();
+                            // Return 204 No Content.
+                            $response->setStatusCode(204);                            
                         }
                 }
             }
