@@ -180,13 +180,10 @@ class DefaultController extends Controller
      * @return The Edit-IRI response.
      */
     public function editSubmissionAction($collectionId, $uuid)
-    {
-         $logger = $this->get('logger');
-        
+    {        
         // Get the request body.
         $request = new Request();
         $editIriXml = $request->getContent();
-        $logger->info($editIriXml);
 
         // Parse the 'recrawl' attribute of each lom:content element and update
         // the Content entity's 'recrawl' property if the value is false.
@@ -196,8 +193,6 @@ class DefaultController extends Controller
             foreach ($contentChunk[0]->attributes() as $key => $value) {
                 // Get the value of 'recrawl'.
                 $recrawl = $contentChunk[0]->attributes()->recrawl;
-                $logger->info('url is ' . $contentChunk);
-                $logger->info('recrawl value is ' . $recrawl);
                 if ($recrawl == 'false') {
                     $em = $this->getDoctrine()->getManager();
                     // Update the Content entity by finding its url value.
@@ -205,7 +200,6 @@ class DefaultController extends Controller
                         ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Content')
                         ->findOneByUrl($contentChunk);
                         if ($content) {
-                            $logger->info('We found content');
                             $content->setRecrawl('0');
                             $em->flush();
                         }
