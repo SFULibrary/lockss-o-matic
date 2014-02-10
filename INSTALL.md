@@ -16,9 +16,9 @@ clone the repo at https://github.com/mjordan/lockss-o-matic into your webroot.
 
 2) Make sure the user running your web server needs to have write permissions to the app/cache and app/logs directories. From within the lockss-o-matic directory, issue the following commands:
 
-```sudo chmod -R app/cache```
+```sudo chmod -R 777 app/cache```
 
-```sudo chmod -R app/logs```
+```sudo chmod -R 777app/logs```
 
 These commands are the easiest way to allow your web server to write to these directories, but they are also the least secure. You may want to consult the "Setting up Permissions" section of the Symfony documentation at http://symfony.com/doc/current/book/installation.html.
 
