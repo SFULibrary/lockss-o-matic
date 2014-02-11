@@ -57,6 +57,13 @@ class ContentProviders
     private $hostname;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="checksum_type", type="text", nullable=true)
+     */
+    private $checksumType;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -179,5 +186,28 @@ class ContentProviders
     public function getHostname()
     {
         return $this->hostname;
-    }    
+    }
+    
+    /**
+     * Set checksumType
+     *
+     * @param string $checksumType
+     * @return ContentProviders
+     */
+    public function setChecksumType($checksumType)
+    {
+        $this->checksumType = $checksumType;
+
+        return $this;
+    }
+
+    /**
+     * Get checksumType
+     *
+     * @return string 
+     */
+    public function getChecksumType()
+    {
+        return $this->checksumType;
+    }
 }

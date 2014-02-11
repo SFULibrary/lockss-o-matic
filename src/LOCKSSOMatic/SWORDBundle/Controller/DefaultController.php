@@ -228,7 +228,7 @@ class DefaultController extends Controller
      * 
      * @param string $collectionId The collection ID (i.e., Content Provider ID).
      *   We use this to determine some AU properties like title, journal title, etc.
-     * @param string $contentSize The size of the content, in bytes.
+     * @param string $contentSize The size of the content, in kB.
      * @return $auId The id property of the AU.
      */
     public function getDestinationAu($collectionId, $contentSize) {

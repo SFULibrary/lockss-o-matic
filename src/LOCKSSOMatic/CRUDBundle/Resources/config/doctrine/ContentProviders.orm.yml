@@ -45,5 +45,12 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             nullable: true
             length: null
             fixed: false
-            comment: ''            
+            comment: ''
+        checksumType:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: checksum_type      
     lifecycleCallbacks: {  }
