@@ -42,7 +42,19 @@ class ContentProviders
      */
     private $name;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ip_address", type="text", nullable=true)
+     */
+    private $ipAddress;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="hostname", type="text", nullable=true)
+     */
+    private $hostname;
 
     /**
      * Get id
@@ -124,14 +136,6 @@ class ContentProviders
     }
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="ip_address", type="text", nullable=true)
-     */
-    private $ipAddress;
-
-
-    /**
      * Set ipAddress
      *
      * @param string $ipAddress
@@ -153,4 +157,27 @@ class ContentProviders
     {
         return $this->ipAddress;
     }
+
+    /**
+     * Set hostname
+     *
+     * @param string $hostname
+     * @return ContentProviders
+     */
+    public function setHostname($hostname)
+    {
+        $this->hostname = $hostname;
+
+        return $this;
+    }
+
+    /**
+     * Get hostname
+     *
+     * @return string 
+     */
+    public function getHostname()
+    {
+        return $this->hostname;
+    }    
 }

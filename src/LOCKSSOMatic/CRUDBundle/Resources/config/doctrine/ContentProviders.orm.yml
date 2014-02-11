@@ -40,4 +40,10 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             fixed: false
             comment: ''
             column: ip_address
+        hostname:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''            
     lifecycleCallbacks: {  }
