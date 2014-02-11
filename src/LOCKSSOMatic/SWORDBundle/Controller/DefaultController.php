@@ -80,7 +80,7 @@ class DefaultController extends Controller
         $dem->persist($deposit);
         $dem->flush();
         
-        // 2) Parse lom:content elements. We need the checksum type, checksum value,
+        // Parse lom:content elements. We need the checksum type, checksum value,
         // file size, and URL.
         foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
             foreach ($contentChunk[0]->attributes() as $key => $value) {
@@ -92,7 +92,8 @@ class DefaultController extends Controller
                 $content->setDepositsId($deposit->getId());
                 // @todo: Determine which AU the content should go into.
                 // For now, use 1.
-                $content->setAusId(1);
+                $auId = $this->getDestinationAu($collectionId, $contentChunk[0]->attributes()->size);
+                $content->setAusId($auId);
                 $content->setUrl($contentChunk);                
                 $content->setTitle('Some generatic title');
                 $content->setSize($contentChunk[0]->attributes()->size);                
@@ -105,7 +106,7 @@ class DefaultController extends Controller
             }
         }
 
-        // 3) Return the deposit receipt.
+        // Return the deposit receipt.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
             array('contentProviderId' => $collectionId, 'depositUuid' => $deposit->getUuid()));
         $response->headers->set('Content-Type', 'text/xml');
@@ -117,8 +118,8 @@ class DefaultController extends Controller
      * Controller for the SWORD Statement request.
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
+     *   Not used in this function (is required as a parameter in the SWORD State-IRI).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
-     * 
      * @return The Statement response.
      */
     public function swordStatementAction($collectionId, $uuid)
@@ -175,8 +176,9 @@ class DefaultController extends Controller
      * value of the 'recrawl' attribute to indicate that LOM should not recrawl the content.
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
+     *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
-     * 
+     *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
      * @return The Edit-IRI response.
      */
     public function editSubmissionAction($collectionId, $uuid)
@@ -187,7 +189,6 @@ class DefaultController extends Controller
 
         // Parse the 'recrawl' attribute of each lom:content element and update
         // the Content entity's 'recrawl' property if the value is false.
-        // $atomEntry = new \SimpleXMLElement($editIriXml);
         $atomEntry = simplexml_load_string($editIriXml);
         foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
             foreach ($contentChunk[0]->attributes() as $key => $value) {
@@ -220,5 +221,21 @@ class DefaultController extends Controller
         $response = new Response();
         $response->setStatusCode(200);
         return $response;
+    }
+    
+    /**
+     * Determines which AU to put the content in.
+     * 
+     * @param string $collectionId The collection ID (i.e., Content Provider ID).
+     *   We use this to determine some AU properties like title, journal title, etc.
+     * @param string $contentSize The size of the content, in bytes.
+     * @return $auId The id property of the AU.
+     */
+    public function getDestinationAu($collectionId, $contentSize) {
+        // @todo: If $contentSize is less than remaining capacity of the newest AU
+        // for the Content Provider, put the content in this AU. If $contentSize is
+        // greater, create a new AU and put the content in this one.
+        $auId = '1';
+        return $auId;
     }
 }
