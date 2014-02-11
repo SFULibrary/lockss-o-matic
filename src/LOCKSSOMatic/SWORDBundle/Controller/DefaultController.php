@@ -89,26 +89,29 @@ class DefaultController extends Controller
         // file size, and URL.
         foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
             foreach ($contentChunk[0]->attributes() as $key => $value) {
-                // Create a new Content entity.
-                $content = new Content();
-                // @todo: Check to verify the content provider identified by
-                // $collectionId exists. If not, return an appropriate error code.
-                $content->setContentProvidersId($collectionId);
-                $content->setDepositsId($deposit->getId());
-                // @todo: Determine which AU the content should go into.
-                // For now, use 1.
-                $auId = $this->getDestinationAu($collectionId, $contentChunk[0]->attributes()->size);
-                $content->setAusId($auId);
-                $content->setUrl($contentChunk);                
-                $content->setTitle('Some generatic title');
-                $content->setSize($contentChunk[0]->attributes()->size);                
-                $content->setChecksumType($contentChunk[0]->attributes()->checksumType);
-                $content->setChecksumValue($contentChunk[0]->attributes()->checksumValue);
-                $content->setRecrawl(1);
-                $cem = $this->getDoctrine()->getManager();
-                $cem->persist($content);
-                $cem->flush();
+                $contentSize = $contentChunk[0]->attributes()->size;
+                $contentChecksumType = $contentChunk[0]->attributes()->checksumType;
+                $contentChecksumValue = $contentChunk[0]->attributes()->checksumValue;
             }
+            // Create a new Content entity.
+            $content = new Content();
+            // @todo: Check to verify the content provider identified by
+            // $collectionId exists. If not, return an appropriate error code.
+            $content->setContentProvidersId($collectionId);
+            $content->setDepositsId($deposit->getId());
+            // @todo: Determine which AU the content should go into.
+            // For now, use 1.
+            $auId = $this->getDestinationAu($collectionId, $contentSize);
+            $content->setAusId($auId);
+            $content->setUrl($contentChunk);                
+            $content->setTitle('Some generatic title');
+            $content->setSize($contentChunk[0]->attributes()->size);                
+            $content->setChecksumType($contentChecksumType);
+            $content->setChecksumValue($contentChecksumValue);
+            $content->setRecrawl(1);
+            $cem = $this->getDoctrine()->getManager();
+            $cem->persist($content);
+            $cem->flush();            
         }
 
         // Return the deposit receipt.
