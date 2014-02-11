@@ -18,6 +18,8 @@ class LoadContentProvidersData implements FixtureInterface
         $contentProvider->setType('application');
         $contentProvider->setName('Test application');
         $contentProvider->setIpAddress('111.222.333.444');
+        $contentProvider->setHostname('foo.example.com');
+        $contentProvider->setChecksumType('md5');
 
         $manager->persist($contentProvider);
         $manager->flush();
