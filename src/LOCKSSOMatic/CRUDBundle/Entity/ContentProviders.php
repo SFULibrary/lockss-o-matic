@@ -64,6 +64,20 @@ class ContentProviders
     private $checksumType;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="max_file_size", type="integer", nullable=true)
+     */
+    private $maxFileSize;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="max_au_size", type="integer", nullable=true)
+     */
+    private $maxAuSize;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -210,4 +224,57 @@ class ContentProviders
     {
         return $this->checksumType;
     }
+
+    /**
+     * Get maxFileSize
+     *
+     * @return integer 
+     */
+    public function getMaxFileSize()
+    {
+        return $this->maxFileSize;
+    }
+
+   /**
+     * Set maxFileSize
+     *
+     * @param integer $maxFileSize
+     * @return ContentProviders
+     */
+    public function setMaxFileSize($maxFileSize)
+    {
+        $this->maxFileSize = $maxFileSize;
+
+        return $this;
+    }
+    /**
+     * Get maxAuize
+     *
+     * @return integer 
+     */
+    public function getMaxAuSize()
+    {
+        return $this->maxAuSize;
+    }
+
+   /**
+     * Set maxAuSize
+     *
+     * @param integer $maxAuSize
+     * @return ContentProviders
+     */
+    public function setMaxAuSize($maxAuSize)
+    {
+        $this->maxAuSize = $maxAuSize;
+
+        return $this;
+    }
+
+
+    
+    
+    
+    
+    
+    
 }

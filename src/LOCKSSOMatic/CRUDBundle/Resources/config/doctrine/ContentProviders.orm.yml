@@ -52,5 +52,17 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             length: null
             fixed: false
             comment: ''
-            column: checksum_type      
+            column: checksum_type
+        maxFileSize:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: max_file_size
+        maxAuSize:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: max_au_size            
     lifecycleCallbacks: {  }

@@ -47,7 +47,12 @@ class DefaultController extends Controller
         }
 
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
-            array('onBehalfOf' => $onBehalfOf, 'name' => $contentProvider->getName()));
+            array(
+                'onBehalfOf' => $onBehalfOf,
+                'maxFileSize' => $contentProvider->getMaxFileSize(),
+                'checksumType' => $contentProvider->getChecksumType(),
+                'name' => $contentProvider->getName())
+            );
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
