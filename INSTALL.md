@@ -42,7 +42,7 @@ These commands are the easiest way to allow your web server to write to these di
 
 6) Load the data required to test the SWORD server:
 
-```php app/console doctrine:fixtures:load```
+```mysql -uroot -p lomtest < RESTTesting/lomdata.sql```
 
 7) Test your PHP configuration by going to the following URL:
 
