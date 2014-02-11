@@ -13,8 +13,8 @@ namespace Symfony\Bundle\SwiftmailerBundle\EventListener;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\IntrospectableContainerInterface;
-use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -33,7 +33,7 @@ class EmailSenderListener implements EventSubscriberInterface
         $this->container = $container;
     }
 
-    public function onKernelTerminate(PostResponseEvent $event)
+    public function onTerminate()
     {
         if (!$this->container->has('mailer')) {
             return;
@@ -57,6 +57,12 @@ class EmailSenderListener implements EventSubscriberInterface
 
     static public function getSubscribedEvents()
     {
-        return array(KernelEvents::TERMINATE => 'onKernelTerminate');
+        $listeners = array(KernelEvents::TERMINATE => 'onTerminate');
+
+        if (class_exists('Symfony\Component\Console\ConsoleEvents')) {
+            $listeners[ConsoleEvents::TERMINATE] = 'onTerminate';
+        }
+
+        return $listeners;
     }
 }
