@@ -62,6 +62,6 @@ Answer 'y' if asked if it is OK to purge the database
 
 http://localhost/lockss-o-matic/web/config.php
 
-You do not need to configure the application. However, if Symfony reports any issues with your PHP configuration, or with file/directory permissions, you should fix those before testing the SWORD server.
+You do not need to configure the application. However, if Symfony reports any issues with your PHP configuration, or with file/directory permissions, you should fix those before testing the SWORD server. If you change your PHP configuration, don't forget to restart your web server.
 
 9) You are now ready to test the SWORD server as described in RESTTesting/README.txt.
