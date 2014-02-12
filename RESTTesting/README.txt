@@ -1,3 +1,6 @@
+Testing the LOCKSS-O-Matic SWORD server
+=======================================
+
 Below are example URLs you can use to test the LOCKSS-O-Matic SWORD server. Note that LOCKSS-O-Matic
 does not implement a complete SWORD server. It only implements the minimum functionality required
 for a content provider to post a set of content URLs for harvesting by a LOCKSS network, for the
