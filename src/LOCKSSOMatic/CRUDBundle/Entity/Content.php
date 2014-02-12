@@ -24,13 +24,6 @@ class Content
     /**
      * @var integer
      *
-     * @ORM\Column(name="content_providers_id", type="integer", nullable=true)
-     */
-    private $contentProvidersId;
-
-    /**
-     * @var integer
-     *
      * @ORM\Column(name="deposits_id", type="integer", nullable=true)
      */
     private $depositsId;
@@ -91,8 +84,6 @@ class Content
      */
     private $recrawl;
 
-
-
     /**
      * Get id
      *
@@ -101,29 +92,6 @@ class Content
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set contentProvidersId
-     *
-     * @param integer $contentProvidersId
-     * @return Content
-     */
-    public function setContentProvidersId($contentProvidersId)
-    {
-        $this->contentProvidersId = $contentProvidersId;
-
-        return $this;
-    }
-
-    /**
-     * Get contentProvidersId
-     *
-     * @return integer 
-     */
-    public function getContentProvidersId()
-    {
-        return $this->contentProvidersId;
     }
 
     /**

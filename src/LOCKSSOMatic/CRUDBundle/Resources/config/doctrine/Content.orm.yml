@@ -2,9 +2,6 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
     type: entity
     table: content
     indexes:
-        content_providers_id_idx:
-            columns:
-                - content_providers_id
         deposits_id_idx:
             columns:
                 - deposits_id
@@ -18,12 +15,6 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             generator:
                 strategy: IDENTITY
     fields:
-        contentProvidersId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: ''
-            column: content_providers_id
         depositsId:
             type: integer
             nullable: true
