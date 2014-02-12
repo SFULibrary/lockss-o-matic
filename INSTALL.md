@@ -5,6 +5,11 @@ LOCKSS-O-Matic is still in early stages of development, so there isn't a lot for
 
 LOCKSS-O-Matic uses the Symfony Web Application Framework (http://symfony.com/). However, you do not need to install Symfony separately.
 
+Prerequisites
+=============
+
+Details are available at http://symfony.com/doc/current/reference/requirements.html, but in a nutshell, you need PHP 5.3.3 or higher and MySQL to be installed. Also, your php.ini file needs to have its ```date.timezone``` setting defined. Support for other databases will be added soon.
+
 Installation
 ============
 
