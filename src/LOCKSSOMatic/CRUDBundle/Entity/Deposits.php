@@ -11,7 +11,15 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  */
 class Deposits
-{
+{	
+	/**
+	* Collection property required for many-to-one relationship with ContentProviders.
+	* 
+	* @ManyToOne(targetEntity="ContentProviders", mappedBy="deposit")
+	* @JoinColumn(name="content_providers_id", referencedColumnName="id")
+	*/
+	protected $contentProvider;
+
     /**
      * @var integer
      *

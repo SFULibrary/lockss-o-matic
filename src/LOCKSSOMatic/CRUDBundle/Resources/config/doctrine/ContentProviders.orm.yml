@@ -7,6 +7,13 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             joinColumn:
                 name: content_owners_id
                 referencedColumnName: id
+                
+    oneToMany:
+        contentProvider:
+            targetEntity: Deposits
+            mappedBy: contentProvider
+            
+                     
     table: content_providers
     indexes:
         content_owners_id_idx:
