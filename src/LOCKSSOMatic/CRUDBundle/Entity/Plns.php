@@ -14,6 +14,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Plns
 {
 	/**
+	 * Property required for one-to-many relationship with Aus.
+	 * 
+	 * @OneToMany(targetEntity="Aus", mappedBy="aus")
+	 */
+	protected $aus;
+
+	/**
 	 * Property required for one-to-many relationship with PlnProperties.
 	 * 
 	 * @OneToMany(targetEntity="PlnProperties", mappedBy="plnProperties")
@@ -35,12 +42,13 @@ class Plns
 	protected $boxes;
 
 	/**
-	 * Initializes the $plnProperties and $externalTitleDbs properties.
+	 * Initializes the $aus, $plnProperties, $externalTitleDbs, and $boxes properties.
 	 */
 
 	public function __construct()
 	{
-        $this->auProperties = new ArrayCollection();
+		$this->aus = new ArrayCollection();
+        $this->plnProperties = new ArrayCollection();
         $this->externalTitleDbs = new ArrayCollection();
         $this->boxes = new ArrayCollection();
 	}

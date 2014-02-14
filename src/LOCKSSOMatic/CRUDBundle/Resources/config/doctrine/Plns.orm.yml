@@ -1,6 +1,9 @@
 LOCKSSOMatic\CRUDBundle\Entity\Plns:
     type: entity
     oneToMany:
+        aus:
+            targetEntity: Aus
+            mappedBy: pln
         plnProperties:
             targetEntity: PlnProperties
             mappedBy: pln

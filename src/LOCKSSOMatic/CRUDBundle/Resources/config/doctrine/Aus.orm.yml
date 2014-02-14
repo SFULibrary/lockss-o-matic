@@ -13,6 +13,13 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
         pluginProperties:
             targetEntity: PluginProperties
             mappedBy: au
+    manyToOne:
+        pln:
+            targetEntity: Plns
+            inversedBy: aus
+            joinColumn:
+                name: plns_id
+                referencedColumnName: id
     table: aus
     indexes:
         plns_id_idx:
