@@ -17,7 +17,7 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -26,50 +26,50 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the content_owners table.'
             column: content_owners_id
         type:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'Either "application" (deposits content via SWORD interface) or "manual" (deposits content via web form).'
         name:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The name of the content provider.'
         ipAddress:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The IP address of the content provider application.'
             column: ip_address
         hostname:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The hostname of the content provider application.'
         checksumType:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'A standard identifier for commonly used checksum algorithms such as md5, sha1, etc.'
             column: checksum_type
         maxFileSize:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'The maximum allowed size for a single file included in deposits from the content provider, in kB.'
             column: max_file_size
         maxAuSize:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'The maximum cumulative size for an Archival Unit containing deposits from the content provider, in kB.'
             column: max_au_size            
     lifecycleCallbacks: {  }

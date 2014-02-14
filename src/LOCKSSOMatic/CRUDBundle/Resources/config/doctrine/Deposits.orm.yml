@@ -13,7 +13,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -22,24 +22,24 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the content_providers table.'
             column: content_providers_id
         uuid:
             type: string
             nullable: true
             length: 36
             fixed: false
-            comment: ''
+            comment: 'A UUID identifying the deposit, supplied by the content provider in the <sword:id> element.'
         title:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The title of the deposit.'
         dateDeposited:
             type: datetime
             nullable: true
-            comment: ''
+            comment: 'Timestamp indicating when was deposit was created.'
             column: date_deposited
     lifecycleCallbacks:
         prePersist: [setDateDeposited]

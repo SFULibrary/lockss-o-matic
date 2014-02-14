@@ -10,7 +10,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -19,25 +19,25 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the plns table.'
             column: plns_id
         externalTitleDbsId:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the external_title_dbs table.'
             column: external_title_dbs_id            
         auid:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The LOCKSS auId. @todo: Explain where this is generated.'
         manifestUrl:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The LOCKSS manifest URL for the AU.'
             column: manifest_url
     lifecycleCallbacks: {  }

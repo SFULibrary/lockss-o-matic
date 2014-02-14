@@ -10,7 +10,7 @@ LOCKSSOMatic\CRUDBundle\Entity\BoxStatus:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -19,26 +19,26 @@ LOCKSSOMatic\CRUDBundle\Entity\BoxStatus:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the boxes table.'
             column: boxes_id
         queryDate:
             type: datetime
             nullable: true
-            comment: ''
+            comment: 'Timestamp indicating when the box was queried.'
             column: query_date
         propertyKey:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'Box property key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'Box property value.'
             column: property_value
     lifecycleCallbacks:
             prePersist: [setQueryDate]

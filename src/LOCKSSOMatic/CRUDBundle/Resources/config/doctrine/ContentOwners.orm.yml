@@ -10,7 +10,7 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentOwners:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -20,12 +20,12 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentOwners:
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'Name of the insitution, department, or individual who is responsible for content.'
         emailAddress:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'One or more email addresses used in sending reports, alerts, etc.'
             column: email_address
     lifecycleCallbacks: {  }

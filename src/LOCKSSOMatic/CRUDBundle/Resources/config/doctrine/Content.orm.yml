@@ -10,7 +10,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -19,54 +19,54 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the deposits table.'
             column: deposits_id
         ausId:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the aus table.'
             column: aus_id
         url:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The fully qualified URL for the content. This URL will appear in LOCKSS manifest pages.'
         title:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The title of the content, supplied by the content provider in the <lom:content> title attribute if there is one; if missing, generated from url value.'
         size:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'The size of the content, in kB.'
         dateDeposited:
             type: datetime
             nullable: true
-            comment: ''
+            comment: 'Timestamp indicating when the content was depositied.'
             column: date_deposited           
         checksumType:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'A standard identifier for commonly used checksum algorithms such as md5, sha1, etc. supplied by the content provider in the <lom:content> checksumType attribute.'
             column: checksum_type
         checksumValue:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The checksum value, supplied by the content provider in the <lom:content> checksumValue attribute.'
             column: checksum_value
         recrawl:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Either 1 (indicating that LOCKSS boxes should recrawl the content) or 0 (indicating that they should not).'
     lifecycleCallbacks:
         prePersist: [setDateDeposited]

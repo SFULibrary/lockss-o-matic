@@ -10,7 +10,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Boxes:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -19,19 +19,19 @@ LOCKSSOMatic\CRUDBundle\Entity\Boxes:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the plns table.'
             column: plns_id
         hostname:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The hostname of the LOCKSS box.'
         ipAddress:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The IP address of the LOCKSS box.'
             column: ip_address
     lifecycleCallbacks: {  }

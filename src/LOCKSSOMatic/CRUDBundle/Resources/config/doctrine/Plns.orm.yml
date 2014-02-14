@@ -6,7 +6,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Plns:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -16,12 +16,12 @@ LOCKSSOMatic\CRUDBundle\Entity\Plns:
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The name of the PLN.'
         propsPath:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The URL of the lockss.xml file for the PLN.'
             column: props_path
     lifecycleCallbacks: {  }

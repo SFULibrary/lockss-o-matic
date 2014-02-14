@@ -13,7 +13,7 @@ LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -22,32 +22,32 @@ LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the plugins table.'
             column: plugins_id
         ausId:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the aus table.'
             column: aus_id
         parentId:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'id value from this table of the property''s parent property.'
             column: parent_id
         propertyKey:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'Plugin proprety key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'Plugin property value.'
             column: property_value
     lifecycleCallbacks: {  }

@@ -10,7 +10,7 @@ LOCKSSOMatic\CRUDBundle\Entity\PlnProperties:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -19,26 +19,26 @@ LOCKSSOMatic\CRUDBundle\Entity\PlnProperties:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the plns table.'
             column: plns_id
         parentId:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'id value from this table of the property''s parent property.'
             column: parent_id
         propertyKey:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'PLN property key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'PLN property value.'
             column: property_value
     lifecycleCallbacks: {  }

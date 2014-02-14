@@ -10,7 +10,7 @@ LOCKSSOMatic\CRUDBundle\Entity\AuStatus:
             type: integer
             nullable: false
             unsigned: false
-            comment: ''
+            comment: 'Primary key for this table.'
             id: true
             generator:
                 strategy: IDENTITY
@@ -19,33 +19,33 @@ LOCKSSOMatic\CRUDBundle\Entity\AuStatus:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: 'Foreign key for the aus table.'
             column: aus_id
         boxHostname:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'The hostname of the box that perserves the AU.'
             column: box_hostname
         queryDate:
             type: datetime
             nullable: true
-            comment: ''
+            comment: 'Timestamp indicating when the box was queried.'
             column: query_date
         propertyKey:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'AU property key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
             length: null
             fixed: false
-            comment: ''
+            comment: 'AU property value.'
             column: property_value
     lifecycleCallbacks:
             prePersist: [setQueryDate]
