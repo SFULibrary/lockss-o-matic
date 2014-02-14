@@ -21,12 +21,20 @@ class Plns
 	protected $plnProperties;
 
 	/**
-	 * Initializes the $plnProperties property.
+	 * Property required for one-to-many relationship with ExternalTitleDbs.
+	 * 
+	 * @OneToMany(targetEntity="ExternalTitleDbs", mappedBy="externalTitleDbs")
+	 */
+	protected $externalTitleDbs;
+
+	/**
+	 * Initializes the $plnProperties and $externalTitleDbs properties.
 	 */
 
 	public function __construct()
 	{
         $this->auProperties = new ArrayCollection();
+        $this->externalTitleDbs = new ArrayCollection();
 	}
 
     /**

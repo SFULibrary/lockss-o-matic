@@ -1,5 +1,12 @@
 LOCKSSOMatic\CRUDBundle\Entity\ExternalTitleDbs:
     type: entity
+    manyToOne:
+        pln:
+            targetEntity: Plns
+            inversedBy: externalTitleDbs
+            joinColumn:
+                name: plns_id
+                referencedColumnName: id
     table: external_title_dbs
     indexes:
         plns_id_idx:
