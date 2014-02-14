@@ -9,7 +9,7 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
                 referencedColumnName: id
                 
     oneToMany:
-        contentProvider:
+        deposit:
             targetEntity: Deposits
             mappedBy: contentProvider
             
