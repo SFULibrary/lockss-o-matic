@@ -1,5 +1,12 @@
 LOCKSSOMatic\CRUDBundle\Entity\Content:
     type: entity
+    manyToOne:
+        deposit:
+            targetEntity: Deposits
+            inversedBy: content
+            joinColumn:
+                name: deposits_id
+                referencedColumnName: id       
     table: content
     indexes:
         deposits_id_idx:

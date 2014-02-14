@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Deposits
@@ -19,6 +20,27 @@ class Deposits
 	* @JoinColumn(name="content_providers_id", referencedColumnName="id")
 	*/
 	protected $contentProvider;
+
+
+
+
+	/**
+	 * Property required for one-to-many relationship with Content.
+	 * 
+	 * @OneToMany(targetEntity="Content", mappedBy="content")
+	 */
+	protected $content;
+	
+	/**
+	 * Initializes the $collectionowner property.
+	 */
+	public function __construct()
+	{
+		$this->content = new ArrayCollection();
+	}
+
+
+
 
     /**
      * @var integer
