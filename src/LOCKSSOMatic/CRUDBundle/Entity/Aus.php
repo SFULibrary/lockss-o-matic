@@ -21,13 +21,21 @@ class Aus
 	protected $content;
 
 	/**
-	 * Initializes the $collectionowner property.
+	 * Property required for one-to-many relationship with AuStatus.
+	 * 
+	 * @OneToMany(targetEntity="AuStatus", mappedBy="auStatus")
+	 */
+	protected $auStatus;
+
+	/**
+	 * Initializes the $content and $auStatus properties.
 	 */
 	public function __construct()
 	{
 		$this->content = new ArrayCollection();
+		$this->auStatus = new ArrayCollection();
 	}
-	
+
     /**
      * @var integer
      *

@@ -1,10 +1,12 @@
 LOCKSSOMatic\CRUDBundle\Entity\Aus:
     type: entity
-    
     oneToMany:
         content:
             targetEntity: Content
-            mappedBy: au     
+            mappedBy: au
+        auStatus:
+            targetEntity: AuStatus
+            mappedBy: au
     table: aus
     indexes:
         plns_id_idx:
