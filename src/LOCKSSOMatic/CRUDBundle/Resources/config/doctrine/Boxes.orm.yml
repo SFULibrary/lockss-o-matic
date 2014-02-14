@@ -4,6 +4,13 @@ LOCKSSOMatic\CRUDBundle\Entity\Boxes:
         boxStatus:
             targetEntity: BoxStatus
             mappedBy: box
+    manyToOne:
+        pln:
+            targetEntity: Plns
+            inversedBy: boxes
+            joinColumn:
+                name: plns_id
+                referencedColumnName: id
     table: boxes
     indexes:
         plns_id_idx:

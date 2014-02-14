@@ -28,6 +28,13 @@ class Plns
 	protected $externalTitleDbs;
 
 	/**
+	 * Property required for one-to-many relationship with Boxes.
+	 * 
+	 * @OneToMany(targetEntity="Boxes", mappedBy="boxes")
+	 */
+	protected $boxes;
+
+	/**
 	 * Initializes the $plnProperties and $externalTitleDbs properties.
 	 */
 
@@ -35,6 +42,7 @@ class Plns
 	{
         $this->auProperties = new ArrayCollection();
         $this->externalTitleDbs = new ArrayCollection();
+        $this->boxes = new ArrayCollection();
 	}
 
     /**

@@ -28,6 +28,14 @@ class Boxes
 		$this->boxStatus = new ArrayCollection();
 	}
 
+	/**
+	* Property required for many-to-one relationship with Plns.
+	* 
+	* @ManyToOne(targetEntity="Plns", mappedBy="boxes")
+	* @JoinColumn(name="plns_id", referencedColumnName="id")
+	*/
+	protected $pln;
+
     /**
      * @var integer
      *

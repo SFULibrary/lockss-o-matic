@@ -7,6 +7,9 @@ LOCKSSOMatic\CRUDBundle\Entity\Plns:
         externalTitleDbs:
             targetEntity: ExternalTitleDbs
             mappedBy: pln
+        boxes:
+            targetEntity: Boxes
+            mappedBy: pln
     table: plns
     id:
         id:
