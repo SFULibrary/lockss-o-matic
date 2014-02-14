@@ -3,7 +3,6 @@
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * ContentProviders
@@ -15,16 +14,11 @@ class ContentProviders
 {
 	/**
 	* Collection property required for many-to-one relationship with ContentOwners.
+	* 
+	* @ManyToOne(targetEntity="ContentOwners", mappedBy="contentProvider")
+	* @JoinColumn(name="content_owners_id", referencedColumnName="id")
 	*/
 	protected $contentOwner;
-	
-	/**
-	 * Initializes the $collectionowner property.
-	 */
-	public function __construct()
-	{
-		$this->contentOwner = new ArrayCollection();
-	}
 	
     /**
      * @var integer

@@ -1,7 +1,7 @@
 LOCKSSOMatic\CRUDBundle\Entity\ContentOwners:
     type: entity
     oneToMany:
-        contentProviders:
+        contentProvider:
             targetEntity: ContentProviders
             mappedBy: contentOwner
     table: content_owners

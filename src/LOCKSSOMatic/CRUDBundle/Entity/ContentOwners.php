@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * ContentOwners
@@ -14,8 +15,18 @@ class ContentOwners
 {
 	/**
 	 * Property required for one-to-many relationship with ContentProviders.
+	 * 
+	 * @OneToMany(targetEntity="ContentProviders", mappedBy="ContentOwner")
 	 */
-	protected $contentProviders;
+	protected $contentProvider;
+	
+	/**
+	 * Initializes the $collectionowner property.
+	 */
+	public function __construct()
+	{
+		$this->contentProvider = new ArrayCollection();
+	}
 	
     /**
      * @var integer
@@ -39,8 +50,6 @@ class ContentOwners
      * @ORM\Column(name="email_address", type="text", nullable=true)
      */
     private $emailAddress;
-
-
 
     /**
      * Get id

@@ -3,7 +3,7 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
     manyToOne:
         contentOwner:
             targetEntity: ContentOwners
-            inversedBy: contentProviders
+            inversedBy: contentProvider
             joinColumn:
                 name: content_owners_id
                 referencedColumnName: id
