@@ -19,7 +19,15 @@ class PluginProperties
 	* @JoinColumn(name="plugins_id", referencedColumnName="id")
 	*/
 	protected $plugin;
-	
+
+	/**
+	* Property required for many-to-one relationship with Plugins.
+	* 
+	* @ManyToOne(targetEntity="Aus", mappedBy="pluginProperties")
+	* @JoinColumn(name="aus_id", referencedColumnName="id")
+	*/
+	protected $au;
+
     /**
      * @var integer
      *

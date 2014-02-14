@@ -35,13 +35,22 @@ class Aus
 	protected $auProperties;
 
 	/**
-	 * Initializes the $content, $auStatus, and $auProperties properties.
+	 * Property required for one-to-many relationship with PluginProperties.
+	 * 
+	 * @OneToMany(targetEntity="PluginProperties", mappedBy="pluginProperties")
+	 */
+	protected $pluginProperties;
+
+	/**
+	 * Initializes the $content, $auStatus, $auProperties, and $pluginProperties
+	 * properties.
 	 */
 	public function __construct()
 	{
 		$this->content = new ArrayCollection();
 		$this->auStatus = new ArrayCollection();
         $this->auProperties = new ArrayCollection();
+        $this->pluginProperties = new ArrayCollection();
 	}
 
     /**

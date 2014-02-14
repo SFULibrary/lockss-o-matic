@@ -7,6 +7,12 @@ LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
             joinColumn:
                 name: plugins_id
                 referencedColumnName: id
+        au:
+            targetEntity: Aus
+            inversedBy: auProperties
+            joinColumn:
+                name: aus_id
+                referencedColumnName: id
     table: plugin_properties
     indexes:
         aus_id_idx:
