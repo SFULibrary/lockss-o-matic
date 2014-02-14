@@ -1,5 +1,9 @@
 LOCKSSOMatic\CRUDBundle\Entity\ContentOwners:
     type: entity
+    oneToMany:
+        contentProviders:
+            targetEntity: ContentProviders
+            mappedBy: contentOwner
     table: content_owners
     id:
         id:

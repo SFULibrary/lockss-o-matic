@@ -1,5 +1,12 @@
 LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
     type: entity
+    manyToOne:
+        contentOwner:
+            targetEntity: ContentOwners
+            inversedBy: contentProviders
+            joinColumn:
+                name: content_owners_id
+                referencedColumnName: id
     table: content_providers
     indexes:
         content_owners_id_idx:

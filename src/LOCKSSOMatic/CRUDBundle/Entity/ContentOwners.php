@@ -12,6 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ContentOwners
 {
+	/**
+	 * Property required for one-to-many relationship with ContentProviders.
+	 */
+	protected $contentProviders;
+	
     /**
      * @var integer
      *

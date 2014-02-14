@@ -12,6 +12,19 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ContentProviders
 {
+	/**
+	* Collection property required for many-to-one relationship with ContentOwners.
+	*/
+	protected $contentOwner;
+	
+	/**
+	 * Initializes the $collectionowner property.
+	 */
+	public function __construct()
+	{
+		$this->contentOwner = new ArrayCollection();
+	}
+	
     /**
      * @var integer
      *
