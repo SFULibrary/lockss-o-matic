@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Boxes
@@ -12,6 +13,21 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Boxes
 {
+	/**
+	 * Property required for one-to-many relationship with BoxStatus.
+	 * 
+	 * @OneToMany(targetEntity="BoxStatus", mappedBy="boxStatus")
+	 */
+	protected $boxStatus;
+	
+	/**
+	 * Initializes the $boxStatus property.
+	 */
+	public function __construct()
+	{
+		$this->boxStatus = new ArrayCollection();
+	}
+
     /**
      * @var integer
      *

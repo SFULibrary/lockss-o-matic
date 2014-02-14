@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class AuStatus
 {
 	/**
-	* Property required for many-to-one relationship with Deposits.
+	* Property required for many-to-one relationship with Aus.
 	* 
 	* @ManyToOne(targetEntity="Aus", mappedBy="auStatus")
 	* @JoinColumn(name="aus_id", referencedColumnName="id")

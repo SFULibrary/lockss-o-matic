@@ -1,5 +1,9 @@
 LOCKSSOMatic\CRUDBundle\Entity\Boxes:
     type: entity
+    oneToMany:
+        boxStatus:
+            targetEntity: BoxStatus
+            mappedBy: box
     table: boxes
     indexes:
         plns_id_idx:

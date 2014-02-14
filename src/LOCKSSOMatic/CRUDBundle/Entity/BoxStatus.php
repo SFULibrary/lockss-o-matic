@@ -12,6 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class BoxStatus
 {
+	/**
+	* Property required for many-to-one relationship with Boxes.
+	* 
+	* @ManyToOne(targetEntity="Boxes", mappedBy="boxStatus")
+	* @JoinColumn(name="boxes_id", referencedColumnName="id")
+	*/
+	protected $box;
+
     /**
      * @var integer
      *
