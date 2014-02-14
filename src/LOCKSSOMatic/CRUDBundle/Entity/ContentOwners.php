@@ -18,14 +18,14 @@ class ContentOwners
 	 * 
 	 * @OneToMany(targetEntity="ContentProviders", mappedBy="ContentOwner")
 	 */
-	protected $contentProvider;
+	protected $contentProviders;
 	
 	/**
 	 * Initializes the $collectionowner property.
 	 */
 	public function __construct()
 	{
-		$this->contentProvider = new ArrayCollection();
+		$this->contentProviders = new ArrayCollection();
 	}
 	
     /**

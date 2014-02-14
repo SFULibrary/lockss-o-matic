@@ -26,14 +26,14 @@ class ContentProviders
 	 * 
 	 * @OneToMany(targetEntity="Deposits", mappedBy="ContentProvider")
 	 */
-	protected $deposit;
+	protected $deposits;
 	
 	/**
 	 * Initializes the $collectionowner property.
 	 */
 	public function __construct()
 	{
-		$this->deposit = new ArrayCollection();
+		$this->deposits = new ArrayCollection();
 	}
 
     /**
