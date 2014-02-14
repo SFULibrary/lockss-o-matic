@@ -28,12 +28,20 @@ class Aus
 	protected $auStatus;
 
 	/**
-	 * Initializes the $content and $auStatus properties.
+	 * Property required for one-to-many relationship with AuProperties.
+	 * 
+	 * @OneToMany(targetEntity="AuProperties", mappedBy="auProperties")
+	 */
+	protected $auProperties;
+
+	/**
+	 * Initializes the $content, $auStatus, and $auProperties properties.
 	 */
 	public function __construct()
 	{
 		$this->content = new ArrayCollection();
 		$this->auStatus = new ArrayCollection();
+        $this->auProperties = new ArrayCollection();
 	}
 
     /**

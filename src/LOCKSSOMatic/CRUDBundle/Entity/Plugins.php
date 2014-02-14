@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Plugins
@@ -12,6 +13,21 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Plugins
 {
+	/**
+	 * Property required for one-to-many relationship with AuProperties.
+	 * 
+	 * @OneToMany(targetEntity="AuProperties", mappedBy="auProperties")
+	 */
+	protected $pluginProperties;
+
+	/**
+	 * Initializes the $pluginProperties property.
+	 */
+	public function __construct()
+	{
+        $this->pluginProperties = new ArrayCollection();
+	}
+
     /**
      * @var integer
      *

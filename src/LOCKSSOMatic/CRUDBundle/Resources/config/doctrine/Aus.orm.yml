@@ -7,6 +7,9 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
         auStatus:
             targetEntity: AuStatus
             mappedBy: au
+        auProperties:
+            targetEntity: AuProperties
+            mappedBy: au
     table: aus
     indexes:
         plns_id_idx:

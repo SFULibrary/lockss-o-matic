@@ -12,6 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class AuProperties
 {
+	
+	/**
+	* Property required for many-to-one relationship with Aus.
+	* 
+	* @ManyToOne(targetEntity="Aus", mappedBy="auProperties")
+	* @JoinColumn(name="aus_id", referencedColumnName="id")
+	*/
+	protected $au;
+
     /**
      * @var integer
      *

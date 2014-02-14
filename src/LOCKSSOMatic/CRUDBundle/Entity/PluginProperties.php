@@ -12,6 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PluginProperties
 {
+	/**
+	* Property required for many-to-one relationship with Plugins.
+	* 
+	* @ManyToOne(targetEntity="Plugins", mappedBy="pluginProperties")
+	* @JoinColumn(name="plugins_id", referencedColumnName="id")
+	*/
+	protected $plugin;
+	
     /**
      * @var integer
      *

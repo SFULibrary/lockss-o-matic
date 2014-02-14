@@ -1,5 +1,9 @@
 LOCKSSOMatic\CRUDBundle\Entity\Plugins:
     type: entity
+    oneToMany:
+        pluginProperties:
+            targetEntity: PluginProperties
+            mappedBy: plugin
     table: plugins
     id:
         id:
