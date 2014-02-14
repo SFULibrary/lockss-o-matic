@@ -21,9 +21,6 @@ class Deposits
 	*/
 	protected $contentProvider;
 
-
-
-
 	/**
 	 * Property required for one-to-many relationship with Content.
 	 * 
@@ -38,9 +35,6 @@ class Deposits
 	{
 		$this->content = new ArrayCollection();
 	}
-
-
-
 
     /**
      * @var integer
