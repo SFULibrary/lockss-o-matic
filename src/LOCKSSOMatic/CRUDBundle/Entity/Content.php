@@ -13,13 +13,21 @@ use Doctrine\ORM\Mapping as ORM;
 class Content
 {
 	/**
-	* Collection property required for many-to-one relationship with Deposits.
+	* Property required for many-to-one relationship with Deposits.
 	* 
 	* @ManyToOne(targetEntity="Deposits", mappedBy="content")
 	* @JoinColumn(name="deposits_id", referencedColumnName="id")
 	*/
 	protected $deposit;
-	
+
+	/**
+	* Property required for many-to-one relationship with Deposits.
+	* 
+	* @ManyToOne(targetEntity="Aus", mappedBy="content")
+	* @JoinColumn(name="aus_id", referencedColumnName="id")
+	*/
+	protected $au;
+
     /**
      * @var integer
      *
