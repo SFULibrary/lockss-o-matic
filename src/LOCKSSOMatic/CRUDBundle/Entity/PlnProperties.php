@@ -12,6 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PlnProperties
 {
+	/**
+	* Property required for many-to-one relationship with Plns.
+	* 
+	* @ManyToOne(targetEntity="Plns", mappedBy="plnProperties")
+	* @JoinColumn(name="plns_id", referencedColumnName="id")
+	*/
+	protected $pln;
+
     /**
      * @var integer
      *

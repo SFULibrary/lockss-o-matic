@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Plns
@@ -12,6 +13,22 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Plns
 {
+	/**
+	 * Property required for one-to-many relationship with PlnProperties.
+	 * 
+	 * @OneToMany(targetEntity="PlnProperties", mappedBy="plnProperties")
+	 */
+	protected $plnProperties;
+
+	/**
+	 * Initializes the $plnProperties property.
+	 */
+
+	public function __construct()
+	{
+        $this->auProperties = new ArrayCollection();
+	}
+
     /**
      * @var integer
      *

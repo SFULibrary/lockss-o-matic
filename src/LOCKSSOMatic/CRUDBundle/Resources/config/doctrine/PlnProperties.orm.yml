@@ -1,5 +1,12 @@
 LOCKSSOMatic\CRUDBundle\Entity\PlnProperties:
     type: entity
+    manyToOne:
+        pln:
+            targetEntity: Plns
+            inversedBy: plnProperties
+            joinColumn:
+                name: plns_id
+                referencedColumnName: id
     table: pln_properties
     indexes:
         plns_id_idx:
