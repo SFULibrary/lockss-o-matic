@@ -301,4 +301,60 @@ class ContentProviders
     
     
     
+
+    /**
+     * Add deposits
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits
+     * @return ContentProviders
+     */
+    public function addDeposit(\LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits)
+    {
+        $this->deposits[] = $deposits;
+
+        return $this;
+    }
+
+    /**
+     * Remove deposits
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits
+     */
+    public function removeDeposit(\LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits)
+    {
+        $this->deposits->removeElement($deposits);
+    }
+
+    /**
+     * Get deposits
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDeposits()
+    {
+        return $this->deposits;
+    }
+
+    /**
+     * Set contentOwner
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwner
+     * @return ContentProviders
+     */
+    public function setContentOwner(\LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwner = null)
+    {
+        $this->contentOwner = $contentOwner;
+
+        return $this;
+    }
+
+    /**
+     * Get contentOwner
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners 
+     */
+    public function getContentOwner()
+    {
+        return $this->contentOwner;
+    }
 }

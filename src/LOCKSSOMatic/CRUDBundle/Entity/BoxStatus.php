@@ -160,4 +160,27 @@ class BoxStatus
     {
         return $this->propertyValue;
     }
+
+    /**
+     * Set box
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Boxes $box
+     * @return BoxStatus
+     */
+    public function setBox(\LOCKSSOMatic\CRUDBundle\Entity\Boxes $box = null)
+    {
+        $this->box = $box;
+
+        return $this;
+    }
+
+    /**
+     * Get box
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Boxes 
+     */
+    public function getBox()
+    {
+        return $this->box;
+    }
 }

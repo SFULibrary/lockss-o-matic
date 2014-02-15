@@ -106,4 +106,37 @@ class ContentOwners
     {
         return $this->emailAddress;
     }
+
+    /**
+     * Add contentProviders
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders
+     * @return ContentOwners
+     */
+    public function addContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders)
+    {
+        $this->contentProviders[] = $contentProviders;
+
+        return $this;
+    }
+
+    /**
+     * Remove contentProviders
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders
+     */
+    public function removeContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders)
+    {
+        $this->contentProviders->removeElement($contentProviders);
+    }
+
+    /**
+     * Get contentProviders
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getContentProviders()
+    {
+        return $this->contentProviders;
+    }
 }

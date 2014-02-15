@@ -146,4 +146,60 @@ class Boxes
     {
         return $this->ipAddress;
     }
+
+    /**
+     * Add boxStatus
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\BoxStatus $boxStatus
+     * @return Boxes
+     */
+    public function addBoxStatus(\LOCKSSOMatic\CRUDBundle\Entity\BoxStatus $boxStatus)
+    {
+        $this->boxStatus[] = $boxStatus;
+
+        return $this;
+    }
+
+    /**
+     * Remove boxStatus
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\BoxStatus $boxStatus
+     */
+    public function removeBoxStatus(\LOCKSSOMatic\CRUDBundle\Entity\BoxStatus $boxStatus)
+    {
+        $this->boxStatus->removeElement($boxStatus);
+    }
+
+    /**
+     * Get boxStatus
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getBoxStatus()
+    {
+        return $this->boxStatus;
+    }
+
+    /**
+     * Set pln
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @return Boxes
+     */
+    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    {
+        $this->pln = $pln;
+
+        return $this;
+    }
+
+    /**
+     * Get pln
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     */
+    public function getPln()
+    {
+        return $this->pln;
+    }
 }

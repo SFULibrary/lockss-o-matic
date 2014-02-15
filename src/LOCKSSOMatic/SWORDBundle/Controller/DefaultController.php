@@ -97,7 +97,8 @@ class DefaultController extends Controller
             $content = new Content();
             // @todo: Check to verify the content provider identified by
             // $collectionId exists. If not, return an appropriate error code.
-            $content->setDepositsId($deposit->getId());
+            // $content->setDepositsId($deposit->getId());
+            $content->setDeposit($deposit);
             // @todo: Determine which AU the content should go into.
             // For now, use 1.
             $auId = $this->getDestinationAu($collectionId, $contentSize);

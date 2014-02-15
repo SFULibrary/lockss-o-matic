@@ -316,4 +316,50 @@ class Content
     {
         return $this->recrawl;
     }
+
+    /**
+     * Set deposit
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposit
+     * @return Content
+     */
+    public function setDeposit(\LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposit = null)
+    {
+        $this->deposit = $deposit;
+
+        return $this;
+    }
+
+    /**
+     * Get deposit
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Deposits 
+     */
+    public function getDeposit()
+    {
+        return $this->deposit;
+    }
+
+    /**
+     * Set au
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
+     * @return Content
+     */
+    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
+    {
+        $this->au = $au;
+
+        return $this;
+    }
+
+    /**
+     * Get au
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
+     */
+    public function getAu()
+    {
+        return $this->au;
+    }
 }

@@ -199,4 +199,159 @@ class Aus
     {
         return $this->manifestUrl;
     }
+
+    /**
+     * Add content
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     * @return Aus
+     */
+    public function addContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    {
+        $this->content[] = $content;
+
+        return $this;
+    }
+
+    /**
+     * Remove content
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     */
+    public function removeContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    {
+        $this->content->removeElement($content);
+    }
+
+    /**
+     * Get content
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * Add auStatus
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus
+     * @return Aus
+     */
+    public function addAuStatus(\LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus)
+    {
+        $this->auStatus[] = $auStatus;
+
+        return $this;
+    }
+
+    /**
+     * Remove auStatus
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus
+     */
+    public function removeAuStatus(\LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus)
+    {
+        $this->auStatus->removeElement($auStatus);
+    }
+
+    /**
+     * Get auStatus
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAuStatus()
+    {
+        return $this->auStatus;
+    }
+
+    /**
+     * Add auProperties
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties
+     * @return Aus
+     */
+    public function addAuProperty(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties)
+    {
+        $this->auProperties[] = $auProperties;
+
+        return $this;
+    }
+
+    /**
+     * Remove auProperties
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties
+     */
+    public function removeAuProperty(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties)
+    {
+        $this->auProperties->removeElement($auProperties);
+    }
+
+    /**
+     * Get auProperties
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAuProperties()
+    {
+        return $this->auProperties;
+    }
+
+    /**
+     * Add pluginProperties
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
+     * @return Aus
+     */
+    public function addPluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
+    {
+        $this->pluginProperties[] = $pluginProperties;
+
+        return $this;
+    }
+
+    /**
+     * Remove pluginProperties
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
+     */
+    public function removePluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
+    {
+        $this->pluginProperties->removeElement($pluginProperties);
+    }
+
+    /**
+     * Get pluginProperties
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPluginProperties()
+    {
+        return $this->pluginProperties;
+    }
+
+    /**
+     * Set pln
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @return Aus
+     */
+    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    {
+        $this->pln = $pln;
+
+        return $this;
+    }
+
+    /**
+     * Get pln
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     */
+    public function getPln()
+    {
+        return $this->pln;
+    }
 }

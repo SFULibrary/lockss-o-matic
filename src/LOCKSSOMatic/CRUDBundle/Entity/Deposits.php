@@ -176,4 +176,60 @@ class Deposits
     {
         return $this->dateDeposited;
     }
+
+    /**
+     * Add content
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     * @return Deposits
+     */
+    public function addContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    {
+        $this->content[] = $content;
+
+        return $this;
+    }
+
+    /**
+     * Remove content
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     */
+    public function removeContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    {
+        $this->content->removeElement($content);
+    }
+
+    /**
+     * Get content
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * Set contentProvider
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider
+     * @return Deposits
+     */
+    public function setContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider = null)
+    {
+        $this->contentProvider = $contentProvider;
+
+        return $this;
+    }
+
+    /**
+     * Get contentProvider
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders 
+     */
+    public function getContentProvider()
+    {
+        return $this->contentProvider;
+    }
 }

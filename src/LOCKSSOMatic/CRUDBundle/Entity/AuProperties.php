@@ -161,4 +161,27 @@ class AuProperties
     {
         return $this->propertyValue;
     }
+
+    /**
+     * Set au
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
+     * @return AuProperties
+     */
+    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
+    {
+        $this->au = $au;
+
+        return $this;
+    }
+
+    /**
+     * Get au
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
+     */
+    public function getAu()
+    {
+        return $this->au;
+    }
 }

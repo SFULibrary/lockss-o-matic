@@ -160,4 +160,27 @@ class PlnProperties
     {
         return $this->propertyValue;
     }
+
+    /**
+     * Set pln
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @return PlnProperties
+     */
+    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    {
+        $this->pln = $pln;
+
+        return $this;
+    }
+
+    /**
+     * Get pln
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     */
+    public function getPln()
+    {
+        return $this->pln;
+    }
 }

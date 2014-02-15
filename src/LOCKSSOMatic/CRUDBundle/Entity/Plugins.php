@@ -78,4 +78,37 @@ class Plugins
     {
         return $this->name;
     }
+
+    /**
+     * Add pluginProperties
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
+     * @return Plugins
+     */
+    public function addPluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
+    {
+        $this->pluginProperties[] = $pluginProperties;
+
+        return $this;
+    }
+
+    /**
+     * Remove pluginProperties
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
+     */
+    public function removePluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
+    {
+        $this->pluginProperties->removeElement($pluginProperties);
+    }
+
+    /**
+     * Get pluginProperties
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPluginProperties()
+    {
+        return $this->pluginProperties;
+    }
 }

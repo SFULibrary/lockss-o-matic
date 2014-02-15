@@ -198,4 +198,50 @@ class PluginProperties
     {
         return $this->propertyValue;
     }
+
+    /**
+     * Set plugin
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin
+     * @return PluginProperties
+     */
+    public function setPlugin(\LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin = null)
+    {
+        $this->plugin = $plugin;
+
+        return $this;
+    }
+
+    /**
+     * Get plugin
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plugins 
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
+    }
+
+    /**
+     * Set au
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
+     * @return PluginProperties
+     */
+    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
+    {
+        $this->au = $au;
+
+        return $this;
+    }
+
+    /**
+     * Get au
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
+     */
+    public function getAu()
+    {
+        return $this->au;
+    }
 }
