@@ -1,0 +1,48 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>LomSettings</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Sitename</th>
+                <td>{{ entity.siteName }}</td>
+            </tr>
+            <tr>
+                <th>Baseurl</th>
+                <td>{{ entity.baseUrl }}</td>
+            </tr>
+            <tr>
+                <th>Ipaddress</th>
+                <td>{{ entity.ipAddress }}</td>
+            </tr>
+            <tr>
+                <th>Pathtouploads</th>
+                <td>{{ entity.pathToUploads }}</td>
+            </tr>
+            <tr>
+                <th>Pathtoplnfiles</th>
+                <td>{{ entity.pathToPlnFiles }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('lomsettings') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('lomsettings_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}
