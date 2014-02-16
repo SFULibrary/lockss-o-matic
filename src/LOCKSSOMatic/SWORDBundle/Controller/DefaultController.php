@@ -33,6 +33,12 @@ class DefaultController extends Controller
             $response->setStatusCode(412);
             return $response;
         }
+
+        // Query the LomSettings entity so we can get site-wide settings.
+        // LomSettings ID will always be 1.
+        $lomSettings = $this->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\LomSettings')
+            ->find(1);
  
         // Query the ContentProvider entity so we can get its name.
         $contentProvider = $this->getDoctrine()
@@ -48,10 +54,12 @@ class DefaultController extends Controller
 
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
             array(
+                'site_name' => $lomSettings->getSiteName(),
+                'base_url' => $lomSettings->getBaseUrl(),          
                 'onBehalfOf' => $onBehalfOf,
                 'maxFileSize' => $contentProvider->getMaxFileSize(),
                 'checksumType' => $contentProvider->getChecksumType(),
-                'name' => $contentProvider->getName())
+                'content_provider_name' => $contentProvider->getName())
             );
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
@@ -111,9 +119,19 @@ class DefaultController extends Controller
             $cem->flush();            
         }
 
+        // Query the LomSettings entity so we can get site-wide settings.
+        // LomSettings ID will always be 1.
+        $lomSettings = $this->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\LomSettings')
+            ->find(1);
+
         // Return the deposit receipt.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
-            array('contentProviderId' => $collectionId, 'depositUuid' => $deposit->getUuid()));
+            array(
+                'base_url' => $lomSettings->getBaseUrl(),
+                'contentProviderId' => $collectionId,
+                'depositUuid' => $deposit->getUuid())
+            );
         $response->headers->set('Content-Type', 'text/xml');
         $response->setStatusCode(201);
         return $response;

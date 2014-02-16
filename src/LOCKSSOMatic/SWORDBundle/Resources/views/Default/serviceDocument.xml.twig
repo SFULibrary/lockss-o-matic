@@ -11,16 +11,15 @@
     <lom:uploadChecksumType>{{ checksumType }}</lom:uploadChecksumType>
 
     <workspace>
-        <!-- @todo: Get atom:title from site-wide configuration values. -->
-        <atom:title>LOCKSS-O-Matic at Simon Fraser University</atom:title>     
+        <atom:title>{{ site_name }}</atom:title>     
         <!-- Each LOCKSS-O-Matic content provider will have its own SWORD collection,
             identified in the 'On-Behalf-Of' header sent along with the GET request
             for this document. -->
-        <collection href="http://lockssomatic.example.org/api/sword/2.0/col-iri/{{onBehalfOf}}">
-            <atom:title>{{ name }}</atom:title>
+        <collection href="{{base_url}}/api/sword/2.0/col-iri/{{onBehalfOf}}">
+            <atom:title>{{ content_provider_name }}</atom:title>
             <accept>*/*</accept>
             <accept alternate="multipart-related">*/*</accept>
             <sword:mediation>false</sword:mediation>
-         </collection>
+        </collection>
     </workspace>
 </service>
