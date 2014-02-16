@@ -1,0 +1,26 @@
+LOCKSSOMatic\CRUDBundle\Entity\LomSettings:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        siteName:
+            type: text
+            column: site_name
+        baseUrl:
+            type: text
+            column: base_url
+        ipAddress:
+            type: text
+            column: ip_address
+        pathToUploads:
+            type: text
+            column: path_to_uploads
+        pathToPlnFiles:
+            type: text
+            column: path_to_pln_files
+    lifecycleCallbacks: {  }
