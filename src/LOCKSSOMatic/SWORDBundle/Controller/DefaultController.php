@@ -97,12 +97,9 @@ class DefaultController extends Controller
             $content = new Content();
             // @todo: Check to verify the content provider identified by
             // $collectionId exists. If not, return an appropriate error code.
-            // $content->setDepositsId($deposit->getId());
             $content->setDeposit($deposit);
-            // @todo: Determine which AU the content should go into.
-            // For now, use 1.
-            $auId = $this->getDestinationAu($collectionId, $contentSize);
-            $content->setAusId($auId);
+            $au = $this->getDestinationAu($collectionId, $contentSize);
+            $content->setAu($au);
             $content->setUrl($contentChunk);                
             $content->setTitle('Some generatic title');
             $content->setSize($contentChunk[0]->attributes()->size);                
@@ -237,13 +234,16 @@ class DefaultController extends Controller
      * @param string $collectionId The collection ID (i.e., Content Provider ID).
      *   We use this to determine some AU properties like title, journal title, etc.
      * @param string $contentSize The size of the content, in kB.
-     * @return $auId The id property of the AU.
+     * @return object $au.
      */
     public function getDestinationAu($collectionId, $contentSize) {
         // @todo: If $contentSize is less than remaining capacity of the newest AU
         // for the Content Provider, put the content in this AU. If $contentSize is
         // greater, create a new AU and put the content in this one.
-        $auId = '1';
-        return $auId;
+        // Query for the Au. For now, just pick the Au with id 1.
+        $au = $this->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')
+            ->find(1);
+        return $au;
     }
 }
