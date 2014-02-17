@@ -10,9 +10,9 @@ for one or more of those URLs.
 Get Service Document
 ====================
 
-Note that the value of 'On-Behalf-Of' must match a Content Provider ID in the LOCKSS-O-Matic database.
+Note that the value of 'X-On-Behalf-Of' must match a Content Provider ID in the LOCKSS-O-Matic database.
 
-curl -v -H 'On-Behalf-Of: 1' http://localhost/lockss-o-matic/web/app_dev.php/api/sword/2.0/sd-iri
+curl -v -H 'X-On-Behalf-Of: 1' http://localhost/lockss-o-matic/web/app_dev.php/api/sword/2.0/sd-iri
 
 Create resource (i.e., post a set of URLs)
 ==========================================
@@ -21,7 +21,7 @@ Note that the parameter at the end of the URL must match the ID of an existing C
 (typically it is the same as the 'On-Behalf-Of' value used in the Service Document requrest.
 The POSTed XML will contain the list of URLs.
 
-curl -v -H "In-Progress: true" --data-binary @create_resource.xml --request POST http://localhost/lockss-o-matic/web/app_dev.php/api/sword/2.0/col-iri/1
+curl -v -H "In-Progress: true" --data-binary @atom.xml --request POST http://localhost/lockss-o-matic/web/app_dev.php/api/sword/2.0/col-iri/1
 
 Get SWORD statement
 ===================
