@@ -26,7 +26,7 @@ class DefaultController extends Controller
         $request = Request::createFromGlobals();
         // Get value of 'On-Behalf-Of' HTTP header and include it as
         // the collection ID in the service document's col-iri parameter.
-        $onBehalfOf = $request->headers->get('on_behalf_of');
+        $onBehalfOf = $request->headers->get('x_on_behalf_of');
         if (!is_numeric($onBehalfOf)) {
             $response = new Response();
             // Return a "Precondition Failed" response.
