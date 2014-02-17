@@ -71,13 +71,13 @@ class DefaultController extends Controller
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return The Deposit Receipt response.
      */
-    public function createSubmissionAction($collectionId)
+    public function createDepositAction($collectionId)
     {        
         // Get the request body.
         $request = new Request();
         $createResourceXml = $request->getContent();
         
-        // Parse the Atom entry's <id> element, which will contain the submission's UUID.
+        // Parse the Atom entry's <id> element, which will contain the deposit's UUID.
         $atomEntry = new \SimpleXMLElement($createResourceXml);
         $depositUuid = $atomEntry->id[0];
         $depositTitle = $atomEntry->title[0];
@@ -128,7 +128,8 @@ class DefaultController extends Controller
         // Return the deposit receipt.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
             array(
-                'base_url' => $lomSettings->getBaseUrl(),
+                'siteName' => $lomSettings->getSiteName(),
+                'baseUrl' => $lomSettings->getBaseUrl(),
                 'contentProviderId' => $collectionId,
                 'depositUuid' => $deposit->getUuid())
             );
@@ -204,7 +205,7 @@ class DefaultController extends Controller
      *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
      * @return The Edit-IRI response.
      */
-    public function editSubmissionAction($collectionId, $uuid)
+    public function editDepositAction($collectionId, $uuid)
     {        
         // Get the request body.
         $request = new Request();
@@ -245,7 +246,33 @@ class DefaultController extends Controller
         $response->setStatusCode(200);
         return $response;
     }
-    
+
+    /**
+     * Determines which AU to put the content in.
+     * 
+     * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
+     * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
+     * @return The Deposit Receipt response.
+     */
+    public function depositReceiptAction($collectionId, $uuid) {
+        // Query the LomSettings entity so we can get site-wide settings.
+        // LomSettings ID will always be 1.
+        $lomSettings = $this->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\LomSettings')
+            ->find(1);
+
+        // Return the deposit receipt.
+        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
+            array(
+                'siteName' => $lomSettings->getSiteName(),
+                'baseUrl' => $lomSettings->getBaseUrl(),
+                'contentProviderId' => $collectionId,
+                'depositUuid' => $uuid)
+            );
+        $response->headers->set('Content-Type', 'text/xml');
+        return $response;
+    }
+
     /**
      * Determines which AU to put the content in.
      * 

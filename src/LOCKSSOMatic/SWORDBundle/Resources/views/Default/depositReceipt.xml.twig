@@ -1,13 +1,13 @@
 <entry xmlns="http://www.w3.org/2005/Atom" xmlns:sword="http://purl.org/net/sword/">
-    <sword:treatment>Required, "a human-readable statement describing treatment the deposited resource has received"</sword:treatment>
-    <content type="application/x-7z-compressed" src="{{base_url}}/api/sword/2.0/cont-IRI/{{contentProviderId}}/{{depositUuid}}" />
+    <sword:treatment>Content URLs deposited to {{siteName}}, collection {{contentProviderId}}.</sword:treatment>
+    <content type="application/x-7z-compressed" src="{{baseUrl}}/api/sword/2.0/cont-iri/{{contentProviderId}}/{{depositUuid}}" />
     <!-- EM-IRI. The EM-IRI and Cont-IRI can (and in LOCKSS-O-Matic, will) have the same value.-->
-    <link rel="edit-media" href="{{base_url}}/api/sword/2.0/cont-IRI/{{contentProviderId}}/{{depositUuid}}" />
+    <link rel="edit-media" href="{{baseUrl}}/api/sword/2.0/cont-iri/{{contentProviderId}}/{{depositUuid}}" />
     <!-- SE-IRI (can be same as Edit-IRI) -->
-    <link rel="http://purl.org/net/sword/terms/add" href="{{base_url}}/api/sword/2.0/cont-IRI/{{contentProviderId}}/{{depositUuid}}/edit" />
+    <link rel="http://purl.org/net/sword/terms/add" href="{{baseUrl}}/api/sword/2.0/cont-iri/{{contentProviderId}}/{{depositUuid}}/edit" />
     <!-- Edit-IRI -->
-    <link rel="edit" href="{{base_url}}/api/sword/2.0/cont-IRI/{{contentProviderId}}/{{depositUuid}}/edit" />
+    <link rel="edit" href="{{baseUrl}}/api/sword/2.0/cont-iri/{{contentProviderId}}/{{depositUuid}}/edit" />
     <!-- In LOCKSS-O-Matic, the State-IRI will be the EM-IRI/Cont-IRI with the string ‘/state’ appended. -->
-    <link rel="http://purl.org/net/sword/terms/statement" type="application/atom+xml;type=feed" href="{{base_url}}/api/sword/2.0/cont-IRI/{{contentProviderId}}/{{depositUuid}}/state" />
+    <link rel="http://purl.org/net/sword/terms/statement" type="application/atom+xml;type=feed" href="{{baseUrl}}/api/sword/2.0/cont-iri/{{contentProviderId}}/{{depositUuid}}/state" />
 </entry>
 

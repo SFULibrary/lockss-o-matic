@@ -5,10 +5,10 @@ lockssomatic_sword_service_document:
     methods: [GET]
 
 # Route to the SWORD Col-IRI. The SWORD client POSTs to this URL to create
-# a submission.
+# a deposit.
 lockssomatic_sword_collection_iri:
     path: /api/sword/2.0/col-iri/{collectionId}
-    defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:createSubmission }
+    defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:createDeposit }
     methods: [POST]
     requirements:
         collectionId: \d+
@@ -21,14 +21,25 @@ lockssomatic_sword_state_iri:
     requirements:
         collectionId: \d+
         # UUIDs are 36 characters long.
-        # uuid: .{36}
+        uuid: .{36}
 
-# Route to the SWORD Edit-IRI.
+# Route to the SWORD Edit-IRI, to return the Deposit Receipt.
+lockssomatic_deposit_receipt:
+    path: /api/sword/2.0/cont-iri/{collectionId}/{uuid}/edit
+    defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:depositReceipt }
+    methods: [GET]
+    requirements:
+        collectionId: \d+
+        # UUIDs are 36 characters long.
+        uuid: .{36}
+
+# Route to the SWORD Edit-IRI, to edit the deposit.
 lockssomatic_sword_edit_iri:
     path: /api/sword/2.0/cont-iri/{collectionId}/{uuid}/edit
-    defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:editSubmission }
+    defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:editDeposit }
     methods: [PUT]
     requirements:
         collectionId: \d+
         # UUIDs are 36 characters long.
-        # uuid: .{36}
+        uuid: .{36}
+
