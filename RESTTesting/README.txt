@@ -1,5 +1,6 @@
-Testing the LOCKSS-O-Matic SWORD server
-=======================================
+==================================================
+Testing the LOCKSS-O-Matic SWORD server using Curl
+==================================================
 
 Below are example URLs you can use to test the LOCKSS-O-Matic SWORD server. Note that LOCKSS-O-Matic
 does not implement a complete SWORD server. It only implements the minimum functionality required
@@ -36,8 +37,14 @@ Edit-IRI
 ========
 
 The parameter following 'cont-iri' must match the ID of an existing Content Provider. The paramter
-preceding '/state' is the UUID of original deposit provided in the "create resource" request. The PUTed
+preceding '/edit' is the UUID of original deposit provided in the "create resource" request. The PUTed
 XML will contain the list of URLs that are to be flagged as 'recrawl="false"'.
 
 curl -v -H "Content-Type: application/xml" -X PUT --data-binary @edit_resource.xml http://localhost/lockss-o-matic/web/app_dev.php/api/sword/2.0/cont-iri/1/1225c695-cfb8-4ebb-aaaa-80da344efa6a/edit
+
+==============================================================
+Testing the LOCKSS-O-Matic SWORD server using a client library
+==============================================================
+
+You can also test the SWORD server with sample_sword_client.php, which uses the SWORD v2 PHP client library (https://github.com/swordapp/swordappv2-php-library, not distributed with LOCKSS-O-Matic). Download or clone the library, modify the first three variables in the client script, and then run 'php sample_sword_client.php'.
 

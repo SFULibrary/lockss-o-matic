@@ -1,0 +1,12 @@
+<entry xmlns="http://www.w3.org/2005/Atom"
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:lom="http://purl.org/lockssomatic/terms/SWORD">
+    <title>Some content to preserve.</title>
+    <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+    <updated>2013-10-07T17:17:08Z</updated>
+    <author><name>Institute of Foo Studies</name></author>
+    <summary type="text">Content deposited to LOCKSS-O-Matic at Institute of Foo Studies Library.</summary>
+    <lom:content size="102400" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://contentprovider.example.org/download/file1.zip</lom:content>
+    <lom:content size="46899" checksumType="md5" checksumValue="226190d94b21d1b0c7b1a42d855e419d">http://contentprovider.example.org/download/file2.zip</lom:content>
+</entry>
+
