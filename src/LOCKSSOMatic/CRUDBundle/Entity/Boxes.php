@@ -65,6 +65,20 @@ class Boxes
      * @ORM\Column(name="ip_address", type="text", nullable=true)
      */
     private $ipAddress;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="username", type="text", nullable=true)
+     */
+    private $username;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password", type="text", nullable=true)
+     */
+    private $password;    
 
 
 
@@ -145,6 +159,52 @@ class Boxes
     public function getIpAddress()
     {
         return $this->ipAddress;
+    }
+    
+    /**
+     * Set username
+     *
+     * @param string $username
+     * @return Boxes
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * Get username
+     *
+     * @return string 
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     * @return Boxes
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string 
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     /**
