@@ -6,6 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * LomSettings
+ *
+ * @ORM\Table(name="lom_settings")
+ * @ORM\Entity
  */
 class LomSettings
 {

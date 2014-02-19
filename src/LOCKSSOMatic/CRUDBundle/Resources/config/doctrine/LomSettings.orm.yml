@@ -1,6 +1,6 @@
 LOCKSSOMatic\CRUDBundle\Entity\LomSettings:
     type: entity
-    table: null
+    table: lom_settings
     id:
         id:
             type: integer
