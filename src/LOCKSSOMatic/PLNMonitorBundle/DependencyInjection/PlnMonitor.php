@@ -8,7 +8,33 @@ namespace LOCKSSOMatic\PLNMonitorBundle\DependencyInjection;
  *
  * Some methods are meant to be run from app/console lockssomatic:monitor
  * via a cronjob.
+ * 
+ * All methods return an array of status arrays. Each array will have
+ * a key (which maps to the 'property_key' in the db and a value
+ * (which maps to the 'property_value' in the db).
+ *
+ * Query box 23 (returns array of 1 array).
+ * $status = $monitor->queryBox(23);
+ *
+ * Query all boxes in PLN 2 (returns array of n arrays). For background
+ * monitoring of all boxes in a PLN, iterate over all boxes in all PLNs.
+ * The app/console command should take a 'pause' parameter to indicate
+ * how long, in seconds, to pause between queries.
+ * $status = $monitor->queryPln(2);
+ *
+ * Query AU 567 (which will be in a particular box; returns array of 1 array)).
+ * $status = $monitor->queryAu(567);
+ *
+ * Query all instances (in PLN) of AU by AUID (returns array of n arrays).
+ * For background monitoring of all AUs in a PLN, iterate over all AUs and
+ * issue this command. The app/console command should take a 'pause' parameter
+ * to indicate how long, in seconds, to pause between queries.
+ * $status = $monitor->queryAuByAuId('SomeLongStringThatIsTheAUid');
+ *
+ * Query all instances (in PLN) of URL (returns array of n arrays).
+ * $status = $monitor->queryUrl('http: * somecontent.someprovider.com/download/foo.zip');
  */
+
 
 class PlnMonitor
 {
