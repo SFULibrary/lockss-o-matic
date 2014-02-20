@@ -78,16 +78,20 @@ $statement_atom = $sd_response->sac_state_iri_atom;
 
 // Request the Deposit Receipt from the Edit-IRI.
 print "\nRetrieving Deposit Receipt from " . $edit_iri . "\n";
+try {
 $sd_response = $sword_client->retrieveDepositReceipt($edit_iri, '', '', $on_behalf_of);
-if ($sd_response->sac_status == 200) {
-    print "OK, received HTTP status code: " . $sd_response->sac_status . " (" . $sd_response->sac_statusmessage . ")\n";
 }
-else {
-    print "Received HTTP status code: " . $sd_response->sac_status . " (" . $sd_response->sac_statusmessage . ")\n";
-    print $sd_response->toString();
+catch (Exception $e) {
+    if ($sd_response->sac_status == 200) {
+        print "OK, received HTTP status code: " . $sd_response->sac_status . " (" . $sd_response->sac_statusmessage . ")\n";
+    }
+    else {
+        print "Received HTTP status code: " . $sd_response->sac_status . " (" . $sd_response->sac_statusmessage . ")\n";
+        print $sd_response->toString();
+    }
 }
 
-// Edit the content ().
+// Edit the content (i.e., update the 'recrawl' attribute in one of the content URLs from 'true' to 'false').
 print "\nEditing the content via Atom entry (" . $atom_entry_modify . ") PUT to " . $edit_iri . "\n";
 // We use a try/catch here because the SWORD v2 PHP client library throws an
 // error parsing the response from a PUT to the Edit-IRI.
