@@ -13,23 +13,23 @@ namespace LOCKSSOMatic\PLNMonitorBundle\DependencyInjection;
  * a key (which maps to the 'property_key' in the db and a value
  * (which maps to the 'property_value' in the db).
  *
- * Query box 23 (returns array of 1 array).
- * $status = $monitor->queryBox(23);
- *
  * Query all boxes in PLN 2 (returns array of n arrays). For background
  * monitoring of all boxes in a PLN, iterate over all boxes in all PLNs.
  * The app/console command should take a 'pause' parameter to indicate
  * how long, in seconds, to pause between queries.
  * $status = $monitor->queryPln(2);
  *
- * Query AU 567 (which will be in a particular box; returns array of 1 array)).
- * $status = $monitor->queryAu(567);
- *
- * Query all instances (in PLN) of AU by AUID (returns array of n arrays).
- * For background monitoring of all AUs in a PLN, iterate over all AUs and
+ * Query box 23 (returns array of 1 array).
+ * $status = $monitor->queryBox(23);
+ * 
+ * Query all instances (in PLN) of AU (returns array of n arrays). For
+ * background monitoring of all AUs in a PLN, iterate over all AUs and
  * issue this command. The app/console command should take a 'pause' parameter
  * to indicate how long, in seconds, to pause between queries.
- * $status = $monitor->queryAuByAuId('SomeLongStringThatIsTheAUid');
+ * $status = $monitor->queryAu(567);
+ *
+ * Query AU 567 on box 23; returns array of 1 array)).
+ * $status = $monitor->queryAuOnBox(567, 23);
  *
  * Query all instances (in PLN) of URL (returns array of n arrays).
  * $status = $monitor->queryUrl('http: * somecontent.someprovider.com/download/foo.zip');
