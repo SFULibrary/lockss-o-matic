@@ -26,7 +26,7 @@ $sword_app_library = "swordappv2-php-library/swordappclient.php";
 
 // Value of the X-On-Behalf-Of HTTP header. This is the ID of the LOCKSS-O-Matic
 // content provider making the deposit.
-$on_behalf_of = "46";
+$on_behalf_of = "1";
 
 // The base URL of your LOCKSS-O-Matic instance. This should be the same
 // as the "Base URL" value in your LOM Settings.
