@@ -41,8 +41,6 @@ From within the lockss-o-matic directory, issue the following command:
 
 ```curl -s https://getcomposer.org/installer | php```
 
-When prompted, choose the 'pdo_mysql' database driver, enter the database name, user, and password that used when you created the database above. Accept the suggested defaults for all other questions.
-
 5) Install LOCKSS-O-Matic's external libraries. From withing the lockss-o-matic directory, issue the following command:
 
 ```php composer.phar install```
