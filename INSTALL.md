@@ -47,25 +47,32 @@ When prompted, choose the 'pdo_mysql' database driver, enter the database name, 
 
 These commands are the easiest way to allow your web server to write to these directories, but they are also the least secure. You may want to consult the "Setting up Permissions" section of the Symfony documentation at http://symfony.com/doc/current/book/installation.html.
 
+6) Update your database connection details. From within the lockss-o-matic directory, issue the following commands:
+  
+  ```cd app/config```
+  
+  ```cp parameters.yml.dist parameters.yml```
 
-6) Create the LOCKSS-O-Matic database tables. From within the lockss-o-matic directory, run:
+Edit parameters.yml so that the database_name, database_user, and database_password values match those you used in step 1.
+
+7) Create the LOCKSS-O-Matic database tables. From within the lockss-o-matic directory, run:
 
 ```php app/console doctrine:schema:update --force```
 
-7) Load the data required to test the SWORD server. From within the lockss-o-matic directory, run:
+8) Load the data required to test the SWORD server. From within the lockss-o-matic directory, run:
 
 ```php app/console doctrine:fixtures:load```
 
 Answer 'y' if asked if it is OK to purge the database
 
-8) Test your PHP configuration by going to the following URL:
+9) Test your PHP configuration by going to the following URL:
 
 http://localhost/lockss-o-matic/web/config.php
 
 You do not need to configure the application. However, if Symfony reports any issues with your PHP configuration, or with file/directory permissions, you should fix those before testing the SWORD server. If you change your PHP configuration, don't forget to restart your web server.
 
-9) Add a site name and base URL to use in the SWORD XML templates (ignore the IP address and the file path settings):
+10) Add a site name and base URL to use in the SWORD XML templates (ignore the IP address and the file path settings):
 
 http://localhost/lockss-o-matic/web/app_dev.php/lomsettings/edit
 
-10) You are now ready to test the SWORD server as described in RESTTesting/README.txt.
+11) You are now ready to test the SWORD server as described in RESTTesting/README.txt.
