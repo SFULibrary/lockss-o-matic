@@ -27,7 +27,15 @@ or
 
 clone the repo at https://github.com/mjordan/lockss-o-matic into your webroot.
 
-3) Install Composer, which is the standard tool for managing Symfony applications.
+3) Update your database connection details. From within the lockss-o-matic directory, issue the following commands:
+  
+  ```cd app/config```
+  
+  ```cp parameters.yml.dist parameters.yml```
+
+Edit parameters.yml so that the database_name, database_user, and database_password values match those you used in step 1.
+
+4) Install Composer, which is the standard tool for managing Symfony applications.
 
 From within the lockss-o-matic directory, issue the following command:
 
@@ -35,11 +43,11 @@ From within the lockss-o-matic directory, issue the following command:
 
 When prompted, choose the 'pdo_mysql' database driver, enter the database name, user, and password that used when you created the database above. Accept the suggested defaults for all other questions.
 
-4) Install LOCKSS-O-Matic's external libraries. From withing the lockss-o-matic directory, issue the following command:
+5) Install LOCKSS-O-Matic's external libraries. From withing the lockss-o-matic directory, issue the following command:
 
 ```php composer.phar install```
 
-5) Make sure the user running your web server needs to have write permissions to the app/cache and app/logs directories. From within the lockss-o-matic directory, issue the following commands:
+6) Make sure the user running your web server needs to have write permissions to the app/cache and app/logs directories. From within the lockss-o-matic directory, issue the following commands:
 
 ```sudo chmod -R 777 app/cache```
 
@@ -47,13 +55,6 @@ When prompted, choose the 'pdo_mysql' database driver, enter the database name, 
 
 These commands are the easiest way to allow your web server to write to these directories, but they are also the least secure. You may want to consult the "Setting up Permissions" section of the Symfony documentation at http://symfony.com/doc/current/book/installation.html.
 
-6) Update your database connection details. From within the lockss-o-matic directory, issue the following commands:
-  
-  ```cd app/config```
-  
-  ```cp parameters.yml.dist parameters.yml```
-
-Edit parameters.yml so that the database_name, database_user, and database_password values match those you used in step 1.
 
 7) Create the LOCKSS-O-Matic database tables. From within the lockss-o-matic directory, run:
 
