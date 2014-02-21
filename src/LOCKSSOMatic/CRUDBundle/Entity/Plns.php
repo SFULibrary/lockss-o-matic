@@ -42,7 +42,15 @@ class Plns
 	protected $boxes;
 
 	/**
-	 * Initializes the $aus, $plnProperties, $externalTitleDbs, and $boxes properties.
+	 * Property required for one-to-many relationship with ContentProviders.
+	 * 
+	 * @OneToMany(targetEntity="ContentProviders", mappedBy="contentProviders")
+	 */
+	protected $contentProviders;
+
+	/**
+	 * Initializes the $aus, $plnProperties, $externalTitleDbs, $boxes, and $contentProviders
+	 * properties.
 	 */
 
 	public function __construct()
@@ -51,6 +59,7 @@ class Plns
         $this->plnProperties = new ArrayCollection();
         $this->externalTitleDbs = new ArrayCollection();
         $this->boxes = new ArrayCollection();
+        $this->contentProviders = new ArrayCollection();
 	}
 
     /**
@@ -264,5 +273,38 @@ class Plns
     public function getBoxes()
     {
         return $this->boxes;
+    }
+
+    /**
+     * Add contentProviders
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders
+     * @return Plns
+     */
+    public function addContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders)
+    {
+        $this->contentProviders[] = $contentProviders;
+
+        return $this;
+    }
+
+    /**
+     * Remove contentProviders
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders
+     */
+    public function removeContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders)
+    {
+        $this->contentProviders->removeElement($contentProviders);
+    }
+
+    /**
+     * Get contentProviders
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getContentProviders()
+    {
+        return $this->contentProviders;
     }
 }

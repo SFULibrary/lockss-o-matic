@@ -51,6 +51,13 @@ class ContentProviders
      * @ORM\Column(name="content_owners_id", type="integer", nullable=true)
      */
     private $contentOwnersId;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="pln_id", type="integer", nullable=true)
+     */
+    private $plnId;
 
     /**
      * @var string
@@ -132,6 +139,29 @@ class ContentProviders
     public function getContentOwnersId()
     {
         return $this->contentOwnersId;
+    }
+
+    /**
+     * Set plnId
+     *
+     * @param integer $plnId
+     * @return Plns
+     */
+    public function setPlnId($plnId)
+    {
+        $this->plnId = $plnId;
+
+        return $this;
+    }
+
+    /**
+     * Get plnId
+     *
+     * @return integer 
+     */
+    public function getPlnId()
+    {
+        return $this->plnId;
     }
 
     /**
@@ -356,5 +386,33 @@ class ContentProviders
     public function getContentOwner()
     {
         return $this->contentOwner;
+    }
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     */
+    private $pln;
+
+
+    /**
+     * Set pln
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @return ContentProviders
+     */
+    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    {
+        $this->pln = $pln;
+
+        return $this;
+    }
+
+    /**
+     * Get pln
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     */
+    public function getPln()
+    {
+        return $this->pln;
     }
 }

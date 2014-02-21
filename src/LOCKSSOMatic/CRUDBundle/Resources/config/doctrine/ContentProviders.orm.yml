@@ -6,7 +6,13 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             inversedBy: contentProvider
             joinColumn:
                 name: content_owners_id
-                referencedColumnName: id        
+                referencedColumnName: id
+        pln:
+            targetEntity: Plns
+            inversedBy: contentProviders
+            joinColumn:
+                name: plns_id
+                referencedColumnName: id   
     oneToMany:
         deposits:
             targetEntity: Deposits
