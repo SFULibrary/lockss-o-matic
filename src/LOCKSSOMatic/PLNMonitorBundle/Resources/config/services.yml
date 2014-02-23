@@ -4,3 +4,4 @@ parameters:
 services:
     pln_monitor:
         class: %locksso_matic_pln_monitor.pln_monitor.class%
+        arguments: [@doctrine.orm.entity_manager]

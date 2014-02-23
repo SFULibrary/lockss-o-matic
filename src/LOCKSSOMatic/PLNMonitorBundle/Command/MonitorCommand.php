@@ -14,8 +14,8 @@ class MonitorCommand extends ContainerAwareCommand
     {
         $this
             ->setName('lockssomatic:monitor')
-            ->setDescription('Monitor a PLN box or AU')
-            ->addArgument('type', InputArgument::OPTIONAL, 'Do you want to monitor a box or an au?')
+            ->setDescription('Monitor a PLN, a box or an AU')
+            ->addArgument('type', InputArgument::OPTIONAL, 'Do you want to monitor a PLN, a box or an au?')
             ->addArgument('id', InputArgument::OPTIONAL, 'What is its ID?')
         ;
     }
@@ -27,8 +27,10 @@ class MonitorCommand extends ContainerAwareCommand
 
         // Instantiate the monitor.
         $monitor = $this->getContainer()->get('pln_monitor');
-
-        $monitor->boxId = $id;
-        $output->writeln($monitor->displayBoxId());
+        
+        if ($type == 'pln') {
+            $monitor->plnId = $id;
+            $output->writeln($monitor->queryPln());
+        }
     }
 }

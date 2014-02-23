@@ -2,6 +2,14 @@
 
 namespace LOCKSSOMatic\PLNMonitorBundle\DependencyInjection;
 
+use Doctrine\ORM\EntityManager;
+
+use LOCKSSOMatic\CRUDBundle\Entity\Boxes;
+use LOCKSSOMatic\CRUDBundle\Entity\BoxStatus;
+use LOCKSSOMatic\CRUDBundle\Entity\Plns;
+use LOCKSSOMatic\CRUDBundle\Entity\Aus;
+use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
+
 /**
  * Class defining PlnMonitors, which query one or more LOCKSS boxes
  * in a PLN, an AU on a specific box, an AU across all boxes in a PLN.
@@ -41,34 +49,37 @@ class PlnMonitor
     public $boxId;
     public $auId;
     public $plnId;
-
-    /**
-     * Stub for querying box for its status.
-     */
-    public function displayBoxId()
+    
+    public function __construct(EntityManager $em)
     {
-        if (isset($this->boxId)) {
-            return 'From with the Monitor, Box ID is ' . $this->boxId;
-        }
+        $this->em = $em;
     }
 
-    /**
-     * Stub for querying a specific AU for its status.
-     */
-    public function displayAuId()
-    {
-        if (isset($this->auId)) {
-            return 'From within the Monitor, AU ID is ' . $this->auId;
-        }
-    }
-
-    /**
-     * Stub for querying all boxes in a PLN for their status.
-     */
-    public function displayPlnId()
+    public function queryPln()
     {
         if (isset($this->plnId)) {
-            return 'From within the Monitor, PLN ID is ' . $this->plnId;
+            // Query the Pln entity to get the associated boxes.
+            $pln = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plns')
+                ->find($this->plnId);
+
+            $boxes = $pln->getBoxes();
+
+            if (count($boxes)) {
+                foreach ($boxes as $box) {
+                    // Set up the SOAP client.
+                    $client = new \SoapClient($box->getHostname() . "/ws/DaemonStatusService?wsdl",
+                        array('login' => $box->getUsername(), 'password' => $box->getPassword()));
+
+                    // Check to see if the SOAP API says the daemon is ready.
+                    $ready = $client->isDaemonReady();
+                    if ($ready) {
+                        print  "LOCKSS daemon on " . $box->getHostname() . " is responding\n";
+                    }
+                    else {
+                        print "LOCKSS daemon on " . $box->getHostname() . " is not responding\n";
+                    }
+                }
+            }
         }
     }
 }
