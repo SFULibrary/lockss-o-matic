@@ -17,6 +17,7 @@ class MonitorCommand extends ContainerAwareCommand
             ->setDescription('Monitor a PLN, a box or an AU')
             ->addArgument('type', InputArgument::OPTIONAL, 'Do you want to monitor a PLN, a box or an au?')
             ->addArgument('id', InputArgument::OPTIONAL, 'What is its ID?')
+            ->addArgument('pause', InputArgument::OPTIONAL, 'How long to pause between queries (in seconds)')
         ;
     }
 
@@ -24,13 +25,24 @@ class MonitorCommand extends ContainerAwareCommand
     {
         $type = $input->getArgument('type');
         $id = $input->getArgument('id');
+        $pause = $input->getArgument('pause');
 
         // Instantiate the monitor.
         $monitor = $this->getContainer()->get('pln_monitor');
         
-        if ($type == 'pln') {
+        if ($input->getArgument('type') == 'pln') {
             $monitor->plnId = $id;
+            if ($pause) {
+                $monitor->pause = $pause;
+            }
             $output->writeln($monitor->queryPln());
         }
+        
+        if ($input->getArgument('type') == 'box') {
+            $monitor->boxId = $id;
+            $output->writeln($monitor->queryBox());
+        }        
+        
+        
     }
 }

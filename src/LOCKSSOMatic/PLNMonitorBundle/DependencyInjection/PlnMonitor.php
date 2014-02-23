@@ -49,23 +49,29 @@ class PlnMonitor
     public $boxId;
     public $auId;
     public $plnId;
+    public $pause;
     
     public function __construct(EntityManager $em)
     {
         $this->em = $em;
     }
 
+    /**
+     * Queries all boxes in a given PLN.
+     */
     public function queryPln()
     {
         if (isset($this->plnId)) {
             // Query the Pln entity to get the associated boxes.
             $pln = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plns')
                 ->find($this->plnId);
-
             $boxes = $pln->getBoxes();
 
             if (count($boxes)) {
                 foreach ($boxes as $box) {
+                    if (isset($this->pause)) {
+                        sleep($this->pause);
+                    }
                     // Set up the SOAP client.
                     $client = new \SoapClient($box->getHostname() . "/ws/DaemonStatusService?wsdl",
                         array('login' => $box->getUsername(), 'password' => $box->getPassword()));
@@ -73,13 +79,57 @@ class PlnMonitor
                     // Check to see if the SOAP API says the daemon is ready.
                     $ready = $client->isDaemonReady();
                     if ($ready) {
-                        print  "LOCKSS daemon on " . $box->getHostname() . " is responding\n";
+                        // Add an entry to BoxStatus, with no properties.
+                        $status = new BoxStatus();
+                        $status->setBox($box);
+                        $this->em->persist($status);
+                        $this->em->flush();
                     }
                     else {
-                        print "LOCKSS daemon on " . $box->getHostname() . " is not responding\n";
+                        // Add an entry to BoxStatus, with property 'status' and value 'not ready'.                        
+                        $status = new BoxStatus();
+                        $status->setBox($box);
+                        $status->setPropertyKey('status');
+                        $status->setPropertyValue('not ready');
+                        $this->em->persist($status);
+                        $this->em->flush();
                     }
                 }
             }
         }
     }
+    
+    public function queryBox()
+    {
+        if (isset($this->boxId)) {
+            // Query the Pln entity to get the associated boxes.
+            $box = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Boxes')
+                ->find($this->boxId);
+
+            if ($box) {
+                // Set up the SOAP client.
+                $client = new \SoapClient($box->getHostname() . "/ws/DaemonStatusService?wsdl",
+                    array('login' => $box->getUsername(), 'password' => $box->getPassword()));
+                // Check to see if the SOAP API says the daemon is ready.
+                $ready = $client->isDaemonReady();
+                if ($ready) {
+                    // Add an entry to BoxStatus, with no properties.
+                    $status = new BoxStatus();
+                    $status->setBox($box);
+                    $this->em->persist($status);
+                    $this->em->flush();
+                }
+                else {
+                    // Add an entry to BoxStatus, with property 'status' and value 'not ready'.                        
+                    $status = new BoxStatus();
+                    $status->setBox($box);
+                    $status->setPropertyKey('status');
+                    $status->setPropertyValue('not ready');
+                    $this->em->persist($status);
+                    $this->em->flush();
+                }
+            }
+        }
+    }
+
 }
