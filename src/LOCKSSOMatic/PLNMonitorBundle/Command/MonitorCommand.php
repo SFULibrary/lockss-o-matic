@@ -17,7 +17,8 @@ class MonitorCommand extends ContainerAwareCommand
             ->setDescription('Monitor a PLN, a box or an AU')
             ->addArgument('type', InputArgument::OPTIONAL, 'Do you want to monitor a PLN, a box or an au?')
             ->addArgument('id', InputArgument::OPTIONAL, 'What is its ID?')
-            ->addArgument('pause', InputArgument::OPTIONAL, 'How long to pause between queries (in seconds)')
+            ->addArgument('pause', InputArgument::OPTIONAL, 'If a PLN, how long to pause between queries (in seconds)')
+            ->addArgument('au_box_id', InputArgument::OPTIONAL, 'If an AU, do you want to query only one box?')
         ;
     }
 
@@ -25,24 +26,52 @@ class MonitorCommand extends ContainerAwareCommand
     {
         $type = $input->getArgument('type');
         $id = $input->getArgument('id');
+        $au_box_id = $input->getArgument('au_box_id');
         $pause = $input->getArgument('pause');
 
         // Instantiate the monitor.
         $monitor = $this->getContainer()->get('pln_monitor');
         
-        if ($input->getArgument('type') == 'pln') {
-            $monitor->plnId = $id;
+        if ($type == 'pln') {
             if ($pause) {
                 $monitor->pause = $pause;
             }
-            $output->writeln($monitor->queryPln());
+            $monitor->queryPln($id);
         }
-        
-        if ($input->getArgument('type') == 'box') {
-            $monitor->boxId = $id;
-            $output->writeln($monitor->queryBox());
+        elseif ($type == 'pln' && $id == 'all') {
+            if ($pause) {
+                $monitor->pause = $pause;
+            }
+            // @todo: Get all AUs and iterate over then, issuing
+            // $monitor->queryPln($id) for each one.
         }        
-        
-        
+        elseif ($type == 'box') {
+            if ($pause) {
+                $monitor->pause = $pause;
+            }
+            $monitor->queryBox($id);
+        }
+        elseif ($type == 'box' && $id == 'all') {
+            if ($pause) {
+                $monitor->pause = $pause;
+            }
+            // @todo: Get all boxes and iterate over then, issuing
+            // $monitor->queryBox($id) for each one.
+        }        
+        elseif ($type == 'au') {
+            if ($pause) {
+                $monitor->pause = $pause;
+            }
+            $monitor->queryAu($id);
+        }
+        elseif ($type == 'au' && $au_box_id) {
+            if ($pause) {
+                $monitor->pause = $pause;
+            }
+            $monitor->queryAuOnBox($id, $au_box_id);
+        }
+        else {
+            $output->writeln('Sorry, not enough information to do anything.');
+        }
     }
 }
