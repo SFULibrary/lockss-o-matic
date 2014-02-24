@@ -19,8 +19,11 @@ use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
  *
  * @todo: Write method to query all instances (in PLN) of URL, like
  * $status = $monitor->queryUrl('http://somecontent.someprovider.com/download/foo.zip');
+ * 
+ * @todo: Fix catching and logging of SoapFault errors, and add them to queryPln.
+ * 
+ * @todo: Check to see if there are no results from queries on PLNs, Aus, Boxes.
  */
-
 
 class PlnMonitor
 {
@@ -50,8 +53,7 @@ class PlnMonitor
             $boxes = $pln->getBoxes();
         }
         else {
-            $box = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Boxes')
-                ->find($boxId);
+            $box = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Boxes')->find($boxId);
             $boxes = array();
             $boxes[] = $box;
         }
@@ -135,13 +137,11 @@ class PlnMonitor
         if (is_null($boxId)) {
             $plnId = $au->getPln()->getId();
             // Query the Pln entity to get the status of its boxes.
-            $pln = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plns')
-                ->find($plnId);
+            $pln = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plns')->find($plnId);
             $boxes = $pln->getBoxes();
         }
         else {
-            $box = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Boxes')
-                ->find($boxId);
+            $box = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Boxes')->find($boxId);
             $boxes = array();
             $boxes[] = $box;
         }
@@ -167,7 +167,7 @@ class PlnMonitor
                     $auStatus->setPropertyKey('Status');
                     $auStatus->setPropertyValue($e->faultstring);
                     $this->em->persist($auStatus);
-                    $this->em->flush();                    
+                    $this->em->flush();
                 }
                 // If the daemon is ready, query the box for the AU status.
                 if ($ready) {
@@ -175,30 +175,6 @@ class PlnMonitor
                         // Note: $au->getAuid() gives us the LOCKSS SOAP API auId, not the
                         // Doctrine entity auId.
                         $statusOnBox = $client->getAuStatus(array('auId' => $au->getAuid()));
-                        $auStatus = new AuStatus();
-                        $auStatus->setAu($au);
-                        $auStatus->setBoxHostname($box->getHostname());
-                        // If the 'status' property from LOCKSS's getAuStatus() query
-                        // is '100.00% Agreement', add an entry documenting the query.
-                        if ($statusOnBox->return->status == '100.00% Agreement') {
-                            $auStatus = new AuStatus();
-                            $auStatus->setAu($au);
-                            $auStatus->setBoxHostname($box->getHostname());
-                            $this->em->persist($auStatus);
-                        }
-                        // If not record all the properties for the current AU on the current
-                        // box.
-                        else {
-                            foreach ($statusOnBox->return as $key => $value) {
-                                $auStatus = new AuStatus();
-                                $auStatus->setAu($au);
-                                $auStatus->setBoxHostname($box->getHostname());
-                                $auStatus->setPropertyKey($key);
-                                $auStatus->setPropertyValue($value);
-                                $this->em->persist($auStatus);
-                            }
-                        }
-                        $this->em->flush();
                     }
                     catch (SoapFault $e) {
                         // Add an entry to AuStatus, with property 'status' and value 'not ready'
@@ -211,6 +187,30 @@ class PlnMonitor
                         $this->em->persist($auStatus);
                         $this->em->flush();
                     }
+                    $auStatus = new AuStatus();
+                    $auStatus->setAu($au);
+                    $auStatus->setBoxHostname($box->getHostname());
+                    // If the 'status' property from LOCKSS's getAuStatus() query
+                    // is '100.00% Agreement', add an entry documenting the query.
+                    if ($statusOnBox->return->status == '100.00% Agreement') {
+                        $auStatus = new AuStatus();
+                        $auStatus->setAu($au);
+                        $auStatus->setBoxHostname($box->getHostname());
+                        $this->em->persist($auStatus);
+                    }
+                    // If not record all the properties for the current AU on the current
+                    // box.
+                    else {
+                        foreach ($statusOnBox->return as $key => $value) {
+                            $auStatus = new AuStatus();
+                            $auStatus->setAu($au);
+                            $auStatus->setBoxHostname($box->getHostname());
+                            $auStatus->setPropertyKey($key);
+                            $auStatus->setPropertyValue($value);
+                            $this->em->persist($auStatus);
+                        }
+                    }
+                    $this->em->flush();
                 }
                 else {
                     // Add an entry to AuStatus, with property 'status' and value 'not ready'
@@ -228,9 +228,7 @@ class PlnMonitor
 
     /**
      * Wrapper method to pass a single-box query off to queryPln().
-     * 
-     * @param int $plnId
-     *   The ID of the PLN to monitor.
+     *
      * @param int $boxId
      *   The ID of the box to query.
      */     
@@ -242,10 +240,10 @@ class PlnMonitor
     /**
      * Wrapper method to pass a single-box query off to queryAu().
      * 
-    * @param int $auId
-    *   The ID of the AU to monitor.
-    * @param int $boxId
-    *   The ID of the box to monitor.
+     * @param int $auId
+     *   The ID of the AU to monitor.
+     * @param int $boxId
+     *   The ID of the box to monitor.
      */     
     public function queryAuOnBox($auId, $boxId)
     {
