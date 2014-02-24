@@ -19,8 +19,6 @@ use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
  *
  * @todo: Write method to query all instances (in PLN) of URL, like
  * $status = $monitor->queryUrl('http://somecontent.someprovider.com/download/foo.zip');
- * 
- * @todo: Check to see if there are no results from queries on PLNs, Aus, Boxes.
  */
 
 class PlnMonitor
@@ -49,12 +47,20 @@ class PlnMonitor
             // Query the Pln entity to get the status of its boxes.
             $pln = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plns')
                 ->find($plnId);
+            if (!$pln) {
+                $this->logMonitorError('box', NULL, NULL, 'PLN $plnId not found');   
+            }
             $boxes = $pln->getBoxes();
         }
         else {
             $box = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Boxes')->find($boxId);
-            $boxes = array();
-            $boxes[] = $box;
+            if (!$box) {
+                $this->logMonitorError('box', NULL, NULL, 'Box $boxId not found');
+            }
+            else {
+                $boxes = array();
+                $boxes[] = $box;
+            }
         }
 
         if (count($boxes)) {
@@ -71,11 +77,11 @@ class PlnMonitor
                     $ready = $client->isDaemonReady();
                 }
                 catch (\SoapFault $s) {
-                    $this->logSoapError('box', $box, $box->getHostname(), $s->faultstring);
+                    $this->logMonitorError('box', $box, $box->getHostname(), $s->faultstring);
                 }
                 // PHP's SOAP client doesn't catch all HTTP errors.
                 catch (\Exception $e) {
-                    $this->logSoapError('box', $box, $box->getHostname(), $e->getMessage());
+                    $this->logMonitorError('box', $box, $box->getHostname(), $e->getMessage());
                 }
                 if ($ready) {
                     // Add an entry to BoxStatus, with no properties.
@@ -141,6 +147,10 @@ class PlnMonitor
         // Query the Au entity to get its PLN ID.
         $au = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')
             ->find($auId);
+            
+        if (!$au) {
+            $this->logMonitorError('au', NULL, NULL, 'AU $auId not found');
+        }
 
         if (is_null($boxId)) {
             $plnId = $au->getPln()->getId();
@@ -150,8 +160,13 @@ class PlnMonitor
         }
         else {
             $box = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Boxes')->find($boxId);
-            $boxes = array();
-            $boxes[] = $box;
+            if (!$box) {
+                $this->logMonitorError('box', NULL, NULL, 'Box $boxId not found');
+            }
+            else {
+                $boxes = array();
+                $boxes[] = $box;
+            }
         }
 
         if (count($boxes)) {
@@ -168,13 +183,11 @@ class PlnMonitor
                     $ready = $client->isDaemonReady();
                 }
                 catch (\SoapFault $s) {
-                    print "Caugth by SoapFault\n";
-                    $this->logSoapError('au', $au, $box->getHostname(), $s->faultstring);
+                    $this->logMonitorError('au', $au, $box->getHostname(), $s->faultstring);
                 }
                 // PHP's SOAP client doesn't catch all HTTP errors.
                 catch (\Exception $e) {
-                    print "Caught by Exception\n";
-                    $this->logSoapError('box', $box, $box->getHostname(), $e->getMessage());
+                    $this->logMonitorError('box', $box, $box->getHostname(), $e->getMessage());
                 }
                 // If the daemon is ready, query the box for the AU status.
                 if ($ready) {
@@ -184,11 +197,11 @@ class PlnMonitor
                         $statusOnBox = $client->getAuStatus(array('auId' => $au->getAuid()));
                     }
                     catch (\SoapFault $s) {
-                        logSoapError('au', $au, $box->getHostname(), $s->faultstring);
+                        logMonitorError('au', $au, $box->getHostname(), $s->faultstring);
                     }
                     // PHP's SOAP client doesn't catch all HTTP errors.
                     catch (\Exception $e) {
-                        logSoapError('box', $box, $box->getHostname(), $e->getMessage());
+                        logMonitorError('box', $box, $box->getHostname(), $e->getMessage());
                     }
                     $auStatus = new AuStatus();
                     $auStatus->setAu($au);
@@ -263,9 +276,9 @@ class PlnMonitor
      * @param string $boxHostname
      *   The hostname of the box being queried at the time of the error.
      * @param string $errorString
-     *   The SOAP client's faultstring value.
+     *   The SOAP client's faultstring value or other error message value.
      */
-    public function logSoapError($type, $parent, $boxHostname, $errorString) {
+    public function logMonitorError($type, $parent, $boxHostname, $errorString) {
         if ($type == 'au') {
             $auStatus = new AuStatus();
             $auStatus->setAu($parent);
@@ -289,7 +302,7 @@ class PlnMonitor
      * Custom shutdown function. Catches last untrapped error.
      * 
      * @todo: Pass Au or Box object and box hostname in so we
-     * can log these errors using logSoapError().
+     * can log these errors using logMonitorError().
      */
     public function plnMonitorShutdown() { 
         // $error = error_get_last();
