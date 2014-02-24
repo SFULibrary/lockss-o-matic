@@ -14,33 +14,11 @@ use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
  * Class defining PlnMonitors, which query one or more LOCKSS boxes
  * in a PLN, an AU on a specific box, an AU across all boxes in a PLN.
  *
- * Some methods are meant to be run from app/console lockssomatic:monitor
+ * Mthods are meant to be run from app/console lockssomatic:monitor
  * via a cronjob.
- * 
- * All methods return an array of status arrays. Each array will have
- * a key (which maps to the 'property_key' in the db and a value
- * (which maps to the 'property_value' in the db).
  *
- * Query all boxes in PLN 2 (returns array of n arrays). For background
- * monitoring of all boxes in a PLN, iterate over all boxes in all PLNs.
- * The app/console command should take a 'pause' parameter to indicate
- * how long, in seconds, to pause between queries.
- * $status = $monitor->queryPln(2);
- *
- * Query box 23 (returns array of 1 array).
- * $status = $monitor->queryBox(23);
- * 
- * Query all instances (in PLN) of AU (returns array of n arrays). For
- * background monitoring of all AUs in a PLN, iterate over all AUs and
- * issue this command. The app/console command should take a 'pause' parameter
- * to indicate how long, in seconds, to pause between queries.
- * $status = $monitor->queryAu(567);
- *
- * Query AU 567 on box 23; returns array of 1 array)).
- * $status = $monitor->queryAuOnBox(567, 23);
- *
- * Query all instances (in PLN) of URL (returns array of n arrays).
- * $status = $monitor->queryUrl('http: * somecontent.someprovider.com/download/foo.zip');
+ * @todo: Write method to query all instances (in PLN) of URL, like
+ * $status = $monitor->queryUrl('http://somecontent.someprovider.com/download/foo.zip');
  */
 
 
@@ -57,6 +35,9 @@ class PlnMonitor
     /**
      * Queries all boxes in a given PLN and records the results in the
      * BoxStatus entity.
+     * 
+     * @param int $plnId
+     *   The ID of the PLN to monitor.
      */
     public function queryPln($plnId)
     {
@@ -99,6 +80,9 @@ class PlnMonitor
     /**
      * Queries a specific box to get its status and records the result in the
      * BoxStatus entity.
+     * 
+     * @param int $boxId
+     *   The ID of the box to query.
      */
     public function queryBox($boxId)
     {
@@ -163,6 +147,11 @@ class PlnMonitor
             [substanceState] => Unknown
             [volume] => Simon Fraser University Library Editorial Cartoons Collection: Uluschak, Edd (1970)
         )
+        * 
+        * @param int $auId
+        *   The ID of the AU to monitor.
+        * @param int $boxId
+        *   The ID of the box to monitor.
      */
     public function queryAu($auId, $boxId = NULL)
     {
@@ -267,6 +256,11 @@ class PlnMonitor
     
     /**
      * Wrapper method to pass a single-box query off to queryAu().
+     * 
+    * @param int $auId
+    *   The ID of the AU to monitor.
+    * @param int $boxId
+    *   The ID of the box to monitor. 
      */     
     public function queryAuOnBox($auId, $boxId)
     {
