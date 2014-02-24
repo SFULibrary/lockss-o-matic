@@ -20,8 +20,6 @@ use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
  * @todo: Write method to query all instances (in PLN) of URL, like
  * $status = $monitor->queryUrl('http://somecontent.someprovider.com/download/foo.zip');
  * 
- * @todo: Fix catching and logging of SoapFault errors, and add them to queryPln.
- * 
  * @todo: Check to see if there are no results from queries on PLNs, Aus, Boxes.
  */
 
@@ -33,6 +31,7 @@ class PlnMonitor
     public function __construct(EntityManager $em)
     {
         $this->em = $em;
+        register_shutdown_function(array($this, 'plnMonitorShutdown'));
     }
 
     /**
@@ -60,15 +59,24 @@ class PlnMonitor
 
         if (count($boxes)) {
             foreach ($boxes as $box) {
+                $ready = NULL;
                 if (isset($this->pause)) {
                     sleep($this->pause);
                 }
                 // Set up the SOAP client.
+                try {
                 $client = new \SoapClient($box->getHostname() . "/ws/DaemonStatusService?wsdl",
                     array('login' => $box->getUsername(), 'password' => $box->getPassword()));
-
-                // Check to see if the SOAP API says the daemon is ready.
-                $ready = $client->isDaemonReady();
+                    // Check to see if the SOAP API says the daemon is ready.
+                    $ready = $client->isDaemonReady();
+                }
+                catch (\SoapFault $s) {
+                    $this->logSoapError('box', $box, $box->getHostname(), $s->faultstring);
+                }
+                // PHP's SOAP client doesn't catch all HTTP errors.
+                catch (\Exception $e) {
+                    $this->logSoapError('box', $box, $box->getHostname(), $e->getMessage());
+                }
                 if ($ready) {
                     // Add an entry to BoxStatus, with no properties.
                     $boxStatus = new BoxStatus();
@@ -148,6 +156,7 @@ class PlnMonitor
 
         if (count($boxes)) {
             foreach ($boxes as $box) {
+                $ready = NULL;
                 if (isset($this->pause)) {
                     sleep($this->pause);
                 }
@@ -158,16 +167,14 @@ class PlnMonitor
                     // Check to see if the SOAP API says the daemon is ready.
                     $ready = $client->isDaemonReady();
                 }
-                catch (SoapFault $e) {
-                    // Add an entry to AuStatus, with property 'status' and value 'not ready'
-                    // and property 'box.                        
-                    $auStatus = new AuStatus();
-                    $auStatus->setAu($au);                        
-                    $auStatus->setBoxHostname($box->getHostname());
-                    $auStatus->setPropertyKey('Status');
-                    $auStatus->setPropertyValue($e->faultstring);
-                    $this->em->persist($auStatus);
-                    $this->em->flush();
+                catch (\SoapFault $s) {
+                    print "Caugth by SoapFault\n";
+                    $this->logSoapError('au', $au, $box->getHostname(), $s->faultstring);
+                }
+                // PHP's SOAP client doesn't catch all HTTP errors.
+                catch (\Exception $e) {
+                    print "Caught by Exception\n";
+                    $this->logSoapError('box', $box, $box->getHostname(), $e->getMessage());
                 }
                 // If the daemon is ready, query the box for the AU status.
                 if ($ready) {
@@ -176,16 +183,12 @@ class PlnMonitor
                         // Doctrine entity auId.
                         $statusOnBox = $client->getAuStatus(array('auId' => $au->getAuid()));
                     }
-                    catch (SoapFault $e) {
-                        // Add an entry to AuStatus, with property 'status' and value 'not ready'
-                        // and property 'box.                        
-                        $auStatus = new AuStatus();
-                        $auStatus->setAu($au);                        
-                        $auStatus->setBoxHostname($box->getHostname());
-                        $auStatus->setPropertyKey('Status');
-                        $auStatus->setPropertyValue($e->faultstring);
-                        $this->em->persist($auStatus);
-                        $this->em->flush();
+                    catch (\SoapFault $s) {
+                        logSoapError('au', $au, $box->getHostname(), $s->faultstring);
+                    }
+                    // PHP's SOAP client doesn't catch all HTTP errors.
+                    catch (\Exception $e) {
+                        logSoapError('box', $box, $box->getHostname(), $e->getMessage());
                     }
                     $auStatus = new AuStatus();
                     $auStatus->setAu($au);
@@ -248,5 +251,53 @@ class PlnMonitor
     public function queryAuOnBox($auId, $boxId)
     {
         $this->queryAu($auId, $boxId);
+    }
+
+    /**
+     * Persists SOAP client errors to the AU or Box status tables.
+     * 
+     * @param string $type
+     *   Either 'au' or 'box'.
+     * @param object $parent
+     *   Either an Au or a Box object.
+     * @param string $boxHostname
+     *   The hostname of the box being queried at the time of the error.
+     * @param string $errorString
+     *   The SOAP client's faultstring value.
+     */
+    public function logSoapError($type, $parent, $boxHostname, $errorString) {
+        if ($type == 'au') {
+            $auStatus = new AuStatus();
+            $auStatus->setAu($parent);
+            $auStatus->setBoxHostname($boxHostname);
+            $auStatus->setPropertyKey('Status');
+            $auStatus->setPropertyValue($errorString);
+            $this->em->persist($auStatus);
+            $this->em->flush();
+        }
+        if ($type == 'box') {
+            $boxStatus = new BoxStatus();
+            $boxStatus->setBox($parent);
+            $boxStatus->setPropertyKey('Status');
+            $boxStatus->setPropertyValue($errorString);
+            $this->em->persist($boxStatus);
+            $this->em->flush();
+        }
+    }
+
+    /**
+     * Custom shutdown function. Catches last untrapped error.
+     * 
+     * @todo: Pass Au or Box object and box hostname in so we
+     * can log these errors using logSoapError().
+     */
+    public function plnMonitorShutdown() { 
+        // $error = error_get_last();
+        // if ($error['type'] == 1) {
+        // if ($error) {
+            // Temporary dump during development.
+            // print "Custom shutdown error catcher reports:\n";
+            // var_dump($error);
+        // }
     }
 }
