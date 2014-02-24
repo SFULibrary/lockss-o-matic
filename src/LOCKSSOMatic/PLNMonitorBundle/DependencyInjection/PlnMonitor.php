@@ -14,7 +14,7 @@ use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
  * Class defining PlnMonitors, which query one or more LOCKSS boxes
  * in a PLN, an AU on a specific box, an AU across all boxes in a PLN.
  *
- * Mthods are meant to be run from app/console lockssomatic:monitor
+ * Methods are meant to be run from app/console lockssomatic:monitor
  * via a cronjob.
  *
  * @todo: Write method to query all instances (in PLN) of URL, like
@@ -33,18 +33,28 @@ class PlnMonitor
     }
 
     /**
-     * Queries all boxes in a given PLN and records the results in the
-     * BoxStatus entity.
+     * Queries all boxes in a given PLN (or optionally, a single box)
+     * and records the results in the BoxStatus entity.
      * 
      * @param int $plnId
      *   The ID of the PLN to monitor.
+     * @param int $boxId
+     *   The ID of the box to query.
      */
-    public function queryPln($plnId)
+    public function queryPln($plnId = NULL, $boxId = NULL)
     {
-        // Query the Pln entity to get the status of its boxes.
-        $pln = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plns')
-            ->find($plnId);
-        $boxes = $pln->getBoxes();
+        if (is_null($boxId)) {
+            // Query the Pln entity to get the status of its boxes.
+            $pln = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plns')
+                ->find($plnId);
+            $boxes = $pln->getBoxes();
+        }
+        else {
+            $box = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Boxes')
+                ->find($boxId);
+            $boxes = array();
+            $boxes[] = $box;
+        }
 
         if (count($boxes)) {
             foreach ($boxes as $box) {
@@ -76,49 +86,12 @@ class PlnMonitor
             }
         }
     }
-    
-    /**
-     * Queries a specific box to get its status and records the result in the
-     * BoxStatus entity.
-     * 
-     * @param int $boxId
-     *   The ID of the box to query.
-     */
-    public function queryBox($boxId)
-    {
-        // Query the Pln entity to get the associated boxes.
-        $box = $this->em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Boxes')
-            ->find($boxId);
-
-        if ($box) {
-            // Set up the SOAP client.
-            $client = new \SoapClient($box->getHostname() . "/ws/DaemonStatusService?wsdl",
-                array('login' => $box->getUsername(), 'password' => $box->getPassword()));
-            // Check to see if the SOAP API says the daemon is ready.
-            $ready = $client->isDaemonReady();
-            if ($ready) {
-                // Add an entry to BoxStatus, with no properties.
-                $boxStatus = new BoxStatus();
-                $boxStatus->setBox($box);
-                $this->em->persist($boxStatus);
-                $this->em->flush();
-            }
-            else {
-                // Add an entry to BoxStatus, with property 'status' and value 'not ready'.                        
-                $boxStatus = new BoxStatus();
-                $boxStatus->setBox($box);
-                $boxStatus->setPropertyKey('Status');
-                $boxStatus->setPropertyValue('Not ready');
-                $this->em->persist($boxStatus);
-                $this->em->flush();
-            }
-        }
-    }
 
     /**
-     * Queries all boxes in a given PLN and records the results in the
-     * BoxStatus entity. Detailed results are only recorded if the
-     * box returns anything other than a '100.00% Agreement' status.
+     * Queries all boxes in a given PLN (or optionally, a single box)and
+     * records the results in the BoxStatus entity. Detailed results are
+     * only recorded if the box returns anything other than a '100.00% Agreement'
+     * status.
      * 
      * Results of the LOCKSS SOAP API's getAuStatus() method return the
      * following:
@@ -252,15 +225,27 @@ class PlnMonitor
             }
         }
     }
-    
-    
+
+    /**
+     * Wrapper method to pass a single-box query off to queryPln().
+     * 
+     * @param int $plnId
+     *   The ID of the PLN to monitor.
+     * @param int $boxId
+     *   The ID of the box to query.
+     */     
+    public function queryBox($boxId)
+    {
+        $this->queryPln(NULL, $boxId);
+    }
+
     /**
      * Wrapper method to pass a single-box query off to queryAu().
      * 
     * @param int $auId
     *   The ID of the AU to monitor.
     * @param int $boxId
-    *   The ID of the box to monitor. 
+    *   The ID of the box to monitor.
      */     
     public function queryAuOnBox($auId, $boxId)
     {
