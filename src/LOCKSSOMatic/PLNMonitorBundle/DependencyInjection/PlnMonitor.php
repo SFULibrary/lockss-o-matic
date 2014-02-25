@@ -14,17 +14,20 @@ use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
  * Class defining PlnMonitors, which query one or more LOCKSS boxes
  * in a PLN, an AU on a specific box, an AU across all boxes in a PLN.
  *
- * Methods are meant to be run from app/console lockssomatic:monitor
- * via a cronjob.
+ * Methods (other than queryContentStatus) are meant to be run from
+ * app/console lockssomatic:monitor via a cronjob.
  *
- * @todo: Write method to query all instances (in PLN) of URL, like
- * $status = $monitor->queryUrl('http://somecontent.someprovider.com/download/foo.zip');
+ * @todo: Finish queryContentStatus().
  */
 
 class PlnMonitor
 {
     // Number of seconds to pause between queries.
     public $pause;
+    
+    // Object containing data about Content URLs that are queried
+    // in this class, in queryContentUrl().
+    public $contentUrlStatus;
     
     public function __construct(EntityManager $em)
     {
@@ -104,7 +107,7 @@ class PlnMonitor
     }
 
     /**
-     * Queries all boxes in a given PLN (or optionally, a single box)and
+     * Queries all boxes in a given PLN (or optionally, a single box) and
      * records the results in the BoxStatus entity. Detailed results are
      * only recorded if the box returns anything other than a '100.00% Agreement'
      * status.
@@ -232,6 +235,7 @@ class PlnMonitor
                     // Add an entry to AuStatus, with property 'status' and value 'not ready'
                     // and property 'box.                        
                     $auStatus = new AuStatus();
+                    $auStatus->setAu($au);
                     $auStatus->setBoxHostname($box->getHostname());
                     $auStatus->setPropertyKey('Status');
                     $auStatus->setPropertyValue('Not ready');
@@ -264,6 +268,56 @@ class PlnMonitor
     public function queryAuOnBox($auId, $boxId)
     {
         $this->queryAu($auId, $boxId);
+    }
+
+    /**
+     * Queries all boxes in a given PLN (or optionally, a single box) and
+     * returns a list of objects, each with box ID, box URL, and checksum value.
+     * 
+     * Not called from the PLN Monitor console command; expected use is from
+     * within the SWORD server, to populate <lom:content> elements in the
+     * SWORD Statement.
+     * 
+     * @todo: Finish this.
+     * 
+     * @param string $url
+     *   The Content URL to look up in each box.
+     * @param string $checksumType
+     *   The type of checksum, e.g. MD5, SHA-1, etc. to return.
+     * @param int $boxId
+     *   The specific Box to query
+     * 
+     * @return array
+     *   An array of ContentUrlStatus objects, one per queried box, each with
+     *   contentURL, boxId, boxUrl, checksumValue, and agreement properties.
+     */
+    public function queryContentStatus($url, $checksumType, $boxId = NULL)
+    {
+        // @todo: Get all the Boxes that contain the $url. If $boxId is
+        // not null, query only that box
+        
+        // @todo: Query each box using the LOCKSS SOAP API to get the
+        // agreement 'status' (e.g. '100.00% Agreement' or not). Also
+        // @todo, map the agreement to the SWORD state terms.
+        
+        // @todo: Query each box to get the checksum (of $checksumType)
+        // for the URL.
+        
+        // @todo: Construct a ContentUrlStatus object for the URL.
+        // Test code for constructing objects follows.
+        $contentUrls = array();
+        for ($i = 1; $i <= 4; $i++) {
+            $this->contentUrlStatus = new ContentUrl;
+            $this->contentUrlStatus->boxId = $i;
+            $this->contentUrlStatus->checksumValue = rand(1000, 10000);
+            $contentUrls[] = $this->contentUrlStatus;
+        }
+
+        // @todo: Add the ContentUrlStatus object to the $contentUrls
+        // array to return.
+        
+        // @todo: Return the array of ContentUrlStatus objects.
+        // print_r($contentUrls);
     }
 
     /**
@@ -313,4 +367,17 @@ class PlnMonitor
             // var_dump($error);
         // }
     }
+}
+
+/**
+ * Helper class to encapsulate information about Content URLs that are
+ * queried in queryContentUrl().
+ */
+class ContentUrl
+{
+    public $contentUrl;
+    public $boxId;
+    public $boxUrl;
+    public $checksumValue;
+    public $agreement;
 }
