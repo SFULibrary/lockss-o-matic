@@ -40,7 +40,20 @@ $minorProblems = $symfonyRequirements->getFailedRecommendations();
                 <div class="search">
                   <form method="get" action="http://symfony.com/search">
                     <div class="form-row">
-                    <p></p>
+
+                      <label for="search-id">
+                          <img src="bundles/framework/images/grey_magnifier.png" alt="Search on Symfony website" />
+                      </label>
+
+                      <input name="q" id="search-id" type="search" placeholder="Search on Symfony website" />
+
+                      <button type="submit" class="sf-button">
+                          <span class="border-l">
+                            <span class="border-r">
+                                <span class="btn-bg">OK</span>
+                            </span>
+                        </span>
+                      </button>
                     </div>
                    </form>
                 </div>
@@ -50,9 +63,10 @@ $minorProblems = $symfonyRequirements->getFailedRecommendations();
                 <div class="block">
                     <div class="symfony-block-content">
                         <h1 class="title">Welcome!</h1>
-                        <p>Welcome to LOCKSS-O-Matic.</p>
+                        <p>Welcome to your new Symfony project.</p>
                         <p>
-                            This script checks you system to make sure it meets all requirements.
+                            This script will guide you through the basic configuration of your project.
+                            You can also do the same by editing the ‘<strong>app/config/parameters.yml</strong>’ file directly.
                         </p>
 
                         <?php if (count($majorProblems)): ?>
@@ -93,6 +107,10 @@ $minorProblems = $symfonyRequirements->getFailedRecommendations();
                         <?php endif; ?>
 
                         <ul class="symfony-install-continue">
+                            <?php if (!count($majorProblems)): ?>
+                                <li><a href="app_dev.php/_configurator/">Configure your Symfony Application online</a></li>
+                                <li><a href="app_dev.php/">Bypass configuration and go to the Welcome page</a></li>
+                            <?php endif; ?>
                             <?php if (count($majorProblems) || count($minorProblems)): ?>
                                 <li><a href="config.php">Re-check configuration</a></li>
                             <?php endif; ?>
