@@ -79,7 +79,7 @@ $statement_atom = $sd_response->sac_state_iri_atom;
 // Request the Deposit Receipt from the Edit-IRI.
 print "\nRetrieving Deposit Receipt from " . $edit_iri . "\n";
 try {
-$sd_response = $sword_client->retrieveDepositReceipt($edit_iri, '', '', $on_behalf_of);
+    $sd_response = $sword_client->retrieveDepositReceipt($edit_iri, '', '', $on_behalf_of);
 }
 catch (Exception $e) {
     if ($sd_response->sac_status == 200) {
