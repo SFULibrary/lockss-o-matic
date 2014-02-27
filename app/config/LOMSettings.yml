@@ -1,0 +1,7 @@
+parameters:
+    site_name: "Example LOM instance name"
+    base_url: "http://localhost/lockss-o-matic/web/app_dev.php"
+    ip_address: "127.0.0.1"
+    path_to_uploads: "/var/www/lockss-o-matic/uploads"
+    path_to_pln_files: "/var/www/lockss-o-matic/plnfiles"
+    path_to_event_log: "/var/log/lom_events.log"

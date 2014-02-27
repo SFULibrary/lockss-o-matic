@@ -45,12 +45,6 @@ class DefaultController extends Controller
             $response->setStatusCode(412);
             return $response;
         }
-
-        // Query the LomSettings entity so we can get site-wide settings.
-        // LomSettings ID will always be 1.
-        $lomSettings = $this->getDoctrine()
-            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\LomSettings')
-            ->find(1);
  
         // Query the ContentProvider entity so we can get its name.
         $contentProvider = $this->getDoctrine()
@@ -66,8 +60,8 @@ class DefaultController extends Controller
 
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
             array(
-                'site_name' => $lomSettings->getSiteName(),
-                'base_url' => $lomSettings->getBaseUrl(),          
+                'site_name' => $this->container->getParameter('site_name'),
+                'base_url' => $this->container->getParameter('base_url'),          
                 'onBehalfOf' => $onBehalfOf,
                 'maxFileSize' => $contentProvider->getMaxFileSize(),
                 'checksumType' => $contentProvider->getChecksumType(),
@@ -131,17 +125,11 @@ class DefaultController extends Controller
             $cem->flush();            
         }
 
-        // Query the LomSettings entity so we can get site-wide settings.
-        // LomSettings ID will always be 1.
-        $lomSettings = $this->getDoctrine()
-            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\LomSettings')
-            ->find(1);
-
         // Return the deposit receipt.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
             array(
-                'siteName' => $lomSettings->getSiteName(),
-                'baseUrl' => $lomSettings->getBaseUrl(),
+                'siteName' => $this->container->getParameter('site_name'),
+                'baseUrl' => $this->container->getParameter('base_url'),
                 'contentProviderId' => $collectionId,
                 'depositUuid' => $deposit->getUuid())
             );
@@ -267,17 +255,11 @@ class DefaultController extends Controller
      * @return The Deposit Receipt response.
      */
     public function depositReceiptAction($collectionId, $uuid) {
-        // Query the LomSettings entity so we can get site-wide settings.
-        // LomSettings ID will always be 1.
-        $lomSettings = $this->getDoctrine()
-            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\LomSettings')
-            ->find(1);
-
         // Return the deposit receipt.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
             array(
-                'siteName' => $lomSettings->getSiteName(),
-                'baseUrl' => $lomSettings->getBaseUrl(),
+                'siteName' => $this->container->getParameter('site_name'),
+                'baseUrl' => $this->container->getParameter('base_url'),
                 'contentProviderId' => $collectionId,
                 'depositUuid' => $uuid)
             );

@@ -54,7 +54,3 @@ LOCKSSOMaticCRUDBundle_deposits:
 LOCKSSOMaticCRUDBundle_content:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/content.yml"
     prefix:   /content
-
-LOCKSSOMaticCRUDBundle_lomsettings:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/lomsettings.yml"
-    prefix:   /lomsettings

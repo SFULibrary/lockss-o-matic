@@ -70,8 +70,6 @@ http://localhost/lockss-o-matic/web/config.php
 
 You do not need to configure the application. However, if Symfony reports any issues with your PHP configuration, or with file/directory permissions, you should fix those before testing the SWORD server. If you change your PHP configuration, don't forget to restart your web server.
 
-10) Add a site name and base URL to use in the SWORD XML templates (ignore the IP address and the file path settings):
-
-http://localhost/lockss-o-matic/web/app_dev.php/lomsettings/edit
+10) Configure your site settings. Edit app/config/LOMSettings.yml so that it contains the correct base_url and path_to_event_log values (the others aren't important for now).
 
 11) You are now ready to test the SWORD server as described in RESTTesting/README.txt.
