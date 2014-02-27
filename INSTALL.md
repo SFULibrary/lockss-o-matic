@@ -35,17 +35,23 @@ clone the repo at https://github.com/mjordan/lockss-o-matic into your webroot.
 
 Edit parameters.yml so that the database_name, database_user, and database_password values match those you used in step 1.
 
-4) Install Composer, which is the standard tool for managing Symfony applications.
+4) Update your site settings. From within the same directory you entered in step 3 (app/config), issue the following command:
+  
+  ```cp LOMSettings.yml.dist LOMSettings.yml```
+
+Edit LOMSettings.yml so that it contains the correct base_url and path_to_event_log values for the computer you are installing LOCKSS-O-Matic on (the others are not important for now).
+
+5) Install Composer, which is the standard tool for managing Symfony applications.
 
 From within the lockss-o-matic directory, issue the following command:
 
 ```curl -s https://getcomposer.org/installer | php```
 
-5) Install LOCKSS-O-Matic's external libraries. From withing the lockss-o-matic directory, issue the following command:
+6) Install LOCKSS-O-Matic's external libraries. From withing the lockss-o-matic directory, issue the following command:
 
 ```php composer.phar install```
 
-6) Make sure the user running your web server needs to have write permissions to the app/cache and app/logs directories. From within the lockss-o-matic directory, issue the following commands:
+7) Make sure the user running your web server needs to have write permissions to the app/cache and app/logs directories. From within the lockss-o-matic directory, issue the following commands:
 
 ```sudo chmod -R 777 app/cache```
 
@@ -53,23 +59,20 @@ From within the lockss-o-matic directory, issue the following command:
 
 These commands are the easiest way to allow your web server to write to these directories, but they are also the least secure. You may want to consult the "Setting up Permissions" section of the Symfony documentation at http://symfony.com/doc/current/book/installation.html.
 
-
-7) Create the LOCKSS-O-Matic database tables. From within the lockss-o-matic directory, run:
+8) Create the LOCKSS-O-Matic database tables. From within the lockss-o-matic directory, run:
 
 ```php app/console doctrine:schema:update --force```
 
-8) Load the data required to test the SWORD server. From within the lockss-o-matic directory, run:
+9) Load the data required to test the SWORD server. From within the lockss-o-matic directory, run:
 
 ```php app/console doctrine:fixtures:load```
 
 Answer 'y' if asked if it is OK to purge the database
 
-9) Test your PHP configuration by going to the following URL:
+10) Test your PHP configuration by going to the following URL:
 
 http://localhost/lockss-o-matic/web/config.php
 
 You do not need to configure the application. However, if Symfony reports any issues with your PHP configuration, or with file/directory permissions, you should fix those before testing the SWORD server. If you change your PHP configuration, don't forget to restart your web server.
-
-10) Configure your site settings. Edit app/config/LOMSettings.yml so that it contains the correct base_url and path_to_event_log values (the others aren't important for now).
 
 11) You are now ready to test the SWORD server as described in RESTTesting/README.txt.
