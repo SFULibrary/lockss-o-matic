@@ -19,7 +19,7 @@ class DefaultController extends Controller
      * This value is also used for the collection ID (in other words, each
      * content provider has its own SWORD collection).
      * 
-     * @return The Service Document.
+     * @return string The Service Document.
      */
     public function serviceDocumentAction()
     {
@@ -75,7 +75,7 @@ class DefaultController extends Controller
      * Controller for the Col-IRI (create resource) request.
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
-     * @return The Deposit Receipt response.
+     * @return string The Deposit Receipt response.
      */
     public function createDepositAction($collectionId)
     {        
@@ -144,7 +144,7 @@ class DefaultController extends Controller
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      *   Not used in this function (is required as a parameter in the SWORD State-IRI).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
-     * @return The Statement response.
+     * @return string The Statement response.
      */
     public function swordStatementAction($collectionId, $uuid)
     {
@@ -203,7 +203,7 @@ class DefaultController extends Controller
      *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
-     * @return The Edit-IRI response.
+     * @return string The Edit-IRI response.
      */
     public function editDepositAction($collectionId, $uuid)
     {        
@@ -252,7 +252,7 @@ class DefaultController extends Controller
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
-     * @return The Deposit Receipt response.
+     * @return string The Deposit Receipt response.
      */
     public function depositReceiptAction($collectionId, $uuid) {
         // Return the deposit receipt.
