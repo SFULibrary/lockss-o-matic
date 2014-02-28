@@ -1,0 +1,11 @@
+parameters:
+    locksso_matic_core.lom_logger.class: LOCKSSOMatic\CoreBundle\DependencyInjection\LomLogger
+    locksso_matic_core.lom_log_formatter.class: LOCKSSOMatic\CoreBundle\DependencyInjection\LomLogFormatter
+
+services:
+    lom_logger:
+        class: %locksso_matic_core.lom_logger.class%
+        arguments: [@service_container, @doctrine.orm.entity_manager, @logger]
+    lom_log_formatter:
+        class: %locksso_matic_core.lom_log_formatter.class%
+

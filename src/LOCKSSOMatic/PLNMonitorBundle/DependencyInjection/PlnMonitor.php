@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\PLNMonitorBundle\DependencyInjection;
 
 use Doctrine\ORM\EntityManager;
+use LOCKSSOMatic\CoreBundle\DependencyInjection\LomLogger;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Boxes;
 use LOCKSSOMatic\CRUDBundle\Entity\BoxStatus;
@@ -22,16 +23,19 @@ use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
 
 class PlnMonitor
 {
+    private $lomLogger;
+    
     // Number of seconds to pause between queries.
     public $pause;
     
     // Object containing data about Content URLs that are queried
     // in this class, in queryContentUrl().
     public $contentUrlStatus;
-    
-    public function __construct(EntityManager $em)
+
+    public function __construct(EntityManager $em, LomLogger $lomLogger)
     {
         $this->em = $em;
+        $this->lomLogger = $lomLogger;
         register_shutdown_function(array($this, 'plnMonitorShutdown'));
     }
 
@@ -104,6 +108,7 @@ class PlnMonitor
                 }
             }
         }
+        $this->lomLogger->log("Mark", "testing query PLN", "Success");
     }
 
     /**
@@ -244,6 +249,7 @@ class PlnMonitor
                 }
             }
         }
+        $this->lomLogger->log("Mark", "testing queryAU", "Success");
     }
 
     /**

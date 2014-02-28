@@ -3,6 +3,7 @@ imports:
     - { resource: security.yml }
     - { resource: LOMSettings.yml }
     - { resource: "@LOCKSSOMaticPLNMonitorBundle/Resources/config/services.yml" }
+    - { resource: "@LOCKSSOMaticCoreBundle/Resources/config/services.yml" }
 
 framework:
     #esi:             ~
@@ -69,3 +70,15 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+# Monolog Configuration
+monolog:
+    channels: ['lomlogger']
+    handlers:
+        lomlog:
+            type: stream
+            path: "%path_to_lom_event_log%"
+            channels: ['lomlogger']
+            level: info
+            formatter: lom_log_formatter
+
