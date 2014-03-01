@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Doctrine\ORM\EntityManager;
+use LOCKSSOMatic\CoreBundle\DependencyInjection\LomLogger;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\Boxes;
@@ -37,8 +38,11 @@ class MonitorCommand extends ContainerAwareCommand
         // Instantiate an entity manager.
         $em = $this->getContainer()->get('doctrine')->getEntityManager();
 
-        // Instantiate the monitor.
+        // Instantiate a PLN monitor.
         $monitor = $this->getContainer()->get('pln_monitor');
+        
+        // Instantiate a logger.
+        $lomLogger = $this->getContainer()->get('lom_logger');        
         
         /**
          * PLN monitor command.
@@ -46,6 +50,7 @@ class MonitorCommand extends ContainerAwareCommand
         // Query all boxes in a specific PLN. Optionally pause for
         // the stated number of seconds between queries.
         if ($type == 'pln' && is_numeric($id)) {
+            
             if ($pause && is_numeric($seconds)) {
                 $monitor->pause = $pause;
             }
@@ -56,6 +61,7 @@ class MonitorCommand extends ContainerAwareCommand
          */
         // Query a specific box.
         elseif ($type == 'box' && is_numeric($id)) {
+            $lomLogger->log("Mark", "testing query box $id", "Success from within the console command");
             if ($pause && is_numeric($seconds)) {
                 $monitor->pause = $pause;
             }
@@ -63,6 +69,7 @@ class MonitorCommand extends ContainerAwareCommand
         }
         // Query all boxes registered with LOCKSS-O-Matic.
         elseif ($type == 'box' && $id == 'all') {
+            $lomLogger->log("Mark", "testing query boxes all", "Success from within the console command");
             if ($pause) {
                 $monitor->pause = $pause;
             }
@@ -78,6 +85,7 @@ class MonitorCommand extends ContainerAwareCommand
          */
         // Query a specific AU in all boxes it is preserved in.
         elseif ($type == 'au' && is_numeric($id)) {
+            $lomLogger->log("Mark", "testing query AU box $id", "Success from within the console command");            
             if ($pause) {
                 $monitor->pause = $pause;
             }
@@ -85,6 +93,7 @@ class MonitorCommand extends ContainerAwareCommand
         }
         // Query all AUs in all boxes.
         elseif ($type == 'au' && $id == 'all') {
+            $lomLogger->log("Mark", "testing query AU all", "Success from within the console command");
             if ($pause) {
                 $monitor->pause = $pause;
             }
@@ -98,10 +107,11 @@ class MonitorCommand extends ContainerAwareCommand
         // Query a specific AU in a specific box. In this case, $id
         // will be an AU ID with a Box ID, joined by a comma.
         elseif ($type == 'au' && preg_match('/,/', $id)) {
+            list($auId, $boxId) = explode(',', $id);
+            $lomLogger->log("Mark", "testing query AU $auId, box $boxId", "Success from within the console command");
             if ($pause) {
                 $monitor->pause = $pause;
             }
-            list($auId, $boxId) = explode(',', $id);
             $monitor->queryAuOnBox($auId, $boxId);
         }
         else {
