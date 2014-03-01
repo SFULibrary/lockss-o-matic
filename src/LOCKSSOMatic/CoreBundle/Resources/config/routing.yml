@@ -1,3 +1,3 @@
 locksso_matic_core_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: LOCKSSOMaticCoreBundle:Default:index }
+    pattern:  /core/upload/deposit
+    defaults: { _controller: LOCKSSOMaticCoreBundle:Default:uploadDeposit}
