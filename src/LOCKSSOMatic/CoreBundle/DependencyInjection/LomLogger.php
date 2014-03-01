@@ -6,12 +6,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
 use Monolog\Logger;
 
-use LOCKSSOMatic\CRUDBundle\Entity\Boxes;
-use LOCKSSOMatic\CRUDBundle\Entity\BoxStatus;
-use LOCKSSOMatic\CRUDBundle\Entity\Plns;
-use LOCKSSOMatic\CRUDBundle\Entity\Aus;
-use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
-
 /**
  * Class defining the LomLogger, which is a wrapper around the Monolog
  * logger.
