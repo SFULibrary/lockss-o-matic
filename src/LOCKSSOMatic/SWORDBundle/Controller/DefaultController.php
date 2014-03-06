@@ -83,6 +83,12 @@ class DefaultController extends Controller
         $request = new Request();
         $createResourceXml = $request->getContent();
         
+        // @todo: Get the value of the 'X-In-Progress' request header.
+        // We will need to figure out how to flag an AU as 'open' or 'closed'.
+        if ($request->headers->has('x_in_progress')) {
+            $inProgress = $request->headers->get('x_in_progress');
+        }
+        
         // Parse the Atom entry's <id> element, which will contain the deposit's UUID.
         $atomEntry = new \SimpleXMLElement($createResourceXml);
         $depositUuid = $atomEntry->id[0];
