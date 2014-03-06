@@ -13,20 +13,28 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Plugins
 {
-	/**
-	 * Property required for one-to-many relationship with AuProperties.
-	 * 
-	 * @OneToMany(targetEntity="AuProperties", mappedBy="auProperties")
-	 */
-	protected $pluginProperties;
+    /**
+     * Property required for one-to-many relationship with PluginProperties.
+     * 
+     * @OneToMany(targetEntity="PluginProperties", mappedBy="pluginProperties")
+     */
+    protected $pluginProperties;
+    
+    /**
+     * Property required for one-to-many relationship with Aus.
+     * 
+     * @OneToMany(targetEntity="Aus", mappedBy="aus")
+     */
+    protected $aus;    
 
-	/**
-	 * Initializes the $pluginProperties property.
-	 */
-	public function __construct()
-	{
+    /**
+     * Initializes the $pluginProperties and $aus properties.
+     */
+    public function __construct()
+    {
         $this->pluginProperties = new ArrayCollection();
-	}
+        $this->aus = new ArrayCollection();
+    }
 
     /**
      * @var integer
@@ -110,5 +118,38 @@ class Plugins
     public function getPluginProperties()
     {
         return $this->pluginProperties;
+    }
+
+    /**
+     * Add aus
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $aus
+     * @return Plugins
+     */
+    public function addAus(\LOCKSSOMatic\CRUDBundle\Entity\Aus $aus)
+    {
+        $this->aus[] = $aus;
+
+        return $this;
+    }
+
+    /**
+     * Remove aus
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $aus
+     */
+    public function removeAus(\LOCKSSOMatic\CRUDBundle\Entity\Aus $aus)
+    {
+        $this->aus->removeElement($aus);
+    }
+
+    /**
+     * Get aus
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAus()
+    {
+        return $this->aus;
     }
 }

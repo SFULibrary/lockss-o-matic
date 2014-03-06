@@ -7,26 +7,18 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * PluginProperties
  *
- * @ORM\Table(name="plugin_properties", indexes={@ORM\Index(name="aus_id_idx", columns={"aus_id"}), @ORM\Index(name="plugins_id_idx", columns={"plugins_id"})})
+ * @ORM\Table(name="plugin_properties", @ORM\Index(name="plugins_id_idx", columns={"plugins_id"})})
  * @ORM\Entity
  */
 class PluginProperties
 {
-	/**
-	* Property required for many-to-one relationship with Plugins.
-	* 
-	* @ManyToOne(targetEntity="Plugins", mappedBy="pluginProperties")
-	* @JoinColumn(name="plugins_id", referencedColumnName="id")
-	*/
-	protected $plugin;
-
-	/**
-	* Property required for many-to-one relationship with Plugins.
-	* 
-	* @ManyToOne(targetEntity="Aus", mappedBy="pluginProperties")
-	* @JoinColumn(name="aus_id", referencedColumnName="id")
-	*/
-	protected $au;
+    /**
+    * Property required for many-to-one relationship with Plugins.
+    * 
+    * @ManyToOne(targetEntity="Plugins", mappedBy="pluginProperties")
+    * @JoinColumn(name="plugins_id", referencedColumnName="id")
+    */
+    protected $plugin;
 
     /**
      * @var integer
@@ -43,13 +35,6 @@ class PluginProperties
      * @ORM\Column(name="plugins_id", type="integer", nullable=true)
      */
     private $pluginsId;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="aus_id", type="integer", nullable=true)
-     */
-    private $ausId;
 
     /**
      * @var integer
@@ -71,8 +56,6 @@ class PluginProperties
      * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
-
-
 
     /**
      * Get id
@@ -105,29 +88,6 @@ class PluginProperties
     public function getPluginsId()
     {
         return $this->pluginsId;
-    }
-
-    /**
-     * Set ausId
-     *
-     * @param integer $ausId
-     * @return PluginProperties
-     */
-    public function setAusId($ausId)
-    {
-        $this->ausId = $ausId;
-
-        return $this;
-    }
-
-    /**
-     * Get ausId
-     *
-     * @return integer 
-     */
-    public function getAusId()
-    {
-        return $this->ausId;
     }
 
     /**
@@ -220,28 +180,5 @@ class PluginProperties
     public function getPlugin()
     {
         return $this->plugin;
-    }
-
-    /**
-     * Set au
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
-     * @return PluginProperties
-     */
-    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
-    {
-        $this->au = $au;
-
-        return $this;
-    }
-
-    /**
-     * Get au
-     *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
-     */
-    public function getAu()
-    {
-        return $this->au;
     }
 }

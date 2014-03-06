@@ -13,53 +13,53 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Aus
 {
-	/**
-	 * Property required for one-to-many relationship with Content.
-	 * 
-	 * @OneToMany(targetEntity="Content", mappedBy="content")
-	 */
-	protected $content;
+    /**
+     * Property required for one-to-many relationship with Content.
+     * 
+     * @OneToMany(targetEntity="Content", mappedBy="content")
+     */
+    protected $content;
 
-	/**
-	 * Property required for one-to-many relationship with AuStatus.
-	 * 
-	 * @OneToMany(targetEntity="AuStatus", mappedBy="auStatus")
-	 */
-	protected $auStatus;
+    /**
+     * Property required for one-to-many relationship with AuStatus.
+     * 
+     * @OneToMany(targetEntity="AuStatus", mappedBy="auStatus")
+     */
+    protected $auStatus;
 
-	/**
-	 * Property required for one-to-many relationship with AuProperties.
-	 * 
-	 * @OneToMany(targetEntity="AuProperties", mappedBy="auProperties")
-	 */
-	protected $auProperties;
+    /**
+     * Property required for one-to-many relationship with AuProperties.
+     * 
+     * @OneToMany(targetEntity="AuProperties", mappedBy="auProperties")
+     */
+    protected $auProperties;
 
-	/**
-	 * Property required for one-to-many relationship with PluginProperties.
-	 * 
-	 * @OneToMany(targetEntity="PluginProperties", mappedBy="pluginProperties")
-	 */
-	protected $pluginProperties;
-
-	/**
-	 * Initializes the $content, $auStatus, $auProperties, and $pluginProperties
-	 * properties.
-	 */
-	public function __construct()
-	{
-		$this->content = new ArrayCollection();
-		$this->auStatus = new ArrayCollection();
+    /**
+     * Initializes the $content, $auStatus, $auProperties, and $pluginProperties
+     * properties.
+     */
+    public function __construct()
+    {
+        $this->content = new ArrayCollection();
+        $this->auStatus = new ArrayCollection();
         $this->auProperties = new ArrayCollection();
-        $this->pluginProperties = new ArrayCollection();
-	}
+    }
 
-	/**
-	* Property required for many-to-one relationship with Plns.
-	* 
-	* @ManyToOne(targetEntity="Plns", mappedBy="aus")
-	* @JoinColumn(name="plns_id", referencedColumnName="id")
-	*/
-	protected $pln;
+    /**
+    * Property required for many-to-one relationship with Plns.
+    * 
+    * @ManyToOne(targetEntity="Plns", mappedBy="aus")
+    * @JoinColumn(name="plns_id", referencedColumnName="id")
+    */
+    protected $pln;
+    
+    /**
+    * Property required for many-to-one relationship with Plugins.
+    * 
+    * @ManyToOne(targetEntity="Plugins", mappedBy="aus")
+    * @JoinColumn(name="plugins_id", referencedColumnName="id")
+    */
+    protected $plugin;    
 
     /**
      * @var integer
@@ -97,6 +97,13 @@ class Aus
      * @ORM\Column(name="manifest_url", type="text", nullable=true)
      */
     private $manifestUrl;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="open", type="integer", nullable=true)
+     */
+    private $open;    
 
     /**
      * Get id
@@ -353,5 +360,79 @@ class Aus
     public function getPln()
     {
         return $this->pln;
+    }
+    /**
+     * @var integer
+     */
+    private $pluginsId;
+
+
+    /**
+     * Set pluginsId
+     *
+     * @param integer $pluginsId
+     * @return Aus
+     */
+    public function setPluginsId($pluginsId)
+    {
+        $this->pluginsId = $pluginsId;
+
+        return $this;
+    }
+
+    /**
+     * Get pluginsId
+     *
+     * @return integer 
+     */
+    public function getPluginsId()
+    {
+        return $this->pluginsId;
+    }
+
+    /**
+     * Set plugin
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin
+     * @return Aus
+     */
+    public function setPlugin(\LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin = null)
+    {
+        $this->plugin = $plugin;
+
+        return $this;
+    }
+
+    /**
+     * Get plugin
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plugins 
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
+    }
+
+    /**
+     * Set open
+     *
+     * @param integer $open
+     * @return Aus
+     */
+    public function setOpen($open)
+    {
+        $this->open = $open;
+
+        return $this;
+    }
+
+    /**
+     * Get open
+     *
+     * @return integer 
+     */
+    public function getOpen()
+    {
+        return $this->open;
     }
 }

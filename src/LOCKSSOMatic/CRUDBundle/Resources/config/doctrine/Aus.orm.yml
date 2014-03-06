@@ -10,9 +10,6 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
         auProperties:
             targetEntity: AuProperties
             mappedBy: au
-        pluginProperties:
-            targetEntity: PluginProperties
-            mappedBy: au
     manyToOne:
         pln:
             targetEntity: Plns
@@ -20,11 +17,20 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             joinColumn:
                 name: plns_id
                 referencedColumnName: id
+        plugin:
+            targetEntity: Plugins
+            inversedBy: aus
+            joinColumn:
+                name: plugins_id
+                referencedColumnName: id                
     table: aus
     indexes:
         plns_id_idx:
             columns:
                 - plns_id
+        plugins_id_idx:
+            columns:
+                - plugins_id                
     id:
         id:
             type: integer
@@ -41,6 +47,12 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             unsigned: false
             comment: 'Foreign key for the plns table.'
             column: plns_id
+        pluginsId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: 'Foreign key for the plugins table.'
+            column: plugins_id
         externalTitleDbsId:
             type: integer
             nullable: true
@@ -60,4 +72,9 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             fixed: false
             comment: 'The LOCKSS manifest URL for the AU.'
             column: manifest_url
+        open:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: 'Either 1 (indicating that content should still be added to this AU) or 0 (indicating that it should not).'            
     lifecycleCallbacks: {  }

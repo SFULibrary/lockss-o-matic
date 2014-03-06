@@ -7,17 +7,8 @@ LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
             joinColumn:
                 name: plugins_id
                 referencedColumnName: id
-        au:
-            targetEntity: Aus
-            inversedBy: auProperties
-            joinColumn:
-                name: aus_id
-                referencedColumnName: id
     table: plugin_properties
     indexes:
-        aus_id_idx:
-            columns:
-                - aus_id
         plugins_id_idx:
             columns:
                 - plugins_id
@@ -37,12 +28,6 @@ LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
             unsigned: false
             comment: 'Foreign key for the plugins table.'
             column: plugins_id
-        ausId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the aus table.'
-            column: aus_id
         parentId:
             type: integer
             nullable: true
