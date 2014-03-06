@@ -3,13 +3,11 @@
     xmlns:atom="http://www.w3.org/2005/Atom"
     xmlns:lom="http://purl.org/lockssomatic/terms/SWORD"
     xmlns="http://www.w3.org/2007/app">
-
     <sword:version>2.0</sword:version>
     <!-- sword:maxUploadSize is configurable per Content Provider. -->
     <sword:maxUploadSize>{{ maxFileSize }}</sword:maxUploadSize>
     <!-- lom:uploadChecksumType is configurable per Content Provider. -->
     <lom:uploadChecksumType>{{ checksumType }}</lom:uploadChecksumType>
-
     <workspace>
         <atom:title>{{ site_name }}</atom:title>     
         <!-- Each LOCKSS-O-Matic content provider will have its own SWORD collection,
@@ -17,9 +15,8 @@
             for this document. -->
         <collection href="{{base_url}}/api/sword/2.0/col-iri/{{onBehalfOf}}">
             <atom:title>{{ content_provider_name }}</atom:title>
-            <accept>*/*</accept>
-            <accept alternate="multipart-related">*/*</accept>
-            <sword:mediation>false</sword:mediation>
+            <accept>application/atom+xml;type=entry</accept> 
+            <sword:mediation>true</sword:mediation>
         </collection>
     </workspace>
 </service>
