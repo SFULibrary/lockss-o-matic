@@ -24,8 +24,9 @@ class DefaultController extends Controller
     public function serviceDocumentAction()
     {
         $request = Request::createFromGlobals();
-        // Get value of 'On-Behalf-Of' HTTP header and include it as
-        // the collection ID in the service document's col-iri parameter.
+        // Get value of 'On-Behalf-Of' HTTP header (or its 'X-' version)
+        // and include it as the collection ID in the service document's
+        // col-iri parameter.
         if ($request->headers->has('x_on_behalf_of')) {
             $onBehalfOf = $request->headers->get('x_on_behalf_of');
         }
@@ -78,15 +79,35 @@ class DefaultController extends Controller
      * @return string The Deposit Receipt response.
      */
     public function createDepositAction($collectionId)
-    {        
+    {
+        $request = Request::createFromGlobals();
+        
         // Get the request body.
-        $request = new Request();
         $createResourceXml = $request->getContent();
         
-        // @todo: Get the value of the 'X-In-Progress' request header.
-        // We will need to figure out how to flag an AU as 'open' or 'closed'.
-        if ($request->headers->has('x_in_progress')) {
-            $inProgress = $request->headers->get('x_in_progress');
+        // Get the value of the 'X-In-Progress' request header and define
+        // whether we will be adding this deposit to an open or closed AU.
+        if ($request->headers->has('in_progress')) {
+            $inProgressHeaderValue = $request->headers->get('in_progress');
+            if ($inProgressHeaderValue == 'true') {
+                $inProgress = true;
+            }
+            else {
+                $inProgress = false;
+            }
+        }
+        elseif ($request->headers->has('x_in_progress')) {
+            $inProgressHeaderValue = $request->headers->get('x_in_progress');
+            if ($inProgressHeaderValue == 'true') {
+                $inProgress = true;
+            }
+            else {
+                $inProgress = false;
+            }
+        }
+        // If there's no In-Progress/X-In-Progress header, we use a closed AU.
+        else {
+            $inProgress = false;
         }
         
         // Parse the Atom entry's <id> element, which will contain the deposit's UUID.
@@ -118,7 +139,7 @@ class DefaultController extends Controller
             // @todo: Check to verify the content provider identified by
             // $collectionId exists. If not, return an appropriate error code.
             $content->setDeposit($deposit);
-            $au = $this->getDestinationAu($collectionId, $contentSize);
+            $au = $this->getDestinationAu($inProgress, $collectionId, $contentSize);
             $content->setAu($au);
             $content->setUrl($contentChunk);                
             $content->setTitle('Some generatic title');
@@ -276,15 +297,19 @@ class DefaultController extends Controller
     /**
      * Determines which AU to put the content in.
      * 
+     * @param bool $inProgress Whether the AU is 'open' or 'closed'.
      * @param string $collectionId The collection ID (i.e., Content Provider ID).
      *   We use this to determine some AU properties like title, journal title, etc.
      * @param string $contentSize The size of the content, in kB.
      * @return object $au.
      */
-    public function getDestinationAu($collectionId, $contentSize) {
-        // @todo: If $contentSize is less than remaining capacity of the newest AU
-        // for the Content Provider, put the content in this AU. If $contentSize is
-        // greater, create a new AU and put the content in this one.
+    public function getDestinationAu($inProgress, $collectionId, $contentSize) {
+        // @todo: For open AUs, if $contentSize is less than remaining capacity
+        // of the newest AU for the Content Provider, put the content in this AU.
+        // If $contentSize is greater, create a new AU and put the content in this
+        // one. For closed AUs, create a new AU and put all content in this deposit
+        // in it.
+        //
         // Query for the Au. For now, just pick the Au with id 1.
         $au = $this->getDoctrine()
             ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')
