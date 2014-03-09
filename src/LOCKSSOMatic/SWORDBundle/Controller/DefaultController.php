@@ -241,10 +241,16 @@ class DefaultController extends Controller
      * LOCKSS-O-Matic supports only one edit operation: content providers can change the
      * value of the 'recrawl' attribute to indicate that LOM should not recrawl the content.
      * 
+     * @todo: Add logic to return:
+     * HTTP 202 (Accepted) meaning LOM is updating the LOCKSS config files saying not to harvest this, but it is not done yet.
+     * HTTP 200 (OK) meaning all config updates are complete
+     * HTTP 204 (No Content) if there is no matching aip
+     * HTTP 409 (Conflict) There are files in the LOCKSS AU that do not have ‘recrawl=false’.
+     * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
-     * @return string The Edit-IRI response.
+     * @return object The Edit-IRI response.
      */
     public function editDepositAction($collectionId, $uuid)
     {
