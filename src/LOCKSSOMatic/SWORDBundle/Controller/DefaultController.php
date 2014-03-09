@@ -54,8 +54,8 @@ class DefaultController extends Controller
         
         if (!$contentProvider) {
             $response = new Response();
-            // Return a "Not Found" response.
-            $response->setStatusCode(404);
+            // Return a "Forbidden" response.
+            $response->setStatusCode(403);
             return $response;
         }
 
@@ -80,6 +80,15 @@ class DefaultController extends Controller
      */
     public function createDepositAction($collectionId)
     {
+        // Check to verify the content provider identified by $collectionId
+        // exists. If not, return an appropriate error code.
+        $contentProviderExists = $this->confirmContentProvider($collectionId);
+        if (!$contentProviderExists) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;   
+        }
+        
         $request = Request::createFromGlobals();
         
         // Get the request body.
@@ -136,8 +145,6 @@ class DefaultController extends Controller
             }
             // Create a new Content entity.
             $content = new Content();
-            // @todo: Check to verify the content provider identified by
-            // $collectionId exists. If not, return an appropriate error code.
             $content->setDeposit($deposit);
             $au = $this->getDestinationAu($inProgress, $collectionId, $contentSize);
             $content->setAu($au);
@@ -169,12 +176,20 @@ class DefaultController extends Controller
      * Controller for the SWORD Statement request.
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
-     *   Not used in this function (is required as a parameter in the SWORD State-IRI).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      * @return string The Statement response.
      */
     public function swordStatementAction($collectionId, $uuid)
     {
+        // Check to verify the content provider identified by $collectionId
+        // exists. If not, return an appropriate error code.
+        $contentProviderExists = $this->confirmContentProvider($collectionId);
+        if (!$contentProviderExists) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;   
+        }        
+
         // Get the URLs for all the Content chunks added in the deposit identifed
         // by $uuid.
         $stmt = $this->getDoctrine()
@@ -227,13 +242,21 @@ class DefaultController extends Controller
      * value of the 'recrawl' attribute to indicate that LOM should not recrawl the content.
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
-     *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
      * @return string The Edit-IRI response.
      */
     public function editDepositAction($collectionId, $uuid)
-    {        
+    {
+        // Check to verify the content provider identified by $collectionId
+        // exists. If not, return an appropriate error code.
+        $contentProviderExists = $this->confirmContentProvider($collectionId);
+        if (!$contentProviderExists) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;   
+        }
+        
         // Get the request body.
         $request = new Request();
         $editIriXml = $request->getContent();
@@ -282,6 +305,15 @@ class DefaultController extends Controller
      * @return string The Deposit Receipt response.
      */
     public function depositReceiptAction($collectionId, $uuid) {
+        // Check to verify the content provider identified by $collectionId
+        // exists. If not, return an appropriate error code.
+        $contentProviderExists = $this->confirmContentProvider($collectionId);
+        if (!$contentProviderExists) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;   
+        }
+
         // Return the deposit receipt.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
             array(
@@ -315,5 +347,23 @@ class DefaultController extends Controller
             ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')
             ->find(1);
         return $au;
+    }
+
+    /**
+     * Confirm existence of content provider.
+     * 
+     * @param bool $contentProviderId The ID of the content provider.
+     * @return bool
+     */
+    public function confirmContentProvider($contentProviderId) {
+        $cp = $this->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders')
+            ->find($contentProviderId);
+        if ($cp) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
