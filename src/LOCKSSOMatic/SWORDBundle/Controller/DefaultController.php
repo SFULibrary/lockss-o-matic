@@ -77,8 +77,6 @@ class DefaultController extends Controller
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return string The Deposit Receipt response.
-     * 
-     * @todo: On deposit, return the Edit-IRI in a Location header, as per the SWORD spec.
      */
     public function createDepositAction($collectionId)
     {
@@ -170,6 +168,10 @@ class DefaultController extends Controller
                 'depositUuid' => $deposit->getUuid())
             );
         $response->headers->set('Content-Type', 'text/xml');
+        // Return the Edit-IRI in a Location header, as per the SWORD spec.
+        $editIri = $this->container->getParameter('base_url') . '/api/sword/2.0/cont-iri/' . 
+            $collectionId . '/' . $depositUuid . '/edit';
+        $response->headers->set('Location', $editIri);
         $response->setStatusCode(201);
         return $response;
     }
@@ -244,9 +246,10 @@ class DefaultController extends Controller
      * value of the 'recrawl' attribute to indicate that LOM should not recrawl the content.
      * 
      * @todo: Add logic to return:
-     * HTTP 202 (Accepted) meaning LOM is updating the LOCKSS config files saying not to harvest this, but it is not done yet.
-     * HTTP 200 (OK) meaning all config updates are complete
-     * HTTP 204 (No Content) if there is no matching aip
+     * HTTP 200 (OK) meaning AU config stanzas have been updated.
+     * HTTP 202 (Accepted) meaning LOM is updating the LOCKSS config files to prevent
+     *     reharvest but it is not done yet.
+     * HTTP 204 (No Content) if there is no matching Content URL.
      * HTTP 409 (Conflict) There are files in the LOCKSS AU that do not have ‘recrawl=false’.
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
@@ -301,7 +304,7 @@ class DefaultController extends Controller
         // block in the title db file.
         
         $response = new Response();
-        $response->setStatusCode(200);
+        $response->setStatusCode(202);
         return $response;
     }
 
