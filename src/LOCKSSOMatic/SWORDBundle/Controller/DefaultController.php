@@ -77,6 +77,8 @@ class DefaultController extends Controller
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return string The Deposit Receipt response.
+     * 
+     * @todo: On deposit, return the Edit-IRI in a Location header, as per the SWORD spec.
      */
     public function createDepositAction($collectionId)
     {
