@@ -121,6 +121,9 @@ class DefaultController extends Controller
         
         // Parse the Atom entry's <id> element, which will contain the deposit's UUID.
         $atomEntry = new \SimpleXMLElement($createResourceXml);
+        $atomEntry->registerXPathNamespace('atom', 'http://www.w3.org/2005/Atom');
+        $atomEntry->registerXPathNamespace('lom', 'http://lockssomatic.info/SWORD2');
+        $atomEntry->registerXPathNamespace('dcterms', 'http://purl.org/dc/terms/');
         $depositUuid = $atomEntry->id[0];
         $depositTitle = $atomEntry->title[0];
         // Remove the 'urn:uuid:'.
