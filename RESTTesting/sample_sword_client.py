@@ -10,7 +10,7 @@ import os
 import sys
 import requests
 
-server_base_url = 'http://thinkpad/lockss-o-matic/web/app_dev.php'
+server_base_url = 'http://localhost/lockss-o-matic/web/app_dev.php'
 sd_iri = '/api/sword/2.0/sd-iri'
 col_iri = '/api/sword/2.0/col-iri/'
 cont_iri = '/api/sword/2.0/cont-iri/'
@@ -62,7 +62,4 @@ if action == 'modifyDeposit':
     print 'Modifying Deposit on behalf of ' + content_provider
     r = requests.put(server_base_url + cont_iri + content_provider + '/' + content_uuid + '/edit', data=atom, headers=headers)
     print r.status_code
-
-    
-
 
