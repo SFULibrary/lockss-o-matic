@@ -124,8 +124,9 @@ class DefaultController extends Controller
         $atomEntry->registerXPathNamespace('atom', 'http://www.w3.org/2005/Atom');
         $atomEntry->registerXPathNamespace('lom', 'http://lockssomatic.info/SWORD2');
         $atomEntry->registerXPathNamespace('dcterms', 'http://purl.org/dc/terms/');
-        $depositUuid = $atomEntry->id[0];
-        $depositTitle = $atomEntry->title[0];
+        $atomNs = $atomEntry->children('http://www.w3.org/2005/Atom');
+        $depositUuid = $atomNs->id[0];
+        $depositTitle = $atomNs->title[0];
         // Remove the 'urn:uuid:'.
         $depositUuid = preg_replace('/^urn:uuid:/', '', $depositUuid);
         
@@ -312,7 +313,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * Determines which AU to put the content in.
+     * Returns a deposit receipt, in response to a request to the SWORD Edit-IRI.
      * 
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
