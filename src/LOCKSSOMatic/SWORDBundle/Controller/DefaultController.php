@@ -279,6 +279,9 @@ class DefaultController extends Controller
         // Parse the 'recrawl' attribute of each lom:content element and update
         // the Content entity's 'recrawl' property if the value is false.
         $atomEntry = simplexml_load_string($editIriXml);
+        $atomEntry->registerXPathNamespace('atom', 'http://www.w3.org/2005/Atom');
+        $atomEntry->registerXPathNamespace('lom', 'http://lockssomatic.info/SWORD2');
+        $atomEntry->registerXPathNamespace('dcterms', 'http://purl.org/dc/terms/');
         foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
             foreach ($contentChunk[0]->attributes() as $key => $value) {
                 // Get the value of 'recrawl'.
