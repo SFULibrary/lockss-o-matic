@@ -270,11 +270,6 @@ class PLNImportCommand extends ContainerAwareCommand
       if ($this-> plugin_exists_by_name($pluginName) == false) {
           //echo 'Unknown plugin detected.  The plugin will now be added to the database.';
           // New lockss plugin - insert into plugin table
-          /*
-          $query = $dbh->prepare('INSERT INTO plugins (`name`) VALUES (?)');
-          $query->execute(array($pluginName));
-          $pluginsId = $dbh->lastInsertId();
-          */
           $plugins = new Plugins();
           $plugins->setName($pluginName);
           $em->persist($plugins);
@@ -290,7 +285,7 @@ class PLNImportCommand extends ContainerAwareCommand
           $query->execute(array($pluginsId, 'plugin_name', $pluginName));
           */
           $pluginProperties = new PluginProperties();
-          $pluginProperties->setPluginsId($pluginId);
+          echo $pluginProperties->setPluginsId($pluginId);
           $pluginProperties->setPropertyKey('plugin_name');
           $pluginProperties->setPropertyValue($pluginName);
 
@@ -310,6 +305,7 @@ class PLNImportCommand extends ContainerAwareCommand
             return "PluginVersionEntryElement for $pluginName is of type " . (string) gettype($pluginVersionEntryElement) . " the value is $pluginVersionEntryElement";
           }
           */
+
           if (is_object($pluginVersionEntryElement) && ($pluginVersionEntryElement->string) == 2 ) {
               foreach ($pluginVersionStringChildrenObj as $key => $value) {
                   if ($value != 'plugin_version') {
@@ -343,10 +339,6 @@ class PLNImportCommand extends ContainerAwareCommand
                       $pluginIdentifier = $value;
                   }
               }
-              /*
-              $query = $dbh->prepare('INSERT INTO plugin_properties (`plugins_id`, `property_key`, `property_value`) VALUES (?,?,?)');
-              $query->execute(array($pluginsId, 'plugin_identifier', $pluginIdentifier));
-              */
               $pluginProperties->setPluginsId($pluginId);
               $pluginProperties->setPropertyKey('plugin_identifier');
               $pluginProperties->setPropertyValue($pluginIdentifier);
@@ -370,10 +362,7 @@ class PLNImportCommand extends ContainerAwareCommand
                       $auName = $value;
                   }
               }
-              /*
-              $query = $dbh->prepare('INSERT INTO plugin_properties (`plugins_id`, `property_key`, `property_value`) VALUES (?,?,?)');
-              $query->execute(array($pluginsId, 'au_name', $auName));
-              */
+
               $pluginProperties->setPluginsId($pluginId);
               $pluginProperties->setPropertyKey('au_name');
               $pluginProperties->setPropertyValue($auName);
@@ -399,10 +388,7 @@ class PLNImportCommand extends ContainerAwareCommand
             $pluginParameters = $pluginParameters->list->{'org.lockss.daemon.ConfigParamDescr'};
 
             // Add a row with key plugin_config_props  and null value record insert_id as parent 
-            /*
-            $query = $dbh->prepare('INSERT INTO plugin_properties (`plugins_id`,`property_key`) VALUES (?,?)');
-            $query->execute(array($pluginsId, 'plugin_config_props'));
-            */
+
             $pluginProperties->setPluginsId($pluginId);
             $pluginProperties->setPropertyKey('plugin_config_props');
 
@@ -417,10 +403,6 @@ class PLNImportCommand extends ContainerAwareCommand
             foreach ($pluginParameters as $element) {
 
                 // for each list item, add a row as a child or parent with key of configparamdescr and value null record
-                /*
-                $query = $dbh->prepare('INSERT INTO plugin_properties (`plugins_id`, `parent_id`, `property_key`) VALUES (?,?,?)');
-                $query->execute(array($pluginsId, $pluginConfigPropsRowId, 'configparamdescr'));
-                */
                 $pluginProperties->setPluginsId($pluginId);
                 $pluginProperties->setParentId($pluginConfigPropsRowId);
                 $pluginProperties->setPropertyKey('configparamdescr');
@@ -433,10 +415,7 @@ class PLNImportCommand extends ContainerAwareCommand
                 // record insert ID to group the properties of the given paramenter
                 //pre_print_r($element);
                 foreach ($element as $key => $value) {
-                    /*
-                    $query = $dbh->prepare('INSERT INTO plugin_properties (`plugins_id`, `parent_id`, `property_key`, `property_value`) VALUES (?,?,?,?)');
-                    $query->execute(array($pluginsId, $configparamdescrId, $key, $value));
-                    */
+
                     $pluginProperties->setPluginsId($pluginId);
                     $pluginProperties->setParentId($configparamdescrId);
                     $pluginProperties->setPropertyKey($key);
@@ -446,15 +425,13 @@ class PLNImportCommand extends ContainerAwareCommand
                     $em->flush();
 
                 }
-
             }
-
           } else {
             // Plugin XML may not indicate configuration parameters.
             // Log these?            
             //return "Plugin $pluginName may not have any configuration parameters.  Please investigate."
           }
-
+            
           return "$pluginName has been added to the database.";
       } else {
           return "The $pluginName has previously been added.";
