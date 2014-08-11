@@ -287,95 +287,19 @@ class PLNImportCommand extends ContainerAwareCommand
 
           $em->persist($pluginProperties);
           $em->flush();
-
           //return "Addded entry into plugin_properties table for $pluginName with id $pluginId";
-
           //echo "<br>The plugin name $plugin_name has been added to the plugin properties table.";
+
+          //plugin_version parent_id null
           $pluginVersionResult = $this->findAndAddPluginProperty($pluginId, $xml, 'plugin_version');
-          
-          return $pluginVersionResult;
-          // plugin_version  parent_id null
-          $pluginVersionEntryElement = $this -> get_plugin_entry_element_by_string_name($xml, 'plugin_version');
-          /*
-          if (is_object($pluginVersionEntryElement)) {
-            $pluginVersionStringChildrenObj = $pluginVersionEntryElement->string;
-          } else {
-            return "PluginVersionEntryElement for $pluginName is of type " . (string) gettype($pluginVersionEntryElement) . " the value is $pluginVersionEntryElement";
-          }
-          */
-          //return is_object($pluginVersionEntryElement);
-          if (is_object($pluginVersionEntryElement)) {
-              $pluginVersionStringChildrenObj = $pluginVersionEntryElement->string;
-              foreach ($pluginVersionStringChildrenObj as $key => $value) {
-                  if ($value != 'plugin_version') {
-                      $pluginVersionNum = $value;
-                  }
-              }
-              $pluginProperties = new PluginProperties();
-              $pluginProperties->setPluginsId($pluginId);
-              $pluginProperties->setPropertyKey('plugin_version');
-              $pluginProperties->setPropertyValue($pluginVersionNum);
-
-              $em->persist($pluginProperties);
-              $em->flush();
-
-              //return "You are importing version $pluginVersionNum of the $pluginName plugin.";
-          } else {
-              // Plugin XML may not inidcate plugin_version
-              // Log these?
-              //exit("There was an issue with the number of string child elements of the plugin version entry. Exiting.");
-          }
-          //return "Plugin version information was available for plugin $pluginId";
 
           // plugin_identifier parent_id null
-          $pluginIdentifierEntryElement = $this->get_plugin_entry_element_by_string_name($xml, 'plugin_identifier');
-          if (is_object($pluginIdentifierEntryElement)) {
-              $pluginIdentifierStringChildrenObj = $pluginIdentifierEntryElement->string;
-              foreach ($pluginIdentifierStringChildrenObj as $key => $value) {
-                  if ($value != 'identifier') {
-                      $pluginIdentifier = $value;
-                  }
-              }
-              $pluginProperties = new PluginProperties();
-              $pluginProperties->setPluginsId($pluginId);
-              $pluginProperties->setPropertyKey('plugin_identifier');
-              $pluginProperties->setPropertyValue($pluginIdentifier);
-
-              $em->persist($pluginProperties);
-              $em->flush();
-
-              //return "The plugin identifier $pluginIdentifier was added to the database.";
-          } else {
-              // Plugin XML may not indicate plugin_identifier
-              // log these?
-              //exit("There was an issue with the number of string child elements of the plugin identifier entry. Exiting.");
-          }
-
-          return "Plugin identifier information was available for plugin $pluginId";
+          $pluginIdentifierResult = $this->findAndAddPluginProperty($pluginId, $xml, 'plugin_identifier');
 
           // au_name [needed for aus_id?] parent_id null
-          $auNameEntryElement = $this->get_plugin_entry_element_by_string_name($xml, 'au_name');
-          if (is_object($auNameEntryElement) ) {
-              $auNameStringChildrenObj = $auNameEntryElement->string;
-              foreach ($auNameStringChildrenObj as $key => $value) {
-                  if ($value != 'identifier') {
-                      $auName = $value;
-                  }
-              }
-
-              $pluginProperties->setPluginsId($pluginId);
-              $pluginProperties->setPropertyKey('au_name');
-              $pluginProperties->setPropertyValue($auName);
-
-              $em->persist($pluginProperties);
-              $em->flush();
-
-              //return "The au name $auName for plugin $pluginId was added to the database.";
-          } else {
-              // Plugin XML may not indicate au_name
-              // Log these?              
-              //exit("There was an issue with the number of string child elements of the au_name entry. Exiting.");
-          }
+          $pluginIdentifierResult = $this->findAndAddPluginProperty($pluginId, $xml, 'au_name');
+          
+          //return $pluginIdentifierResult;
 
           // plugin_config_props
           // plugin_config_props will be key of parent (no value)
@@ -466,7 +390,7 @@ class PLNImportCommand extends ContainerAwareCommand
         $entityManager->persist($pluginProperties);
         $entityManager->flush();
 
-        $msg = "The property $propertyString with value $pluginPropertyValue for";
+        $msg = "The property $propertyString with value $pluginPropertyValue for ";
         $msg .= "plugin $pluginId was added to the database.";
 
       } else {
