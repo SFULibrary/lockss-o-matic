@@ -259,6 +259,7 @@ class PLNImportCommand extends ContainerAwareCommand
 
       //$pluginName = "Simon Fraser University Library Editorial Cartoons Collection Plugin";
       $pluginName = $this->get_plugin_name($xml);
+
       /*
       if ($this->plugin_exists_by_name($pluginName) == false) {
         return "$pluginName has yet to be imported.";
@@ -268,26 +269,38 @@ class PLNImportCommand extends ContainerAwareCommand
       */
 
       if ($this-> plugin_exists_by_name($pluginName) == false) {
+          /*
+          $echoSQLLogger = $this->getContainer()->get('doctrine')
+              ->getConnection()
+              ->getConfiguration()
+              ->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+          */    
           //echo 'Unknown plugin detected.  The plugin will now be added to the database.';
+
           // New lockss plugin - insert into plugin table
           $plugins = new Plugins();
           $plugins->setName($pluginName);
           $em->persist($plugins);
           $em->flush();
           $pluginId = $plugins->getId();
+          
+          //echo $echoSQLLogger;
 
           // Grab the pertinent details of the plugin 
           // insert into the plugin_properties table
 
           // plugin_name parent_id null
           $pluginProperties = new PluginProperties();
-          $pluginProperties->setPluginsId($pluginId);
+          $plugin = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plugins')->find($pluginId);
           $pluginProperties->setPropertyKey('plugin_name');
           $pluginProperties->setPropertyValue($pluginName);
-
+          $plugin->addPluginProperty($pluginProperties);
+          $pluginProperties->setPlugin($plugin);
           $em->persist($pluginProperties);
+          $em->persist($plugin);
           $em->flush();
           //return "Addded entry into plugin_properties table for $pluginName with id $pluginId";
+
           //echo "<br>The plugin name $plugin_name has been added to the plugin properties table.";
 
           //plugin_version parent_id null
@@ -299,12 +312,9 @@ class PLNImportCommand extends ContainerAwareCommand
           // au_name [needed for aus_id?] parent_id null
           $pluginIdentifierResult = $this->findAndAddPluginProperty($pluginId, $xml, 'au_name');
           
-          //return $pluginIdentifierResult;
-
           // plugin_config_props
           // plugin_config_props will be key of parent (no value)
           // children will the be the ConfigParamDescr track parent id
-
           $pluginParameters = $this->get_plugin_entry_element_by_string_name($xml, 'plugin_config_props');
 
           if (is_object($pluginParameters)) {
@@ -312,11 +322,13 @@ class PLNImportCommand extends ContainerAwareCommand
             $pluginParameters = $pluginParameters->list->{'org.lockss.daemon.ConfigParamDescr'};
 
             // Add a row with key plugin_config_props  and null value record insert_id as parent 
-
-            $pluginProperties->setPluginsId($pluginId);
+            $pluginProperties = new PluginProperties();
+            $plugin = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plugins')->find($pluginId);
             $pluginProperties->setPropertyKey('plugin_config_props');
-
+            $plugin->addPluginProperty($pluginProperties);
+            $pluginProperties->setPlugin($plugin);
             $em->persist($pluginProperties);
+            $em->persist($plugin);
             $em->flush();
 
             //$pluginConfigPropsRowId = $dbh->lastInsertId();
@@ -327,25 +339,30 @@ class PLNImportCommand extends ContainerAwareCommand
             foreach ($pluginParameters as $element) {
 
                 // for each list item, add a row as a child or parent with key of configparamdescr and value null record
-                $pluginProperties->setPluginsId($pluginId);
+                $pluginProperties = new PluginProperties();
+                $plugin = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plugins')->find($pluginId);
                 $pluginProperties->setParentId($pluginConfigPropsRowId);
                 $pluginProperties->setPropertyKey('configparamdescr');
-
+                $plugin->addPluginProperty($pluginProperties);
+                $pluginProperties->setPlugin($plugin);
                 $em->persist($pluginProperties);
+                $em->persist($plugin);
                 $em->flush();
 
                 //$configparamdescrId = $dbh->lastInsertId();
                 $configparamdescrId = $pluginProperties->getId();
                 // record insert ID to group the properties of the given paramenter
-                //pre_print_r($element);
                 foreach ($element as $key => $value) {
 
-                    $pluginProperties->setPluginsId($pluginId);
+                    $pluginProperties = new PluginProperties();
+                    $plugin = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plugins')->find($pluginId);
                     $pluginProperties->setParentId($configparamdescrId);
                     $pluginProperties->setPropertyKey($key);
                     $pluginProperties->setPropertyValue($value);
-
+                    $plugin->addPluginProperty($pluginProperties);
+                    $pluginProperties->setPlugin($plugin);
                     $em->persist($pluginProperties);
+                    $em->persist($plugin);
                     $em->flush();
 
                 }
@@ -382,12 +399,15 @@ class PLNImportCommand extends ContainerAwareCommand
                 $pluginPropertyValue = $value;
             }
         }
+
         $pluginProperties = new PluginProperties();
-        $pluginProperties->setPluginsId($pluginId);
+        $plugin = $entityManager->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plugins')->find($pluginId);
         $pluginProperties->setPropertyKey($propertyString);
         $pluginProperties->setPropertyValue($pluginPropertyValue);
-
+        $plugin->addPluginProperty($pluginProperties);
+        $pluginProperties->setPlugin($plugin);
         $entityManager->persist($pluginProperties);
+        $entityManager->persist($plugin);
         $entityManager->flush();
 
         $msg = "The property $propertyString with value $pluginPropertyValue for ";
