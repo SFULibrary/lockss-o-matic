@@ -16,7 +16,7 @@ class ContentOwners
 	/**
 	 * Property required for one-to-many relationship with ContentProviders.
 	 * 
-	 * @OneToMany(targetEntity="ContentProviders", mappedBy="ContentOwner")
+	 * @ORM\OneToMany(targetEntity="ContentProviders", mappedBy="ContentOwner")
 	 */
 	protected $contentProviders;
 	

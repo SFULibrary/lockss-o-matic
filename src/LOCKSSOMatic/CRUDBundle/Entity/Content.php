@@ -15,16 +15,16 @@ class Content
 	/**
 	* Property required for many-to-one relationship with Deposits.
 	* 
-	* @ManyToOne(targetEntity="Deposits", mappedBy="content")
-	* @JoinColumn(name="deposits_id", referencedColumnName="id")
+	* @ORM\ManyToOne(targetEntity="Deposits", mappedBy="content")
+	* @ORM\JoinColumn((name="deposits_id", referencedColumnName="id")
 	*/
 	protected $deposit;
 
 	/**
 	* Property required for many-to-one relationship with Deposits.
 	* 
-	* @ManyToOne(targetEntity="Aus", mappedBy="content")
-	* @JoinColumn(name="aus_id", referencedColumnName="id")
+	* @ORM\ManyToOne(targetEntity="Aus", mappedBy="content")
+	* @ORM\JoinColumn((name="aus_id", referencedColumnName="id")
 	*/
 	protected $au;
 

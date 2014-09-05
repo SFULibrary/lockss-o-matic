@@ -16,7 +16,7 @@ class Boxes
 	/**
 	 * Property required for one-to-many relationship with BoxStatus.
 	 * 
-	 * @OneToMany(targetEntity="BoxStatus", mappedBy="boxStatus")
+	 * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="boxStatus")
 	 */
 	protected $boxStatus;
 	
@@ -31,8 +31,8 @@ class Boxes
 	/**
 	* Property required for many-to-one relationship with Plns.
 	* 
-	* @ManyToOne(targetEntity="Plns", mappedBy="boxes")
-	* @JoinColumn(name="plns_id", referencedColumnName="id")
+	* @ORM\ManyToOne(targetEntity="Plns", inversedBy="boxes")
+	* @ORM\JoinColumn(name="plns_id", referencedColumnName="id")
 	*/
 	protected $pln;
 

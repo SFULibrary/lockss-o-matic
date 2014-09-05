@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * PluginProperties
  *
- * @ORM\Table(name="plugin_properties", @ORM\Index(name="plugins_id_idx", columns={"plugins_id"})})
+ * @ORM\Table(name="plugin_properties", @ORM\Index(name="plugins_id_idx", columns={"plugins_id"}))
  * @ORM\Entity
  */
 class PluginProperties
@@ -15,8 +15,8 @@ class PluginProperties
     /**
     * Property required for many-to-one relationship with Plugins.
     * 
-    * @ManyToOne(targetEntity="Plugins", mappedBy="pluginProperties")
-    * @JoinColumn(name="plugins_id", referencedColumnName="id")
+    * @ORM\ManyToOne(targetEntity="Plugins", inversedBy="pluginProperties")
+    * @ORM\JoinColumn(name="plugins_id", referencedColumnName="id")
     */
     protected $plugin;
 

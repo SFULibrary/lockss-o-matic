@@ -16,35 +16,35 @@ class Plns
 	/**
 	 * Property required for one-to-many relationship with Aus.
 	 * 
-	 * @OneToMany(targetEntity="Aus", mappedBy="aus")
+	 * @ORM\OneToMany(targetEntity="Aus", mappedBy="aus")
 	 */
 	protected $aus;
 
 	/**
 	 * Property required for one-to-many relationship with PlnProperties.
 	 * 
-	 * @OneToMany(targetEntity="PlnProperties", mappedBy="plnProperties")
+	 * @ORM\OneToMany(targetEntity="PlnProperties", mappedBy="plnProperties")
 	 */
 	protected $plnProperties;
 
 	/**
 	 * Property required for one-to-many relationship with ExternalTitleDbs.
 	 * 
-	 * @OneToMany(targetEntity="ExternalTitleDbs", mappedBy="externalTitleDbs")
+	 * @ORM\OneToMany(targetEntity="ExternalTitleDbs", mappedBy="externalTitleDbs")
 	 */
 	protected $externalTitleDbs;
 
 	/**
 	 * Property required for one-to-many relationship with Boxes.
 	 * 
-	 * @OneToMany(targetEntity="Boxes", mappedBy="boxes")
+	 * @ORM\OneToMany(targetEntity="Boxes", mappedBy="boxes")
 	 */
 	protected $boxes;
 
 	/**
 	 * Property required for one-to-many relationship with ContentProviders.
 	 * 
-	 * @OneToMany(targetEntity="ContentProviders", mappedBy="contentProviders")
+	 * @ORM\OneToMany(targetEntity="ContentProviders", mappedBy="contentProviders")
 	 */
 	protected $contentProviders;
 
