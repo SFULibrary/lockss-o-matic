@@ -1,3 +1,5 @@
+/web/bundles/
+/app/bootstrap.php.cache
 /vendor/
 /app/cache/*
 !app/cache/.gitkeep
@@ -5,4 +7,7 @@
 !app/logs/.gitkeep
 /app/config/parameters.yml
 /app/config/LOMSettings.yml
+/build/
+/bin/
+/composer.phar
 *.php~

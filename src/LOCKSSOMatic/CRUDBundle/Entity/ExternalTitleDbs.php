@@ -15,8 +15,8 @@ class ExternalTitleDbs
 	/**
 	* Property required for many-to-one relationship with Plns.
 	* 
-	* @ManyToOne(targetEntity="Plns", mappedBy="externalTitleDbs")
-	* @JoinColumn(name="plns_id", referencedColumnName="id")
+	* @ORM\ManyToOne(targetEntity="Plns", mappedBy="externalTitleDbs")
+	* @ORM\JoinColumn((name="plns_id", referencedColumnName="id")
 	*/
 	protected $pln;
 

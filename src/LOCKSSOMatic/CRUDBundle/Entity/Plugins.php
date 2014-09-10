@@ -16,14 +16,14 @@ class Plugins
     /**
      * Property required for one-to-many relationship with PluginProperties.
      * 
-     * @OneToMany(targetEntity="PluginProperties", mappedBy="pluginProperties")
+     * @ORM\OneToMany(targetEntity="PluginProperties", mappedBy="pluginProperties")
      */
     protected $pluginProperties;
     
     /**
      * Property required for one-to-many relationship with Aus.
      * 
-     * @OneToMany(targetEntity="Aus", mappedBy="aus")
+     * @ORM\OneToMany(targetEntity="Aus", mappedBy="aus")
      */
     protected $aus;    
 

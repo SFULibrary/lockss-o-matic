@@ -16,21 +16,21 @@ class Aus
     /**
      * Property required for one-to-many relationship with Content.
      * 
-     * @OneToMany(targetEntity="Content", mappedBy="content")
+     * @ORM\OneToMany(targetEntity="Content", mappedBy="content")
      */
     protected $content;
 
     /**
      * Property required for one-to-many relationship with AuStatus.
      * 
-     * @OneToMany(targetEntity="AuStatus", mappedBy="auStatus")
+     * @ORM\OneToMany(targetEntity="AuStatus", mappedBy="auStatus")
      */
     protected $auStatus;
 
     /**
      * Property required for one-to-many relationship with AuProperties.
      * 
-     * @OneToMany(targetEntity="AuProperties", mappedBy="auProperties")
+     * @ORM\OneToMany(targetEntity="AuProperties", mappedBy="auProperties")
      */
     protected $auProperties;
 
@@ -48,16 +48,16 @@ class Aus
     /**
     * Property required for many-to-one relationship with Plns.
     * 
-    * @ManyToOne(targetEntity="Plns", mappedBy="aus")
-    * @JoinColumn(name="plns_id", referencedColumnName="id")
+    * @ORM\ManyToOne(targetEntity="Plns", inversedBy="aus")
+    * @ORM\JoinColumn(name="plns_id", referencedColumnName="id")
     */
     protected $pln;
     
     /**
     * Property required for many-to-one relationship with Plugins.
     * 
-    * @ManyToOne(targetEntity="Plugins", mappedBy="aus")
-    * @JoinColumn(name="plugins_id", referencedColumnName="id")
+    * @ORM\ManyToOne(targetEntity="Plugins", inversedBy="aus")
+    * @ORM\JoinColumn(name="plugins_id", referencedColumnName="id")
     */
     protected $plugin;    
 

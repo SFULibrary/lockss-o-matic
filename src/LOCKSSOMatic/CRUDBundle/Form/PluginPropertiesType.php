@@ -16,7 +16,6 @@ class PluginPropertiesType extends AbstractType
     {
         $builder
             ->add('pluginsId')
-            ->add('ausId')
             ->add('parentId')
             ->add('propertyKey')
             ->add('propertyValue')

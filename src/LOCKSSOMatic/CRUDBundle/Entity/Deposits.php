@@ -16,15 +16,15 @@ class Deposits
 	/**
 	* Collection property required for many-to-one relationship with ContentProviders.
 	* 
-	* @ManyToOne(targetEntity="ContentProviders", mappedBy="deposit")
-	* @JoinColumn(name="content_providers_id", referencedColumnName="id")
+	* @ORM\ManyToOne(targetEntity="ContentProviders", mappedBy="deposit")
+	* @ORM\JoinColumn((name="content_providers_id", referencedColumnName="id")
 	*/
 	protected $contentProvider;
 
 	/**
 	 * Property required for one-to-many relationship with Content.
 	 * 
-	 * @OneToMany(targetEntity="Content", mappedBy="content")
+	 * @ORM\OneToMany(targetEntity="Content", mappedBy="content")
 	 */
 	protected $content;
 	

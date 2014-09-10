@@ -16,15 +16,15 @@ class ContentProviders
     /**
     * Collection property required for many-to-one relationship with ContentOwners.
     * 
-    * @ManyToOne(targetEntity="ContentOwners", mappedBy="contentProvider")
-    * @JoinColumn(name="content_owners_id", referencedColumnName="id")
+    * @ORM\ManyToOne(targetEntity="ContentOwners", inversedBy="contentProvider")
+    * @ORM\JoinColumn(name="content_owners_id", referencedColumnName="id")
     */
     protected $contentOwner;
 
     /**
      * Property required for one-to-many relationship with Deposits.
      * 
-     * @OneToMany(targetEntity="Deposits", mappedBy="ContentProvider")
+     * @ORM\OneToMany(targetEntity="Deposits", mappedBy="ContentProvider")
      */
     protected $deposits;
     
