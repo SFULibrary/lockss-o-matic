@@ -80,9 +80,11 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $pluginPropertyElement = $au->xpath($xpathRule)[0];
         $pluginIdentifier = $pluginPropertyElement->attributes()->value;
 
-        return $pluginIdentifier;
+        //return $pluginIdentifier;
 
-        $pluginsId = $this->getPluginsId();
+        $pluginsId = $this->getPluginsId($pluginIdentifier);
+        
+        return $pluginsId;
         //pre_print_r($plugins_id);
         //exit();
 
@@ -224,14 +226,23 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
 
     }
 
-    protected function getPluginsId(/*PDO $dbh, $plugin_identifier*/){
-   
-       // AUs only record the plugin_identifier
-       //$query = $dbh->prepare('SELECT plugins_id FROM `plugin_properties` WHERE property_value = ? LIMIT 1;');
-       //$query->execute(array($plugin_identifier));
-       //$result = $query->fetch();
-    
-       return false;
+    protected function getPluginsId($pluginIdentifier)
+    {
+
+        // AUs only record the plugin_identifier
+
+        // Instantiate an entity manager.
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        //$repository = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\PluginProperties')->findOneBy(array('property_value' => $pluginIdentifier));
+        $result = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\PluginProperties')
+                    ->findOneByPropertyValue($pluginIdentifier);
+        
+        $em->flush(); 
+        $em->clear();
+        $em = null; // memory issue fix?
+
+        return $result->getPluginsId();
     }
 
 } // end of class
