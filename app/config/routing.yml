@@ -18,6 +18,9 @@ locksso_matic_pln_importer:
     resource: "@LOCKSSOMaticPLNImporterBundle/Resources/config/routing.yml"
     prefix:   /
 
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
 locksso_matic_user:
-    resource: "@LOCKSSOMATicUserBUndle/Resources/config/routing.yml"
+    resource: "@LOCKSSOMaticUserBundle/Resources/config/routing.yml"
     prefix: /
