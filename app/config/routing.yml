@@ -17,3 +17,7 @@ locksso_matic_sword:
 locksso_matic_pln_importer:
     resource: "@LOCKSSOMaticPLNImporterBundle/Resources/config/routing.yml"
     prefix:   /
+
+locksso_matic_user:
+    resource: "@LOCKSSOMATicUserBUndle/Resources/config/routing.yml"
+    prefix: /

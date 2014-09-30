@@ -5,6 +5,18 @@ imports:
     - { resource: "@LOCKSSOMaticPLNMonitorBundle/Resources/config/services.yml" }
     - { resource: "@LOCKSSOMaticCoreBundle/Resources/config/services.yml" }
 
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: LOCKSSOMatic\UserBundle\Entity\User
+
+    profile:
+        form:
+            type: lom_user_profile
+
+parameters:
+    security.acl.permission.map.class: LOCKSSOMatic\UserBundle\Security\Acl\Permission\PermissionMap
+
 framework:
     #esi:             ~
     #translator:      { fallback: "%locale%" }
@@ -31,7 +43,7 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
-
+        
 # Assetic Configuration
 assetic:
     debug:          "%kernel.debug%"
