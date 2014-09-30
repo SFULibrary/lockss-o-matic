@@ -33,7 +33,7 @@ be used to create the user and ACL tables in the database.
 There are sample users which can be added to the database:
 
 ```
-    php app/console doctrine:fixtures:load --append --fixtures=src/LOCKSSOMatic/UserBundle/Fixtures/ORM
+    php app/console doctrine:fixtures:load --append --fixtures=src/LOCKSSOMatic/UserBundle/DataFixtures/ORM
 ```
 
 This will not install any ACL data, as it would require fore-knowledge of the entities
