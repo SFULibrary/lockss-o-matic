@@ -50,7 +50,7 @@ abstract class LOMWebTestCase extends WebTestCase {
         $this->client = static::createClient();
         $this->client->restart();
         if($this->logger === null) {
-            $this->logger = $this->client->getContainer()->get('monolog.logger.devel');
+            $this->logger = $this->client->getContainer()->get('logger');
         }
     }
 
