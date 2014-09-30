@@ -23,7 +23,10 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "braincrafted/bootstrap-bundle": "~2.0",
         "twbs/bootstrap": "3.0.*",
-        "jquery/jquery": "1.11.*"
+        "jquery/jquery": "1.11.*",
+        "ircmaxell/password-compat": "~1.0",
+        "friendsofsymfony/user-bundle": "~2.0@dev",
+        "problematic/acl-manager-bundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [
