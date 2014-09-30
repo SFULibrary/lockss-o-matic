@@ -80,7 +80,7 @@ class AccessTest extends FixturesTestCase
     public function testHasAccess()
     {
         $em = $this->get('doctrine')->getManager();
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(2);
+        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.admin@example.com'));
         self::$container->get('security.context')->setToken(
             new UsernamePasswordToken($user, null, 'main', $user->getRoles())
         );
@@ -91,7 +91,7 @@ class AccessTest extends FixturesTestCase
         $this->assertTrue($am->hasAccess('ROLE_LOMADMIN'));
         $this->assertTrue($am->hasAccess('ROLE_USER'));
         
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(3);
+        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.monitor@example.com'));
         self::$container->get('security.context')->setToken(
             new UsernamePasswordToken($user, null, 'main', $user->getRoles())
         );
@@ -104,25 +104,21 @@ class AccessTest extends FixturesTestCase
     public function testHasAccessWithUser()
     {
         $em = $this->get('doctrine')->getManager();
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(2);
+        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.admin@example.com'));
+        $em->refresh($user);
 
         $am = $this->get('lom.access');
         
         $this->assertFalse($am->hasAccess('ROLE_ADMIN', null, $user));
         $this->assertTrue($am->hasAccess('ROLE_LOMADMIN', null, $user));
         $this->assertTrue($am->hasAccess('ROLE_USER', null, $user));
-
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(3);
-
-        $this->assertFalse($am->hasAccess('PLNADMIN', null, $user));
-        $this->assertFalse($am->hasAccess('MONITOR', null, $user));
-        $this->assertTrue($am->hasAccess('DEPOSIT', null, $user));
     }
     
     public function testGrantRevokeRole()
     {
         $em = $this->get('doctrine')->getManager();
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(2);
+        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.admin@example.com'));
+        $em->refresh($user);
 
         $am = $this->get('lom.access');
         
