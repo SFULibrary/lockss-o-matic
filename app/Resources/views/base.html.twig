@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% block stylesheets %}{% endblock %}
+        <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet" media="screen">
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <div class="container">
+            {% block body %}{% endblock %}
+        </div>
         {% block javascripts %}{% endblock %}
-    </body>
+        <!-- jQuery (necessary for Bootstraps JavaScript plugins) -->
+        <script src="{{ asset('js/jquery.js') }}"></script>
+        <!-- Include all JavaScripts, compiled by Assetic -->
+        <script src="{{ asset('js/bootstrap.js') }}"></script>
+</body>
 </html>
