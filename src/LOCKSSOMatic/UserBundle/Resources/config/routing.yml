@@ -1,0 +1,4 @@
+lom_user_admin_user:
+    resource: "@LOCKSSOMaticUserBundle/Resources/config/routing/adminUser.yml"
+    prefix:   /admin/user
+
