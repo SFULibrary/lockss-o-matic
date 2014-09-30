@@ -18,3 +18,32 @@ LOCKSS-O-Matic is being developed primarily at [Simon Fraser University Library]
 If you would like to participate in testing or development, please contact mjordan - sfu.ca.
 
 
+UserBundle
+==========
+
+The user bundle has several external dependencies:
+
+ * FOSUserBundle: https://github.com/FriendsOfSymfony/FOSUserBundle
+ * ProblematicAclBundle: https://github.com/Problematic/ProblematicAclManagerBundle
+
+Both of these are installed via `composer update` and shouldn't require any
+configuration after the update. Once they are installed, `php app/console doctrine:schema:update --force` can
+be used to create the user and ACL tables in the database.
+
+There are sample users which can be added to the database:
+
+```
+    php app/console doctrine:fixtures:load --append --fixtures=src/LOCKSSOMatic/UserBundle/Fixtures/ORM
+```
+
+This will not install any ACL data, as it would require fore-knowledge of the entities
+in the database. Note the use of `--append` to prevent any data loss. After installing
+the sample users, visit /login to login as admin@example.com with password supersecret.
+
+The UserBundle also comes with some tests for use with PHPUnit.
+
+```
+phpunit -c app src/LOCKSSOMatic/UserBundle/Tests
+```
+
+will run them.

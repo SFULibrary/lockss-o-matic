@@ -77,50 +77,9 @@ class AccessTest extends FixturesTestCase
         $am->checkAccess('ROLE_ADMIN');
     }
 
-    /**
-     * @expectedException Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
-    public function testPermissionCheckFail()
-    {
-        // testing ACLs requires actual users from the database.
-        $em = $this->get('doctrine')->getManager();
-        $pln = $em->getRepository('LOMCrudBundle:Pln')->find(1);
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(11);
-
-        // Fake a proper login. That's OK, so long as the user exists.
-        self::$container->get('security.context')->setToken(
-            new UsernamePasswordToken($user, null, 'main', $user->getRoles())
-        );
-        $am = $this->get('lom.access');
-        $am->checkAccess('PLNADMIN', $pln);
-    }
-
-    public function testPermissionCheckSuccess()
-    {
-        $em = $this->get('doctrine')->getManager();
-        $pln = $em->getRepository('LOMCrudBundle:Pln')->find(1);
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(2);
-        self::$container->get('security.context')->setToken(
-            new UsernamePasswordToken($user, null, 'main', $user->getRoles())
-        );
-        $am = $this->get('lom.access');
-        $am->checkAccess('PLNADMIN', $pln);
-        $am->checkAccess('MONITOR', $pln);
-        $am->checkAccess('DEPOSIT', $pln);
-
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(3);
-        self::$container->get('security.context')->setToken(
-            new UsernamePasswordToken($user, null, 'main', $user->getRoles())
-        );
-        $am->checkAccess('MONITOR', $pln);
-        $am->checkAccess('DEPOSIT', $pln);
-        $this->assertTrue(true); // if we made it this far, the test passes.
-    }
-
     public function testHasAccess()
     {
         $em = $this->get('doctrine')->getManager();
-        $pln = $em->getRepository('LOMCrudBundle:Pln')->find(1);
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(2);
         self::$container->get('security.context')->setToken(
             new UsernamePasswordToken($user, null, 'main', $user->getRoles())
@@ -132,11 +91,6 @@ class AccessTest extends FixturesTestCase
         $this->assertTrue($am->hasAccess('ROLE_LOMADMIN'));
         $this->assertTrue($am->hasAccess('ROLE_USER'));
         
-        // permissions
-        $this->assertTrue($am->hasAccess('PLNADMIN', $pln));
-        $this->assertFalse($am->hasAccess('MONITOR', $pln));
-        $this->assertFalse($am->hasAccess('DEPOSIT', $pln));
-
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(3);
         self::$container->get('security.context')->setToken(
             new UsernamePasswordToken($user, null, 'main', $user->getRoles())
@@ -145,16 +99,11 @@ class AccessTest extends FixturesTestCase
         $this->assertFalse($am->hasAccess('ROLE_ADMIN'));
         $this->assertFalse($am->hasAccess('ROLE_LOMADMIN'));
         $this->assertTrue($am->hasAccess('ROLE_USER'));
-
-        $this->assertFalse($am->hasAccess('PLNADMIN', $pln));
-        $this->assertFalse($am->hasAccess('MONITOR', $pln));
-        $this->assertTrue($am->hasAccess('DEPOSIT', $pln));
     }
 
     public function testHasAccessWithUser()
     {
         $em = $this->get('doctrine')->getManager();
-        $pln = $em->getRepository('LOMCrudBundle:Pln')->find(1);
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(2);
 
         $am = $this->get('lom.access');
@@ -163,19 +112,11 @@ class AccessTest extends FixturesTestCase
         $this->assertTrue($am->hasAccess('ROLE_LOMADMIN', null, $user));
         $this->assertTrue($am->hasAccess('ROLE_USER', null, $user));
 
-        $this->assertTrue($am->hasAccess('PLNADMIN', $pln, $user));
-        $this->assertFalse($am->hasAccess('MONITOR', $pln, $user));
-        $this->assertFalse($am->hasAccess('DEPOSIT', $pln, $user));
-
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(3);
 
-        $this->assertFalse($am->hasAccess('ROLE_ADMIN', null, $user));
-        $this->assertFalse($am->hasAccess('ROLE_LOMADMIN', null, $user));
-        $this->assertTrue($am->hasAccess('ROLE_USER', null, $user));
-
-        $this->assertFalse($am->hasAccess('PLNADMIN', $pln, $user));
-        $this->assertFalse($am->hasAccess('MONITOR', $pln, $user));
-        $this->assertTrue($am->hasAccess('DEPOSIT', $pln, $user));
+        $this->assertFalse($am->hasAccess('PLNADMIN', null, $user));
+        $this->assertFalse($am->hasAccess('MONITOR', null, $user));
+        $this->assertTrue($am->hasAccess('DEPOSIT', null, $user));
     }
     
     public function testGrantRevokeRole()
@@ -193,66 +134,5 @@ class AccessTest extends FixturesTestCase
         $am->grantRole('ROLE_LOMADMIN', $user);
         $this->assertTrue($user->hasRole('ROLE_LOMADMIN'));
         $em->flush();
-    }
-
-    public function testGrantRevokeSetAccess()
-    {
-        $em = $this->get('doctrine')->getManager();
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(2);
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(2);
-        self::$container->get('security.context')->setToken(
-            new UsernamePasswordToken($user, null, 'main', $user->getRoles())
-        );
-        $pln = $em->getRepository('LOMCrudBundle:Pln')->find(1);
-
-        $am = $this->get('lom.access');
-        
-        $this->assertTrue($am->hasAccess('PLNADMIN', $pln));
-        $this->assertFalse($am->hasAccess('DEPOSIT', $pln));
-        $this->assertFalse($am->hasAccess('MONITOR', $pln));
-
-        $am->grantAccess('DEPOSIT', $pln);
-        $this->assertTrue($am->hasAccess('PLNADMIN', $pln));
-        $this->assertTrue($am->hasAccess('DEPOSIT', $pln));
-        $this->assertFalse($am->hasAccess('MONITOR', $pln));
-        
-        $am->revokeAccess($pln);
-        $this->assertFalse($am->hasAccess('PLNADMIN', $pln));
-        $this->assertFalse($am->hasAccess('DEPOSIT', $pln));
-        $this->assertFalse($am->hasAccess('MONITOR', $pln));
-
-        $am->setAccess('MONITOR', $pln);
-        $this->assertFalse($am->hasAccess('PLNADMIN', $pln));
-        $this->assertFalse($am->hasAccess('DEPOSIT', $pln));
-        $this->assertTrue($am->hasAccess('MONITOR', $pln));
-        
-        $am->setAccess('PLNADMIN', $pln);
-    }
-    
-    public function testGrantRevokeSetAccessUser()
-    {
-        $em = $this->get('doctrine')->getManager();
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find(2);
-        $pln = $em->getRepository('LOMCrudBundle:Pln')->find(1);
-
-        $am = $this->get('lom.access');
-        
-        $this->assertTrue($am->hasAccess('PLNADMIN', $pln, $user));
-        $am->grantAccess('DEPOSIT', $pln, $user);
-        $this->assertTrue($am->hasAccess('PLNADMIN', $pln, $user));
-        $this->assertTrue($am->hasAccess('DEPOSIT', $pln, $user));
-        $this->assertFalse($am->hasAccess('MONITOR', $pln, $user));
-        
-        $am->revokeAccess($pln, $user);
-        $this->assertFalse($am->hasAccess('PLNADMIN', $pln, $user));
-        $this->assertFalse($am->hasAccess('DEPOSIT', $pln, $user));
-        $this->assertFalse($am->hasAccess('MONITOR', $pln, $user));
-
-        $am->setAccess('MONITOR', $pln, $user);
-        $this->assertFalse($am->hasAccess('PLNADMIN', $pln, $user));
-        $this->assertFalse($am->hasAccess('DEPOSIT', $pln, $user));
-        $this->assertTrue($am->hasAccess('MONITOR', $pln, $user));
-        
-        $am->setAccess('PLNADMIN', $pln, $user);
     }
 }

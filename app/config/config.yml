@@ -4,6 +4,7 @@ imports:
     - { resource: LOMSettings.yml }
     - { resource: "@LOCKSSOMaticPLNMonitorBundle/Resources/config/services.yml" }
     - { resource: "@LOCKSSOMaticCoreBundle/Resources/config/services.yml" }
+    - { resource: "@LOCKSSOMaticUserBundle/Resources/config/services.yml" }
 
 fos_user:
     db_driver: orm
@@ -43,6 +44,8 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    globals:
+        lom_access: "@lom.access"
         
 # Assetic Configuration
 assetic:
