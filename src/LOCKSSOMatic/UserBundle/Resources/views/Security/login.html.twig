@@ -4,7 +4,10 @@
 
 {% block fos_user_content %}
 {% if error %}
-<div>{{ error|trans }}</div>
+<div class="alert alert-danger alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    {{ error.message|trans }}
+</div>
 {% endif %}
 
 <form action="{{ path("fos_user_security_check") }}" method="post" class="form-horizontal" role="form">
