@@ -10,10 +10,6 @@
                 <td>{{ entity.id }}</td>
             </tr>
             <tr>
-                <th>Contentprovidersid</th>
-                <td>{{ entity.contentProvidersId }}</td>
-            </tr>
-            <tr>
                 <th>Depositsid</th>
                 <td>{{ entity.depositsId }}</td>
             </tr>
@@ -34,8 +30,8 @@
                 <td>{{ entity.size }}</td>
             </tr>
             <tr>
-                <th>Dateaddedtoau</th>
-                <td>{{ entity.dateAddedToAu|date('Y-m-d H:i:s') }}</td>
+                <th>Datedeposited</th>
+                <td>{{ entity.dateDeposited|date('Y-m-d H:i:s') }}</td>
             </tr>
             <tr>
                 <th>Checksumtype</th>
@@ -46,8 +42,8 @@
                 <td>{{ entity.checksumValue }}</td>
             </tr>
             <tr>
-                <th>Reharvest</th>
-                <td>{{ entity.reharvest }}</td>
+                <th>Recrawl</th>
+                <td>{{ entity.recrawl }}</td>
             </tr>            
         </tbody>
     </table>
