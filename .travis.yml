@@ -9,5 +9,16 @@ php:
 before_script:
   - cp app/config/LOMSettings.yml.dist app/config/LOMSettings.yml
   - composer install -n
+  - mysql -e 'create database lomtest;'
+  - cp app/config/config_test.yml.travis app/config/config_test.yml
+  - php app/console --env=test doctrine:schema:update --force
+  - php app/console --env=test doctrine:fixtures:load -n
+  - sudo apt-get install apache2
+  - sudo a2enmod actions
+  - sudo a2enmod rewrite
+  - echo "export PATH=/home/vagrant/.phpenv/bin:$PATH" | sudo tee -a /etc/apache2/envvars > /dev/null
+  - echo "$(curl -fsSL https://gist.github.com/roderik/16d751c979fdeb5a14e3/raw/gistfile1.txt)" | sudo tee /etc/apache2/conf.d/phpconfig > /dev/null
+  - echo "$(curl -fsSL https://gist.github.com/roderik/2eb301570ed4a1f4c33d/raw/gistfile1.txt)" | sed -e "s,PATH,`pwd`/web,g" | sudo tee /etc/apache2/sites-available/default > /dev/null
+  - sudo service apache2 restart
 
 script: phpunit -c app
