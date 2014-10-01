@@ -21,9 +21,8 @@ class DefaultController extends Controller
      * 
      * @return string The Service Document.
      */
-    public function serviceDocumentAction()
+    public function serviceDocumentAction(Request $request)
     {
-        $request = Request::createFromGlobals();
         // Get value of 'On-Behalf-Of' HTTP header (or its 'X-' version)
         // and include it as the collection ID in the service document's
         // col-iri parameter.

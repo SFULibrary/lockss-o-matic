@@ -34,10 +34,15 @@ class DefaultControllerTest extends WebTestCase {
         foreach (self::$namespaces as $k => $v) {
             $xml->registerXPathNamespace($k, $v);
         }
-        
+
         $this->assertEquals("2.0", $xml->xpath('/app:service/sword:version/text()')[0]);
         $this->assertGreaterThan(1, $xml->xpath('/app:service/sword:maxUploadSize/text()')[0]);
         $this->assertEquals('md5', $xml->xpath('/app:service/lom:uploadChecksumType/text()')[0]);
+        $href = $xml->xpath('//app:collection/@href')[0];
+        $this->assertStringEndsWith('/api/sword/2.0/col-iri/1', (string)$href);
+        $accept = $xml->xpath('//app:collection/app:accept/text()')[0];
+        $this->assertTrue(strlen($accept) > 0);
+        $this->assertEquals('true', $xml->xpath('//app:collection/sword:mediation/text()')[0]);
     }
 
 }
