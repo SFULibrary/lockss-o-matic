@@ -77,7 +77,7 @@ class DefaultController extends Controller
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return string The Deposit Receipt response.
      */
-    public function createDepositAction($collectionId)
+    public function createDepositAction(Request $request, $collectionId)
     {
         // Check to verify the content provider identified by $collectionId
         // exists. If not, return an appropriate error code.
@@ -87,8 +87,6 @@ class DefaultController extends Controller
             $response->setStatusCode(403);
             return $response;   
         }
-        
-        $request = Request::createFromGlobals();
         
         // Get the request body.
         $createResourceXml = $request->getContent();
