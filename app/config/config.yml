@@ -95,7 +95,7 @@ swiftmailer:
 
 # Monolog Configuration
 monolog:
-    channels: ['lomlogger']
+    channels: ['lomlogger', 'sword']
     handlers:
         lomlog:
             type: stream
@@ -103,4 +103,10 @@ monolog:
             channels: ['lomlogger']
             level: info
             formatter: lom_log_formatter
+        sword:
+            type: stream
+            channels: ['sword']
+            path: "%kernel.logs_dir%/sword.log"
+            level: info
+            
 
