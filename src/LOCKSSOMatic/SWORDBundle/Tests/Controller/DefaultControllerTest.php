@@ -78,7 +78,7 @@ class DefaultControllerTest extends WebTestCase {
             $xml->registerXPathNamespace($k, $v);
         }
         $xml->addChild('title', 'Image taken from page 275 of "The Youth\'s History of the United States, etc"');
-        $xml->addChild('id', $uuid);
+        $xml->addChild('id', 'urn:uuid:' . $uuid);
         $xml->addChild('updated', date('c'));
         $author = $xml->addChild('author');
         $author->addChild('name', 'Ellis, Edward Sylvester');
