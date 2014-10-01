@@ -16,6 +16,7 @@ class DefaultControllerTest extends WebTestCase {
         'app' => "http://www.w3.org/2007/app",
     );
 
+    // MUST CREATE A CONTENT PROVIDER ID FOR THIS TO WORK.
     public function testServiceDocument() {
         $client = static::createClient();
 
@@ -45,4 +46,27 @@ class DefaultControllerTest extends WebTestCase {
         $this->assertEquals('true', $xml->xpath('//app:collection/sword:mediation/text()')[0]);
     }
 
+//    public function testServiceDocumentNoBehalfOf() {
+//        $client = static::createClient();
+//
+//        $crawler = $client->request(
+//                'GET', 
+//                '/api/sword/2.0/sd-iri'
+//        );
+//
+//        $response = $client->getResponse();
+//        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+//
+//        $xml = new \SimpleXMLElement($response->getContent());
+//        foreach (self::$namespaces as $k => $v) {
+//            $xml->registerXPathNamespace($k, $v);
+//        }
+//
+//        $this->assertEquals("2.0", $xml->xpath('/app:service/sword:version/text()')[0]);
+//        $this->assertGreaterThan(1, $xml->xpath('/app:service/sword:maxUploadSize/text()')[0]);
+//        $this->assertEquals('md5', $xml->xpath('/app:service/lom:uploadChecksumType/text()')[0]);
+//    }
+    
+    
+    
 }
