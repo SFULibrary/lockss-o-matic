@@ -5,6 +5,8 @@ namespace LOCKSSOMatic\SWORDBundle\Tests\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
+use J20\Uuid\Uuid;
+
 class DefaultControllerTest extends WebTestCase {
 
     private static $namespaces = array(
@@ -67,6 +69,46 @@ class DefaultControllerTest extends WebTestCase {
 //        $this->assertEquals('md5', $xml->xpath('/app:service/lom:uploadChecksumType/text()')[0]);
 //    }
     
-    
+    //6.3.3. Creating a Resource with an Atom Entry
+    public function testCreateResource() {
+        
+        $xml = new \SimpleXMLElement('<entry xmlns="http://www.w3.org/2005/Atom"/>');
+        $uuid = Uuid::v4();
+        foreach (self::$namespaces as $k => $v) {
+            $xml->registerXPathNamespace($k, $v);
+        }
+        $xml->addChild('title', 'Image taken from page 275 of "The Youth\'s History of the United States, etc"');
+        $xml->addChild('id', $uuid);
+        $xml->addChild('updated', date('c'));
+        $author = $xml->addChild('author');
+        $author->addChild('name', 'Ellis, Edward Sylvester');
+        $summary = $xml->addChild('summary', 'Image taken from page 275 of "The Youth\'s History of the United States, etc"');
+        $summary->addAttribute('type', 'text');
+        
+        $content = $xml->addChild('content', 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 'http://lockssomatic.info/SWORD2');
+        $content->addAttribute('size', '899922');
+        $content->addAttribute('checksumType', 'md5');
+        $content->addAttribute('checksumValue', 'ed5697c06b97f95e1221f857a3c08661');
+
+        $xml->addChild('abstract', 'Image taken from page 275 of "The Youth\'s History of the United States, etc"', 'http://purl.org/dc/terms/');
+        $xml->addChild('title', 'The Youth\'s History of the United States, etc', 'http://purl.org/dc/terms/');
+        $xml->addChild('author', 'Ellis, Edward Sylvester', 'http://purl.org/dc/terms/');
+        $xml->addChild('identifier', '001059471', 'http://purl.org/dc/terms/');
+        $xml->addChild('identifier', 'British Library HMNTS 9605.f.8.', 'http://purl.org/dc/terms/');
+        $xml->addChild('publisher', 'Cassell &amp; Co.', 'http://purl.org/dc/terms/');
+        
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $xml->asXML());
+        $response = $client->getResponse();
+        
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('Location'));
+        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
+        
+        $xml = new \SimpleXMLElement($response->getContent());
+        foreach (self::$namespaces as $k => $v) {
+            $xml->registerXPathNamespace($k, $v);
+        }
+    }
     
 }
