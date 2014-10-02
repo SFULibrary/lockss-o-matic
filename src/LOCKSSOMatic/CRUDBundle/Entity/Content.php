@@ -16,7 +16,7 @@ class Content
 	* Property required for many-to-one relationship with Deposits.
 	* 
 	* @ORM\ManyToOne(targetEntity="Deposits", mappedBy="content")
-	* @ORM\JoinColumn((name="deposits_id", referencedColumnName="id")
+	* @ORM\JoinColumn(name="deposits_id", referencedColumnName="id")
 	*/
 	protected $deposit;
 

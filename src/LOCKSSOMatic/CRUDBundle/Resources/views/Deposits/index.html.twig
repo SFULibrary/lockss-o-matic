@@ -18,7 +18,9 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('deposits_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.contentProvidersId }}</td>
+                <td>{% if entity.contentProvider %}
+                    {{ entity.contentProvider.name }}
+                    {% endif %}</td>
                 <td>{{ entity.uuid }}</td>
                 <td>{{ entity.title }}</td>
                 <td>{% if entity.dateDeposited %}{{ entity.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>

@@ -48,13 +48,6 @@ class ContentProviders
     /**
      * @var integer
      *
-     * @ORM\Column(name="content_owners_id", type="integer", nullable=true)
-     */
-    private $contentOwnersId;
-    
-    /**
-     * @var integer
-     *
      * @ORM\Column(name="pln_id", type="integer", nullable=true)
      */
     private $plnId;
@@ -116,29 +109,6 @@ class ContentProviders
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set contentOwnersId
-     *
-     * @param integer $contentOwnersId
-     * @return ContentProviders
-     */
-    public function setContentOwnersId($contentOwnersId)
-    {
-        $this->contentOwnersId = $contentOwnersId;
-
-        return $this;
-    }
-
-    /**
-     * Get contentOwnersId
-     *
-     * @return integer 
-     */
-    public function getContentOwnersId()
-    {
-        return $this->contentOwnersId;
     }
 
     /**

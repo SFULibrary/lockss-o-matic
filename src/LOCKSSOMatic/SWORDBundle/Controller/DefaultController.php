@@ -79,10 +79,14 @@ class DefaultController extends Controller
      */
     public function createDepositAction(Request $request, $collectionId)
     {
+        $dem = $this->getDoctrine()->getManager();
+        $contentProviderRepo = $dem->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders');
+        $contentProvider = $contentProviderRepo->find($collectionId);
+
         // Check to verify the content provider identified by $collectionId
         // exists. If not, return an appropriate error code.
         $contentProviderExists = $this->confirmContentProvider($collectionId);
-        if (!$contentProviderExists) {
+        if ($contentProvider === null) {
             $response = new Response();
             $response->setStatusCode(403);
             return $response;   
@@ -129,10 +133,9 @@ class DefaultController extends Controller
         
         // Create a Deposit entity.
         $deposit = new Deposits();
-        $deposit->setContentProvidersId($collectionId);
+        $deposit->setContentProvider($contentProvider);
         $deposit->setUuid($depositUuid);
         $deposit->setTitle($depositTitle);
-        $dem = $this->getDoctrine()->getManager();
         $dem->persist($deposit);
         $dem->flush();
         

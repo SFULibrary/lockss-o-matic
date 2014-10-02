@@ -78,6 +78,33 @@ class DefaultControllerTest extends WebTestCase {
 //    }
     
     //6.3.3. Creating a Resource with an Atom Entry
+    public function testCreateNoResource() {
+        $uuid = Uuid::v4();
+        
+        $doc = new DOMDocument("1.0", "UTF-8");
+        $entry = $doc->appendChild($doc->createElementNS(self::$NS['atom'], 'entry'));
+        foreach(self::$NS as $k => $v) {
+            $ns = $entry->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . $k, $v);
+        }
+        
+        $entry->appendChild(new DOMElement('title', 'Empty deposit'));
+        $entry->appendChild(new DOMElement('id', $uuid));
+        $entry->appendChild(new DOMElement('updated', date('c')));
+        $author = $entry->appendChild(new DOMElement('author'));
+        $author->appendChild(new DOMElement('name', 'Ellis, Edward Sylvester'));
+        $summary = $entry->appendChild(new DOMElement('summary', 'Deposit with no content element'));
+        $summary->setAttribute('type', 'text');
+        
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $doc->saveXML());
+        $response = $client->getResponse();
+
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('Location'));
+        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
+    }
+    
+    //6.3.3. Creating a Resource with an Atom Entry
     public function testCreateSingleResource() {
         $uuid = Uuid::v4();
         

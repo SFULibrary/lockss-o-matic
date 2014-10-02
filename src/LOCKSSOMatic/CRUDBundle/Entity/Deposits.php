@@ -4,6 +4,7 @@ namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 
 /**
  * Deposits
@@ -12,29 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  */
 class Deposits
-{	
-	/**
-	* Collection property required for many-to-one relationship with ContentProviders.
-	* 
-	* @ORM\ManyToOne(targetEntity="ContentProviders", mappedBy="deposit")
-	* @ORM\JoinColumn((name="content_providers_id", referencedColumnName="id")
-	*/
-	protected $contentProvider;
-
-	/**
-	 * Property required for one-to-many relationship with Content.
-	 * 
-	 * @ORM\OneToMany(targetEntity="Content", mappedBy="content")
-	 */
-	protected $content;
-	
-	/**
-	 * Initializes the $collectionowner property.
-	 */
-	public function __construct()
-	{
-		$this->content = new ArrayCollection();
-	}
+{
 
     /**
      * @var integer
@@ -46,11 +25,19 @@ class Deposits
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="content_providers_id", type="integer", nullable=true)
+     * Collection property required for many-to-one relationship with ContentProviders.
+     * 
+     * @ORM\ManyToOne(targetEntity="ContentProviders", mappedBy="deposits")
+     * @ORM\JoinColumn(name="content_providers_id", referencedColumnName="id");
      */
-    private $contentProvidersId;
+    protected $contentProvider;
+
+    /**
+     * Property required for one-to-many relationship with Content.
+     * 
+     * @ORM\OneToMany(targetEntity="Content", mappedBy="content")
+     */
+    protected $content;
 
     /**
      * @var string
@@ -73,7 +60,13 @@ class Deposits
      */
     private $dateDeposited;
 
-
+    /**
+     * Initializes the $collectionowner property.
+     */
+    public function __construct()
+    {
+        $this->content = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -83,29 +76,6 @@ class Deposits
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set contentProvidersId
-     *
-     * @param integer $contentProvidersId
-     * @return Deposits
-     */
-    public function setContentProvidersId($contentProvidersId)
-    {
-        $this->contentProvidersId = $contentProvidersId;
-
-        return $this;
-    }
-
-    /**
-     * Get contentProvidersId
-     *
-     * @return integer 
-     */
-    public function getContentProvidersId()
-    {
-        return $this->contentProvidersId;
     }
 
     /**
@@ -232,4 +202,5 @@ class Deposits
     {
         return $this->contentProvider;
     }
+
 }

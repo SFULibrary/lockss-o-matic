@@ -32,12 +32,6 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             generator:
                 strategy: IDENTITY
     fields:
-        contentOwnersId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the content_owners table.'
-            column: content_owners_id
         type:
             type: text
             nullable: true
