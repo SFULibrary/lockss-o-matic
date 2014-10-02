@@ -2,11 +2,12 @@
 
 namespace LOCKSSOMatic\CRUDBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 
-class LoadAusData implements FixtureInterface
+class LoadAusData extends AbstractFixture implements OrderedFixtureInterface
 {
     /**
      * {@inheritDoc}
@@ -21,4 +22,10 @@ class LoadAusData implements FixtureInterface
         $manager->persist($au);
         $manager->flush();
     }
+
+    public function getOrder()
+    {
+        return 4;
+    }
+
 }
