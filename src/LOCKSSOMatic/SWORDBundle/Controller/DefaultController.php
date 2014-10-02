@@ -138,6 +138,13 @@ class DefaultController extends Controller
         
         // Parse lom:content elements. We need the checksum type, checksum value,
         // file size, and URL.
+        
+        if(count($atomEntry->xpath('//lom:content')) === 0) {
+            $logger = $this->get('monolog.logger.sword');
+            $logger->log('error', 'No content elements found in deposit XML.');
+            $logger->log('error', $createResourceXml);
+        }
+        
         foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
             foreach ($contentChunk[0]->attributes() as $key => $value) {
                 $contentSize = $contentChunk[0]->attributes()->size;
