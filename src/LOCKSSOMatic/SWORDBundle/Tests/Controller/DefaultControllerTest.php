@@ -114,12 +114,12 @@ class DefaultControllerTest extends WebTestCase {
             $ns = $entry->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . $k, $v);
         }
         
-        $entry->appendChild(new DOMElement('title', 'Image taken from page 275 of "The Youth\'s History of the United States, etc"'));
+        $entry->appendChild(new DOMElement('title', 'Single image deposit'));
         $entry->appendChild(new DOMElement('id', $uuid));
         $entry->appendChild(new DOMElement('updated', date('c')));
         $author = $entry->appendChild(new DOMElement('author'));
-        $name = $author->appendChild(new DOMElement('name', 'Ellis, Edward Sylvester'));
-        $summary = $entry->appendChild(new DOMElement('summary', 'Image taken from page 275 of "The Youth\'s History of the United States, etc"'));
+        $author->appendChild(new DOMElement('name', 'Me, Myself'));
+        $summary = $entry->appendChild(new DOMElement('summary', 'Deposit with a single content element'));
         $summary->setAttribute('type', 'text');
 
         $content = $entry->appendChild(new DOMElement('lom:content', 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', self::$NS['lom']));
