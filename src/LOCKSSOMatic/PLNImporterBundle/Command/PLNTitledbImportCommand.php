@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\CoreBundle\DependencyInjection\LomLogger;
 
-
 use LOCKSSOMatic\CRUDBundle\Entity\Plugins;
 use LOCKSSOMatic\CRUDBundle\Entity\PluginProperties;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
@@ -34,7 +33,6 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
     {
         $pathToTitledb = $input->getArgument('path_to_titledb');
         if (file_exists($pathToTitledb)) {
-            //$text = $pathToTitledb;
             $xml = simplexml_load_file($pathToTitledb);
             $text = "Loading the titledb XML.\n";
             $text .= "Depeding on the file size, this may take some time.\n";
@@ -43,29 +41,31 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             $AUs = $this->parseAUsFromTitledbXML($xml);
             $text = "The number of AUs is " . count($AUs);
             $output->writeln($text);
-            
+
             $text = "Adding AUs:\n";
+            $output->writeln($text);
+            $count = 0;
             foreach ($AUs as $au) {
+                $gcValue = gc_collect_cycles(); // force PHP garbage collection.
                 $result = $this->addAU($au);
-                $text .= $result . "\n";
-                break;
+                $count+=1;
+                $text = "Result: $result . Added $count AUs. GC value = $gcValue";
+                $output->writeln($text);
             }
-            
+
+            $text = "Completing added AUs.  Please verify.";
             $output->writeln($text);
 
         } else {
             $text = 'An invalid path was provided.  Aborting PLN plugin import.';
             $output->writeln($text);
         }
-
-        //$output->writeln($text);
     }
 
     protected function parseAUsFromTitledbXML($xml)
     {
       // Grab all AUs in the titledb xml
       // Root element of an AU is the property element with name "org.lockss.title"
-
       // All child property elements of parent wrapper element of org.lockss.title
       $xpathRule = '//lockss-config/property[@name="org.lockss.title"]/property';
       $AUs = $xml->xpath($xpathRule);
@@ -80,169 +80,172 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $pluginPropertyElement = $au->xpath($xpathRule)[0];
         $pluginIdentifier = $pluginPropertyElement->attributes()->value;
 
-        //return $pluginIdentifier;
+        try {
+          $pluginsId = $this->getPluginId($pluginIdentifier);
+        } catch (Exception $exception) {
+          return "Exception: " . $e->getMessage() .  "\n PluginIdentifier: $pluginIdentifier";
+        }
 
-        $pluginsId = $this->getPluginsId($pluginIdentifier);
-        
-        return $pluginsId;
-        //pre_print_r($plugins_id);
-        //exit();
+        // grab all the data from the AU
+        // First get the pluginIndentifier value
+        // the top-level property (parentId and propertyValue will be NULL)
+        $auTopLevelPropertyKey = 'au_top_level_property_name';  // value will be NULL for INSERT.
+        // Cast to string before using in array to avoid illegal offset type Warnings.
+        $auTopLevelPropertyValue = (string) $au->attributes()->name;
 
-        // grab all the data from the AU - then do the INSERTS.
-        // This will allow you to first get the plugin_indentifier value 
-        //the top-level property (parent_id and property_value will be NULL)
-        $au_top_level_property_key = 'au_top_level_property_name';  // value will be NULL for INSERT.
-        $au_top_level_property_value = (string) $au->attributes()->name;
+        $propertiesKeyValueArray = array();
+        $childrenPropertiesOfTopLevel = $au->property;
 
-        // Be sure to cast to string before using in array to avoid Illegal offset type Warnings.
-        //$au_top_level_property_key = (string) $au_top_level_property_key;
+        foreach ($childrenPropertiesOfTopLevel as $property) {
+          // cast to string before using in array to avoid Illegal offset type warnings.
+          $propertyName = (string) $property->attributes()->name;
+          $propertyValue = (string) $property->attributes()->value;
 
-        $properties_key_value_array = array();
-        $children_properties_of_top_level = $au->property;    
-        foreach ($children_properties_of_top_level as $property) {
-          //pre_print_r($property);
-          //exit();
-          // Be sure to cast to string before using in array to avoid Illegal offset type Warnings.
-          $property_name = (string) $property->attributes()->name;
-          $property_value = (string) $property->attributes()->value;
-
-           //exit($property_name . "=>" . $property_value);
-           //$properties_key_value_array[$property_name] = $property_value;
-          if (preg_match('/^param\./', $property_name)) {
-              $param_name = (string)$property_name; // Will be like param.1, param.2 
-              // When inserting later, the key $param_name will have value NULL - but track 
-              // parent_id (lastInsertId) when adding 
-              $name_value_array = array(); // will hold the name(key) and value for the parameter
+          if (preg_match('/^param\./', $propertyName)) {
+              $paramName = (string) $propertyName; // Will be like param.1, param.2 
+              // The key $paramName will have value NULL - but track parentId
+              $nameValueArray = array(); // will hold the name(key) and value for the parameter
 
               // parameters for lockss plugin 
-              // grab the parameter property with $property_name and any children.
-              $xpath_rule = 'property[@name="'. $param_name . '"]/*';
-              //pre_print_r($au);
-
-              //echo $xpath_rule .'<br>';
-              $param_name_values = $au->xpath($xpath_rule);
-              //pre_print_r($param_name_values);
-              //echo '<br>count($param_name_values) = ' . count($param_name_values);
-              //echo "The number of parameter child property elements is ". count($param_name_values);
+              // grab the parameter property with $propertyName and any children.
+              $xpathRule = 'property[@name="'. $paramName . '"]/*';
+              $paramNameValues = $au->xpath($xpathRule);
 
               // Add the name and value for the parameter from the children propety elements.
-          
-              //exit();
-              foreach($param_name_values as $property_child) {
-                //pre_print_r($property_child);
-            
-                $prop_key = (string) $property_child->attributes()->name;
-                $prop_value = (string) $property_child->attributes()->value;
-            
-                $name_value_array[$prop_key] = $prop_value;
-            
+              foreach ($paramNameValues as $propertyChild) {
+
+                $propKey = (string) $propertyChild->attributes()->name;
+                $propValue = (string) $propertyChild->attributes()->value;
+
+                $nameValueArray[$propKey] = $propValue;
+
               }
-          
-              $properties_key_value_array[$property_name] = $name_value_array;
+
+              $propertiesKeyValueArray[$propertyName] = $nameValueArray;
           } else {
-            $properties_key_value_array[$property_name] = $property_value;
+            $propertiesKeyValueArray[$propertyName] = $propertyValue;
           }
-      
-        } 
 
-        //pre_print_r($au);
-        // Grab plugins_id via the plugins_properties table.
-        // AU stanzas use plugin_identifier rather than plugin_name.
-        // [Add plugin_identifier to plugins table - this may be more efficient.
+        }
 
-        //pre_print_r($properties_key_value_array);
-        //exit();
-        // AUS table
-        // Some data that must be inserted is not available.  Please double check with MJ.
+        // Grab pluginsId via the pluginsProperties table.
+        // AU stanzas use pluginIdentifier rather than pluginName.
+        // [Add pluginIdentifier to plugins table?]
 
-        $query = $dbh->prepare('INSERT INTO aus (`plugins_id`) VALUES (?)');
-        $query->execute(array($plugins_id));
-        $aus_id = $dbh->lastInsertId();
-        echo "Inserted a new AU with aus_id of $aus_id into the AUS table.";
-    
-        // au_properties table 
-        // use $aus_id 
-    
+        // Instantiate an entity manager.
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        // Aus table - add plugins id into Aus table.
+        $aus = new Aus();
+        $plugin = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plugins')->find($pluginsId);
+        $aus->setPluginsId($pluginsId);
+        $plugin->addAus($aus);
+        $aus->setPlugin($plugin);
+        $em->persist($aus);
+        $em->persist($plugin);
+        $em->flush();
+        $ausId = $aus->getId();
+        $em->clear();
+
+        // Instantiate an entity manager.
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        // auProperties table 
+        // use $ausId
         // parent property element for AU
-        $query = $dbh->prepare('INSERT INTO au_properties (`aus_id`, `property_key`) VALUES (?,?)');
-        $property_key  = (string) $au_top_level_property_value = (string) $au->attributes()->name;
-        $query->execute(array($aus_id,$property_key));
-        $au_parent_id = $dbh->lastInsertID();
-        foreach($properties_key_value_array as $key=>$value){
-          //echo gettype($value);
+        $auProperties = new AuProperties();
+        $aus = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')->find($ausId);
+        $auProperties->setAusId($ausId);
+        $propertyKey = (string) $au->attributes()->name;
+        $auProperties->setPropertyKey($propertyKey);
+        $auProperties->setAu($aus);
+        $em->persist($auProperties);
+        $em->persist($aus);
+        $em->flush();
+        $auParentId = $auProperties->getId();
+        $em->clear();
 
-          if(gettype($value) == 'array' && preg_match('/^param\./', $key)){
+        foreach ($propertiesKeyValueArray as $key => $value) {
+          if (gettype($value) == 'array' && preg_match('/^param\./', $key)) {
               // key will be param.n where n is some whole number.
               // if we get something else, then we need to investigate.
+              // Instantiate an entity manager.
+              $em = $this->getContainer()->get('doctrine')->getManager();
+              // $key with value NULL - record insertId 
+              $auProperties = new AuProperties();
+              $aus = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')->find($ausId);
+              $auProperties->setAusId($ausId);
+              $auProperties->setParentId($auParentId);
+              $propertyKey = (string) $key;
+              $auProperties->setPropertyKey($propertyKey);
+              $auProperties->setAu($aus);
+              $em->persist($auProperties);
+              $em->persist($aus);
+              $em->flush();
+              $parentId = $auProperties->getId();
+              $em->clear();
+              $em = null;
 
-              // Insert $key with value NULL - record insert_id 
-              $query = $dbh->prepare('INSERT INTO au_properties
-                                        (
-                                          `aus_id`,
-                                          `parent_id`, 
-                                          `property_key`
-                                        )
-                                        VALUES (?, ?, ?)
-                                    ');
-              $property_key = (string) $key;
-              $query->execute(array($aus_id, $au_parent_id, $property_key)); 
-              $parent_id = $dbh->lastInsertId();
+              // iterate thought the key=>values in the value array using parent insertId
+              foreach ($value as $childKey => $childValue) {
 
-              // iterate thought the key=>values in the value array using parent insert_id
-              foreach($value as $child_key=>$child_value){
-                $query = $dbh->prepare('INSERT INTO au_properties
-                                          (
-                                            `aus_id`,
-                                            `parent_id`,
-                                            `property_key`,
-                                            `property_value`                                        
-                                          )
-                                        VALUE(?, ?, ?, ?)
-                                      ');
-                $property_key = (string) $child_key;
-                $property_value = (string) $child_value;
-                $query->execute(array($aus_id, $parent_id, $property_key, $property_value));
-                //$last_au_prop_insert_id = $dbh->lastInsertId();
+                // Instantiate an entity manager.
+                $em = $this->getContainer()->get('doctrine')->getManager();
+
+                $auProperties = new AuProperties();
+                $auProperties = new AuProperties();
+                $aus = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')->find($ausId);
+                $auProperties->setAusId($ausId);
+                $auProperties->setParentId($auParentId);
+                $propertyKey = (string) $childKey;
+                $propertyValue = (string) $childValue;
+                $auProperties->setPropertyKey($propertyKey);
+                $auProperties->setPropertyValue($propertyValue);
+                $auProperties->setAu($aus);
+                $em->persist($auProperties);
+                $em->persist($aus);
+                $em->flush();
+                $em->clear();
+
               }
 
           } else {
             /*
-            $query = $dbh->prepare('INSERT INTO au_properties 
+            $query = $dbh->prepare('INSERT INTO auProperties 
                                       (
-                                        `aus_id`, 
-                                        `parent_id`,
-                                        `property_key`, 
-                                        `property_value`
+                                        `ausId`, 
+                                        `parentId`,
+                                        `propertyKey`, 
+                                        `propertyValue`
                                       ) 
                                       VALUES (?, ?, ?, ?)');
-            $property_key = (string) $key;
-            $property_value = (string) $value;
-            $query->execute(array($aus_id, $au_parent_id, $property_key, $property_value));
+            $propertyKey = (string) $key;
+            $propertyValue = (string) $value;
+            $query->execute(array($ausId, $auParentId, $propertyKey, $propertyValue));
             */
-            //$last_au_prop_insert_id = $dbh->lastInsertId();
+            //$lastAuPropInsertId = $dbh->lastInsertId();
           }
 
         }
 
     }
 
-    protected function getPluginsId($pluginIdentifier)
+    protected function getPluginId($pluginIdentifier)
     {
 
-        // AUs only record the plugin_identifier
+        // AUs only record the pluginIdentifier
 
         // Instantiate an entity manager.
         $em = $this->getContainer()->get('doctrine')->getManager();
 
-        //$repository = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\PluginProperties')->findOneBy(array('property_value' => $pluginIdentifier));
+        //$repository = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\PluginProperties')->findOneBy(array('propertyValue' => $pluginIdentifier));
         $result = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\PluginProperties')
-                    ->findOneByPropertyValue($pluginIdentifier);
-        
-        $em->flush(); 
+                    ->findOneByPropertyValue($pluginIdentifier)
+                    ->getPluginsId();
+        $em->flush();
         $em->clear();
         $em = null; // memory issue fix?
 
-        return $result->getPluginsId();
+        return $result;
     }
 
 } // end of class
