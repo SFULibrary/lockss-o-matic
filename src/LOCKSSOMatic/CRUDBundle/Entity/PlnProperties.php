@@ -2,7 +2,8 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * PlnProperties
@@ -25,17 +26,17 @@ class PlnProperties
     private $propertyValue;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $children;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     * @var Plns
      */
     private $pln;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties
+     * @var PlnProperties
      */
     private $parent;
 
@@ -44,22 +45,23 @@ class PlnProperties
      */
     public function __construct()
     {
-        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->propertyKey;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -82,7 +84,7 @@ class PlnProperties
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -105,7 +107,7 @@ class PlnProperties
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -115,10 +117,10 @@ class PlnProperties
     /**
      * Add children
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $children
+     * @param PlnProperties $children
      * @return PlnProperties
      */
-    public function addChild(\LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $children)
+    public function addChild(PlnProperties $children)
     {
         $this->children[] = $children;
 
@@ -128,9 +130,9 @@ class PlnProperties
     /**
      * Remove children
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $children
+     * @param PlnProperties $children
      */
-    public function removeChild(\LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $children)
+    public function removeChild(PlnProperties $children)
     {
         $this->children->removeElement($children);
     }
@@ -138,7 +140,7 @@ class PlnProperties
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getChildren()
     {
@@ -148,10 +150,10 @@ class PlnProperties
     /**
      * Set pln
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @param Plns $pln
      * @return PlnProperties
      */
-    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    public function setPln(Plns $pln = null)
     {
         $this->pln = $pln;
 
@@ -161,7 +163,7 @@ class PlnProperties
     /**
      * Get pln
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     * @return Plns
      */
     public function getPln()
     {
@@ -171,10 +173,10 @@ class PlnProperties
     /**
      * Set parent
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $parent
+     * @param PlnProperties $parent
      * @return PlnProperties
      */
-    public function setParent(\LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $parent = null)
+    public function setParent(PlnProperties $parent = null)
     {
         $this->parent = $parent;
 
@@ -184,7 +186,7 @@ class PlnProperties
     /**
      * Get parent
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties 
+     * @return PlnProperties
      */
     public function getParent()
     {

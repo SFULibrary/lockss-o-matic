@@ -29,7 +29,7 @@ class LoadPlnPropertiesData extends AbstractFixture implements OrderedFixtureInt
         $object->setPropertyKey('example');
         $object->setPropertyValue('no');
         $object->setPln($this->getReference('pln-1'));
-        $object->setParent($this->getReference('plnprop-1'));        
+        $object->setParent($this->getReference('plnprop-1'));
         $manager->persist($object);
         $manager->flush();
 
@@ -37,9 +37,8 @@ class LoadPlnPropertiesData extends AbstractFixture implements OrderedFixtureInt
         $object->setPropertyKey('recursive');
         $object->setPropertyValue('P. 269: recursion  86, 139, 141, 182, 202, 269');
         $object->setPln($this->getReference('pln-1'));
-        $object->setParent($this->getReference('plnprop-1'));        
+        $object->setParent($this->getReference('plnprop-1'));
         $manager->persist($object);
         $manager->flush();
     }
-
 }

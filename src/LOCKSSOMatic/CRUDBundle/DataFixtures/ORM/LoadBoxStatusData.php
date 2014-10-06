@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\BoxStatus;
 
-class LoadBoxStatusData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadBoxStatusData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -25,7 +26,8 @@ class LoadBoxStatusData extends AbstractFixture implements OrderedFixtureInterfa
         $this->loadStatus('acceptConnections', 'no', $this->getReference('box-2'), $manager);
     }
 
-    private function loadStatus($key, $value, $box, $manager) {
+    private function loadStatus($key, $value, $box, $manager)
+    {
         $object = new BoxStatus();
         $object->setBox($box);
         $object->setPropertyKey($key);
@@ -34,5 +36,4 @@ class LoadBoxStatusData extends AbstractFixture implements OrderedFixtureInterfa
         $manager->persist($object);
         $manager->flush();
     }
-    
 }

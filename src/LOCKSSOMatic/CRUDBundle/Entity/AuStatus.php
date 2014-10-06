@@ -41,17 +41,18 @@ class AuStatus
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->propertyKey;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -74,7 +75,7 @@ class AuStatus
     /**
      * Get boxHostname
      *
-     * @return string 
+     * @return string
      */
     public function getBoxHostname()
     {
@@ -97,7 +98,7 @@ class AuStatus
     /**
      * Get queryDate
      *
-     * @return DateTime 
+     * @return DateTime
      */
     public function getQueryDate()
     {
@@ -120,7 +121,7 @@ class AuStatus
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -143,7 +144,7 @@ class AuStatus
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -166,7 +167,7 @@ class AuStatus
     /**
      * Get au
      *
-     * @return Aus 
+     * @return Aus
      */
     public function getAu()
     {

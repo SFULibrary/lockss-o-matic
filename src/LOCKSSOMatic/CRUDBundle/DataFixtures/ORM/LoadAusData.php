@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 
-class LoadAusData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadAusData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -27,5 +28,4 @@ class LoadAusData extends AbstractFixture implements OrderedFixtureInterface {
         $manager->flush();
         $this->setReference('au-1', $object);
     }
-
 }

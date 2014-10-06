@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Boxes;
 
-class LoadBoxesData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadBoxesData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -38,5 +39,4 @@ class LoadBoxesData extends AbstractFixture implements OrderedFixtureInterface {
         $manager->flush();
         $this->setReference('box-2', $object);
     }
-
 }

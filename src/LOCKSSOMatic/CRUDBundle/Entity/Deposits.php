@@ -51,17 +51,18 @@ class Deposits
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->title;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -84,7 +85,7 @@ class Deposits
     /**
      * Get uuid
      *
-     * @return string 
+     * @return string
      */
     public function getUuid()
     {
@@ -107,7 +108,7 @@ class Deposits
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -130,7 +131,7 @@ class Deposits
     /**
      * Get dateDeposited
      *
-     * @return DateTime 
+     * @return DateTime
      */
     public function getDateDeposited()
     {
@@ -163,7 +164,7 @@ class Deposits
     /**
      * Get content
      *
-     * @return Collection 
+     * @return Collection
      */
     public function getContent()
     {
@@ -186,7 +187,7 @@ class Deposits
     /**
      * Get contentProvider
      *
-     * @return ContentProviders 
+     * @return ContentProviders
      */
     public function getContentProvider()
     {

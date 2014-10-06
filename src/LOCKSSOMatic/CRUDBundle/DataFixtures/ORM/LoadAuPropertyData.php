@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\AuProperties;
 
-class LoadAuPropertyData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadAuPropertyData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -28,7 +29,7 @@ class LoadAuPropertyData extends AbstractFixture implements OrderedFixtureInterf
         $object->setPropertyKey('example');
         $object->setPropertyValue('no');
         $object->setAu($this->getReference('au-1'));
-        $object->setParent($this->getReference('auprop-1'));        
+        $object->setParent($this->getReference('auprop-1'));
         $manager->persist($object);
         $manager->flush();
 
@@ -36,9 +37,8 @@ class LoadAuPropertyData extends AbstractFixture implements OrderedFixtureInterf
         $object->setPropertyKey('recursive');
         $object->setPropertyValue('P. 269: recursion  86, 139, 141, 182, 202, 269');
         $object->setAu($this->getReference('au-1'));
-        $object->setParent($this->getReference('auprop-1'));        
+        $object->setParent($this->getReference('auprop-1'));
         $manager->persist($object);
         $manager->flush();
     }
-
 }

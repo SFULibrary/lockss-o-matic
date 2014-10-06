@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
 
-class LoadDepositsData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadDepositsData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -25,5 +26,4 @@ class LoadDepositsData extends AbstractFixture implements OrderedFixtureInterfac
         $manager->flush();
         $this->setReference('deposit-1', $object);
     }
-
 }

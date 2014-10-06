@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Plugins;
 
-class LoadPluginsData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadPluginsData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -22,5 +23,4 @@ class LoadPluginsData extends AbstractFixture implements OrderedFixtureInterface
         $manager->flush();
         $this->setReference('plugin-1', $object);
     }
-
 }

@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Plns;
 
-class LoadPlnsData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadPlnsData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -23,5 +24,4 @@ class LoadPlnsData extends AbstractFixture implements OrderedFixtureInterface {
         $manager->flush();
         $this->setReference('pln-1', $object);
     }
-
 }

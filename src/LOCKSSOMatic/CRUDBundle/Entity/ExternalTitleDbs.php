@@ -2,8 +2,6 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  * ExternalTitleDbs
  */
@@ -20,24 +18,25 @@ class ExternalTitleDbs
     private $path;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     * @var Plns
      */
     private $pln;
 
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->path;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -60,7 +59,7 @@ class ExternalTitleDbs
     /**
      * Get path
      *
-     * @return string 
+     * @return string
      */
     public function getPath()
     {
@@ -70,10 +69,10 @@ class ExternalTitleDbs
     /**
      * Set pln
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @param Plns $pln
      * @return ExternalTitleDbs
      */
-    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    public function setPln(Plns $pln = null)
     {
         $this->pln = $pln;
 
@@ -83,7 +82,7 @@ class ExternalTitleDbs
     /**
      * Get pln
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     * @return Plns
      */
     public function getPln()
     {

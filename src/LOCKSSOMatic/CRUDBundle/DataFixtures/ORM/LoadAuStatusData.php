@@ -41,5 +41,4 @@ class LoadAuStatusData extends AbstractFixture implements OrderedFixtureInterfac
         $manager->persist($object);
         $manager->flush();
     }
-
 }

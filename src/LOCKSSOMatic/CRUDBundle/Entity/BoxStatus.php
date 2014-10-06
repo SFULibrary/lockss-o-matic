@@ -37,17 +37,18 @@ class BoxStatus
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->propertyKey;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -69,7 +70,7 @@ class BoxStatus
     /**
      * Get queryDate
      *
-     * @return DateTime 
+     * @return DateTime
      */
     public function getQueryDate()
     {
@@ -92,7 +93,7 @@ class BoxStatus
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -115,7 +116,7 @@ class BoxStatus
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -138,7 +139,7 @@ class BoxStatus
     /**
      * Get box
      *
-     * @return Boxes 
+     * @return Boxes
      */
     public function getBox()
     {

@@ -2,7 +2,8 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Aus
@@ -30,27 +31,27 @@ class Aus
     private $open;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $content;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $auStatus;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $auProperties;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     * @var Plns
      */
     private $pln;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plugins
+     * @var Plugins
      */
     private $plugin;
 
@@ -59,24 +60,25 @@ class Aus
      */
     public function __construct()
     {
-        $this->content = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->auStatus = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->auProperties = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->content = new ArrayCollection();
+        $this->auStatus = new ArrayCollection();
+        $this->auProperties = new ArrayCollection();
     }
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return sprintf('%d (%s)', array($this->id, $this->plugin->getName()));
     }
     
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -99,7 +101,7 @@ class Aus
     /**
      * Get auid
      *
-     * @return string 
+     * @return string
      */
     public function getAuid()
     {
@@ -122,7 +124,7 @@ class Aus
     /**
      * Get manifestUrl
      *
-     * @return string 
+     * @return string
      */
     public function getManifestUrl()
     {
@@ -145,7 +147,7 @@ class Aus
     /**
      * Get open
      *
-     * @return integer 
+     * @return integer
      */
     public function getOpen()
     {
@@ -155,10 +157,10 @@ class Aus
     /**
      * Add content
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     * @param Content $content
      * @return Aus
      */
-    public function addContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    public function addContent(Content $content)
     {
         $this->content[] = $content;
 
@@ -168,9 +170,9 @@ class Aus
     /**
      * Remove content
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     * @param Content $content
      */
-    public function removeContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    public function removeContent(Content $content)
     {
         $this->content->removeElement($content);
     }
@@ -178,7 +180,7 @@ class Aus
     /**
      * Get content
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getContent()
     {
@@ -188,10 +190,10 @@ class Aus
     /**
      * Add auStatus
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus
+     * @param AuStatus $auStatus
      * @return Aus
      */
-    public function addAuStatus(\LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus)
+    public function addAuStatus(AuStatus $auStatus)
     {
         $this->auStatus[] = $auStatus;
 
@@ -201,9 +203,9 @@ class Aus
     /**
      * Remove auStatus
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus
+     * @param AuStatus $auStatus
      */
-    public function removeAuStatus(\LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus)
+    public function removeAuStatus(AuStatus $auStatus)
     {
         $this->auStatus->removeElement($auStatus);
     }
@@ -211,7 +213,7 @@ class Aus
     /**
      * Get auStatus
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getAuStatus()
     {
@@ -221,10 +223,10 @@ class Aus
     /**
      * Add auProperties
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties
+     * @param AuProperties $auProperties
      * @return Aus
      */
-    public function addAuProperty(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties)
+    public function addAuProperty(AuProperties $auProperties)
     {
         $this->auProperties[] = $auProperties;
 
@@ -234,9 +236,9 @@ class Aus
     /**
      * Remove auProperties
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties
+     * @param AuProperties $auProperties
      */
-    public function removeAuProperty(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties)
+    public function removeAuProperty(AuProperties $auProperties)
     {
         $this->auProperties->removeElement($auProperties);
     }
@@ -244,7 +246,7 @@ class Aus
     /**
      * Get auProperties
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getAuProperties()
     {
@@ -254,10 +256,10 @@ class Aus
     /**
      * Set pln
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @param Plns $pln
      * @return Aus
      */
-    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    public function setPln(Plns $pln = null)
     {
         $this->pln = $pln;
 
@@ -267,7 +269,7 @@ class Aus
     /**
      * Get pln
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     * @return Plns
      */
     public function getPln()
     {
@@ -277,10 +279,10 @@ class Aus
     /**
      * Set plugin
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin
+     * @param Plugins $plugin
      * @return Aus
      */
-    public function setPlugin(\LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin = null)
+    public function setPlugin(Plugins $plugin = null)
     {
         $this->plugin = $plugin;
 
@@ -290,7 +292,7 @@ class Aus
     /**
      * Get plugin
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plugins 
+     * @return Plugins
      */
     public function getPlugin()
     {

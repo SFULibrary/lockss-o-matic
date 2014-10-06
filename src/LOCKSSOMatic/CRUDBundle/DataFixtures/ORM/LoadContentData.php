@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Content;
 
-class LoadContentData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadContentData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -30,5 +31,4 @@ class LoadContentData extends AbstractFixture implements OrderedFixtureInterface
         $manager->flush();
         $this->setReference('cp-1', $object);
     }
-
 }

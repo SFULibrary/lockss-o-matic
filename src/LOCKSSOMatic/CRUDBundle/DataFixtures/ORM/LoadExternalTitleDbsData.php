@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\ExternalTitleDbs;
 
-class LoadExternalTitleDbsData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadExternalTitleDbsData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -23,5 +24,4 @@ class LoadExternalTitleDbsData extends AbstractFixture implements OrderedFixture
         $manager->flush();
         $this->setReference('ext-1', $object);
     }
-
 }

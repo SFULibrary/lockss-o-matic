@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentOwners;
 
-class LoadContentOwnersData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadContentOwnersData extends AbstractFixture implements OrderedFixtureInterface
+{
     
     public function getOrder()
     {
@@ -24,5 +25,4 @@ class LoadContentOwnersData extends AbstractFixture implements OrderedFixtureInt
         $manager->flush();
         $this->setReference('owner-1', $object);
     }
-
 }

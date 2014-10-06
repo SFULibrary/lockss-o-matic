@@ -61,17 +61,18 @@ class Content
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->title;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -94,7 +95,7 @@ class Content
     /**
      * Get url
      *
-     * @return string 
+     * @return string
      */
     public function getUrl()
     {
@@ -117,7 +118,7 @@ class Content
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -140,7 +141,7 @@ class Content
     /**
      * Get size
      *
-     * @return integer 
+     * @return integer
      */
     public function getSize()
     {
@@ -163,7 +164,7 @@ class Content
     /**
      * Get dateDeposited
      *
-     * @return DateTime 
+     * @return DateTime
      */
     public function getDateDeposited()
     {
@@ -186,7 +187,7 @@ class Content
     /**
      * Get checksumType
      *
-     * @return string 
+     * @return string
      */
     public function getChecksumType()
     {
@@ -209,7 +210,7 @@ class Content
     /**
      * Get checksumValue
      *
-     * @return string 
+     * @return string
      */
     public function getChecksumValue()
     {
@@ -232,7 +233,7 @@ class Content
     /**
      * Get recrawl
      *
-     * @return integer 
+     * @return integer
      */
     public function getRecrawl()
     {
@@ -255,7 +256,7 @@ class Content
     /**
      * Get deposit
      *
-     * @return Deposits 
+     * @return Deposits
      */
     public function getDeposit()
     {
@@ -278,7 +279,7 @@ class Content
     /**
      * Get au
      *
-     * @return Aus 
+     * @return Aus
      */
     public function getAu()
     {

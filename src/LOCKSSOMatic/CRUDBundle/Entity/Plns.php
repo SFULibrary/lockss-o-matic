@@ -2,7 +2,8 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Plns
@@ -25,27 +26,27 @@ class Plns
     private $propsPath;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $contentProviders;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $aus;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $plnProperties;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $externalTitleDbs;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $boxes;
 
@@ -54,26 +55,27 @@ class Plns
      */
     public function __construct()
     {
-        $this->contentProviders = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->aus = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->plnProperties = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->externalTitleDbs = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->boxes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->contentProviders = new ArrayCollection();
+        $this->aus = new ArrayCollection();
+        $this->plnProperties = new ArrayCollection();
+        $this->externalTitleDbs = new ArrayCollection();
+        $this->boxes = new ArrayCollection();
     }
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->name;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -96,7 +98,7 @@ class Plns
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -119,7 +121,7 @@ class Plns
     /**
      * Get propsPath
      *
-     * @return string 
+     * @return string
      */
     public function getPropsPath()
     {
@@ -129,10 +131,10 @@ class Plns
     /**
      * Add contentProviders
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders
+     * @param ContentProviders $contentProviders
      * @return Plns
      */
-    public function addContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders)
+    public function addContentProvider(ContentProviders $contentProviders)
     {
         $this->contentProviders[] = $contentProviders;
 
@@ -142,9 +144,9 @@ class Plns
     /**
      * Remove contentProviders
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders
+     * @param ContentProviders $contentProviders
      */
-    public function removeContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders)
+    public function removeContentProvider(ContentProviders $contentProviders)
     {
         $this->contentProviders->removeElement($contentProviders);
     }
@@ -152,7 +154,7 @@ class Plns
     /**
      * Get contentProviders
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getContentProviders()
     {
@@ -162,10 +164,10 @@ class Plns
     /**
      * Add aus
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $aus
+     * @param Aus $aus
      * @return Plns
      */
-    public function addAus(\LOCKSSOMatic\CRUDBundle\Entity\Aus $aus)
+    public function addAus(Aus $aus)
     {
         $this->aus[] = $aus;
 
@@ -175,9 +177,9 @@ class Plns
     /**
      * Remove aus
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $aus
+     * @param Aus $aus
      */
-    public function removeAus(\LOCKSSOMatic\CRUDBundle\Entity\Aus $aus)
+    public function removeAus(Aus $aus)
     {
         $this->aus->removeElement($aus);
     }
@@ -185,7 +187,7 @@ class Plns
     /**
      * Get aus
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getAus()
     {
@@ -195,10 +197,10 @@ class Plns
     /**
      * Add plnProperties
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $plnProperties
+     * @param PlnProperties $plnProperties
      * @return Plns
      */
-    public function addPlnProperty(\LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $plnProperties)
+    public function addPlnProperty(PlnProperties $plnProperties)
     {
         $this->plnProperties[] = $plnProperties;
 
@@ -208,9 +210,9 @@ class Plns
     /**
      * Remove plnProperties
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $plnProperties
+     * @param PlnProperties $plnProperties
      */
-    public function removePlnProperty(\LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $plnProperties)
+    public function removePlnProperty(PlnProperties $plnProperties)
     {
         $this->plnProperties->removeElement($plnProperties);
     }
@@ -218,7 +220,7 @@ class Plns
     /**
      * Get plnProperties
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getPlnProperties()
     {
@@ -228,10 +230,10 @@ class Plns
     /**
      * Add externalTitleDbs
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ExternalTitleDbs $externalTitleDbs
+     * @param ExternalTitleDbs $externalTitleDbs
      * @return Plns
      */
-    public function addExternalTitleDb(\LOCKSSOMatic\CRUDBundle\Entity\ExternalTitleDbs $externalTitleDbs)
+    public function addExternalTitleDb(ExternalTitleDbs $externalTitleDbs)
     {
         $this->externalTitleDbs[] = $externalTitleDbs;
 
@@ -241,9 +243,9 @@ class Plns
     /**
      * Remove externalTitleDbs
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ExternalTitleDbs $externalTitleDbs
+     * @param ExternalTitleDbs $externalTitleDbs
      */
-    public function removeExternalTitleDb(\LOCKSSOMatic\CRUDBundle\Entity\ExternalTitleDbs $externalTitleDbs)
+    public function removeExternalTitleDb(ExternalTitleDbs $externalTitleDbs)
     {
         $this->externalTitleDbs->removeElement($externalTitleDbs);
     }
@@ -251,7 +253,7 @@ class Plns
     /**
      * Get externalTitleDbs
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getExternalTitleDbs()
     {
@@ -261,10 +263,10 @@ class Plns
     /**
      * Add boxes
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Boxes $boxes
+     * @param Boxes $boxes
      * @return Plns
      */
-    public function addBox(\LOCKSSOMatic\CRUDBundle\Entity\Boxes $boxes)
+    public function addBox(Boxes $boxes)
     {
         $this->boxes[] = $boxes;
 
@@ -274,9 +276,9 @@ class Plns
     /**
      * Remove boxes
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Boxes $boxes
+     * @param Boxes $boxes
      */
-    public function removeBox(\LOCKSSOMatic\CRUDBundle\Entity\Boxes $boxes)
+    public function removeBox(Boxes $boxes)
     {
         $this->boxes->removeElement($boxes);
     }
@@ -284,7 +286,7 @@ class Plns
     /**
      * Get boxes
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getBoxes()
     {

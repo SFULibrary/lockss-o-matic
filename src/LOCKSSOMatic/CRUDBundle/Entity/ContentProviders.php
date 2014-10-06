@@ -2,7 +2,8 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * ContentProviders
@@ -50,17 +51,17 @@ class ContentProviders
     private $maxAuSize;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $deposits;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners
+     * @var ContentOwners
      */
     private $contentOwner;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     * @var Plns
      */
     private $pln;
 
@@ -69,22 +70,23 @@ class ContentProviders
      */
     public function __construct()
     {
-        $this->deposits = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->deposits = new ArrayCollection();
     }
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->name;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -107,7 +109,7 @@ class ContentProviders
     /**
      * Get type
      *
-     * @return string 
+     * @return string
      */
     public function getType()
     {
@@ -130,7 +132,7 @@ class ContentProviders
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -153,7 +155,7 @@ class ContentProviders
     /**
      * Get ipAddress
      *
-     * @return string 
+     * @return string
      */
     public function getIpAddress()
     {
@@ -176,7 +178,7 @@ class ContentProviders
     /**
      * Get hostname
      *
-     * @return string 
+     * @return string
      */
     public function getHostname()
     {
@@ -199,7 +201,7 @@ class ContentProviders
     /**
      * Get checksumType
      *
-     * @return string 
+     * @return string
      */
     public function getChecksumType()
     {
@@ -222,7 +224,7 @@ class ContentProviders
     /**
      * Get maxFileSize
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaxFileSize()
     {
@@ -245,7 +247,7 @@ class ContentProviders
     /**
      * Get maxAuSize
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaxAuSize()
     {
@@ -255,10 +257,10 @@ class ContentProviders
     /**
      * Add deposits
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits
+     * @param Deposits $deposits
      * @return ContentProviders
      */
-    public function addDeposit(\LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits)
+    public function addDeposit(Deposits $deposits)
     {
         $this->deposits[] = $deposits;
 
@@ -268,9 +270,9 @@ class ContentProviders
     /**
      * Remove deposits
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits
+     * @param Deposits $deposits
      */
-    public function removeDeposit(\LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits)
+    public function removeDeposit(Deposits $deposits)
     {
         $this->deposits->removeElement($deposits);
     }
@@ -278,7 +280,7 @@ class ContentProviders
     /**
      * Get deposits
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getDeposits()
     {
@@ -288,10 +290,10 @@ class ContentProviders
     /**
      * Set contentOwner
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwner
+     * @param ContentOwners $contentOwner
      * @return ContentProviders
      */
-    public function setContentOwner(\LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwner = null)
+    public function setContentOwner(ContentOwners $contentOwner = null)
     {
         $this->contentOwner = $contentOwner;
 
@@ -301,7 +303,7 @@ class ContentProviders
     /**
      * Get contentOwner
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners 
+     * @return ContentOwners
      */
     public function getContentOwner()
     {
@@ -311,10 +313,10 @@ class ContentProviders
     /**
      * Set pln
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @param Plns $pln
      * @return ContentProviders
      */
-    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    public function setPln(Plns $pln = null)
     {
         $this->pln = $pln;
 
@@ -324,7 +326,7 @@ class ContentProviders
     /**
      * Get pln
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     * @return Plns
      */
     public function getPln()
     {

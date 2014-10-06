@@ -2,7 +2,8 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Boxes
@@ -35,12 +36,12 @@ class Boxes
     private $password;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $boxStatus;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     * @var Plns
      */
     private $pln;
 
@@ -49,22 +50,23 @@ class Boxes
      */
     public function __construct()
     {
-        $this->boxStatus = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->boxStatus = new ArrayCollection();
     }
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->hostname;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -87,7 +89,7 @@ class Boxes
     /**
      * Get hostname
      *
-     * @return string 
+     * @return string
      */
     public function getHostname()
     {
@@ -110,7 +112,7 @@ class Boxes
     /**
      * Get ipAddress
      *
-     * @return string 
+     * @return string
      */
     public function getIpAddress()
     {
@@ -133,7 +135,7 @@ class Boxes
     /**
      * Get username
      *
-     * @return string 
+     * @return string
      */
     public function getUsername()
     {
@@ -156,7 +158,7 @@ class Boxes
     /**
      * Get password
      *
-     * @return string 
+     * @return string
      */
     public function getPassword()
     {
@@ -166,10 +168,10 @@ class Boxes
     /**
      * Add boxStatus
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\BoxStatus $boxStatus
+     * @param BoxStatus $boxStatus
      * @return Boxes
      */
-    public function addBoxStatus(\LOCKSSOMatic\CRUDBundle\Entity\BoxStatus $boxStatus)
+    public function addBoxStatus(BoxStatus $boxStatus)
     {
         $this->boxStatus[] = $boxStatus;
 
@@ -179,9 +181,9 @@ class Boxes
     /**
      * Remove boxStatus
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\BoxStatus $boxStatus
+     * @param BoxStatus $boxStatus
      */
-    public function removeBoxStatus(\LOCKSSOMatic\CRUDBundle\Entity\BoxStatus $boxStatus)
+    public function removeBoxStatus(BoxStatus $boxStatus)
     {
         $this->boxStatus->removeElement($boxStatus);
     }
@@ -189,7 +191,7 @@ class Boxes
     /**
      * Get boxStatus
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getBoxStatus()
     {
@@ -199,10 +201,10 @@ class Boxes
     /**
      * Set pln
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @param Plns $pln
      * @return Boxes
      */
-    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    public function setPln(Plns $pln = null)
     {
         $this->pln = $pln;
 
@@ -212,7 +214,7 @@ class Boxes
     /**
      * Get pln
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     * @return Plns
      */
     public function getPln()
     {

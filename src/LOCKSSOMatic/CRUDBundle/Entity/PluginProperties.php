@@ -2,7 +2,10 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use LOCKSSOMatic\CRUDBundle\Entity\PluginProperties;
+use LOCKSSOMatic\CRUDBundle\Entity\Plugins;
 
 /**
  * PluginProperties
@@ -25,17 +28,17 @@ class PluginProperties
     private $propertyValue;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $children;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plugins
+     * @var Plugins
      */
     private $plugin;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties
+     * @var PluginProperties
      */
     private $parent;
 
@@ -44,22 +47,23 @@ class PluginProperties
      */
     public function __construct()
     {
-        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->propertyKey;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -82,7 +86,7 @@ class PluginProperties
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -105,7 +109,7 @@ class PluginProperties
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -115,10 +119,10 @@ class PluginProperties
     /**
      * Add children
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $children
+     * @param PluginProperties $children
      * @return PluginProperties
      */
-    public function addChild(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $children)
+    public function addChild(PluginProperties $children)
     {
         $this->children[] = $children;
 
@@ -128,9 +132,9 @@ class PluginProperties
     /**
      * Remove children
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $children
+     * @param PluginProperties $children
      */
-    public function removeChild(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $children)
+    public function removeChild(PluginProperties $children)
     {
         $this->children->removeElement($children);
     }
@@ -138,7 +142,7 @@ class PluginProperties
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getChildren()
     {
@@ -148,10 +152,10 @@ class PluginProperties
     /**
      * Set plugin
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin
+     * @param Plugins $plugin
      * @return PluginProperties
      */
-    public function setPlugin(\LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin = null)
+    public function setPlugin(Plugins $plugin = null)
     {
         $this->plugin = $plugin;
 
@@ -161,7 +165,7 @@ class PluginProperties
     /**
      * Get plugin
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plugins 
+     * @return Plugins
      */
     public function getPlugin()
     {
@@ -171,10 +175,10 @@ class PluginProperties
     /**
      * Set parent
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $parent
+     * @param PluginProperties $parent
      * @return PluginProperties
      */
-    public function setParent(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $parent = null)
+    public function setParent(PluginProperties $parent = null)
     {
         $this->parent = $parent;
 
@@ -184,7 +188,7 @@ class PluginProperties
     /**
      * Get parent
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties 
+     * @return PluginProperties
      */
     public function getParent()
     {

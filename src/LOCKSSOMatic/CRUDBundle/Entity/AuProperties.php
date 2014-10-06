@@ -2,7 +2,8 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * AuProperties
@@ -35,17 +36,17 @@ class AuProperties
     private $propertyValue;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $children;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Aus
+     * @var Aus
      */
     private $au;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\AuProperties
+     * @var AuProperties
      */
     private $parent;
 
@@ -54,22 +55,23 @@ class AuProperties
      */
     public function __construct()
     {
-        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     /**
      * Stringify the entity
-     * 
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->propertyKey;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -92,7 +94,7 @@ class AuProperties
     /**
      * Get ausId
      *
-     * @return integer 
+     * @return integer
      */
     public function getAusId()
     {
@@ -115,7 +117,7 @@ class AuProperties
     /**
      * Get parentId
      *
-     * @return integer 
+     * @return integer
      */
     public function getParentId()
     {
@@ -138,7 +140,7 @@ class AuProperties
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -161,7 +163,7 @@ class AuProperties
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -171,10 +173,10 @@ class AuProperties
     /**
      * Add children
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $children
+     * @param AuProperties $children
      * @return AuProperties
      */
-    public function addChild(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $children)
+    public function addChild(AuProperties $children)
     {
         $this->children[] = $children;
 
@@ -184,9 +186,9 @@ class AuProperties
     /**
      * Remove children
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $children
+     * @param AuProperties $children
      */
-    public function removeChild(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $children)
+    public function removeChild(AuProperties $children)
     {
         $this->children->removeElement($children);
     }
@@ -194,7 +196,7 @@ class AuProperties
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getChildren()
     {
@@ -204,10 +206,10 @@ class AuProperties
     /**
      * Set au
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
+     * @param Aus $au
      * @return AuProperties
      */
-    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
+    public function setAu(Aus $au = null)
     {
         $this->au = $au;
 
@@ -217,7 +219,7 @@ class AuProperties
     /**
      * Get au
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
+     * @return Aus
      */
     public function getAu()
     {
@@ -227,10 +229,10 @@ class AuProperties
     /**
      * Set parent
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $parent
+     * @param AuProperties $parent
      * @return AuProperties
      */
-    public function setParent(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $parent = null)
+    public function setParent(AuProperties $parent = null)
     {
         $this->parent = $parent;
 
@@ -240,7 +242,7 @@ class AuProperties
     /**
      * Get parent
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\AuProperties 
+     * @return AuProperties
      */
     public function getParent()
     {

@@ -41,5 +41,4 @@ class LoadPluginPropertiesData extends AbstractFixture implements OrderedFixture
         $manager->persist($object);
         $manager->flush();
     }
-
 }
