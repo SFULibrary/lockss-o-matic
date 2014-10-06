@@ -7,9 +7,10 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Plnsid</th>
                 <th>Hostname</th>
                 <th>Ipaddress</th>
+                <th>Username</th>
+                <th>Password</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -17,9 +18,10 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('boxes_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.plnsId }}</td>
                 <td>{{ entity.hostname }}</td>
                 <td>{{ entity.ipAddress }}</td>
+                <td>{{ entity.username }}</td>
+                <td>{{ entity.password }}</td>
                 <td>
                 <ul>
                     <li>

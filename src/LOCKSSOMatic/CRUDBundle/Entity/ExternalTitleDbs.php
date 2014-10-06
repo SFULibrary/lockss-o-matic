@@ -6,42 +6,33 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * ExternalTitleDbs
- *
- * @ORM\Table(name="external_title_dbs", indexes={@ORM\Index(name="plns_id_idx", columns={"plns_id"})})
- * @ORM\Entity
  */
 class ExternalTitleDbs
 {
-	/**
-	* Property required for many-to-one relationship with Plns.
-	* 
-	* @ORM\ManyToOne(targetEntity="Plns", mappedBy="externalTitleDbs")
-	* @ORM\JoinColumn((name="plns_id", referencedColumnName="id")
-	*/
-	protected $pln;
-
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="plns_id", type="integer", nullable=true)
-     */
-    private $plnsId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="path", type="text", nullable=true)
      */
     private $path;
+
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     */
+    private $pln;
+
+
+    /**
+     * Stringify the entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return $this->path;
+    }
 
     /**
      * Get id
@@ -54,46 +45,10 @@ class ExternalTitleDbs
     }
 
     /**
-     * Set plnsId
-     *
-     * @param integer $plnsId
-     * @return PlnProperties
-     */
-    public function setPlnsId($plnsId)
-    {
-        $this->plnsId = $plnsId;
-
-        return $this;
-    }
-
-    /**
-     * Get plnsId
-     *
-     * @return integer 
-     */
-    public function getPlnsId()
-    {
-        return $this->plnsId;
-    }
-
-    /**
-     * Set parentId
-     *
-     * @param integer $parentId
-     * @return PlnProperties
-     */
-    public function setParentId($parentId)
-    {
-        $this->parentId = $parentId;
-
-        return $this;
-    }
-
-    /**
      * Set path
      *
      * @param string $path
-     * @return PlnProperties
+     * @return ExternalTitleDbs
      */
     public function setPath($path)
     {

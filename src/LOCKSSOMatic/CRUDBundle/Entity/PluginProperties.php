@@ -6,56 +6,55 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * PluginProperties
- *
- * @ORM\Table(name="plugin_properties", @ORM\Index(name="plugins_id_idx", columns={"plugins_id"}))
- * @ORM\Entity
  */
 class PluginProperties
 {
     /**
-    * Property required for many-to-one relationship with Plugins.
-    * 
-    * @ORM\ManyToOne(targetEntity="Plugins", inversedBy="pluginProperties")
-    * @ORM\JoinColumn(name="plugins_id", referencedColumnName="id")
-    */
-    protected $plugin;
-
-    /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="plugins_id", type="integer", nullable=true)
-     */
-    private $pluginsId;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="parent_id", type="integer", nullable=true)
-     */
-    private $parentId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="property_key", type="text", nullable=true)
      */
     private $propertyKey;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $children;
+
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plugins
+     */
+    private $plugin;
+
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties
+     */
+    private $parent;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Stringify the entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return $this->propertyKey;
+    }
 
     /**
      * Get id
@@ -65,52 +64,6 @@ class PluginProperties
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set pluginsId
-     *
-     * @param integer $pluginsId
-     * @return PluginProperties
-     */
-    public function setPluginsId($pluginsId)
-    {
-        $this->pluginsId = $pluginsId;
-
-        return $this;
-    }
-
-    /**
-     * Get pluginsId
-     *
-     * @return integer 
-     */
-    public function getPluginsId()
-    {
-        return $this->pluginsId;
-    }
-
-    /**
-     * Set parentId
-     *
-     * @param integer $parentId
-     * @return PluginProperties
-     */
-    public function setParentId($parentId)
-    {
-        $this->parentId = $parentId;
-
-        return $this;
-    }
-
-    /**
-     * Get parentId
-     *
-     * @return integer 
-     */
-    public function getParentId()
-    {
-        return $this->parentId;
     }
 
     /**
@@ -160,6 +113,39 @@ class PluginProperties
     }
 
     /**
+     * Add children
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $children
+     * @return PluginProperties
+     */
+    public function addChild(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $children
+     */
+    public function removeChild(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
      * Set plugin
      *
      * @param \LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin
@@ -180,5 +166,28 @@ class PluginProperties
     public function getPlugin()
     {
         return $this->plugin;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $parent
+     * @return PluginProperties
+     */
+    public function setParent(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties 
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 }

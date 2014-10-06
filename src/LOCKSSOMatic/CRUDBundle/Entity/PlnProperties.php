@@ -6,58 +6,55 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * PlnProperties
- *
- * @ORM\Table(name="pln_properties", indexes={@ORM\Index(name="plns_id_idx", columns={"plns_id"})})
- * @ORM\Entity
  */
 class PlnProperties
 {
-	/**
-	* Property required for many-to-one relationship with Plns.
-	* 
-	* @ORM\ManyToOne(targetEntity="Plns", inversedBy="plnProperties")
-	* @ORM\JoinColumn(name="plns_id", referencedColumnName="id")
-	*/
-	protected $pln;
-
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="plns_id", type="integer", nullable=true)
-     */
-    private $plnsId;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="parent_id", type="integer", nullable=true)
-     */
-    private $parentId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="property_key", type="text", nullable=true)
      */
     private $propertyKey;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $children;
 
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     */
+    private $pln;
+
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties
+     */
+    private $parent;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Stringify the entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return $this->propertyKey;
+    }
 
     /**
      * Get id
@@ -67,52 +64,6 @@ class PlnProperties
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set plnsId
-     *
-     * @param integer $plnsId
-     * @return PlnProperties
-     */
-    public function setPlnsId($plnsId)
-    {
-        $this->plnsId = $plnsId;
-
-        return $this;
-    }
-
-    /**
-     * Get plnsId
-     *
-     * @return integer 
-     */
-    public function getPlnsId()
-    {
-        return $this->plnsId;
-    }
-
-    /**
-     * Set parentId
-     *
-     * @param integer $parentId
-     * @return PlnProperties
-     */
-    public function setParentId($parentId)
-    {
-        $this->parentId = $parentId;
-
-        return $this;
-    }
-
-    /**
-     * Get parentId
-     *
-     * @return integer 
-     */
-    public function getParentId()
-    {
-        return $this->parentId;
     }
 
     /**
@@ -162,6 +113,39 @@ class PlnProperties
     }
 
     /**
+     * Add children
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $children
+     * @return PlnProperties
+     */
+    public function addChild(\LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $children
+     */
+    public function removeChild(\LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
      * Set pln
      *
      * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
@@ -182,5 +166,28 @@ class PlnProperties
     public function getPln()
     {
         return $this->pln;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $parent
+     * @return PlnProperties
+     */
+    public function setParent(\LOCKSSOMatic\CRUDBundle\Entity\PlnProperties $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\PlnProperties 
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 }

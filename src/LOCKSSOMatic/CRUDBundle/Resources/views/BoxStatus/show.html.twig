@@ -10,10 +10,6 @@
                 <td>{{ entity.id }}</td>
             </tr>
             <tr>
-                <th>Boxesid</th>
-                <td>{{ entity.boxesId }}</td>
-            </tr>
-            <tr>
                 <th>Querydate</th>
                 <td>{{ entity.queryDate|date('Y-m-d H:i:s') }}</td>
             </tr>
@@ -34,5 +30,11 @@
             Back to the list
         </a>
     </li>
+    <li>
+        <a href="{{ path('boxstatus_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
 </ul>
 {% endblock %}

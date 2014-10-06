@@ -1,56 +1,56 @@
-LOCKSSOMaticCRUDBundle_plns:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plns.yml"
-    prefix:   /plns
-
-LOCKSSOMaticCRUDBundle_plnproperties:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plnproperties.yml"
-    prefix:   /plnproperties
-
-LOCKSSOMaticCRUDBundle_contentowners:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/contentowners.yml"
-    prefix:   /contentowners
-
-LOCKSSOMaticCRUDBundle_contentproviders:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/contentproviders.yml"
-    prefix:   /contentproviders
-
-LOCKSSOMaticCRUDBundle_plugins:
+locksso_matic_crud_plugins:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plugins.yml"
     prefix:   /plugins
 
-LOCKSSOMaticCRUDBundle_pluginproperties:
+locksso_matic_crud_pluginproperties:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/pluginproperties.yml"
     prefix:   /pluginproperties
 
-LOCKSSOMaticCRUDBundle_aus:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/aus.yml"
-    prefix:   /aus
+locksso_matic_crud_plns:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plns.yml"
+    prefix:   /plns
 
-LOCKSSOMaticCRUDBundle_auproperties:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/auproperties.yml"
-    prefix:   /auproperties
+locksso_matic_crud_plnproperties:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plnproperties.yml"
+    prefix:   /plnproperties
 
-# Read only.
-LOCKSSOMaticCRUDBundle_austatus:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/austatus.yml"
-    prefix:   /austatus
+locksso_matic_crud_externaltitledbs:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/externaltitledbs.yml"
+    prefix:   /externaltitledbs
 
-
-LOCKSSOMaticCRUDBundle_boxes:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/boxes.yml"
-    prefix:   /boxes
-
-# Read only.
-LOCKSSOMaticCRUDBundle_boxstatus:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/boxstatus.yml"
-    prefix:   /boxstatus
-
-# Read only.
-LOCKSSOMaticCRUDBundle_deposits:
+locksso_matic_crud_deposits:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/deposits.yml"
     prefix:   /deposits
 
-# Read only.
-LOCKSSOMaticCRUDBundle_content:
+locksso_matic_crud_contentproviders:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/contentproviders.yml"
+    prefix:   /contentproviders
+
+locksso_matic_crud_contentowners:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/contentowners.yml"
+    prefix:   /contentowners
+
+locksso_matic_crud_content:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/content.yml"
     prefix:   /content
+
+locksso_matic_crud_boxes:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/boxes.yml"
+    prefix:   /boxes
+
+locksso_matic_crud_boxstatus:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/boxstatus.yml"
+    prefix:   /boxstatus
+
+locksso_matic_crud_aus:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/aus.yml"
+    prefix:   /aus
+
+locksso_matic_crud_austatus:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/austatus.yml"
+    prefix:   /austatus
+
+locksso_matic_crud_auproperties:
+    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/auproperties.yml"
+    prefix:   /auproperties
+

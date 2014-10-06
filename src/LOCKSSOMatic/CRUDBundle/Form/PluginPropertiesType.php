@@ -8,17 +8,17 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PluginPropertiesType extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('pluginsId')
-            ->add('parentId')
             ->add('propertyKey')
             ->add('propertyValue')
+            ->add('plugin')
+            ->add('parent')
         ;
     }
     

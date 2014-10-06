@@ -10,10 +10,6 @@
                 <td>{{ entity.id }}</td>
             </tr>
             <tr>
-                <th>Contentprovidersid</th>
-                <td>{{ entity.contentProvidersId }}</td>
-            </tr>
-            <tr>
                 <th>Uuid</th>
                 <td>{{ entity.uuid }}</td>
             </tr>
@@ -34,5 +30,11 @@
             Back to the list
         </a>
     </li>
+    <li>
+        <a href="{{ path('deposits_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
 </ul>
 {% endblock %}

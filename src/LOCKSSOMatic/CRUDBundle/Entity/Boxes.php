@@ -3,84 +3,63 @@
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Boxes
- *
- * @ORM\Table(name="boxes", indexes={@ORM\Index(name="plns_id_idx", columns={"plns_id"})})
- * @ORM\Entity
  */
 class Boxes
 {
-	/**
-	 * Property required for one-to-many relationship with BoxStatus.
-	 * 
-	 * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="boxStatus")
-	 */
-	protected $boxStatus;
-	
-	/**
-	 * Initializes the $boxStatus property.
-	 */
-	public function __construct()
-	{
-		$this->boxStatus = new ArrayCollection();
-	}
-
-	/**
-	* Property required for many-to-one relationship with Plns.
-	* 
-	* @ORM\ManyToOne(targetEntity="Plns", inversedBy="boxes")
-	* @ORM\JoinColumn(name="plns_id", referencedColumnName="id")
-	*/
-	protected $pln;
-
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="plns_id", type="integer", nullable=true)
-     */
-    private $plnsId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="hostname", type="text", nullable=true)
      */
     private $hostname;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="ip_address", type="text", nullable=true)
      */
     private $ipAddress;
-    
+
     /**
      * @var string
-     *
-     * @ORM\Column(name="username", type="text", nullable=true)
      */
     private $username;
-    
+
     /**
      * @var string
-     *
-     * @ORM\Column(name="password", type="text", nullable=true)
      */
-    private $password;    
+    private $password;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $boxStatus;
 
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     */
+    private $pln;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->boxStatus = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Stringify the entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return $this->hostname;
+    }
 
     /**
      * Get id
@@ -90,29 +69,6 @@ class Boxes
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set plnsId
-     *
-     * @param integer $plnsId
-     * @return Boxes
-     */
-    public function setPlnsId($plnsId)
-    {
-        $this->plnsId = $plnsId;
-
-        return $this;
-    }
-
-    /**
-     * Get plnsId
-     *
-     * @return integer 
-     */
-    public function getPlnsId()
-    {
-        return $this->plnsId;
     }
 
     /**
@@ -160,7 +116,7 @@ class Boxes
     {
         return $this->ipAddress;
     }
-    
+
     /**
      * Set username
      *

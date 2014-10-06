@@ -7,9 +7,6 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Pluginsid</th>
-                <th>Ausid</th>
-                <th>Parentid</th>
                 <th>Propertykey</th>
                 <th>Propertyvalue</th>
                 <th>Actions</th>
@@ -19,9 +16,6 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('pluginproperties_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.pluginsId }}</td>
-                <td>{{ entity.ausId }}</td>
-                <td>{{ entity.parentId }}</td>
                 <td>{{ entity.propertyKey }}</td>
                 <td>{{ entity.propertyValue }}</td>
                 <td>

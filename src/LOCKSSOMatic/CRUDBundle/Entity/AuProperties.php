@@ -6,59 +6,65 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * AuProperties
- *
- * @ORM\Table(name="au_properties", indexes={@ORM\Index(name="aus_id_idx", columns={"aus_id"})})
- * @ORM\Entity
  */
 class AuProperties
 {
-	
-	/**
-	* Property required for many-to-one relationship with Aus.
-	* 
-	* @ORM\ManyToOne(targetEntity="Aus", inversedBy="auProperties")
-	* @ORM\JoinColumn(name="aus_id", referencedColumnName="id")
-	*/
-	protected $au;
-
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(name="aus_id", type="integer", nullable=true)
      */
     private $ausId;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(name="parent_id", type="integer", nullable=true)
      */
     private $parentId;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_key", type="text", nullable=true)
      */
     private $propertyKey;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $children;
 
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Aus
+     */
+    private $au;
+
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\AuProperties
+     */
+    private $parent;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Stringify the entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return $this->propertyKey;
+    }
 
     /**
      * Get id
@@ -163,6 +169,39 @@ class AuProperties
     }
 
     /**
+     * Add children
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $children
+     * @return AuProperties
+     */
+    public function addChild(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $children
+     */
+    public function removeChild(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
      * Set au
      *
      * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
@@ -183,5 +222,28 @@ class AuProperties
     public function getAu()
     {
         return $this->au;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $parent
+     * @return AuProperties
+     */
+    public function setParent(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\AuProperties 
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 }

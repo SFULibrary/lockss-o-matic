@@ -54,12 +54,12 @@ class PlnsController extends Controller
     }
 
     /**
-    * Creates a form to create a Plns entity.
-    *
-    * @param Plns $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to create a Plns entity.
+     *
+     * @param Plns $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createCreateForm(Plns $entity)
     {
         $form = $this->createForm(new PlnsType(), $entity, array(
@@ -105,7 +105,8 @@ class PlnsController extends Controller
 
         return $this->render('LOCKSSOMaticCRUDBundle:Plns:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        ));
+            'delete_form' => $deleteForm->createView(),
+        ));
     }
 
     /**

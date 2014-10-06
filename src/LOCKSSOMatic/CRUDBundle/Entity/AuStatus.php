@@ -6,65 +6,47 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * AuStatus
- *
- * @ORM\Table(name="au_status", indexes={@ORM\Index(name="aus_id_idx", columns={"aus_id"})})
- * @ORM\Entity
  */
 class AuStatus
 {
-	/**
-	* Property required for many-to-one relationship with Aus.
-	* 
-	* @ORM\ManyToOne(targetEntity="Aus", mappedBy="auStatus")
-	* @ORM\JoinColumn((name="aus_id", referencedColumnName="id")
-	*/
-	protected $au;
-
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="aus_id", type="integer", nullable=true)
-     */
-    private $ausId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="box_hostname", type="text", nullable=true)
      */
     private $boxHostname;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=true)
      */
     private $queryDate;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_key", type="text", nullable=true)
      */
     private $propertyKey;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
 
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Aus
+     */
+    private $au;
 
+    /**
+     * Stringify the entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return $this->propertyKey;
+    }
 
     /**
      * Get id
@@ -74,29 +56,6 @@ class AuStatus
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set ausId
-     *
-     * @param integer $ausId
-     * @return AuStatus
-     */
-    public function setAusId($ausId)
-    {
-        $this->ausId = $ausId;
-
-        return $this;
-    }
-
-    /**
-     * Get ausId
-     *
-     * @return integer 
-     */
-    public function getAusId()
-    {
-        return $this->ausId;
     }
 
     /**
@@ -130,7 +89,7 @@ class AuStatus
      */
     public function setQueryDate($queryDate)
     {
-        $this->queryDate = new \DateTime();
+        $this->queryDate = $queryDate;
 
         return $this;
     }

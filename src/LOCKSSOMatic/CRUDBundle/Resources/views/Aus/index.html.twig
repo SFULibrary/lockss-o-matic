@@ -7,9 +7,9 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Plnsid</th>
                 <th>Auid</th>
                 <th>Manifesturl</th>
+                <th>Open</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -17,9 +17,9 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('aus_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.plnsId }}</td>
                 <td>{{ entity.auid }}</td>
                 <td>{{ entity.manifestUrl }}</td>
+                <td>{{ entity.open }}</td>
                 <td>
                 <ul>
                     <li>

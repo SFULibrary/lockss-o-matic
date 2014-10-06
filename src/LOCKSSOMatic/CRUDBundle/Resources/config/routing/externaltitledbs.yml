@@ -1,0 +1,30 @@
+externaltitledbs:
+    path:     /
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ExternalTitleDbs:index" }
+
+externaltitledbs_show:
+    path:     /{id}/show
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ExternalTitleDbs:show" }
+
+externaltitledbs_new:
+    path:     /new
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ExternalTitleDbs:new" }
+
+externaltitledbs_create:
+    path:     /create
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ExternalTitleDbs:create" }
+    requirements: { _method: post }
+
+externaltitledbs_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ExternalTitleDbs:edit" }
+
+externaltitledbs_update:
+    path:     /{id}/update
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ExternalTitleDbs:update" }
+    requirements: { _method: post|put }
+
+externaltitledbs_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticCRUDBundle:ExternalTitleDbs:delete" }
+    requirements: { _method: post|delete }

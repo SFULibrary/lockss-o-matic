@@ -7,7 +7,6 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Contentprovidersid</th>
                 <th>Uuid</th>
                 <th>Title</th>
                 <th>Datedeposited</th>
@@ -18,7 +17,6 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('deposits_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.contentProvidersId }}</td>
                 <td>{{ entity.uuid }}</td>
                 <td>{{ entity.title }}</td>
                 <td>{% if entity.dateDeposited %}{{ entity.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
@@ -27,6 +25,9 @@
                     <li>
                         <a href="{{ path('deposits_show', { 'id': entity.id }) }}">show</a>
                     </li>
+                    <li>
+                        <a href="{{ path('deposits_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
                 </ul>
                 </td>
             </tr>
@@ -34,4 +35,11 @@
         </tbody>
     </table>
 
+        <ul>
+        <li>
+            <a href="{{ path('deposits_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
     {% endblock %}

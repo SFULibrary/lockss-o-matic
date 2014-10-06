@@ -7,7 +7,6 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Boxesid</th>
                 <th>Querydate</th>
                 <th>Propertykey</th>
                 <th>Propertyvalue</th>
@@ -18,7 +17,6 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('boxstatus_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.boxesId }}</td>
                 <td>{% if entity.queryDate %}{{ entity.queryDate|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{{ entity.propertyKey }}</td>
                 <td>{{ entity.propertyValue }}</td>
@@ -27,6 +25,9 @@
                     <li>
                         <a href="{{ path('boxstatus_show', { 'id': entity.id }) }}">show</a>
                     </li>
+                    <li>
+                        <a href="{{ path('boxstatus_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
                 </ul>
                 </td>
             </tr>
@@ -34,4 +35,11 @@
         </tbody>
     </table>
 
+        <ul>
+        <li>
+            <a href="{{ path('boxstatus_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
     {% endblock %}

@@ -10,10 +10,6 @@
                 <td>{{ entity.id }}</td>
             </tr>
             <tr>
-                <th>Ausid</th>
-                <td>{{ entity.ausId }}</td>
-            </tr>
-            <tr>
                 <th>Boxhostname</th>
                 <td>{{ entity.boxHostname }}</td>
             </tr>
@@ -38,5 +34,11 @@
             Back to the list
         </a>
     </li>
+    <li>
+        <a href="{{ path('austatus_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
 </ul>
 {% endblock %}

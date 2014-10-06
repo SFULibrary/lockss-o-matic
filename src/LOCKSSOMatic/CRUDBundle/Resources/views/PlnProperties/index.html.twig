@@ -7,8 +7,6 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Plnsid</th>
-                <th>Parentid</th>
                 <th>Propertykey</th>
                 <th>Propertyvalue</th>
                 <th>Actions</th>
@@ -18,8 +16,6 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('plnproperties_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.plnsId }}</td>
-                <td>{{ entity.parentId }}</td>
                 <td>{{ entity.propertyKey }}</td>
                 <td>{{ entity.propertyValue }}</td>
                 <td>

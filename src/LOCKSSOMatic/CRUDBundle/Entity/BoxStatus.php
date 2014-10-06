@@ -6,58 +6,43 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * BoxStatus
- *
- * @ORM\Table(name="box_status", indexes={@ORM\Index(name="boxes_id_idx", columns={"boxes_id"})})
- * @ORM\Entity
  */
 class BoxStatus
 {
-	/**
-	* Property required for many-to-one relationship with Boxes.
-	* 
-	* @ORM\ManyToOne(targetEntity="Boxes", mappedBy="boxStatus")
-	* @ORM\JoinColumn((name="boxes_id", referencedColumnName="id")
-	*/
-	protected $box;
-
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="boxes_id", type="integer", nullable=true)
-     */
-    private $boxesId;
-
-    /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=true)
      */
     private $queryDate;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_key", type="text", nullable=true)
      */
     private $propertyKey;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
 
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Boxes
+     */
+    private $box;
 
+
+    /**
+     * Stringify the entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return $this->propertyKey;
+    }
 
     /**
      * Get id
@@ -70,29 +55,6 @@ class BoxStatus
     }
 
     /**
-     * Set boxesId
-     *
-     * @param integer $boxesId
-     * @return BoxStatus
-     */
-    public function setBoxesId($boxesId)
-    {
-        $this->boxesId = $boxesId;
-
-        return $this;
-    }
-
-    /**
-     * Get boxesId
-     *
-     * @return integer 
-     */
-    public function getBoxesId()
-    {
-        return $this->boxesId;
-    }
-
-    /**
      * Set queryDate
      *
      * @param \DateTime $queryDate
@@ -100,7 +62,7 @@ class BoxStatus
      */
     public function setQueryDate($queryDate)
     {
-        $this->queryDate = new \DateTime();;
+        $this->queryDate = $queryDate;
 
         return $this;
     }

@@ -54,12 +54,12 @@ class PluginsController extends Controller
     }
 
     /**
-    * Creates a form to create a Plugins entity.
-    *
-    * @param Plugins $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to create a Plugins entity.
+     *
+     * @param Plugins $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createCreateForm(Plugins $entity)
     {
         $form = $this->createForm(new PluginsType(), $entity, array(
@@ -105,7 +105,8 @@ class PluginsController extends Controller
 
         return $this->render('LOCKSSOMaticCRUDBundle:Plugins:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        ));
+            'delete_form' => $deleteForm->createView(),
+        ));
     }
 
     /**

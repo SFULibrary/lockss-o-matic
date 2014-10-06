@@ -3,56 +3,49 @@
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Plugins
- *
- * @ORM\Table(name="plugins")
- * @ORM\Entity
  */
 class Plugins
 {
     /**
-     * Property required for one-to-many relationship with PluginProperties.
-     * 
-     * @ORM\OneToMany(targetEntity="PluginProperties", mappedBy="pluginProperties")
-     */
-    protected $pluginProperties;
-    
-    /**
-     * Property required for one-to-many relationship with Aus.
-     * 
-     * @ORM\OneToMany(targetEntity="Aus", mappedBy="aus")
-     */
-    protected $aus;    
-
-    /**
-     * Initializes the $pluginProperties and $aus properties.
-     */
-    public function __construct()
-    {
-        $this->pluginProperties = new ArrayCollection();
-        $this->aus = new ArrayCollection();
-    }
-
-    /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="name", type="text", nullable=true)
      */
     private $name;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $pluginProperties;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $aus;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->pluginProperties = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->aus = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Stringify the entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return $this->name;
+    }
 
     /**
      * Get id

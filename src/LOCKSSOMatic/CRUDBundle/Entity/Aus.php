@@ -3,108 +3,76 @@
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Aus
- *
- * @ORM\Table(name="aus", indexes={@ORM\Index(name="plns_id_idx", columns={"plns_id"})})
- * @ORM\Entity
  */
 class Aus
 {
     /**
-     * Property required for one-to-many relationship with Content.
-     * 
-     * @ORM\OneToMany(targetEntity="Content", mappedBy="content")
-     */
-    protected $content;
-
-    /**
-     * Property required for one-to-many relationship with AuStatus.
-     * 
-     * @ORM\OneToMany(targetEntity="AuStatus", mappedBy="auStatus")
-     */
-    protected $auStatus;
-
-    /**
-     * Property required for one-to-many relationship with AuProperties.
-     * 
-     * @ORM\OneToMany(targetEntity="AuProperties", mappedBy="auProperties")
-     */
-    protected $auProperties;
-
-    /**
-     * Initializes the $content, $auStatus, $auProperties, and $pluginProperties
-     * properties.
-     */
-    public function __construct()
-    {
-        $this->content = new ArrayCollection();
-        $this->auStatus = new ArrayCollection();
-        $this->auProperties = new ArrayCollection();
-    }
-
-    /**
-    * Property required for many-to-one relationship with Plns.
-    * 
-    * @ORM\ManyToOne(targetEntity="Plns", inversedBy="aus")
-    * @ORM\JoinColumn(name="plns_id", referencedColumnName="id")
-    */
-    protected $pln;
-    
-    /**
-    * Property required for many-to-one relationship with Plugins.
-    * 
-    * @ORM\ManyToOne(targetEntity="Plugins", inversedBy="aus")
-    * @ORM\JoinColumn(name="plugins_id", referencedColumnName="id")
-    */
-    protected $plugin;    
-
-    /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="plns_id", type="integer", nullable=true)
-     */
-    private $plnsId;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="exteranl_title_dbs_id", type="integer", nullable=true)
-     */
-    private $externalTitleDbsId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="auid", type="text", nullable=true)
      */
     private $auid;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="manifest_url", type="text", nullable=true)
      */
     private $manifestUrl;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(name="open", type="integer", nullable=true)
      */
-    private $open;    
+    private $open;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $content;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $auStatus;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $auProperties;
+
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
+     */
+    private $pln;
+
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plugins
+     */
+    private $plugin;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->content = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->auStatus = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->auProperties = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Stringify the entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return sprintf('%d (%s)', array($this->id, $this->plugin->getName()));
+    }
+    
     /**
      * Get id
      *
@@ -113,52 +81,6 @@ class Aus
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set plnsId
-     *
-     * @param integer $plnsId
-     * @return Aus
-     */
-    public function setPlnsId($plnsId)
-    {
-        $this->plnsId = $plnsId;
-
-        return $this;
-    }
-
-    /**
-     * Get plnsId
-     *
-     * @return integer 
-     */
-    public function getPlnsId()
-    {
-        return $this->plnsId;
-    }
-
-    /**
-     * Get externalTitleDbsId
-     *
-     * @return integer 
-     */
-    public function getExternalTitleDbsId()
-    {
-        return $this->externalTitleDbsId;
-    }
-    
-    /**
-     * Set externalTitleDbsId
-     *
-     * @param integer $exteralTitleDbsId
-     * @return Aus
-     */
-    public function setExternalTitleDbsId($externalTitleDbsId)
-    {
-        $this->plnsId = $plnsId;
-
-        return $this;
     }
 
     /**
@@ -205,6 +127,29 @@ class Aus
     public function getManifestUrl()
     {
         return $this->manifestUrl;
+    }
+
+    /**
+     * Set open
+     *
+     * @param integer $open
+     * @return Aus
+     */
+    public function setOpen($open)
+    {
+        $this->open = $open;
+
+        return $this;
+    }
+
+    /**
+     * Get open
+     *
+     * @return integer 
+     */
+    public function getOpen()
+    {
+        return $this->open;
     }
 
     /**
@@ -307,39 +252,6 @@ class Aus
     }
 
     /**
-     * Add pluginProperties
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
-     * @return Aus
-     */
-    public function addPluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
-    {
-        $this->pluginProperties[] = $pluginProperties;
-
-        return $this;
-    }
-
-    /**
-     * Remove pluginProperties
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
-     */
-    public function removePluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
-    {
-        $this->pluginProperties->removeElement($pluginProperties);
-    }
-
-    /**
-     * Get pluginProperties
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPluginProperties()
-    {
-        return $this->pluginProperties;
-    }
-
-    /**
      * Set pln
      *
      * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
@@ -360,34 +272,6 @@ class Aus
     public function getPln()
     {
         return $this->pln;
-    }
-    /**
-     * @var integer
-     */
-    private $pluginsId;
-
-
-    /**
-     * Set pluginsId
-     *
-     * @param integer $pluginsId
-     * @return Aus
-     */
-    public function setPluginsId($pluginsId)
-    {
-        $this->pluginsId = $pluginsId;
-
-        return $this;
-    }
-
-    /**
-     * Get pluginsId
-     *
-     * @return integer 
-     */
-    public function getPluginsId()
-    {
-        return $this->pluginsId;
     }
 
     /**
@@ -411,28 +295,5 @@ class Aus
     public function getPlugin()
     {
         return $this->plugin;
-    }
-
-    /**
-     * Set open
-     *
-     * @param integer $open
-     * @return Aus
-     */
-    public function setOpen($open)
-    {
-        $this->open = $open;
-
-        return $this;
-    }
-
-    /**
-     * Get open
-     *
-     * @return integer 
-     */
-    public function getOpen()
-    {
-        return $this->open;
     }
 }
