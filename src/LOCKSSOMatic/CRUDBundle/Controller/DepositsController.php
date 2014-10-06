@@ -2,11 +2,7 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
-use LOCKSSOMatic\CRUDBundle\Form\DepositsType;
 
 /**
  * Deposits controller.
@@ -44,11 +40,8 @@ class DepositsController extends Controller
             throw $this->createNotFoundException('Unable to find Deposits entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('LOCKSSOMaticCRUDBundle:Deposits:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 

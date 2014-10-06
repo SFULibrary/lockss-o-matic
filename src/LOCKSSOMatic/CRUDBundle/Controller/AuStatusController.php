@@ -2,11 +2,7 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
-use LOCKSSOMatic\CRUDBundle\Form\AuStatusType;
 
 /**
  * AuStatus controller.
@@ -44,11 +40,8 @@ class AuStatusController extends Controller
             throw $this->createNotFoundException('Unable to find AuStatus entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('LOCKSSOMaticCRUDBundle:AuStatus:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 

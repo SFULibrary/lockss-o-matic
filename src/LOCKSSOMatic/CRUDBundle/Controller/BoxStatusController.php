@@ -44,11 +44,8 @@ class BoxStatusController extends Controller
             throw $this->createNotFoundException('Unable to find BoxStatus entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('LOCKSSOMaticCRUDBundle:BoxStatus:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
