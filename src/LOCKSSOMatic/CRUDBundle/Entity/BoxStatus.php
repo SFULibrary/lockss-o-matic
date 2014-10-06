@@ -2,7 +2,7 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
  * BoxStatus
@@ -15,7 +15,7 @@ class BoxStatus
     private $id;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $queryDate;
 
@@ -30,7 +30,7 @@ class BoxStatus
     private $propertyValue;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Boxes
+     * @var Boxes
      */
     private $box;
 
@@ -57,12 +57,11 @@ class BoxStatus
     /**
      * Set queryDate
      *
-     * @param \DateTime $queryDate
      * @return BoxStatus
      */
-    public function setQueryDate($queryDate)
+    public function setQueryDate()
     {
-        $this->queryDate = $queryDate;
+        $this->queryDate = new DateTime();
 
         return $this;
     }
@@ -70,7 +69,7 @@ class BoxStatus
     /**
      * Get queryDate
      *
-     * @return \DateTime 
+     * @return DateTime 
      */
     public function getQueryDate()
     {
@@ -126,10 +125,10 @@ class BoxStatus
     /**
      * Set box
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Boxes $box
+     * @param Boxes $box
      * @return BoxStatus
      */
-    public function setBox(\LOCKSSOMatic\CRUDBundle\Entity\Boxes $box = null)
+    public function setBox(Boxes $box = null)
     {
         $this->box = $box;
 
@@ -139,7 +138,7 @@ class BoxStatus
     /**
      * Get box
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Boxes 
+     * @return Boxes 
      */
     public function getBox()
     {
