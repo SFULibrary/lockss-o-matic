@@ -5,26 +5,3 @@ boxstatus:
 boxstatus_show:
     path:     /{id}/show
     defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:show" }
-
-boxstatus_new:
-    path:     /new
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:new" }
-
-boxstatus_create:
-    path:     /create
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:create" }
-    requirements: { _method: post }
-
-boxstatus_edit:
-    path:     /{id}/edit
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:edit" }
-
-boxstatus_update:
-    path:     /{id}/update
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:update" }
-    requirements: { _method: post|put }
-
-boxstatus_delete:
-    path:     /{id}/delete
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:delete" }
-    requirements: { _method: post|delete }

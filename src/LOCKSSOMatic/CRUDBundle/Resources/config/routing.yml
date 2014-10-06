@@ -1,56 +1,56 @@
-locksso_matic_crud_plugins:
+LOCKSSOMaticCRUDBundle_plugins:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plugins.yml"
     prefix:   /plugins
 
-locksso_matic_crud_pluginproperties:
+LOCKSSOMaticCRUDBundle_pluginproperties:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/pluginproperties.yml"
     prefix:   /pluginproperties
 
-locksso_matic_crud_plns:
+LOCKSSOMaticCRUDBundle_plns:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plns.yml"
     prefix:   /plns
 
-locksso_matic_crud_plnproperties:
+LOCKSSOMaticCRUDBundle_plnproperties:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/plnproperties.yml"
     prefix:   /plnproperties
 
-locksso_matic_crud_externaltitledbs:
+LOCKSSOMaticCRUDBundle_externaltitledbs:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/externaltitledbs.yml"
     prefix:   /externaltitledbs
 
-locksso_matic_crud_deposits:
+LOCKSSOMaticCRUDBundle_deposits:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/deposits.yml"
     prefix:   /deposits
 
-locksso_matic_crud_contentproviders:
+LOCKSSOMaticCRUDBundle_contentproviders:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/contentproviders.yml"
     prefix:   /contentproviders
 
-locksso_matic_crud_contentowners:
+LOCKSSOMaticCRUDBundle_contentowners:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/contentowners.yml"
     prefix:   /contentowners
 
-locksso_matic_crud_content:
+LOCKSSOMaticCRUDBundle_content:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/content.yml"
     prefix:   /content
 
-locksso_matic_crud_boxes:
+LOCKSSOMaticCRUDBundle_boxes:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/boxes.yml"
     prefix:   /boxes
 
-locksso_matic_crud_boxstatus:
+LOCKSSOMaticCRUDBundle_boxstatus:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/boxstatus.yml"
     prefix:   /boxstatus
 
-locksso_matic_crud_aus:
+LOCKSSOMaticCRUDBundle_aus:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/aus.yml"
     prefix:   /aus
 
-locksso_matic_crud_austatus:
+LOCKSSOMaticCRUDBundle_austatus:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/austatus.yml"
     prefix:   /austatus
 
-locksso_matic_crud_auproperties:
+LOCKSSOMaticCRUDBundle_auproperties:
     resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing/auproperties.yml"
     prefix:   /auproperties
 

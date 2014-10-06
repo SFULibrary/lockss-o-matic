@@ -5,26 +5,3 @@ austatus:
 austatus_show:
     path:     /{id}/show
     defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:show" }
-
-austatus_new:
-    path:     /new
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:new" }
-
-austatus_create:
-    path:     /create
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:create" }
-    requirements: { _method: post }
-
-austatus_edit:
-    path:     /{id}/edit
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:edit" }
-
-austatus_update:
-    path:     /{id}/update
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:update" }
-    requirements: { _method: post|put }
-
-austatus_delete:
-    path:     /{id}/delete
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:delete" }
-    requirements: { _method: post|delete }

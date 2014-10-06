@@ -5,26 +5,3 @@ deposits:
 deposits_show:
     path:     /{id}/show
     defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:show" }
-
-deposits_new:
-    path:     /new
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:new" }
-
-deposits_create:
-    path:     /create
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:create" }
-    requirements: { _method: post }
-
-deposits_edit:
-    path:     /{id}/edit
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:edit" }
-
-deposits_update:
-    path:     /{id}/update
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:update" }
-    requirements: { _method: post|put }
-
-deposits_delete:
-    path:     /{id}/delete
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:delete" }
-    requirements: { _method: post|delete }

@@ -5,26 +5,3 @@ content:
 content_show:
     path:     /{id}/show
     defaults: { _controller: "LOCKSSOMaticCRUDBundle:Content:show" }
-
-content_new:
-    path:     /new
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Content:new" }
-
-content_create:
-    path:     /create
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Content:create" }
-    requirements: { _method: post }
-
-content_edit:
-    path:     /{id}/edit
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Content:edit" }
-
-content_update:
-    path:     /{id}/update
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Content:update" }
-    requirements: { _method: post|put }
-
-content_delete:
-    path:     /{id}/delete
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Content:delete" }
-    requirements: { _method: post|delete }
