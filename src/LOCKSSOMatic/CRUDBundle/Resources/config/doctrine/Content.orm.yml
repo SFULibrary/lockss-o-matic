@@ -31,42 +31,38 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
         url:
             type: string
             length: 255
-            nullable: true
-            fixed: false
+            nullable: false
             comment: 'The fully qualified URL for the content. This URL will appear in LOCKSS manifest pages.'
         title:
             type: string
             length: 255
-            nullable: true
-            fixed: false
+            nullable: false
             comment: 'The title of the content, supplied by the content provider in the <lom:content> title attribute if there is one; if missing, generated from url value.'
         size:
             type: integer
-            nullable: true
+            nullable: false
             unsigned: false
             comment: 'The size of the content, in kB.'
         dateDeposited:
             type: datetime
-            nullable: true
+            nullable: false
             comment: 'Timestamp indicating when the content was depositied.'
             column: date_deposited           
         checksumType:
             type: string
             length: 24
-            nullable: true
-            fixed: false
+            nullable: false
             comment: 'A standard identifier for commonly used checksum algorithms such as md5, sha1, etc. supplied by the content provider in the <lom:content> checksumType attribute.'
             column: checksum_type
         checksumValue:
             type: string
             length: 255
-            nullable: true
-            fixed: false
+            nullable: false
             comment: 'The checksum value, supplied by the content provider in the <lom:content> checksumValue attribute.'
             column: checksum_value
         recrawl:
             type: integer
-            nullable: true
+            nullable: false
             unsigned: false
             comment: 'Either 1 (indicating that LOCKSS boxes should recrawl the content) or 0 (indicating that they should not).'
     lifecycleCallbacks:

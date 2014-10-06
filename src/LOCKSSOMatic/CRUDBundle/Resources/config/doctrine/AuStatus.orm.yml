@@ -25,27 +25,23 @@ LOCKSSOMatic\CRUDBundle\Entity\AuStatus:
         boxHostname:
             type: string
             length: 255
-            nullable: true
-            fixed: false
+            nullable: false
             comment: 'The hostname of the box that perserves the AU.'
             column: box_hostname
         queryDate:
             type: datetime
-            nullable: true
+            nullable: false
             comment: 'Timestamp indicating when the box was queried.'
             column: query_date
         propertyKey:
             type: string
             length: 255
-            nullable: true
-            fixed: false
+            nullable: false
             comment: 'AU property key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
-            length: null
-            fixed: false
             comment: 'AU property value.'
             column: property_value
     lifecycleCallbacks:

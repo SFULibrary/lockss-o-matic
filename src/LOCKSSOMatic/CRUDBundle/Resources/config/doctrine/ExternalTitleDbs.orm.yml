@@ -24,7 +24,5 @@ LOCKSSOMatic\CRUDBundle\Entity\ExternalTitleDbs:
     fields:
         path:
             type: text
-            nullable: true
-            length: null
-            fixed: false
+            nullable: false
             comment: 'The filesystem path to the uploaded title db file.'

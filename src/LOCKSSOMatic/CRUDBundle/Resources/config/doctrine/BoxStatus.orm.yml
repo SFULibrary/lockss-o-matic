@@ -24,21 +24,18 @@ LOCKSSOMatic\CRUDBundle\Entity\BoxStatus:
     fields:
         queryDate:
             type: datetime
-            nullable: true
+            nullable: false
             comment: 'Timestamp indicating when the box was queried.'
             column: query_date
         propertyKey:
             type: string
             length: 255
-            nullable: true
-            fixed: false
+            nullable: false
             comment: 'Box property key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
-            length: null
-            fixed: false
             comment: 'Box property value.'
             column: property_value
     lifecycleCallbacks:

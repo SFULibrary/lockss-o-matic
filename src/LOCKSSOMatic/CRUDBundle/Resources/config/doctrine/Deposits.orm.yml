@@ -31,19 +31,17 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
     fields:
         uuid:
             type: string
-            nullable: true
+            nullable: false
             length: 36
-            fixed: false
             comment: 'A UUID identifying the deposit, supplied by the content provider in the <sword:id> element.'
         title:
             type: string
             length: 255
-            nullable: true
-            fixed: false
+            nullable: false
             comment: 'The title of the deposit.'
         dateDeposited:
             type: datetime
-            nullable: true
+            nullable: false
             comment: 'Timestamp indicating when was deposit was created.'
             column: date_deposited
     lifecycleCallbacks:

@@ -35,6 +35,5 @@ LOCKSSOMatic\CRUDBundle\Entity\Plns:
         propsPath:
             type: text
             nullable: true
-            length: null
             comment: 'The URL of the lockss.xml file for the PLN.'
             column: props_path

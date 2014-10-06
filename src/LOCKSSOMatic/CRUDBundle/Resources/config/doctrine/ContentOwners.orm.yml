@@ -18,14 +18,10 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentOwners:
         name:
             type: string
             length: 255
-            nullable: true
-            fixed: false
+            nullable: false
             comment: 'Name of the insitution, department, or individual who is responsible for content.'
         emailAddress:
-            type: string
-            length: 255
-            nullable: true
-            fixed: false
+            type: text
+            nullable: false
             comment: 'One or more email addresses used in sending reports, alerts, etc.'
             column: email_address
-    lifecycleCallbacks: {  }

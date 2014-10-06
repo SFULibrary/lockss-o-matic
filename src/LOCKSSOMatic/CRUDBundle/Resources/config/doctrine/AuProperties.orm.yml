@@ -35,16 +35,11 @@ LOCKSSOMatic\CRUDBundle\Entity\AuProperties:
         propertyKey:
             type: string
             length: 255
-            nullable: true
-            length: null
-            fixed: false
+            nullable: false
             comment: 'AU property key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
-            length: null
-            fixed: false
             comment: 'AU property value.'
             column: property_value
-    lifecycleCallbacks: {  }

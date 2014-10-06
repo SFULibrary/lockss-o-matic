@@ -35,29 +35,23 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
         type:
             type: string
             length: 24
-            length: null
-            fixed: false
             comment: 'Either "application" (deposits content via SWORD interface) or "manual" (deposits content via web form).'
         name:
             type: string
             length: 255
-            fixed: false
             comment: 'The name of the content provider.'
         ipAddress:
             type: string
             length: 16
-            fixed: false
             comment: 'The IP address of the content provider application.'
             column: ip_address
         hostname:
             type: string
             length: 255
-            fixed: false
             comment: 'The hostname of the content provider application.'
         checksumType:
             type: string
             length: 24
-            fixed: false
             comment: 'A standard identifier for commonly used checksum algorithms such as md5, sha1, etc.'
             column: checksum_type
         maxFileSize:

@@ -41,6 +41,5 @@ LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
         propertyValue:
             type: text
             nullable: true
-            length: null
             comment: 'Plugin property value.'
             column: property_value

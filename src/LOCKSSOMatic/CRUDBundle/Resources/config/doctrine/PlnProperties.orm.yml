@@ -41,6 +41,5 @@ LOCKSSOMatic\CRUDBundle\Entity\PlnProperties:
         propertyValue:
             type: text
             nullable: true
-            length: null
             comment: 'PLN property value.'
             column: property_value
