@@ -2,7 +2,7 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
  * Content
@@ -30,7 +30,7 @@ class Content
     private $size;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $dateDeposited;
 
@@ -50,12 +50,12 @@ class Content
     private $recrawl;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Deposits
+     * @var Deposits
      */
     private $deposit;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Aus
+     * @var Aus
      */
     private $au;
 
@@ -150,12 +150,12 @@ class Content
     /**
      * Set dateDeposited
      *
-     * @param \DateTime $dateDeposited
+     * @param DateTime $dateDeposited
      * @return Content
      */
-    public function setDateDeposited($dateDeposited)
+    public function setDateDeposited()
     {
-        $this->dateDeposited = $dateDeposited;
+        $this->dateDeposited = new DateTime();
 
         return $this;
     }
@@ -163,7 +163,7 @@ class Content
     /**
      * Get dateDeposited
      *
-     * @return \DateTime 
+     * @return DateTime 
      */
     public function getDateDeposited()
     {
@@ -242,10 +242,10 @@ class Content
     /**
      * Set deposit
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposit
+     * @param Deposits $deposit
      * @return Content
      */
-    public function setDeposit(\LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposit = null)
+    public function setDeposit(Deposits $deposit = null)
     {
         $this->deposit = $deposit;
 
@@ -255,7 +255,7 @@ class Content
     /**
      * Get deposit
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Deposits 
+     * @return Deposits 
      */
     public function getDeposit()
     {
@@ -265,10 +265,10 @@ class Content
     /**
      * Set au
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
+     * @param Aus $au
      * @return Content
      */
-    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
+    public function setAu(Aus $au = null)
     {
         $this->au = $au;
 
@@ -278,7 +278,7 @@ class Content
     /**
      * Get au
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
+     * @return Aus 
      */
     public function getAu()
     {

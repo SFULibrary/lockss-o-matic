@@ -2,7 +2,7 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
  * AuStatus
@@ -20,7 +20,7 @@ class AuStatus
     private $boxHostname;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $queryDate;
 
@@ -35,7 +35,7 @@ class AuStatus
     private $propertyValue;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Aus
+     * @var Aus
      */
     private $au;
 
@@ -84,12 +84,12 @@ class AuStatus
     /**
      * Set queryDate
      *
-     * @param \DateTime $queryDate
+     * @param DateTime $queryDate
      * @return AuStatus
      */
-    public function setQueryDate($queryDate)
+    public function setQueryDate()
     {
-        $this->queryDate = $queryDate;
+        $this->queryDate = new DateTime();
 
         return $this;
     }
@@ -97,7 +97,7 @@ class AuStatus
     /**
      * Get queryDate
      *
-     * @return \DateTime 
+     * @return DateTime 
      */
     public function getQueryDate()
     {
@@ -153,10 +153,10 @@ class AuStatus
     /**
      * Set au
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
+     * @param Aus $au
      * @return AuStatus
      */
-    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
+    public function setAu(Aus $au = null)
     {
         $this->au = $au;
 
@@ -166,7 +166,7 @@ class AuStatus
     /**
      * Get au
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
+     * @return Aus 
      */
     public function getAu()
     {

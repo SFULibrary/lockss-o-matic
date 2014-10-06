@@ -2,7 +2,9 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Deposits
@@ -25,17 +27,17 @@ class Deposits
     private $title;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $dateDeposited;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $content;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders
+     * @var ContentProviders
      */
     private $contentProvider;
 
@@ -44,7 +46,7 @@ class Deposits
      */
     public function __construct()
     {
-        $this->content = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->content = new ArrayCollection();
     }
 
     /**
@@ -115,12 +117,12 @@ class Deposits
     /**
      * Set dateDeposited
      *
-     * @param \DateTime $dateDeposited
+     * @param DateTime $dateDeposited
      * @return Deposits
      */
-    public function setDateDeposited($dateDeposited)
+    public function setDateDeposited()
     {
-        $this->dateDeposited = $dateDeposited;
+        $this->dateDeposited = new DateTime();
 
         return $this;
     }
@@ -128,7 +130,7 @@ class Deposits
     /**
      * Get dateDeposited
      *
-     * @return \DateTime 
+     * @return DateTime 
      */
     public function getDateDeposited()
     {
@@ -138,10 +140,10 @@ class Deposits
     /**
      * Add content
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     * @param Content $content
      * @return Deposits
      */
-    public function addContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    public function addContent(Content $content)
     {
         $this->content[] = $content;
 
@@ -151,9 +153,9 @@ class Deposits
     /**
      * Remove content
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     * @param Content $content
      */
-    public function removeContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    public function removeContent(Content $content)
     {
         $this->content->removeElement($content);
     }
@@ -161,7 +163,7 @@ class Deposits
     /**
      * Get content
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection 
      */
     public function getContent()
     {
@@ -171,10 +173,10 @@ class Deposits
     /**
      * Set contentProvider
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider
+     * @param ContentProviders $contentProvider
      * @return Deposits
      */
-    public function setContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider = null)
+    public function setContentProvider(ContentProviders $contentProvider = null)
     {
         $this->contentProvider = $contentProvider;
 
@@ -184,7 +186,7 @@ class Deposits
     /**
      * Get contentProvider
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders 
+     * @return ContentProviders 
      */
     public function getContentProvider()
     {
