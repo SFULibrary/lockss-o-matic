@@ -52,82 +52,51 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals('true', $xpath->query('//app:collection/sword:mediation/text()')->item(0)->nodeValue);
     }
 
-//    public function testServiceDocumentNoBehalfOf() {
-//        $client = static::createClient();
+    /**
+     * On-Behalf-Of header is required - should get an empty response without it.
+     */
+    public function testServiceDocumentNoBehalfOf() {
+        $client = static::createClient();
+
+        $crawler = $client->request(
+                'GET', 
+                '/api/sword/2.0/sd-iri'
+        );
+
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
+        $content = $response->getContent();
+        $this->assertTrue($content === NULL || $content === '');
+    }
+    
+//    //6.3.3. Creating a Resource with an Atom Entry
+//    public function testCreateNoResource()
+//    {
+//        $uuid = Uuid::v4();
 //
-//        $crawler = $client->request(
-//                'GET', 
-//                '/api/sword/2.0/sd-iri'
-//        );
-//
-//        $response = $client->getResponse();
-//        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-//
-//        $xml = new \SimpleXMLElement($response->getContent());
-//        foreach (self::$namespaces as $k => $v) {
-//            $xml->registerXPathNamespace($k, $v);
+//        $doc = new DOMDocument("1.0", "UTF-8");
+//        $entry = $doc->appendChild($doc->createElementNS(self::$NS['atom'], 'entry'));
+//        foreach (self::$NS as $k => $v) {
+//            $ns = $entry->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . $k, $v);
 //        }
 //
-//        $this->assertEquals("2.0", $xml->xpath('/app:service/sword:version/text()')[0]);
-//        $this->assertGreaterThan(1, $xml->xpath('/app:service/sword:maxUploadSize/text()')[0]);
-//        $this->assertEquals('md5', $xml->xpath('/app:service/lom:uploadChecksumType/text()')[0]);
+//        $entry->appendChild(new DOMElement('title', 'Empty deposit'));
+//        $entry->appendChild(new DOMElement('id', $uuid));
+//        $entry->appendChild(new DOMElement('updated', date('c')));
+//        $author = $entry->appendChild(new DOMElement('author'));
+//        $author->appendChild(new DOMElement('name', 'Me, A Bunny'));
+//        $summary = $entry->appendChild(new DOMElement('summary', 'Deposit with no content element'));
+//        $summary->setAttribute('type', 'text');
+//
+//        $client = static::createClient();
+//        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $doc->saveXML());
+//        $response = $client->getResponse();
+//
+//        $response = $client->getResponse();
+//        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
+//        $content = $response->getContent();
+//        $this->assertTrue($content === NULL || $content === '');
 //    }
-//    
-    //6.3.3. Creating a Resource with an Atom Entry
-    public function testCreateNoResource()
-    {
-        $uuid = Uuid::v4();
-
-        $doc = new DOMDocument("1.0", "UTF-8");
-        $entry = $doc->appendChild($doc->createElementNS(self::$NS['atom'], 'entry'));
-        foreach (self::$NS as $k => $v) {
-            $ns = $entry->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . $k, $v);
-        }
-
-        $entry->appendChild(new DOMElement('title', 'Empty deposit'));
-        $entry->appendChild(new DOMElement('id', $uuid));
-        $entry->appendChild(new DOMElement('updated', date('c')));
-        $author = $entry->appendChild(new DOMElement('author'));
-        $author->appendChild(new DOMElement('name', 'Me, A Bunny'));
-        $summary = $entry->appendChild(new DOMElement('summary', 'Deposit with no content element'));
-        $summary->setAttribute('type', 'text');
-
-        $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $doc->saveXML());
-        $response = $client->getResponse();
-
-        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
-        $this->assertTrue($response->headers->has('Location'));
-        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
-
-        // check the url is valid and absolute [RFC 2616]
-        $components = parse_url($response->headers->get('location'));
-        $this->assertStringStartsWith('http', $components['scheme']);
-        $this->assertNotNull($components['host']);
-        $this->assertNotEmpty($components['host']);
-        $this->assertNotNull($components['path']);
-        $this->assertStringEndsWith($uuid . '/edit', $components['path']);
-
-        $doc = new DOMDocument();
-        $doc->loadXML($response->getContent());
-        $xpath = new DOMXpath($doc);
-
-        foreach (self::$NS as $k => $v) {
-            $xpath->registerNamespace($k, $v);
-        }
-
-        // must contain an Edit-IRI
-        $this->assertEquals(1, $xpath->query('atom:link[@rel="edit"]')->length);
-
-        // must contain an EM-IRI
-        $this->assertGreaterThan(0, $xpath->query('atom:link[@rel="edit-media"]')->length);
-
-        // must contain an SE-IRI
-        $this->assertEquals(1, $xpath->query('atom:link[@rel="http://purl.org/net/sword/terms/add"]')->length);
-
-        // must contain a sword treatment statement
-        $this->assertEquals(1, $xpath->query('sword:treatment')->length);
-    }
 
     //6.3.3. Creating a Resource with an Atom Entry
     public function testCreateSingleResource()
