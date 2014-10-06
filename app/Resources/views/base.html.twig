@@ -23,7 +23,27 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">              
-            <li class="active"><a href="{{ path('lom_default_homepage') }}">Home</a></li>            
+            <li class="active"><a href="{{ path('lom_default_homepage') }}">Home</a></li> 
+            <li class="dropdown" role="menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Entities <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{{ path('aus') }}">Archival Units</a></li>
+                    <li><a href="{{ path('auproperties') }}">Properties</a></li>
+                    <li><a href="{{ path('austatus') }}">Status</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="{{ path('boxes') }}">Boxes</a></li>
+                    <li><a href="{{ path('boxstatus') }}">Status</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="{{ path('content') }}">Content</a></li>
+                    <li><a href="{{ path('contentowners') }}">Owners</a></li>
+                    <li><a href="{{ path('contentproviders') }}">Providers</a></li>
+                    <li><a href="{{ path('deposits') }}">Deposits</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="{{ path('plns') }}">Networks</a></li>
+                    <li><a href="{{ path('plnproperties') }}">Properties</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="{{ path('plugins') }}">Plugins</a></li>
+                </ul>
+            </li>
           </ul>
             
           <ul class="nav navbar-nav navbar-right">              
@@ -35,7 +55,7 @@
                         </a>
                     </li>
               {% elseif is_granted('ROLE_ADMIN') %}
-                    <li class="dropdow"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Switch user <span class="caret"></span></a>
+                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Switch user <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
                         {% for user in userList() %}
                             <li>

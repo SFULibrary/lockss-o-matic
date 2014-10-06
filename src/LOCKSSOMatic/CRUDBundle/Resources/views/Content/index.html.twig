@@ -24,7 +24,7 @@
                 <td>{{ entity.url }}</td>
                 <td>{{ entity.title }}</td>
                 <td>{{ entity.size }}</td>
-                <td>{% if entity.dateDeposited %}{{ entity.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ entity.dateDeposited|date('Y-m-d H:i:s') }}</td>
                 <td>{{ entity.checksumType }}</td>
                 <td>{{ entity.checksumValue }}</td>
                 <td>{{ entity.recrawl }}</td>
