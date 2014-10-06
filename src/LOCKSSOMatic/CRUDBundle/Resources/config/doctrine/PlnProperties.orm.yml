@@ -7,6 +7,16 @@ LOCKSSOMatic\CRUDBundle\Entity\PlnProperties:
             joinColumn:
                 name: plns_id
                 referencedColumnName: id
+        parent:
+            targetEntity: PlnProperties
+            inversedBy: children
+            joinColumn:
+                name: parent_id
+                referencedColumnName: id
+    oneToMany:
+        children:
+            targetEntity: PlnProperties
+            mappedBy: parent
     table: pln_properties
     indexes:
         plns_id_idx:
@@ -22,30 +32,15 @@ LOCKSSOMatic\CRUDBundle\Entity\PlnProperties:
             generator:
                 strategy: IDENTITY
     fields:
-        plnsId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the plns table.'
-            column: plns_id
-        parentId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'id value from this table of the property''s parent property.'
-            column: parent_id
         propertyKey:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 255
+            nullable: false
             comment: 'PLN property key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
             length: null
-            fixed: false
             comment: 'PLN property value.'
             column: property_value
-    lifecycleCallbacks: {  }

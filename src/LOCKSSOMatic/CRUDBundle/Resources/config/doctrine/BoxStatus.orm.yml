@@ -22,21 +22,15 @@ LOCKSSOMatic\CRUDBundle\Entity\BoxStatus:
             generator:
                 strategy: IDENTITY
     fields:
-        boxesId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the boxes table.'
-            column: boxes_id
         queryDate:
             type: datetime
             nullable: true
             comment: 'Timestamp indicating when the box was queried.'
             column: query_date
         propertyKey:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'Box property key.'
             column: property_key

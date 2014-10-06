@@ -32,41 +32,31 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             generator:
                 strategy: IDENTITY
     fields:
-        contentOwnersId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the content_owners table.'
-            column: content_owners_id
         type:
-            type: text
-            nullable: true
+            type: string
+            length: 24
             length: null
             fixed: false
             comment: 'Either "application" (deposits content via SWORD interface) or "manual" (deposits content via web form).'
         name:
-            type: text
-            nullable: true
-            length: null
+            type: string
+            length: 255
             fixed: false
             comment: 'The name of the content provider.'
         ipAddress:
-            type: text
-            nullable: true
-            length: null
+            type: string
+            length: 16
             fixed: false
             comment: 'The IP address of the content provider application.'
             column: ip_address
         hostname:
-            type: text
-            nullable: true
-            length: null
+            type: string
+            length: 255
             fixed: false
             comment: 'The hostname of the content provider application.'
         checksumType:
-            type: text
-            nullable: true
-            length: null
+            type: string
+            length: 24
             fixed: false
             comment: 'A standard identifier for commonly used checksum algorithms such as md5, sha1, etc.'
             column: checksum_type
@@ -82,4 +72,3 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             unsigned: false
             comment: 'The maximum cumulative size for an Archival Unit containing deposits from the content provider, in kB.'
             column: max_au_size            
-    lifecycleCallbacks: {  }

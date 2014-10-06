@@ -41,34 +41,16 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             generator:
                 strategy: IDENTITY
     fields:
-        plnsId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the plns table.'
-            column: plns_id
-        pluginsId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the plugins table.'
-            column: plugins_id
-        externalTitleDbsId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the external_title_dbs table.'
-            column: external_title_dbs_id            
         auid:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'The LOCKSS auId. @todo: Explain where this is generated.'
         manifestUrl:
-            type: text
+            type: string
+            length: 512
             nullable: true
-            length: null
             fixed: false
             comment: 'The LOCKSS manifest URL for the AU.'
             column: manifest_url

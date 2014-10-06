@@ -29,12 +29,6 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             generator:
                 strategy: IDENTITY
     fields:
-        contentProvidersId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the content_providers table.'
-            column: content_providers_id
         uuid:
             type: string
             nullable: true
@@ -42,9 +36,9 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             fixed: false
             comment: 'A UUID identifying the deposit, supplied by the content provider in the <sword:id> element.'
         title:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'The title of the deposit.'
         dateDeposited:

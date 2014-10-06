@@ -16,15 +16,15 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentOwners:
                 strategy: IDENTITY
     fields:
         name:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'Name of the insitution, department, or individual who is responsible for content.'
         emailAddress:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'One or more email addresses used in sending reports, alerts, etc.'
             column: email_address

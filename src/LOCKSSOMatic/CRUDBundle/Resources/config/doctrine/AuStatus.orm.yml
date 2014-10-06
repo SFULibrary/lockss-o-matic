@@ -22,16 +22,10 @@ LOCKSSOMatic\CRUDBundle\Entity\AuStatus:
             generator:
                 strategy: IDENTITY
     fields:
-        ausId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the aus table.'
-            column: aus_id
         boxHostname:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'The hostname of the box that perserves the AU.'
             column: box_hostname
@@ -41,9 +35,9 @@ LOCKSSOMatic\CRUDBundle\Entity\AuStatus:
             comment: 'Timestamp indicating when the box was queried.'
             column: query_date
         propertyKey:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'AU property key.'
             column: property_key

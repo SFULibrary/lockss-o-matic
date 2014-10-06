@@ -26,35 +26,28 @@ LOCKSSOMatic\CRUDBundle\Entity\Boxes:
             generator:
                 strategy: IDENTITY
     fields:
-        plnsId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the plns table.'
-            column: plns_id
         hostname:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'The hostname of the LOCKSS box.'
         ipAddress:
-            type: text
+            type: string
+            length: 16
             nullable: true
-            length: null
             fixed: false
             comment: 'The IP address of the LOCKSS box.'
             column: ip_address
         username:
-            type: text
+            type: string
+            length: 64
             nullable: true
-            length: null
             fixed: false
             comment: 'The username on this box for the account that can access the box''s API.'
         password:
-            type: text
+            type: string
+            length: 64
             nullable: true
-            length: null
             fixed: false
             comment: 'The password on this box for the account that can access the box''s API.'
-    lifecycleCallbacks: {  }

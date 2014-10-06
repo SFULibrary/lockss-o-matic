@@ -28,28 +28,16 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             generator:
                 strategy: IDENTITY
     fields:
-        depositsId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the deposits table.'
-            column: deposits_id
-        ausId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the aus table.'
-            column: aus_id
         url:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'The fully qualified URL for the content. This URL will appear in LOCKSS manifest pages.'
         title:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'The title of the content, supplied by the content provider in the <lom:content> title attribute if there is one; if missing, generated from url value.'
         size:
@@ -63,16 +51,16 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             comment: 'Timestamp indicating when the content was depositied.'
             column: date_deposited           
         checksumType:
-            type: text
+            type: string
+            length: 24
             nullable: true
-            length: null
             fixed: false
             comment: 'A standard identifier for commonly used checksum algorithms such as md5, sha1, etc. supplied by the content provider in the <lom:content> checksumType attribute.'
             column: checksum_type
         checksumValue:
-            type: text
+            type: string
+            length: 255
             nullable: true
-            length: null
             fixed: false
             comment: 'The checksum value, supplied by the content provider in the <lom:content> checksumValue attribute.'
             column: checksum_value
