@@ -12,7 +12,7 @@ class LoadContentProvidersData extends AbstractFixture implements OrderedFixture
     
     public function getOrder()
     {
-        return 2; // after plns and plugins
+        return 2;
     }
 
     public function load(ObjectManager $manager)
@@ -28,4 +28,5 @@ class LoadContentProvidersData extends AbstractFixture implements OrderedFixture
         $manager->flush();
         $this->setReference('cp-1', $object);
     }
+
 }

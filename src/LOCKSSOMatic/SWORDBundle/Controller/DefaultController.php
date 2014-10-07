@@ -21,9 +21,8 @@ class DefaultController extends Controller
      * 
      * @return string The Service Document.
      */
-    public function serviceDocumentAction()
+    public function serviceDocumentAction(Request $request)
     {
-        $request = Request::createFromGlobals();
         // Get value of 'On-Behalf-Of' HTTP header (or its 'X-' version)
         // and include it as the collection ID in the service document's
         // col-iri parameter.
@@ -78,18 +77,20 @@ class DefaultController extends Controller
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return string The Deposit Receipt response.
      */
-    public function createDepositAction($collectionId)
+    public function createDepositAction(Request $request, $collectionId)
     {
+        $dem = $this->getDoctrine()->getManager();
+        $contentProviderRepo = $dem->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders');
+        $contentProvider = $contentProviderRepo->find($collectionId);
+
         // Check to verify the content provider identified by $collectionId
         // exists. If not, return an appropriate error code.
         $contentProviderExists = $this->confirmContentProvider($collectionId);
-        if (!$contentProviderExists) {
+        if ($contentProvider === null) {
             $response = new Response();
             $response->setStatusCode(403);
             return $response;   
         }
-        
-        $request = Request::createFromGlobals();
         
         // Get the request body.
         $createResourceXml = $request->getContent();
@@ -132,15 +133,21 @@ class DefaultController extends Controller
         
         // Create a Deposit entity.
         $deposit = new Deposits();
-        $deposit->setContentProvidersId($collectionId);
+        $deposit->setContentProvider($contentProvider);
         $deposit->setUuid($depositUuid);
         $deposit->setTitle($depositTitle);
-        $dem = $this->getDoctrine()->getManager();
         $dem->persist($deposit);
         $dem->flush();
         
         // Parse lom:content elements. We need the checksum type, checksum value,
         // file size, and URL.
+        
+        if(count($atomEntry->xpath('//lom:content')) === 0) {
+            $logger = $this->get('monolog.logger.sword');
+            $logger->log('error', 'No content elements found in deposit XML.');
+            $logger->log('error', $createResourceXml);
+        }
+        
         foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
             foreach ($contentChunk[0]->attributes() as $key => $value) {
                 $contentSize = $contentChunk[0]->attributes()->size;

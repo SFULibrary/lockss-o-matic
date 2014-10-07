@@ -5,6 +5,7 @@ namespace LOCKSSOMatic\CRUDBundle\Entity;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 
 /**
  * Deposits
@@ -193,4 +194,5 @@ class Deposits
     {
         return $this->contentProvider;
     }
+
 }

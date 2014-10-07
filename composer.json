@@ -26,7 +26,11 @@
         "jquery/jquery": "1.11.*",
         "ircmaxell/password-compat": "~1.0",
         "friendsofsymfony/user-bundle": "~2.0@dev",
-        "problematic/acl-manager-bundle": "dev-master"
+        "problematic/acl-manager-bundle": "dev-master",
+        "j20/php-uuid": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.2.*"
     },
     "scripts": {
         "post-install-cmd": [

@@ -3,7 +3,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
     manyToOne:
         contentProvider:
             targetEntity: ContentProviders
-            inversedBy: deposit
+            inversedBy: deposits
             joinColumn:
                 name: content_providers_id
                 referencedColumnName: id    

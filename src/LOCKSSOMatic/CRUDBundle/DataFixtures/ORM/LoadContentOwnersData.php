@@ -12,7 +12,7 @@ class LoadContentOwnersData extends AbstractFixture implements OrderedFixtureInt
     
     public function getOrder()
     {
-        return 1; // after plns and plugins
+        return 1; 
     }
 
     public function load(ObjectManager $manager)
@@ -25,4 +25,5 @@ class LoadContentOwnersData extends AbstractFixture implements OrderedFixtureInt
         $manager->flush();
         $this->setReference('owner-1', $object);
     }
+
 }
