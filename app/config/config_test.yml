@@ -1,6 +1,11 @@
 imports:
     - { resource: config_dev.yml }
 
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface:
+            algorithm: plaintext
+
 framework:
     test: ~
     session:
