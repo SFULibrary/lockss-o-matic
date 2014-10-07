@@ -33,7 +33,7 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 
-use LOCKSSOMatic\UserBundle\TestCases\FixturesWebTestCase;
+use LOCKSSOMatic\DefaultBundle\TestCases\FixturesWebTestCase;
 
 class AdminUserControllerAccessTest extends FixturesWebTestCase
 {

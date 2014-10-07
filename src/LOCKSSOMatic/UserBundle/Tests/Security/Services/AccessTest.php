@@ -31,7 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use LOCKSSOMatic\UserBundle\Security\Serivces\Access;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
-use LOCKSSOMatic\UserBundle\TestCases\FixturesTestCase;
+use LOCKSSOMatic\DefaultBundle\TestCases\FixturesTestCase;
 
 require_once 'app/AppKernel.php';
 

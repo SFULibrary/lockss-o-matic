@@ -27,7 +27,7 @@
 namespace LOCKSSOMatic\UserBundle\Tests\Controller;
 
 use LOCKSSOMatic\UserBundle\Entity\User;
-use LOCKSSOMatic\UserBundle\TestCases\FixturesWebTestCase;
+use LOCKSSOMatic\DefaultBundle\TestCases\FixturesWebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
