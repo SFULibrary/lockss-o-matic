@@ -91,6 +91,8 @@ class AdminUserControllerTest extends FixturesWebTestCase
         /** @var User */
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'user@example.com'));
         
+        $this->assertNotNull($user);
+        
         /** @var Crawler */
         $crawler = $this->client->request('GET', '/admin/user/' . $user->getId() . '/show');
         

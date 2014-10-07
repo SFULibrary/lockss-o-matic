@@ -22,7 +22,11 @@ class LoadContentProvidersData extends AbstractFixture implements OrderedFixture
         $object->setName('Example Provider Inc.');
         $object->setIpAddress('192.168.100.200');
         $object->setHostname('cp1.example.com');
-        $object->setChecksumType('sha1');
+        $object->setChecksumType('md5');
+        $object->setMaxFileSize('123456');
+        $object->setMaxAuSize('987654321');
+        $object->setContentOwner($this->getReference('owner-1'));
+        $object->setPln($this->getReference('pln-1'));
         
         $manager->persist($object);
         $manager->flush();

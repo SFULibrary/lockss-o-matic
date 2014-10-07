@@ -81,6 +81,7 @@ class AccessTest extends FixturesTestCase
     {
         $em = $this->get('doctrine')->getManager();
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.admin@example.com'));
+        $this->assertNotNull($user);
         self::$container->get('security.context')->setToken(
             new UsernamePasswordToken($user, null, 'main', $user->getRoles())
         );
