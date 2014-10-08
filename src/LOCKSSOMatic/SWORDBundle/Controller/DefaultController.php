@@ -2,16 +2,64 @@
 
 namespace LOCKSSOMatic\SWORDBundle\Controller;
 
+use LOCKSSOMatic\CRUDBundle\Entity\Content;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
+use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
-use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
-use LOCKSSOMatic\CRUDBundle\Entity\Content;
-
 class DefaultController extends Controller
 {
+    /**
+     * Get the value of the X-On-Behalf-Of header (or it's equivalent), and
+     * return it. Returns null if the header is not present, or is not a number.
+     * 
+     * @param Request $request
+     * 
+     * @return int the header value or null if not present.
+     */
+    private function getOnBehalfOfHeader(Request $request) {
+        $headers = array('x-on-behalf-of', 'on-behalf-of');        
+        foreach($headers as $h) {
+            $value = $request->headers->get($h);
+            if( !is_null($value) && is_numeric($value)) {
+                return $value;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get the value of the in-progress HTTP header, which must be either 
+     * true or false. Returns false if the header is not present or is a
+     * value other than true or false.
+     * 
+     * @param Request $request
+     * @return boolean
+     */
+    private function getInProgressHeader(Request $request) {
+        $headers = array('x-in-progress', 'in-progress');
+        foreach($headers as $h) {
+            $value = $request->headers->get($h);            
+            if(in_array($value, array('true', 'false'))) {
+                return $value;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * 
+     * @param type $onBehalfOf
+     * @return ContentProviders
+     */
+    private function getContentProvider($onBehalfOf) {
+        return $this->getDoctrine()->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')->find($onBehalfOf);
+    }
+    
     /**
      * Controller for the SWORD Service Document request.
      * 
@@ -23,39 +71,19 @@ class DefaultController extends Controller
      */
     public function serviceDocumentAction(Request $request)
     {
-        // Get value of 'On-Behalf-Of' HTTP header (or its 'X-' version)
-        // and include it as the collection ID in the service document's
-        // col-iri parameter.
-        if ($request->headers->has('x_on_behalf_of')) {
-            $onBehalfOf = $request->headers->get('x_on_behalf_of');
-        }
-        elseif ($request->headers->has('on_behalf_of')) {
-            $onBehalfOf = $request->headers->get('on_behalf_of');
-        }
-        else {
-            $response = new Response();
-            // Return a "Precondition Failed" response.
-            $response->setStatusCode(412);
-            return $response;
-        }
+        $onBehalfOf = $this->getOnBehalfOfHeader($request);
         
-        if (!is_numeric($onBehalfOf)) {
-            $response = new Response();
+        if (is_null($onBehalfOf)) {
             // Return a "Precondition Failed" response.
-            $response->setStatusCode(412);
-            return $response;
+            return new Response('', Response::HTTP_PRECONDITION_FAILED);
         }
  
         // Query the ContentProvider entity so we can get its name.
-        $contentProvider = $this->getDoctrine()
-            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders')
-            ->find($onBehalfOf);
+        $contentProvider = $this->getContentProvider($onBehalfOf);
         
-        if (!$contentProvider) {
-            $response = new Response();
+        if ($contentProvider === null) {
             // Return a "Forbidden" response.
-            $response->setStatusCode(403);
-            return $response;
+            return new Response('', Response::HTTP_FORBIDDEN);
         }
 
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
@@ -80,16 +108,13 @@ class DefaultController extends Controller
     public function createDepositAction(Request $request, $collectionId)
     {
         $dem = $this->getDoctrine()->getManager();
-        $contentProviderRepo = $dem->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders');
-        $contentProvider = $contentProviderRepo->find($collectionId);
 
-        // Check to verify the content provider identified by $collectionId
-        // exists. If not, return an appropriate error code.
-        $contentProviderExists = $this->confirmContentProvider($collectionId);
+        // Query the ContentProvider entity so we can get its name.
+        $contentProvider = $this->getContentProvider($collectionId);
+        
         if ($contentProvider === null) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;   
+            // Return a "Forbidden" response.
+            return new Response('', Response::HTTP_FORBIDDEN);
         }
         
         // Get the request body.
@@ -97,35 +122,19 @@ class DefaultController extends Controller
         
         // Get the value of the 'X-In-Progress' request header and define
         // whether we will be adding this deposit to an open or closed AU.
-        if ($request->headers->has('in_progress')) {
-            $inProgressHeaderValue = $request->headers->get('in_progress');
-            if ($inProgressHeaderValue == 'true') {
-                $inProgress = true;
-            }
-            else {
-                $inProgress = false;
-            }
-        }
-        elseif ($request->headers->has('x_in_progress')) {
-            $inProgressHeaderValue = $request->headers->get('x_in_progress');
-            if ($inProgressHeaderValue == 'true') {
-                $inProgress = true;
-            }
-            else {
-                $inProgress = false;
-            }
-        }
-        // If there's no In-Progress/X-In-Progress header, we use a closed AU.
-        else {
-            $inProgress = false;
-        }
+        $inProgress = $this->getInProgressHeader($request);
         
         // Parse the Atom entry's <id> element, which will contain the deposit's UUID.
-        $atomEntry = new \SimpleXMLElement($createResourceXml);
+        $atomEntry = new SimpleXMLElement($createResourceXml);
         $atomEntry->registerXPathNamespace('atom', 'http://www.w3.org/2005/Atom');
         $atomEntry->registerXPathNamespace('lom', 'http://lockssomatic.info/SWORD2');
         $atomEntry->registerXPathNamespace('dcterms', 'http://purl.org/dc/terms/');
         $atomNs = $atomEntry->children('http://www.w3.org/2005/Atom');
+        
+        if(count($atomEntry->xpath('//lom:content')) === 0) {
+            return new Response('', Response::HTTP_PRECONDITION_FAILED);
+        }        
+        
         $depositUuid = $atomNs->id[0];
         $depositTitle = $atomNs->title[0];
         // Remove the 'urn:uuid:'.
@@ -142,11 +151,6 @@ class DefaultController extends Controller
         // Parse lom:content elements. We need the checksum type, checksum value,
         // file size, and URL.
         
-        if(count($atomEntry->xpath('//lom:content')) === 0) {
-            $logger = $this->get('monolog.logger.sword');
-            $logger->log('error', 'No content elements found in deposit XML.');
-            $logger->log('error', $createResourceXml);
-        }
         
         foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
             foreach ($contentChunk[0]->attributes() as $key => $value) {
