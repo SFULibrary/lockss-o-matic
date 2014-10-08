@@ -15,8 +15,6 @@ class AuPropertiesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('ausId')
-            ->add('parentId')
             ->add('propertyKey')
             ->add('propertyValue')
             ->add('au')

@@ -4,26 +4,19 @@ namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use LOCKSSOMatic\CRUDBundle\Entity\AuProperties;
+use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 
 /**
  * AuProperties
  */
 class AuProperties
 {
+
     /**
      * @var integer
      */
     private $id;
-
-    /**
-     * @var integer
-     */
-    private $ausId;
-
-    /**
-     * @var integer
-     */
-    private $parentId;
 
     /**
      * @var string
@@ -79,55 +72,10 @@ class AuProperties
     }
 
     /**
-     * Set ausId
-     *
-     * @param integer $ausId
-     * @return AuProperties
-     */
-    public function setAusId($ausId)
-    {
-        $this->ausId = $ausId;
-
-        return $this;
-    }
-
-    /**
-     * Get ausId
-     *
-     * @return integer
-     */
-    public function getAusId()
-    {
-        return $this->ausId;
-    }
-
-    /**
-     * Set parentId
-     *
-     * @param integer $parentId
-     * @return AuProperties
-     */
-    public function setParentId($parentId)
-    {
-        $this->parentId = $parentId;
-
-        return $this;
-    }
-
-    /**
-     * Get parentId
-     *
-     * @return integer
-     */
-    public function getParentId()
-    {
-        return $this->parentId;
-    }
-
-    /**
      * Set propertyKey
      *
      * @param string $propertyKey
+     * 
      * @return AuProperties
      */
     public function setPropertyKey($propertyKey)
@@ -140,7 +88,7 @@ class AuProperties
     /**
      * Get propertyKey
      *
-     * @return string
+     * @return string 
      */
     public function getPropertyKey()
     {
@@ -151,6 +99,7 @@ class AuProperties
      * Set propertyValue
      *
      * @param string $propertyValue
+     * 
      * @return AuProperties
      */
     public function setPropertyValue($propertyValue)
@@ -163,7 +112,7 @@ class AuProperties
     /**
      * Get propertyValue
      *
-     * @return string
+     * @return string 
      */
     public function getPropertyValue()
     {
@@ -174,6 +123,7 @@ class AuProperties
      * Add children
      *
      * @param AuProperties $children
+     * 
      * @return AuProperties
      */
     public function addChild(AuProperties $children)
@@ -186,6 +136,8 @@ class AuProperties
     /**
      * Remove children
      *
+     * @return string
+     * 
      * @param AuProperties $children
      */
     public function removeChild(AuProperties $children)
@@ -196,7 +148,7 @@ class AuProperties
     /**
      * Get children
      *
-     * @return Collection
+     * @return Collection 
      */
     public function getChildren()
     {
@@ -219,11 +171,23 @@ class AuProperties
     /**
      * Get au
      *
-     * @return Aus
+     * @return string
+     * 
+     * @return Aus 
      */
     public function getAu()
     {
         return $this->au;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return AuProperties 
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     /**
@@ -239,13 +203,4 @@ class AuProperties
         return $this;
     }
 
-    /**
-     * Get parent
-     *
-     * @return AuProperties
-     */
-    public function getParent()
-    {
-        return $this->parent;
-    }
 }
