@@ -169,13 +169,6 @@ class DefaultControllerTest extends WebTestCase
         $content->setAttribute('checksumType', 'md5');
         $content->setAttribute('checksumValue', 'ed5697c06b97f95e1221f857a3c08661');
 
-        $content->appendChild(new DOMElement('dcterms:abstract', 'Image taken from page 275 of "The Youth\'s History of the United States, etc"', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:title', 'The Youth\'s History of the United States, etc', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:author', 'Ellis, Edward Sylvester', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:identifier', '001059471', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:identifier', 'British Library HMNTS 9605.f.8.', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:publisher', 'Cassell &amp; Co.', self::$NS['dcterms']));
-
         $client = static::createClient();
         $crawler = $client->request(
                 'POST', 
@@ -270,28 +263,15 @@ class DefaultControllerTest extends WebTestCase
         $content->setAttribute('checksumType', 'md5');
         $content->setAttribute('checksumValue', 'ed5697c06b97f95e1221f857a3c08661');
 
-        $content->appendChild(new DOMElement('dcterms:abstract', 'Image taken from page 275 of "The Youth\'s History of the United States, etc"', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:title', 'The Youth\'s History of the United States, etc', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:author', 'Ellis, Edward Sylvester', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:identifier', '001059471', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:identifier', 'British Library HMNTS 9605.f.8.', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:publisher', 'Cassell &amp; Co.', self::$NS['dcterms']));
-
         $content = $entry->appendChild(new DOMElement('lom:content', 'http://www.ibiblio.org/wm/paint/auth/monet/parliament/parliament.jpg', self::$NS['lom']));
         $content->setAttribute('size', '198423');
         $content->setAttribute('checksumType', 'md5');
         $content->setAttribute('checksumValue', '5619bbabea01c0841cd99c6cf4ad3b33');
 
-        $content->appendChild(new DOMElement('dcterms:title', 'Houses of Parliament, London, Sun Breaking Through the Fog ', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:creator', 'Monet, Claude', self::$NS['dcterms']));
-
         $content = $entry->appendChild(new DOMElement('lom:content', 'http://www.ibiblio.org/wm/paint/auth/gauguin/gauguin.alyscamps.jpg', self::$NS['lom']));
         $content->setAttribute('size', '176098');
         $content->setAttribute('checksumType', 'md5');
         $content->setAttribute('checksumValue', 'ff9a208611f892d147ef0f213150323e');
-
-        $content->appendChild(new DOMElement('dcterms:title', 'Les Alyscamps, Arles', self::$NS['dcterms']));
-        $content->appendChild(new DOMElement('dcterms:author', 'Gaugin, Paul', self::$NS['dcterms']));
 
         $client = static::createClient();
         $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $doc->saveXML());
