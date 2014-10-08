@@ -44,5 +44,4 @@ class AuStatusController extends Controller
             'entity'      => $entity,
         ));
     }
-
 }

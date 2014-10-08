@@ -194,5 +194,4 @@ class Deposits
     {
         return $this->contentProvider;
     }
-
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace LOCKSSOMatic\CRUDBundle\DataFixtures\ORM;
 
@@ -25,12 +25,11 @@ class LoadPlnData extends AbstractFixture implements OrderedFixtureInterface
 
     /**
      * Plns must be loaded after ContentProviders.
-     * 
+     *
      * @return int
      */
     public function getOrder()
     {
         return 3;
     }
-
 }

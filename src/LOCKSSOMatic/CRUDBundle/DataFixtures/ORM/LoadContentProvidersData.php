@@ -32,5 +32,4 @@ class LoadContentProvidersData extends AbstractFixture implements OrderedFixture
         $manager->flush();
         $this->setReference('cp-1', $object);
     }
-
 }

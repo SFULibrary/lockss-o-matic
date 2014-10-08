@@ -48,5 +48,4 @@ class BoxStatusController extends Controller
             'entity'      => $entity,
         ));
     }
-
 }
