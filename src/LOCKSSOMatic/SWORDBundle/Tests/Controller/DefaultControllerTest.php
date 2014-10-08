@@ -2,12 +2,13 @@
 
 namespace LOCKSSOMatic\SWORDBundle\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Response;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
 use J20\Uuid\Uuid;
+use SimpleXMLElement;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultControllerTest extends WebTestCase
 {
@@ -22,6 +23,7 @@ class DefaultControllerTest extends WebTestCase
     );
 
     // MUST CREATE A CONTENT PROVIDER ID FOR THIS TO WORK.
+    // AND the content provider must have set the maxUploadSize and uploadChecksumType=md5
     public function testServiceDocument()
     {
         $client = static::createClient();
@@ -33,23 +35,23 @@ class DefaultControllerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
-        $doc = new DOMDocument();
-        $doc->loadXML($response->getContent());
-        $xpath = new DOMXpath($doc);
-
+        $client->getContainer()->get('monolog.logger.sword')->log('error', $response->getContent());
+        
+        $xml = new SimpleXMLElement($response->getContent());
         foreach (self::$NS as $k => $v) {
-            $xpath->registerNamespace($k, $v);
+            $xml->registerXPathNamespace($k, $v);
         }
 
-        $this->assertEquals("2.0", $xpath->query('/app:service/sword:version/text()')->item(0)->nodeValue);
-        $this->assertGreaterThan(1, $xpath->query('/app:service/sword:maxUploadSize/text()')->item(0)->nodeValue);
-        $this->assertEquals('md5', $xpath->query('/app:service/lom:uploadChecksumType/text()')->item(0)->nodeValue);
+        $this->assertEquals('2.0', $xml->children(self::$NS['sword'])->version[0]);
+        $this->assertGreaterThan(1, $xml->children(self::$NS['sword'])->maxUploadSize[0]);
+        $this->assertEquals('md5', $xml->children(self::$NS['lom'])->uploadChecksumType[0]);
 
-        $href = $xpath->query('//app:collection/@href')->item(0)->nodeValue;
-        $this->assertStringEndsWith('/api/sword/2.0/col-iri/1', $href);
-        $accept = $xpath->query('//app:collection/app:accept/text()')->item(0)->nodeValue;
+        foreach($xml->children(self::$NS['app'])->collection as $coll ){ 
+            $this->assertStringEndsWith('/api/sword/2.0/col-iri/1', $coll['href']);
+        }
+        
+        $accept = $xml->xpath('//app:accept/text()')[0];
         $this->assertTrue(strlen($accept) > 0);
-        $this->assertEquals('true', $xpath->query('//app:collection/sword:mediation/text()')->item(0)->nodeValue);
     }
 
     /**
@@ -69,34 +71,79 @@ class DefaultControllerTest extends WebTestCase
         $this->assertTrue($content === NULL || $content === '');
     }
     
-//    //6.3.3. Creating a Resource with an Atom Entry
-//    public function testCreateNoResource()
-//    {
-//        $uuid = Uuid::v4();
-//
-//        $doc = new DOMDocument("1.0", "UTF-8");
-//        $entry = $doc->appendChild($doc->createElementNS(self::$NS['atom'], 'entry'));
-//        foreach (self::$NS as $k => $v) {
-//            $ns = $entry->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . $k, $v);
-//        }
-//
-//        $entry->appendChild(new DOMElement('title', 'Empty deposit'));
-//        $entry->appendChild(new DOMElement('id', $uuid));
-//        $entry->appendChild(new DOMElement('updated', date('c')));
-//        $author = $entry->appendChild(new DOMElement('author'));
-//        $author->appendChild(new DOMElement('name', 'Me, A Bunny'));
-//        $summary = $entry->appendChild(new DOMElement('summary', 'Deposit with no content element'));
-//        $summary->setAttribute('type', 'text');
-//
-//        $client = static::createClient();
-//        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $doc->saveXML());
-//        $response = $client->getResponse();
-//
-//        $response = $client->getResponse();
-//        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
-//        $content = $response->getContent();
-//        $this->assertTrue($content === NULL || $content === '');
-//    }
+    /**
+     * On-Behalf-Of header should be a number. 
+     */
+    public function testServiceDocumentStringOnBehalfOf() {
+        $client = static::createClient();
+
+        $crawler = $client->request(
+                'GET', 
+                '/api/sword/2.0/sd-iri', 
+                array(), 
+                array(), 
+                array('HTTP_X-On-Behalf-Of' => 'Magneto')
+        );
+
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
+        $content = $response->getContent();
+        $this->assertTrue($content === NULL || $content === '');
+    }
+    
+    /**
+     * On-Behalf-Of must match a content provider
+     */
+    public function testServiceDocumentBadOnBehalfOf() {
+        $client = static::createClient();
+
+        $crawler = $client->request(
+                'GET', 
+                '/api/sword/2.0/sd-iri', 
+                array(), 
+                array(), 
+                array('HTTP_X-On-Behalf-Of' => 297845)
+        );
+
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        $content = $response->getContent();
+        $this->assertTrue($content === NULL || $content === '');
+    }
+    
+    //6.3.3. Creating a Resource with an Atom Entry
+    public function testCreateNoResource()
+    {
+        $uuid = Uuid::v4();
+        $xml = new SimpleXMLElement('<entry xmlns="http://www.w3.org/2005/Atom"/>');
+        foreach (self::$NS as $k => $v) {
+            $xml->addAttribute('xmlns:' . $k, $v);
+        }
+        $xml->addChild('title', 'Empty deposit', self::$NS['atom']);
+        $xml->addChild('id', $uuid, self::$NS['atom']);
+        $xml->addChild('updated', date('c'), self::$NS['atom']);
+        $author = $xml->addChild('author', null, self::$NS['atom']);
+        $author->addChild('name', 'Me, A Bunny', self::$NS['atom']);
+        
+        $summary = $xml->addChild('summary', 'No content', self::$NS['atom']);
+        $summary->addAttribute('type', 'text');
+
+        $client = static::createClient();
+        $crawler = $client->request(
+                'POST', 
+                '/api/sword/2.0/col-iri/1', 
+                array(), 
+                array(), 
+                array(), 
+                $xml->asXML());
+
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
+        $content = $response->getContent();
+        $this->assertTrue($content === NULL || $content === '');
+        
+        // @TODO check that there was no deposit created
+    }
 
     //6.3.3. Creating a Resource with an Atom Entry
     public function testCreateSingleResource()
@@ -130,7 +177,14 @@ class DefaultControllerTest extends WebTestCase
         $content->appendChild(new DOMElement('dcterms:publisher', 'Cassell &amp; Co.', self::$NS['dcterms']));
 
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $doc->saveXML());
+        $crawler = $client->request(
+                'POST', 
+                '/api/sword/2.0/col-iri/1', 
+                array(), 
+                array(), 
+                array(), 
+                $doc->saveXML()
+                );
         $response = $client->getResponse();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
