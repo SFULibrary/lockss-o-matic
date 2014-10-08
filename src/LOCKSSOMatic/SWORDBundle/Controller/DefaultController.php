@@ -133,7 +133,7 @@ class DefaultController extends Controller
         
         if(count($atomEntry->xpath('//lom:content')) === 0) {
             return new Response('', Response::HTTP_PRECONDITION_FAILED);
-        }        
+        }
         
         $depositUuid = $atomNs->id[0];
         $depositTitle = $atomNs->title[0];
