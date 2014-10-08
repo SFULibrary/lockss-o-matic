@@ -1,10 +1,7 @@
 deposits:
-    pattern:  /
+    path:     /
     defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:index" }
 
 deposits_show:
-    pattern:  /{id}/show
+    path:     /{id}/show
     defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:show" }
-
-
-

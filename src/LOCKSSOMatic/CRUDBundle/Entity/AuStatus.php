@@ -2,101 +2,61 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
  * AuStatus
- *
- * @ORM\Table(name="au_status", indexes={@ORM\Index(name="aus_id_idx", columns={"aus_id"})})
- * @ORM\Entity
  */
 class AuStatus
 {
-	/**
-	* Property required for many-to-one relationship with Aus.
-	* 
-	* @ORM\ManyToOne(targetEntity="Aus", mappedBy="auStatus")
-	* @ORM\JoinColumn((name="aus_id", referencedColumnName="id")
-	*/
-	protected $au;
-
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="aus_id", type="integer", nullable=true)
-     */
-    private $ausId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="box_hostname", type="text", nullable=true)
      */
     private $boxHostname;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=true)
+     * @var DateTime
      */
     private $queryDate;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_key", type="text", nullable=true)
      */
     private $propertyKey;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
 
+    /**
+     * @var Aus
+     */
+    private $au;
 
+    /**
+     * Stringify the entity
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->propertyKey;
+    }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set ausId
-     *
-     * @param integer $ausId
-     * @return AuStatus
-     */
-    public function setAusId($ausId)
-    {
-        $this->ausId = $ausId;
-
-        return $this;
-    }
-
-    /**
-     * Get ausId
-     *
-     * @return integer 
-     */
-    public function getAusId()
-    {
-        return $this->ausId;
     }
 
     /**
@@ -115,7 +75,7 @@ class AuStatus
     /**
      * Get boxHostname
      *
-     * @return string 
+     * @return string
      */
     public function getBoxHostname()
     {
@@ -125,12 +85,12 @@ class AuStatus
     /**
      * Set queryDate
      *
-     * @param \DateTime $queryDate
+     * @param DateTime $queryDate
      * @return AuStatus
      */
-    public function setQueryDate($queryDate)
+    public function setQueryDate()
     {
-        $this->queryDate = new \DateTime();
+        $this->queryDate = new DateTime();
 
         return $this;
     }
@@ -138,7 +98,7 @@ class AuStatus
     /**
      * Get queryDate
      *
-     * @return \DateTime 
+     * @return DateTime
      */
     public function getQueryDate()
     {
@@ -161,7 +121,7 @@ class AuStatus
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -184,7 +144,7 @@ class AuStatus
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -194,10 +154,10 @@ class AuStatus
     /**
      * Set au
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
+     * @param Aus $au
      * @return AuStatus
      */
-    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
+    public function setAu(Aus $au = null)
     {
         $this->au = $au;
 
@@ -207,7 +167,7 @@ class AuStatus
     /**
      * Get au
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
+     * @return Aus
      */
     public function getAu()
     {

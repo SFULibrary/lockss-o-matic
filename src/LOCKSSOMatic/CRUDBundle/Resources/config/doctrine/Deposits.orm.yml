@@ -3,7 +3,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
     manyToOne:
         contentProvider:
             targetEntity: ContentProviders
-            inversedBy: deposit
+            inversedBy: deposits
             joinColumn:
                 name: content_providers_id
                 referencedColumnName: id    
@@ -29,27 +29,19 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             generator:
                 strategy: IDENTITY
     fields:
-        contentProvidersId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the content_providers table.'
-            column: content_providers_id
         uuid:
             type: string
-            nullable: true
+            nullable: false
             length: 36
-            fixed: false
             comment: 'A UUID identifying the deposit, supplied by the content provider in the <sword:id> element.'
         title:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 255
+            nullable: false
             comment: 'The title of the deposit.'
         dateDeposited:
             type: datetime
-            nullable: true
+            nullable: false
             comment: 'Timestamp indicating when was deposit was created.'
             column: date_deposited
     lifecycleCallbacks:

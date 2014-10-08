@@ -7,6 +7,16 @@ LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
             joinColumn:
                 name: plugins_id
                 referencedColumnName: id
+        parent:
+            targetEntity: PluginProperties
+            inversedBy: children
+            joinColumn:
+                name: parent_id
+                referencedColumnName: id
+    oneToMany:
+        children:
+            targetEntity: PluginProperties
+            mappedBy: parent
     table: plugin_properties
     indexes:
         plugins_id_idx:
@@ -22,30 +32,14 @@ LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
             generator:
                 strategy: IDENTITY
     fields:
-        pluginsId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the plugins table.'
-            column: plugins_id
-        parentId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'id value from this table of the property''s parent property.'
-            column: parent_id
         propertyKey:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 255
+            nullable: false
             comment: 'Plugin proprety key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
-            length: null
-            fixed: false
             comment: 'Plugin property value.'
             column: property_value
-    lifecycleCallbacks: {  }

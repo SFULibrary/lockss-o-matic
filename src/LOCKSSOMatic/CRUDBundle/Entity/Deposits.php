@@ -2,110 +2,72 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 
 /**
  * Deposits
- *
- * @ORM\Table(name="deposits", indexes={@ORM\Index(name="content_providers_id_idx", columns={"content_providers_id"}), @ORM\Index(name="uuid", columns={"uuid"})})
- * @ORM\Entity
  */
 class Deposits
-{	
-	/**
-	* Collection property required for many-to-one relationship with ContentProviders.
-	* 
-	* @ORM\ManyToOne(targetEntity="ContentProviders", mappedBy="deposit")
-	* @ORM\JoinColumn((name="content_providers_id", referencedColumnName="id")
-	*/
-	protected $contentProvider;
-
-	/**
-	 * Property required for one-to-many relationship with Content.
-	 * 
-	 * @ORM\OneToMany(targetEntity="Content", mappedBy="content")
-	 */
-	protected $content;
-	
-	/**
-	 * Initializes the $collectionowner property.
-	 */
-	public function __construct()
-	{
-		$this->content = new ArrayCollection();
-	}
-
+{
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="content_providers_id", type="integer", nullable=true)
-     */
-    private $contentProvidersId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="uuid", type="string", length=36, nullable=true)
      */
     private $uuid;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="title", type="text", nullable=true)
      */
     private $title;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date_deposited", type="datetime", nullable=true)
+     * @var DateTime
      */
     private $dateDeposited;
 
+    /**
+     * @var Collection
+     */
+    private $content;
 
+    /**
+     * @var ContentProviders
+     */
+    private $contentProvider;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->content = new ArrayCollection();
+    }
+
+    /**
+     * Stringify the entity
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->title;
+    }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set contentProvidersId
-     *
-     * @param integer $contentProvidersId
-     * @return Deposits
-     */
-    public function setContentProvidersId($contentProvidersId)
-    {
-        $this->contentProvidersId = $contentProvidersId;
-
-        return $this;
-    }
-
-    /**
-     * Get contentProvidersId
-     *
-     * @return integer 
-     */
-    public function getContentProvidersId()
-    {
-        return $this->contentProvidersId;
     }
 
     /**
@@ -124,7 +86,7 @@ class Deposits
     /**
      * Get uuid
      *
-     * @return string 
+     * @return string
      */
     public function getUuid()
     {
@@ -147,7 +109,7 @@ class Deposits
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -157,12 +119,12 @@ class Deposits
     /**
      * Set dateDeposited
      *
-     * @param \DateTime $dateDeposited
+     * @param DateTime $dateDeposited
      * @return Deposits
      */
-    public function setDateDeposited($dateDeposited)
+    public function setDateDeposited()
     {
-        $this->dateDeposited = new \DateTime();
+        $this->dateDeposited = new DateTime();
 
         return $this;
     }
@@ -170,7 +132,7 @@ class Deposits
     /**
      * Get dateDeposited
      *
-     * @return \DateTime 
+     * @return DateTime
      */
     public function getDateDeposited()
     {
@@ -180,10 +142,10 @@ class Deposits
     /**
      * Add content
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     * @param Content $content
      * @return Deposits
      */
-    public function addContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    public function addContent(Content $content)
     {
         $this->content[] = $content;
 
@@ -193,9 +155,9 @@ class Deposits
     /**
      * Remove content
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
+     * @param Content $content
      */
-    public function removeContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
+    public function removeContent(Content $content)
     {
         $this->content->removeElement($content);
     }
@@ -203,7 +165,7 @@ class Deposits
     /**
      * Get content
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getContent()
     {
@@ -213,10 +175,10 @@ class Deposits
     /**
      * Set contentProvider
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider
+     * @param ContentProviders $contentProvider
      * @return Deposits
      */
-    public function setContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider = null)
+    public function setContentProvider(ContentProviders $contentProvider = null)
     {
         $this->contentProvider = $contentProvider;
 
@@ -226,7 +188,7 @@ class Deposits
     /**
      * Get contentProvider
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders 
+     * @return ContentProviders
      */
     public function getContentProvider()
     {

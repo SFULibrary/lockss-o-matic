@@ -24,13 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\UserBundle\TestCases;
+namespace LOCKSSOMatic\DefaultBundle\TestCases;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use LOCKSSOMatic\UserBundle\TestCases\LOMWebTestCase;
+use LOCKSSOMatic\DefaultBundle\TestCases\LOMWebTestCase;
 
 require_once 'app/AppKernel.php';
 

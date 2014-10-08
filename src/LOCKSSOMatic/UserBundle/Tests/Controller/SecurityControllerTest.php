@@ -32,7 +32,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
 
-use LOCKSSOMatic\UserBundle\TestCases\FixturesWebTestCase;
+use LOCKSSOMatic\DefaultBundle\TestCases\FixturesWebTestCase;
 
 /**
  * Test that the registration controller is properly overridden and 

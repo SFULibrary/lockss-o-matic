@@ -1,6 +1,11 @@
 imports:
     - { resource: config_dev.yml }
 
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface:
+            algorithm: plaintext
+
 framework:
     test: ~
     session:
@@ -15,8 +20,10 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
-parameters:
-    testdb_host: 127.0.0.1
-    testdb_name: lomtest
-    testdb_user: lomtest
-    testdb_pass: abc123    
+doctrine:
+    dbal:
+        # variables are defined in parameters.yml
+        host: 127.0.0.1
+        dbname: lomtest
+        user: lomtest
+        password: abc123

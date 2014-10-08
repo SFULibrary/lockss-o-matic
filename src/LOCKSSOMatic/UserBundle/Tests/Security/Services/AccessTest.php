@@ -31,7 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use LOCKSSOMatic\UserBundle\Security\Serivces\Access;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
-use LOCKSSOMatic\UserBundle\TestCases\FixturesTestCase;
+use LOCKSSOMatic\DefaultBundle\TestCases\FixturesTestCase;
 
 require_once 'app/AppKernel.php';
 
@@ -81,6 +81,7 @@ class AccessTest extends FixturesTestCase
     {
         $em = $this->get('doctrine')->getManager();
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.admin@example.com'));
+        $this->assertNotNull($user);
         self::$container->get('security.context')->setToken(
             new UsernamePasswordToken($user, null, 'main', $user->getRoles())
         );

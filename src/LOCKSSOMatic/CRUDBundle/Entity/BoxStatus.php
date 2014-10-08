@@ -2,67 +2,53 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
  * BoxStatus
- *
- * @ORM\Table(name="box_status", indexes={@ORM\Index(name="boxes_id_idx", columns={"boxes_id"})})
- * @ORM\Entity
  */
 class BoxStatus
 {
-	/**
-	* Property required for many-to-one relationship with Boxes.
-	* 
-	* @ORM\ManyToOne(targetEntity="Boxes", mappedBy="boxStatus")
-	* @ORM\JoinColumn((name="boxes_id", referencedColumnName="id")
-	*/
-	protected $box;
-
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="boxes_id", type="integer", nullable=true)
-     */
-    private $boxesId;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=true)
+     * @var DateTime
      */
     private $queryDate;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_key", type="text", nullable=true)
      */
     private $propertyKey;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
 
+    /**
+     * @var Boxes
+     */
+    private $box;
 
+
+    /**
+     * Stringify the entity
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->propertyKey;
+    }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -70,37 +56,13 @@ class BoxStatus
     }
 
     /**
-     * Set boxesId
-     *
-     * @param integer $boxesId
-     * @return BoxStatus
-     */
-    public function setBoxesId($boxesId)
-    {
-        $this->boxesId = $boxesId;
-
-        return $this;
-    }
-
-    /**
-     * Get boxesId
-     *
-     * @return integer 
-     */
-    public function getBoxesId()
-    {
-        return $this->boxesId;
-    }
-
-    /**
      * Set queryDate
      *
-     * @param \DateTime $queryDate
      * @return BoxStatus
      */
-    public function setQueryDate($queryDate)
+    public function setQueryDate()
     {
-        $this->queryDate = new \DateTime();;
+        $this->queryDate = new DateTime();
 
         return $this;
     }
@@ -108,7 +70,7 @@ class BoxStatus
     /**
      * Get queryDate
      *
-     * @return \DateTime 
+     * @return DateTime
      */
     public function getQueryDate()
     {
@@ -131,7 +93,7 @@ class BoxStatus
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -154,7 +116,7 @@ class BoxStatus
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -164,10 +126,10 @@ class BoxStatus
     /**
      * Set box
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Boxes $box
+     * @param Boxes $box
      * @return BoxStatus
      */
-    public function setBox(\LOCKSSOMatic\CRUDBundle\Entity\Boxes $box = null)
+    public function setBox(Boxes $box = null)
     {
         $this->box = $box;
 
@@ -177,7 +139,7 @@ class BoxStatus
     /**
      * Get box
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Boxes 
+     * @return Boxes
      */
     public function getBox()
     {

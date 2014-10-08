@@ -54,12 +54,12 @@ class BoxesController extends Controller
     }
 
     /**
-    * Creates a form to create a Boxes entity.
-    *
-    * @param Boxes $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to create a Boxes entity.
+     *
+     * @param Boxes $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createCreateForm(Boxes $entity)
     {
         $form = $this->createForm(new BoxesType(), $entity, array(
@@ -105,7 +105,8 @@ class BoxesController extends Controller
 
         return $this->render('LOCKSSOMaticCRUDBundle:Boxes:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        ));
+            'delete_form' => $deleteForm->createView(),
+        ));
     }
 
     /**

@@ -27,7 +27,7 @@
 namespace LOCKSSOMatic\UserBundle\Tests\Controller;
 
 use LOCKSSOMatic\UserBundle\Entity\User;
-use LOCKSSOMatic\UserBundle\TestCases\FixturesWebTestCase;
+use LOCKSSOMatic\DefaultBundle\TestCases\FixturesWebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,6 +90,8 @@ class AdminUserControllerTest extends FixturesWebTestCase
         
         /** @var User */
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'user@example.com'));
+        
+        $this->assertNotNull($user);
         
         /** @var Crawler */
         $crawler = $this->client->request('GET', '/admin/user/' . $user->getId() . '/show');

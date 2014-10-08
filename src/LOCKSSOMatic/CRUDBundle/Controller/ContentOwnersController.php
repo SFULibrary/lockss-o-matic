@@ -54,12 +54,12 @@ class ContentOwnersController extends Controller
     }
 
     /**
-    * Creates a form to create a ContentOwners entity.
-    *
-    * @param ContentOwners $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to create a ContentOwners entity.
+     *
+     * @param ContentOwners $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createCreateForm(ContentOwners $entity)
     {
         $form = $this->createForm(new ContentOwnersType(), $entity, array(
@@ -105,7 +105,8 @@ class ContentOwnersController extends Controller
 
         return $this->render('LOCKSSOMaticCRUDBundle:ContentOwners:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        ));
+            'delete_form' => $deleteForm->createView(),
+        ));
     }
 
     /**
