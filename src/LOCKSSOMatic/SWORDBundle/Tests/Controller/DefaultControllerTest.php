@@ -2,6 +2,8 @@
 
 namespace LOCKSSOMatic\SWORDBundle\Tests\Controller;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
@@ -143,7 +145,10 @@ class DefaultControllerTest extends WebTestCase
         $content = $response->getContent();
         $this->assertTrue($content === NULL || $content === '');
         
-        // @TODO check that there was no deposit created
+        /** @var EntityManager */
+        $em = $client->getContainer()->get('doctrine')->getManager();
+        $deposits = $em->getRepository('LOCKSSOMaticCRUDBundle:Deposits')->findBy(array('title' => 'Empty deposit'));
+        $this->assertEquals(0, count($deposits));
     }
 
     //6.3.3. Creating a Resource with an Atom Entry

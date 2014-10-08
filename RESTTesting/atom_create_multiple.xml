@@ -16,23 +16,13 @@
 
     <lom:content size="899922" checksumType="md5" checksumValue="ed5697c06b97f95e1221f857a3c08661">
         https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg
-        <dcterms:abstract>Image taken from page 275 of "The Youth's History of the United States, etc"</dcterms:abstract>
-        <dcterms:title>The Youth's History of the United States, etc</dcterms:title>
-        <dcterms:author>Ellis, Edward Sylvester</dcterms:author>
-        <dcterms:identifier>001059471</dcterms:identifier>
-        <dcterms:identifier>British Library HMNTS 9605.f.8.</dcterms:identifier>
-        <dcterms:publisher>Cassell &amp; Co.</dcterms:publisher>
     </lom:content>
 
     <lom:content size="198423" checksumType="md5" checksumValue="5619bbabea01c0841cd99c6cf4ad3b33">
         http://www.ibiblio.org/wm/paint/auth/monet/parliament/parliament.jpg
-        <dcterms:title>Houses of Parliament, London, Sun Breaking Through the Fog </dcterms:title>
-        <dcterms:creator>Monet, Claude</dcterms:creator>
     </lom:content>
 
     <lom:content size="176098" checksumType="md5" checksumValue="ff9a208611f892d147ef0f213150323e">
         http://www.ibiblio.org/wm/paint/auth/gauguin/gauguin.alyscamps.jpg
-        <dcterms:title>Les Alyscamps, Arles</dcterms:title>
-        <dcterms:author>Gaugin, Paul</dcterms:author>
     </lom:content>
 </entry>
