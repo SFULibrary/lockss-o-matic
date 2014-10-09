@@ -72,7 +72,7 @@ class Aus
      */
     public function __toString()
     {
-        return sprintf('%d (%s)', array($this->id, $this->plugin->getName()));
+            return 'unknown au';
     }
     
     /**
