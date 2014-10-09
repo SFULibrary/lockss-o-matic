@@ -305,13 +305,14 @@ class PLNPluginImportCommand extends ContainerAwareCommand
 
             //$pluginConfigPropsRowId = $dbh->lastInsertId();
             $pluginConfigPropsRowId = $pluginProperties->getId();
+            $parent = $pluginProperties;
 
             foreach ($pluginParameters as $element) {
 
                 // for each list item, add a row as a child or parent with key of configparamdescr and value null record
                 $pluginProperties = new PluginProperties();
                 $plugin = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plugins')->find($pluginId);
-                $pluginProperties->setParentId($pluginConfigPropsRowId);
+                $pluginProperties->setParent($parent);
                 $pluginProperties->setPropertyKey('configparamdescr');
                 $plugin->addPluginProperty($pluginProperties);
                 $pluginProperties->setPlugin($plugin);
@@ -321,12 +322,13 @@ class PLNPluginImportCommand extends ContainerAwareCommand
 
                 //$configparamdescrId = $dbh->lastInsertId();
                 $configparamdescrId = $pluginProperties->getId();
+                $parent = $pluginProperties;
                 // record insert ID to group the properties of the given paramenter
                 foreach ($element as $key => $value) {
 
                     $pluginProperties = new PluginProperties();
                     $plugin = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plugins')->find($pluginId);
-                    $pluginProperties->setParentId($configparamdescrId);
+                    $pluginProperties->setParent($parent);
                     $pluginProperties->setPropertyKey($key);
                     $pluginProperties->setPropertyValue($value);
                     $plugin->addPluginProperty($pluginProperties);
