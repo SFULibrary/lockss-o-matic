@@ -2,19 +2,19 @@
 // src/LOCKSSOMatic/PLNImporterBundle/Command/PLNTitledbImportCommand.php
 namespace LOCKSSOMatic\PLNImporterBundle\Command;
 
+use Doctrine\Common\Util\Debug;
+use Doctrine\ORM\EntityManager;
+use Exception;
+use LOCKSSOMatic\CoreBundle\DependencyInjection\LomLogger;
+use LOCKSSOMatic\CRUDBundle\Entity\AuProperties;
+use LOCKSSOMatic\CRUDBundle\Entity\Aus;
+use LOCKSSOMatic\CRUDBundle\Entity\PluginProperties;
+use LOCKSSOMatic\CRUDBundle\Entity\Plugins;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use Doctrine\ORM\EntityManager;
-use LOCKSSOMatic\CoreBundle\DependencyInjection\LomLogger;
-
-use LOCKSSOMatic\CRUDBundle\Entity\Plugins;
-use LOCKSSOMatic\CRUDBundle\Entity\PluginProperties;
-use LOCKSSOMatic\CRUDBundle\Entity\Aus;
-use LOCKSSOMatic\CRUDBundle\Entity\AuProperties;
 
 /**
  * Private Lockss network plugin import command-line
@@ -73,29 +73,29 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
       return $AUs;
     }
 
-    protected function addAU($au)
+    protected function addAU($auXml)
     {
         $xpathRule = 'property[@name="plugin"]';
 
-        $pluginPropertyElement = $au->xpath($xpathRule)[0];
+        $pluginPropertyElement = $auXml->xpath($xpathRule)[0];
         $pluginIdentifier = $pluginPropertyElement->attributes()->value;
 
         try {
-          $pluginsId = $this->getPluginId($pluginIdentifier);
+          $plugin = $this->getPlugin($pluginIdentifier);
         } catch (Exception $exception) {
           return "Exception: " . $e->getMessage() .  "\n PluginIdentifier: $pluginIdentifier";
         }
 
-        // grab all the data from the AU
-        // First get the pluginIndentifier value
-        // the top-level property (parentId and propertyValue will be NULL)
+//        // grab all the data from the AU
+//        // First get the pluginIndentifier value
+//        // the top-level property (parentId and propertyValue will be NULL)
         $auTopLevelPropertyKey = 'au_top_level_property_name';  // value will be NULL for INSERT.
-        // Cast to string before using in array to avoid illegal offset type Warnings.
-        $auTopLevelPropertyValue = (string) $au->attributes()->name;
-
+//        // Cast to string before using in array to avoid illegal offset type Warnings.
+        $auTopLevelPropertyValue = (string) $auXml->attributes()->name;
+//
         $propertiesKeyValueArray = array();
-        $childrenPropertiesOfTopLevel = $au->property;
-
+        $childrenPropertiesOfTopLevel = $auXml->property;
+        
         foreach ($childrenPropertiesOfTopLevel as $property) {
           // cast to string before using in array to avoid Illegal offset type warnings.
           $propertyName = (string) $property->attributes()->name;
@@ -109,7 +109,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
               // parameters for lockss plugin 
               // grab the parameter property with $propertyName and any children.
               $xpathRule = 'property[@name="'. $paramName . '"]/*';
-              $paramNameValues = $au->xpath($xpathRule);
+              $paramNameValues = $auXml->xpath($xpathRule);
 
               // Add the name and value for the parameter from the children propety elements.
               foreach ($paramNameValues as $propertyChild) {
@@ -134,68 +134,47 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
 
         // Instantiate an entity manager.
         $em = $this->getContainer()->get('doctrine')->getManager();
-
+        
         // Aus table - add plugins id into Aus table.
         $aus = new Aus();
-        $plugin = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Plugins')->find($pluginsId);
-        $aus->setPluginsId($pluginsId);
         $plugin->addAus($aus);
         $aus->setPlugin($plugin);
         $em->persist($aus);
-        $em->persist($plugin);
         $em->flush();
-        $ausId = $aus->getId();
-        $em->clear();
-
-        // Instantiate an entity manager.
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        // auProperties table 
-        // use $ausId
-        // parent property element for AU
+        
+//        $em->clear();
+//
         $auProperties = new AuProperties();
-        $aus = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')->find($ausId);
-        $auProperties->setAusId($ausId);
-        $propertyKey = (string) $au->attributes()->name;
-        $auProperties->setPropertyKey($propertyKey);
+//
         $auProperties->setAu($aus);
+        $propertyKey = (string) $auXml->attributes()->name;
+        $auProperties->setPropertyKey($propertyKey);
         $em->persist($auProperties);
-        $em->persist($aus);
         $em->flush();
-        $auParentId = $auProperties->getId();
-        $em->clear();
-
+//        
+        $auParent = $auProperties;
+//        $em->clear();
+//
         foreach ($propertiesKeyValueArray as $key => $value) {
           if (gettype($value) == 'array' && preg_match('/^param\./', $key)) {
               // key will be param.n where n is some whole number.
               // if we get something else, then we need to investigate.
               // Instantiate an entity manager.
-              $em = $this->getContainer()->get('doctrine')->getManager();
+                        
               // $key with value NULL - record insertId 
               $auProperties = new AuProperties();
-              $aus = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')->find($ausId);
-              $auProperties->setAusId($ausId);
-              $auProperties->setParentId($auParentId);
+              $auProperties->setAu($aus);
+              $auProperties->setParent($auParent);
               $propertyKey = (string) $key;
               $auProperties->setPropertyKey($propertyKey);
-              $auProperties->setAu($aus);
               $em->persist($auProperties);
-              $em->persist($aus);
               $em->flush();
-              $parentId = $auProperties->getId();
-              $em->clear();
-              $em = null;
+              $parent = $auProperties;
 
               // iterate thought the key=>values in the value array using parent insertId
               foreach ($value as $childKey => $childValue) {
-
-                // Instantiate an entity manager.
-                $em = $this->getContainer()->get('doctrine')->getManager();
-
                 $auProperties = new AuProperties();
-                $auProperties = new AuProperties();
-                $aus = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')->find($ausId);
-                $auProperties->setAusId($ausId);
-                $auProperties->setParentId($auParentId);
+                $auProperties->setParent($auParent);
                 $propertyKey = (string) $childKey;
                 $propertyValue = (string) $childValue;
                 $auProperties->setPropertyKey($propertyKey);
@@ -204,8 +183,6 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
                 $em->persist($auProperties);
                 $em->persist($aus);
                 $em->flush();
-                $em->clear();
-
               }
 
           } else {
@@ -229,7 +206,13 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
 
     }
 
-    protected function getPluginId($pluginIdentifier)
+    /**
+     * Get a plugin based on its identifier property.
+     * 
+     * @param type $pluginIdentifier
+     * @return type
+     */
+    protected function getPlugin($pluginIdentifier)
     {
 
         // AUs only record the pluginIdentifier
@@ -239,13 +222,8 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
 
         //$repository = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\PluginProperties')->findOneBy(array('propertyValue' => $pluginIdentifier));
         $result = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\PluginProperties')
-                    ->findOneByPropertyValue($pluginIdentifier)
-                    ->getPluginsId();
-        $em->flush();
-        $em->clear();
-        $em = null; // memory issue fix?
-
-        return $result;
+                    ->findOneByPropertyValue($pluginIdentifier);
+        return $result->getPlugin();
     }
 
 } // end of class
