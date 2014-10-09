@@ -2,22 +2,27 @@
 
 namespace LOCKSSOMatic\CRUDBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentOwners;
 
-class LoadContentOwnersData implements FixtureInterface
+class LoadContentOwnersData extends AbstractFixture implements OrderedFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    
+    public function getOrder()
+    {
+        return 1;
+    }
+
     public function load(ObjectManager $manager)
     {
-        $owner = new ContentOwners();
-        $owner->setName('Test Content Owner');
-        $owner->setEmailAddress('admin@foo.org');
-
-        $manager->persist($owner);
+        $object = new ContentOwners();
+        $object->setEmailAddress('owner@example.com');
+        $object->setName('Example Owner, Dr.');
+        
+        $manager->persist($object);
         $manager->flush();
+        $this->setReference('owner-1', $object);
     }
 }

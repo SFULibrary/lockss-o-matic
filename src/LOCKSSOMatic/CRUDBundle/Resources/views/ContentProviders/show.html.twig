@@ -3,15 +3,11 @@
 {% block body -%}
     <h1>ContentProviders</h1>
 
-    <table class="record_properties">
+    <table class="record_properties table table-striped table-bordered table-hover">
         <tbody>
             <tr>
                 <th>Id</th>
                 <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Contentownersid</th>
-                <td>{{ entity.contentOwnersId }}</td>
             </tr>
             <tr>
                 <th>Type</th>
@@ -22,8 +18,24 @@
                 <td>{{ entity.name }}</td>
             </tr>
             <tr>
-                <th>IpAddress</th>
-                <td>{{ entity.ipAddress}}</td>
+                <th>Ipaddress</th>
+                <td>{{ entity.ipAddress }}</td>
+            </tr>
+            <tr>
+                <th>Hostname</th>
+                <td>{{ entity.hostname }}</td>
+            </tr>
+            <tr>
+                <th>Checksumtype</th>
+                <td>{{ entity.checksumType }}</td>
+            </tr>
+            <tr>
+                <th>Maxfilesize</th>
+                <td>{{ entity.maxFileSize }}</td>
+            </tr>
+            <tr>
+                <th>Maxausize</th>
+                <td>{{ entity.maxAuSize }}</td>
             </tr>
         </tbody>
     </table>

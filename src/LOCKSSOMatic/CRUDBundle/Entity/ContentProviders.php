@@ -2,34 +2,71 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * ContentProviders
- *
- * @ORM\Table(name="content_providers", indexes={@ORM\Index(name="content_owners_id_idx", columns={"content_owners_id"})})
- * @ORM\Entity
  */
 class ContentProviders
 {
     /**
-    * Collection property required for many-to-one relationship with ContentOwners.
-    * 
-    * @ORM\ManyToOne(targetEntity="ContentOwners", inversedBy="contentProvider")
-    * @ORM\JoinColumn(name="content_owners_id", referencedColumnName="id")
-    */
-    protected $contentOwner;
+     * @var integer
+     */
+    private $id;
 
     /**
-     * Property required for one-to-many relationship with Deposits.
-     * 
-     * @ORM\OneToMany(targetEntity="Deposits", mappedBy="ContentProvider")
+     * @var string
      */
-    protected $deposits;
-    
+    private $type;
+
     /**
-     * Initializes the $collectionowner property.
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $ipAddress;
+
+    /**
+     * @var string
+     */
+    private $hostname;
+
+    /**
+     * @var string
+     */
+    private $checksumType;
+
+    /**
+     * @var integer
+     */
+    private $maxFileSize;
+
+    /**
+     * @var integer
+     */
+    private $maxAuSize;
+
+    /**
+     * @var Collection
+     */
+    private $deposits;
+
+    /**
+     * @var ContentOwners
+     */
+    private $contentOwner;
+
+    /**
+     * @var Plns
+     */
+    private $pln;
+
+    /**
+     * Constructor
      */
     public function __construct()
     {
@@ -37,131 +74,23 @@ class ContentProviders
     }
 
     /**
-     * @var integer
+     * Stringify the entity
      *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @return string
      */
-    private $id;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="content_owners_id", type="integer", nullable=true)
-     */
-    private $contentOwnersId;
-    
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="pln_id", type="integer", nullable=true)
-     */
-    private $plnId;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="type", type="text", nullable=true)
-     */
-    private $type;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="text", nullable=true)
-     */
-    private $name;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="ip_address", type="text", nullable=true)
-     */
-    private $ipAddress;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="hostname", type="text", nullable=true)
-     */
-    private $hostname;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="checksum_type", type="text", nullable=true)
-     */
-    private $checksumType;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="max_file_size", type="integer", nullable=true)
-     */
-    private $maxFileSize;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="max_au_size", type="integer", nullable=true)
-     */
-    private $maxAuSize;
+    public function __toString()
+    {
+        return $this->name;
+    }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set contentOwnersId
-     *
-     * @param integer $contentOwnersId
-     * @return ContentProviders
-     */
-    public function setContentOwnersId($contentOwnersId)
-    {
-        $this->contentOwnersId = $contentOwnersId;
-
-        return $this;
-    }
-
-    /**
-     * Get contentOwnersId
-     *
-     * @return integer 
-     */
-    public function getContentOwnersId()
-    {
-        return $this->contentOwnersId;
-    }
-
-    /**
-     * Set plnId
-     *
-     * @param integer $plnId
-     * @return Plns
-     */
-    public function setPlnId($plnId)
-    {
-        $this->plnId = $plnId;
-
-        return $this;
-    }
-
-    /**
-     * Get plnId
-     *
-     * @return integer 
-     */
-    public function getPlnId()
-    {
-        return $this->plnId;
     }
 
     /**
@@ -180,7 +109,7 @@ class ContentProviders
     /**
      * Get type
      *
-     * @return string 
+     * @return string
      */
     public function getType()
     {
@@ -203,7 +132,7 @@ class ContentProviders
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -226,7 +155,7 @@ class ContentProviders
     /**
      * Get ipAddress
      *
-     * @return string 
+     * @return string
      */
     public function getIpAddress()
     {
@@ -249,13 +178,13 @@ class ContentProviders
     /**
      * Get hostname
      *
-     * @return string 
+     * @return string
      */
     public function getHostname()
     {
         return $this->hostname;
     }
-    
+
     /**
      * Set checksumType
      *
@@ -272,7 +201,7 @@ class ContentProviders
     /**
      * Get checksumType
      *
-     * @return string 
+     * @return string
      */
     public function getChecksumType()
     {
@@ -280,16 +209,6 @@ class ContentProviders
     }
 
     /**
-     * Get maxFileSize
-     *
-     * @return integer 
-     */
-    public function getMaxFileSize()
-    {
-        return $this->maxFileSize;
-    }
-
-   /**
      * Set maxFileSize
      *
      * @param integer $maxFileSize
@@ -301,17 +220,18 @@ class ContentProviders
 
         return $this;
     }
+
     /**
-     * Get maxAuize
+     * Get maxFileSize
      *
-     * @return integer 
+     * @return integer
      */
-    public function getMaxAuSize()
+    public function getMaxFileSize()
     {
-        return $this->maxAuSize;
+        return $this->maxFileSize;
     }
 
-   /**
+    /**
      * Set maxAuSize
      *
      * @param integer $maxAuSize
@@ -324,21 +244,23 @@ class ContentProviders
         return $this;
     }
 
-
-    
-    
-    
-    
-    
-    
+    /**
+     * Get maxAuSize
+     *
+     * @return integer
+     */
+    public function getMaxAuSize()
+    {
+        return $this->maxAuSize;
+    }
 
     /**
      * Add deposits
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits
+     * @param Deposits $deposits
      * @return ContentProviders
      */
-    public function addDeposit(\LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits)
+    public function addDeposit(Deposits $deposits)
     {
         $this->deposits[] = $deposits;
 
@@ -348,9 +270,9 @@ class ContentProviders
     /**
      * Remove deposits
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits
+     * @param Deposits $deposits
      */
-    public function removeDeposit(\LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposits)
+    public function removeDeposit(Deposits $deposits)
     {
         $this->deposits->removeElement($deposits);
     }
@@ -358,7 +280,7 @@ class ContentProviders
     /**
      * Get deposits
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getDeposits()
     {
@@ -368,10 +290,10 @@ class ContentProviders
     /**
      * Set contentOwner
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwner
+     * @param ContentOwners $contentOwner
      * @return ContentProviders
      */
-    public function setContentOwner(\LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwner = null)
+    public function setContentOwner(ContentOwners $contentOwner = null)
     {
         $this->contentOwner = $contentOwner;
 
@@ -381,25 +303,20 @@ class ContentProviders
     /**
      * Get contentOwner
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners 
+     * @return ContentOwners
      */
     public function getContentOwner()
     {
         return $this->contentOwner;
     }
-    /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plns
-     */
-    private $pln;
-
 
     /**
      * Set pln
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
+     * @param Plns $pln
      * @return ContentProviders
      */
-    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
+    public function setPln(Plns $pln = null)
     {
         $this->pln = $pln;
 
@@ -409,7 +326,7 @@ class ContentProviders
     /**
      * Get pln
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
+     * @return Plns
      */
     public function getPln()
     {

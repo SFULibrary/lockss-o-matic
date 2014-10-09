@@ -54,12 +54,12 @@ class AuPropertiesController extends Controller
     }
 
     /**
-    * Creates a form to create a AuProperties entity.
-    *
-    * @param AuProperties $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to create a AuProperties entity.
+     *
+     * @param AuProperties $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createCreateForm(AuProperties $entity)
     {
         $form = $this->createForm(new AuPropertiesType(), $entity, array(
@@ -105,7 +105,8 @@ class AuPropertiesController extends Controller
 
         return $this->render('LOCKSSOMaticCRUDBundle:AuProperties:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        ));
+            'delete_form' => $deleteForm->createView(),
+        ));
     }
 
     /**

@@ -2,28 +2,34 @@
 
 namespace LOCKSSOMatic\CRUDBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 
-class LoadContentProvidersData implements FixtureInterface
+class LoadContentProvidersData extends AbstractFixture implements OrderedFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    
+    public function getOrder()
+    {
+        return 2;
+    }
+
     public function load(ObjectManager $manager)
     {
-        $contentProvider = new ContentProviders();
-        $contentProvider->setContentOwnersId('1');
-        $contentProvider->setType('application');
-        $contentProvider->setName('Test application');
-        $contentProvider->setIpAddress('111.222.333.444');
-        $contentProvider->setHostname('foo.example.com');
-        $contentProvider->setChecksumType('md5');
-        $contentProvider->setMaxFileSize('8388608');
-        $contentProvider->setMaxAuSize('8388608');
-
-        $manager->persist($contentProvider);
+        $object = new ContentProviders();
+        $object->setType('application');
+        $object->setName('Example Provider Inc.');
+        $object->setIpAddress('192.168.100.200');
+        $object->setHostname('cp1.example.com');
+        $object->setChecksumType('md5');
+        $object->setMaxFileSize('123456');
+        $object->setMaxAuSize('987654321');
+        $object->setContentOwner($this->getReference('owner-1'));
+        $object->setPln($this->getReference('pln-1'));
+        
+        $manager->persist($object);
         $manager->flush();
+        $this->setReference('cp-1', $object);
     }
 }

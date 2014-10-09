@@ -2,62 +2,57 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Plugins
- *
- * @ORM\Table(name="plugins")
- * @ORM\Entity
  */
 class Plugins
 {
     /**
-     * Property required for one-to-many relationship with PluginProperties.
-     * 
-     * @ORM\OneToMany(targetEntity="PluginProperties", mappedBy="pluginProperties")
+     * @var integer
      */
-    protected $pluginProperties;
-    
-    /**
-     * Property required for one-to-many relationship with Aus.
-     * 
-     * @ORM\OneToMany(targetEntity="Aus", mappedBy="aus")
-     */
-    protected $aus;    
+    private $id;
 
     /**
-     * Initializes the $pluginProperties and $aus properties.
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var Collection
+     */
+    private $pluginProperties;
+
+    /**
+     * @var Collection
+     */
+    private $aus;
+
+    /**
+     * Constructor
      */
     public function __construct()
     {
         $this->pluginProperties = new ArrayCollection();
         $this->aus = new ArrayCollection();
     }
-
+    
     /**
-     * @var integer
+     * Stringify the entity
      *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @return string
      */
-    private $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="text", nullable=true)
-     */
-    private $name;
-
-
+    public function __toString()
+    {
+        return $this->name;
+    }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -80,7 +75,7 @@ class Plugins
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -90,10 +85,10 @@ class Plugins
     /**
      * Add pluginProperties
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
+     * @param PluginProperties $pluginProperties
      * @return Plugins
      */
-    public function addPluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
+    public function addPluginProperty(PluginProperties $pluginProperties)
     {
         $this->pluginProperties[] = $pluginProperties;
 
@@ -103,9 +98,9 @@ class Plugins
     /**
      * Remove pluginProperties
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
+     * @param PluginProperties $pluginProperties
      */
-    public function removePluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
+    public function removePluginProperty(PluginProperties $pluginProperties)
     {
         $this->pluginProperties->removeElement($pluginProperties);
     }
@@ -113,7 +108,7 @@ class Plugins
     /**
      * Get pluginProperties
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getPluginProperties()
     {
@@ -123,10 +118,10 @@ class Plugins
     /**
      * Add aus
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $aus
+     * @param Aus $aus
      * @return Plugins
      */
-    public function addAus(\LOCKSSOMatic\CRUDBundle\Entity\Aus $aus)
+    public function addAus(Aus $aus)
     {
         $this->aus[] = $aus;
 
@@ -136,9 +131,9 @@ class Plugins
     /**
      * Remove aus
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $aus
+     * @param Aus $aus
      */
-    public function removeAus(\LOCKSSOMatic\CRUDBundle\Entity\Aus $aus)
+    public function removeAus(Aus $aus)
     {
         $this->aus->removeElement($aus);
     }
@@ -146,7 +141,7 @@ class Plugins
     /**
      * Get aus
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getAus()
     {

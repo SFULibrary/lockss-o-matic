@@ -3,15 +3,11 @@
 {% block body -%}
     <h1>Aus</h1>
 
-    <table class="record_properties">
+    <table class="record_properties table table-striped table-bordered table-hover">
         <tbody>
             <tr>
                 <th>Id</th>
                 <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Plnsid</th>
-                <td>{{ entity.plnsId }}</td>
             </tr>
             <tr>
                 <th>Auid</th>
@@ -20,6 +16,10 @@
             <tr>
                 <th>Manifesturl</th>
                 <td>{{ entity.manifestUrl }}</td>
+            </tr>
+            <tr>
+                <th>Open</th>
+                <td>{{ entity.open }}</td>
             </tr>
         </tbody>
     </table>

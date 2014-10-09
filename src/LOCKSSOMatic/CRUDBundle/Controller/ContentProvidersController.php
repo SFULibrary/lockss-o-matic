@@ -54,12 +54,12 @@ class ContentProvidersController extends Controller
     }
 
     /**
-    * Creates a form to create a ContentProviders entity.
-    *
-    * @param ContentProviders $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to create a ContentProviders entity.
+     *
+     * @param ContentProviders $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createCreateForm(ContentProviders $entity)
     {
         $form = $this->createForm(new ContentProvidersType(), $entity, array(
@@ -105,7 +105,8 @@ class ContentProvidersController extends Controller
 
         return $this->render('LOCKSSOMaticCRUDBundle:ContentProviders:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        ));
+            'delete_form' => $deleteForm->createView(),
+        ));
     }
 
     /**

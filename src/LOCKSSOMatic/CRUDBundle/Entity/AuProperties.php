@@ -2,68 +2,69 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use LOCKSSOMatic\CRUDBundle\Entity\AuProperties;
+use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 
 /**
  * AuProperties
- *
- * @ORM\Table(name="au_properties", indexes={@ORM\Index(name="aus_id_idx", columns={"aus_id"})})
- * @ORM\Entity
  */
 class AuProperties
 {
-	
-	/**
-	* Property required for many-to-one relationship with Aus.
-	* 
-	* @ORM\ManyToOne(targetEntity="Aus", inversedBy="auProperties")
-	* @ORM\JoinColumn(name="aus_id", referencedColumnName="id")
-	*/
-	protected $au;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="aus_id", type="integer", nullable=true)
-     */
-    private $ausId;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="parent_id", type="integer", nullable=true)
-     */
-    private $parentId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="property_key", type="text", nullable=true)
      */
     private $propertyKey;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
 
+    /**
+     * @var Collection
+     */
+    private $children;
 
+    /**
+     * @var Aus
+     */
+    private $au;
+
+    /**
+     * @var AuProperties
+     */
+    private $parent;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->children = new ArrayCollection();
+    }
+
+    /**
+     * Stringify the entity
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->propertyKey;
+    }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -71,55 +72,10 @@ class AuProperties
     }
 
     /**
-     * Set ausId
-     *
-     * @param integer $ausId
-     * @return AuProperties
-     */
-    public function setAusId($ausId)
-    {
-        $this->ausId = $ausId;
-
-        return $this;
-    }
-
-    /**
-     * Get ausId
-     *
-     * @return integer 
-     */
-    public function getAusId()
-    {
-        return $this->ausId;
-    }
-
-    /**
-     * Set parentId
-     *
-     * @param integer $parentId
-     * @return AuProperties
-     */
-    public function setParentId($parentId)
-    {
-        $this->parentId = $parentId;
-
-        return $this;
-    }
-
-    /**
-     * Get parentId
-     *
-     * @return integer 
-     */
-    public function getParentId()
-    {
-        return $this->parentId;
-    }
-
-    /**
      * Set propertyKey
      *
      * @param string $propertyKey
+     * 
      * @return AuProperties
      */
     public function setPropertyKey($propertyKey)
@@ -143,6 +99,7 @@ class AuProperties
      * Set propertyValue
      *
      * @param string $propertyValue
+     * 
      * @return AuProperties
      */
     public function setPropertyValue($propertyValue)
@@ -163,12 +120,48 @@ class AuProperties
     }
 
     /**
-     * Set au
+     * Add children
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
+     * @param AuProperties $children
+     * 
      * @return AuProperties
      */
-    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
+    public function addChild(AuProperties $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @return string
+     * 
+     * @param AuProperties $children
+     */
+    public function removeChild(AuProperties $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return Collection 
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * Set au
+     *
+     * @param Aus $au
+     * @return AuProperties
+     */
+    public function setAu(Aus $au = null)
     {
         $this->au = $au;
 
@@ -178,10 +171,36 @@ class AuProperties
     /**
      * Get au
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
+     * @return string
+     * 
+     * @return Aus 
      */
     public function getAu()
     {
         return $this->au;
     }
+
+    /**
+     * Get parent
+     *
+     * @return AuProperties 
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param AuProperties $parent
+     * @return AuProperties
+     */
+    public function setParent(AuProperties $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
 }

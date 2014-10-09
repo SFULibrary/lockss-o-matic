@@ -1,0 +1,35 @@
+imports:
+    - { resource: config_dev.yml }
+
+security:
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        enabled: true
+        collect: true
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true
+
+doctrine:
+    dbal:
+        # variables are defined in parameters.yml
+        host: %testdb_host%
+        dbname: %testdb_name%
+        user: %testdb_user%
+        password: %testdb_pass%
+
+parameters:
+    testdb_host: 127.0.0.1
+    testdb_name: lomtest
+    testdb_user: travis
+    testdb_pass: 

@@ -2,158 +2,81 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
  * Content
- *
- * @ORM\Table(name="content", indexes={@ORM\Index(name="content_providers_id_idx", columns={"content_providers_id"}), @ORM\Index(name="deposits_id_idx", columns={"deposits_id"})})
- * @ORM\Entity
  */
 class Content
 {
-	/**
-	* Property required for many-to-one relationship with Deposits.
-	* 
-	* @ORM\ManyToOne(targetEntity="Deposits", mappedBy="content")
-	* @ORM\JoinColumn((name="deposits_id", referencedColumnName="id")
-	*/
-	protected $deposit;
-
-	/**
-	* Property required for many-to-one relationship with Deposits.
-	* 
-	* @ORM\ManyToOne(targetEntity="Aus", mappedBy="content")
-	* @ORM\JoinColumn((name="aus_id", referencedColumnName="id")
-	*/
-	protected $au;
-
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="deposits_id", type="integer", nullable=true)
-     */
-    private $depositsId;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="aus_id", type="integer", nullable=true)
-     */
-    private $ausId;
-
-    /**
      * @var string
-     *
-     * @ORM\Column(name="url", type="text", nullable=true)
      */
     private $url;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="title", type="text", nullable=true)
      */
     private $title;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(name="size", type="integer", nullable=true)
      */
     private $size;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date_deposited", type="datetime", nullable=true)
+     * @var DateTime
      */
     private $dateDeposited;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="checksum_type", type="text", nullable=true)
      */
     private $checksumType;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="checksum_value", type="text", nullable=true)
      */
     private $checksumValue;
-    
+
     /**
      * @var integer
-     *
-     * @ORM\Column(name="recrawl", type="integer", nullable=true)
      */
     private $recrawl;
 
     /**
+     * @var Deposits
+     */
+    private $deposit;
+
+    /**
+     * @var Aus
+     */
+    private $au;
+
+    /**
+     * Stringify the entity
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+    /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set depositsId
-     *
-     * @param integer $depositsId
-     * @return Content
-     */
-    public function setDepositsId($depositsId)
-    {
-        $this->depositsId = $depositsId;
-
-        return $this;
-    }
-
-    /**
-     * Get depositsId
-     *
-     * @return integer 
-     */
-    public function getDepositsId()
-    {
-        return $this->depositsId;
-    }
-
-    /**
-     * Set ausId
-     *
-     * @param integer $ausId
-     * @return Content
-     */
-    public function setAusId($ausId)
-    {
-        $this->ausId = $ausId;
-
-        return $this;
-    }
-
-    /**
-     * Get ausId
-     *
-     * @return integer 
-     */
-    public function getAusId()
-    {
-        return $this->ausId;
     }
 
     /**
@@ -172,7 +95,7 @@ class Content
     /**
      * Get url
      *
-     * @return string 
+     * @return string
      */
     public function getUrl()
     {
@@ -195,7 +118,7 @@ class Content
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -218,7 +141,7 @@ class Content
     /**
      * Get size
      *
-     * @return integer 
+     * @return integer
      */
     public function getSize()
     {
@@ -228,12 +151,12 @@ class Content
     /**
      * Set dateDeposited
      *
-     * @param \DateTime $dateDeposited
+     * @param DateTime $dateDeposited
      * @return Content
      */
-    public function setDateDeposited($dateDeposited)
+    public function setDateDeposited()
     {
-        $this->dateDeposited = new \DateTime();
+        $this->dateDeposited = new DateTime();
 
         return $this;
     }
@@ -241,7 +164,7 @@ class Content
     /**
      * Get dateDeposited
      *
-     * @return \DateTime 
+     * @return DateTime
      */
     public function getDateDeposited()
     {
@@ -264,7 +187,7 @@ class Content
     /**
      * Get checksumType
      *
-     * @return string 
+     * @return string
      */
     public function getChecksumType()
     {
@@ -287,7 +210,7 @@ class Content
     /**
      * Get checksumValue
      *
-     * @return string 
+     * @return string
      */
     public function getChecksumValue()
     {
@@ -320,10 +243,10 @@ class Content
     /**
      * Set deposit
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposit
+     * @param Deposits $deposit
      * @return Content
      */
-    public function setDeposit(\LOCKSSOMatic\CRUDBundle\Entity\Deposits $deposit = null)
+    public function setDeposit(Deposits $deposit = null)
     {
         $this->deposit = $deposit;
 
@@ -333,7 +256,7 @@ class Content
     /**
      * Get deposit
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Deposits 
+     * @return Deposits
      */
     public function getDeposit()
     {
@@ -343,10 +266,10 @@ class Content
     /**
      * Set au
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Aus $au
+     * @param Aus $au
      * @return Content
      */
-    public function setAu(\LOCKSSOMatic\CRUDBundle\Entity\Aus $au = null)
+    public function setAu(Aus $au = null)
     {
         $this->au = $au;
 
@@ -356,7 +279,7 @@ class Content
     /**
      * Get au
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Aus 
+     * @return Aus
      */
     public function getAu()
     {

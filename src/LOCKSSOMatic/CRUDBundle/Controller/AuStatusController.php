@@ -2,10 +2,7 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Controller;
 
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use LOCKSSOMatic\CRUDBundle\Entity\AuStatus;
 
 /**
  * AuStatus controller.

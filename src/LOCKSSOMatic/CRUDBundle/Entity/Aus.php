@@ -2,41 +2,61 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Aus
- *
- * @ORM\Table(name="aus", indexes={@ORM\Index(name="plns_id_idx", columns={"plns_id"})})
- * @ORM\Entity
  */
 class Aus
 {
     /**
-     * Property required for one-to-many relationship with Content.
-     * 
-     * @ORM\OneToMany(targetEntity="Content", mappedBy="content")
+     * @var integer
      */
-    protected $content;
+    private $id;
 
     /**
-     * Property required for one-to-many relationship with AuStatus.
-     * 
-     * @ORM\OneToMany(targetEntity="AuStatus", mappedBy="auStatus")
+     * @var string
      */
-    protected $auStatus;
+    private $auid;
 
     /**
-     * Property required for one-to-many relationship with AuProperties.
-     * 
-     * @ORM\OneToMany(targetEntity="AuProperties", mappedBy="auProperties")
+     * @var string
      */
-    protected $auProperties;
+    private $manifestUrl;
 
     /**
-     * Initializes the $content, $auStatus, $auProperties, and $pluginProperties
-     * properties.
+     * @var integer
+     */
+    private $open;
+
+    /**
+     * @var Collection
+     */
+    private $content;
+
+    /**
+     * @var Collection
+     */
+    private $auStatus;
+
+    /**
+     * @var Collection
+     */
+    private $auProperties;
+
+    /**
+     * @var Plns
+     */
+    private $pln;
+
+    /**
+     * @var Plugins
+     */
+    private $plugin;
+
+    /**
+     * Constructor
      */
     public function __construct()
     {
@@ -46,119 +66,23 @@ class Aus
     }
 
     /**
-    * Property required for many-to-one relationship with Plns.
-    * 
-    * @ORM\ManyToOne(targetEntity="Plns", inversedBy="aus")
-    * @ORM\JoinColumn(name="plns_id", referencedColumnName="id")
-    */
-    protected $pln;
+     * Stringify the entity
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return sprintf('%d (%s)', array($this->id, $this->plugin->getName()));
+    }
     
-    /**
-    * Property required for many-to-one relationship with Plugins.
-    * 
-    * @ORM\ManyToOne(targetEntity="Plugins", inversedBy="aus")
-    * @ORM\JoinColumn(name="plugins_id", referencedColumnName="id")
-    */
-    protected $plugin;    
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="plns_id", type="integer", nullable=true)
-     */
-    private $plnsId;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="exteranl_title_dbs_id", type="integer", nullable=true)
-     */
-    private $externalTitleDbsId;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="auid", type="text", nullable=true)
-     */
-    private $auid;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="manifest_url", type="text", nullable=true)
-     */
-    private $manifestUrl;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="open", type="integer", nullable=true)
-     */
-    private $open;    
-
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set plnsId
-     *
-     * @param integer $plnsId
-     * @return Aus
-     */
-    public function setPlnsId($plnsId)
-    {
-        $this->plnsId = $plnsId;
-
-        return $this;
-    }
-
-    /**
-     * Get plnsId
-     *
-     * @return integer 
-     */
-    public function getPlnsId()
-    {
-        return $this->plnsId;
-    }
-
-    /**
-     * Get externalTitleDbsId
-     *
-     * @return integer 
-     */
-    public function getExternalTitleDbsId()
-    {
-        return $this->externalTitleDbsId;
-    }
-    
-    /**
-     * Set externalTitleDbsId
-     *
-     * @param integer $exteralTitleDbsId
-     * @return Aus
-     */
-    public function setExternalTitleDbsId($externalTitleDbsId)
-    {
-        $this->plnsId = $plnsId;
-
-        return $this;
     }
 
     /**
@@ -177,7 +101,7 @@ class Aus
     /**
      * Get auid
      *
-     * @return string 
+     * @return string
      */
     public function getAuid()
     {
@@ -200,217 +124,11 @@ class Aus
     /**
      * Get manifestUrl
      *
-     * @return string 
+     * @return string
      */
     public function getManifestUrl()
     {
         return $this->manifestUrl;
-    }
-
-    /**
-     * Add content
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
-     * @return Aus
-     */
-    public function addContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
-    {
-        $this->content[] = $content;
-
-        return $this;
-    }
-
-    /**
-     * Remove content
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Content $content
-     */
-    public function removeContent(\LOCKSSOMatic\CRUDBundle\Entity\Content $content)
-    {
-        $this->content->removeElement($content);
-    }
-
-    /**
-     * Get content
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
-     * Add auStatus
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus
-     * @return Aus
-     */
-    public function addAuStatus(\LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus)
-    {
-        $this->auStatus[] = $auStatus;
-
-        return $this;
-    }
-
-    /**
-     * Remove auStatus
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus
-     */
-    public function removeAuStatus(\LOCKSSOMatic\CRUDBundle\Entity\AuStatus $auStatus)
-    {
-        $this->auStatus->removeElement($auStatus);
-    }
-
-    /**
-     * Get auStatus
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getAuStatus()
-    {
-        return $this->auStatus;
-    }
-
-    /**
-     * Add auProperties
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties
-     * @return Aus
-     */
-    public function addAuProperty(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties)
-    {
-        $this->auProperties[] = $auProperties;
-
-        return $this;
-    }
-
-    /**
-     * Remove auProperties
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties
-     */
-    public function removeAuProperty(\LOCKSSOMatic\CRUDBundle\Entity\AuProperties $auProperties)
-    {
-        $this->auProperties->removeElement($auProperties);
-    }
-
-    /**
-     * Get auProperties
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getAuProperties()
-    {
-        return $this->auProperties;
-    }
-
-    /**
-     * Add pluginProperties
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
-     * @return Aus
-     */
-    public function addPluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
-    {
-        $this->pluginProperties[] = $pluginProperties;
-
-        return $this;
-    }
-
-    /**
-     * Remove pluginProperties
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties
-     */
-    public function removePluginProperty(\LOCKSSOMatic\CRUDBundle\Entity\PluginProperties $pluginProperties)
-    {
-        $this->pluginProperties->removeElement($pluginProperties);
-    }
-
-    /**
-     * Get pluginProperties
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPluginProperties()
-    {
-        return $this->pluginProperties;
-    }
-
-    /**
-     * Set pln
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plns $pln
-     * @return Aus
-     */
-    public function setPln(\LOCKSSOMatic\CRUDBundle\Entity\Plns $pln = null)
-    {
-        $this->pln = $pln;
-
-        return $this;
-    }
-
-    /**
-     * Get pln
-     *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plns 
-     */
-    public function getPln()
-    {
-        return $this->pln;
-    }
-    /**
-     * @var integer
-     */
-    private $pluginsId;
-
-
-    /**
-     * Set pluginsId
-     *
-     * @param integer $pluginsId
-     * @return Aus
-     */
-    public function setPluginsId($pluginsId)
-    {
-        $this->pluginsId = $pluginsId;
-
-        return $this;
-    }
-
-    /**
-     * Get pluginsId
-     *
-     * @return integer 
-     */
-    public function getPluginsId()
-    {
-        return $this->pluginsId;
-    }
-
-    /**
-     * Set plugin
-     *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin
-     * @return Aus
-     */
-    public function setPlugin(\LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin = null)
-    {
-        $this->plugin = $plugin;
-
-        return $this;
-    }
-
-    /**
-     * Get plugin
-     *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plugins 
-     */
-    public function getPlugin()
-    {
-        return $this->plugin;
     }
 
     /**
@@ -429,10 +147,155 @@ class Aus
     /**
      * Get open
      *
-     * @return integer 
+     * @return integer
      */
     public function getOpen()
     {
         return $this->open;
+    }
+
+    /**
+     * Add content
+     *
+     * @param Content $content
+     * @return Aus
+     */
+    public function addContent(Content $content)
+    {
+        $this->content[] = $content;
+
+        return $this;
+    }
+
+    /**
+     * Remove content
+     *
+     * @param Content $content
+     */
+    public function removeContent(Content $content)
+    {
+        $this->content->removeElement($content);
+    }
+
+    /**
+     * Get content
+     *
+     * @return Collection
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * Add auStatus
+     *
+     * @param AuStatus $auStatus
+     * @return Aus
+     */
+    public function addAuStatus(AuStatus $auStatus)
+    {
+        $this->auStatus[] = $auStatus;
+
+        return $this;
+    }
+
+    /**
+     * Remove auStatus
+     *
+     * @param AuStatus $auStatus
+     */
+    public function removeAuStatus(AuStatus $auStatus)
+    {
+        $this->auStatus->removeElement($auStatus);
+    }
+
+    /**
+     * Get auStatus
+     *
+     * @return Collection
+     */
+    public function getAuStatus()
+    {
+        return $this->auStatus;
+    }
+
+    /**
+     * Add auProperties
+     *
+     * @param AuProperties $auProperties
+     * @return Aus
+     */
+    public function addAuProperty(AuProperties $auProperties)
+    {
+        $this->auProperties[] = $auProperties;
+
+        return $this;
+    }
+
+    /**
+     * Remove auProperties
+     *
+     * @param AuProperties $auProperties
+     */
+    public function removeAuProperty(AuProperties $auProperties)
+    {
+        $this->auProperties->removeElement($auProperties);
+    }
+
+    /**
+     * Get auProperties
+     *
+     * @return Collection
+     */
+    public function getAuProperties()
+    {
+        return $this->auProperties;
+    }
+
+    /**
+     * Set pln
+     *
+     * @param Plns $pln
+     * @return Aus
+     */
+    public function setPln(Plns $pln = null)
+    {
+        $this->pln = $pln;
+
+        return $this;
+    }
+
+    /**
+     * Get pln
+     *
+     * @return Plns
+     */
+    public function getPln()
+    {
+        return $this->pln;
+    }
+
+    /**
+     * Set plugin
+     *
+     * @param Plugins $plugin
+     * @return Aus
+     */
+    public function setPlugin(Plugins $plugin = null)
+    {
+        $this->plugin = $plugin;
+
+        return $this;
+    }
+
+    /**
+     * Get plugin
+     *
+     * @return Plugins
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
     }
 }

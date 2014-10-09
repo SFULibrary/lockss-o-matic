@@ -8,17 +8,22 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ContentProvidersType extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('contentOwnersId')
             ->add('type')
             ->add('name')
             ->add('ipAddress')
+            ->add('hostname')
+            ->add('checksumType')
+            ->add('maxFileSize')
+            ->add('maxAuSize')
+            ->add('contentOwner')
+            ->add('pln')
         ;
     }
     

@@ -7,6 +7,16 @@ LOCKSSOMatic\CRUDBundle\Entity\AuProperties:
             joinColumn:
                 name: aus_id
                 referencedColumnName: id
+        parent:
+            targetEntity: AuProperties
+            inversedBy: children
+            joinColumn:
+                name: parent_id
+                referencedColumnName: id
+    oneToMany:
+        children:
+            targetEntity: AuProperties
+            mappedBy: parent
     table: au_properties
     indexes:
         aus_id_idx:
@@ -22,30 +32,14 @@ LOCKSSOMatic\CRUDBundle\Entity\AuProperties:
             generator:
                 strategy: IDENTITY
     fields:
-        ausId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the aus table.'
-            column: aus_id
-        parentId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'id value from this table of the property''s parent property.'
-            column: parent_id
         propertyKey:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 255
+            nullable: false
             comment: 'AU property key.'
             column: property_key
         propertyValue:
             type: text
             nullable: true
-            length: null
-            fixed: false
             comment: 'AU property value.'
             column: property_value
-    lifecycleCallbacks: {  }

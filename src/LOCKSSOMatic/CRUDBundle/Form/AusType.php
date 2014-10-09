@@ -8,16 +8,18 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class AusType extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('plnsId')
             ->add('auid')
             ->add('manifestUrl')
+            ->add('open')
+            ->add('pln')
+            ->add('plugin')
         ;
     }
     

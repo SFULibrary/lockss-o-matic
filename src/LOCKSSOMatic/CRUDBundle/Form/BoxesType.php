@@ -8,16 +8,18 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class BoxesType extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('plnsId')
             ->add('hostname')
             ->add('ipAddress')
+            ->add('username')
+            ->add('password')
+            ->add('pln')
         ;
     }
     
