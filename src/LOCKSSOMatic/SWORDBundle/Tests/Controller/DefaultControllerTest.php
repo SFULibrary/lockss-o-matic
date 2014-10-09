@@ -110,13 +110,13 @@ class DefaultControllerTest extends WebTestCase
     public function testCreateNoResource()
     {
         $uuid = Uuid::v4();
-        
+
         $xml = new SimpleXMLElement('<entry />');
         foreach (self::$NS as $k => $v) {
             $xml->registerXPathNamespace($k, $v);
         }
         $xml->addAttribute('xmlns', self::$NS['atom']);
-        
+
         $xml->addChild('title', 'Empty deposit', self::$NS['atom']);
         $xml->addChild('id', $uuid, self::$NS['atom']);
         $xml->addChild('updated', date('c'), self::$NS['atom']);
@@ -246,7 +246,7 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
         $response = $client->getResponse();
-        
+
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
@@ -255,12 +255,55 @@ class DefaultControllerTest extends WebTestCase
         foreach (self::$NS as $k => $v) {
             $responseXml->registerXPathNamespace($k, $v);
         }
-        
-        $client->getContainer()->get('monolog.logger.sword')->log('error', $response->getContent());
 
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="edit"]')));
         $this->assertGreaterThan(1, count($responseXml->xpath('atom:link[@rel="edit-media"]')));
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
+    }
+
+    public function testSwordStatement()
+    {
+        $uuid = Uuid::v4();
+        $depositXml = new SimpleXMLElement('<entry />');
+        foreach (self::$NS as $k => $v) {
+            $depositXml->registerXPathNamespace($k, $v);
+        }
+        $depositXml->addAttribute('xmlns', self::$NS['atom']);
+
+        $depositXml->addChild('title', 'Single content deposit');
+        $depositXml->addChild('id', $uuid);
+        $depositXml->addChild('updated', date('c'));
+        $author = $depositXml->addChild('author');
+        $author->addChild('name', 'Me, A Bunny');
+
+        $summary = $depositXml->addChild('summary', 'One content element');
+        $summary->addAttribute('type', 'text');
+
+        $content = $depositXml->addChild('content', 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', self::$NS['lom']);
+        $content->addAttribute('size', '899922');
+        $content->addAttribute('checksumType', 'md5');
+        $content->addAttribute('checksumValue', 'ed5697c06b97f95e1221f857a3c08661');
+        
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+
+        $responseXml = new SimpleXMLElement($response->getContent());
+        foreach (self::$NS as $k => $v) {
+            $responseXml->registerXPathNamespace($k, $v);
+        }
+        
+        $tmp = $responseXml->xpath('//atom:link[@rel="http://purl.org/net/sword/terms/statement"]/@href');
+        $stateIri = $tmp[0];
+        $location = preg_replace('/^http.*app_dev.php/', '', $stateIri);
+        
+        $crawler = $client->request('GET', $location);
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        
+        $client->getContainer()->get('monolog.logger.sword')->log('error', $response->getContent());
+        // @TODO finish testing this - right now everything is stubbed out.
     }
 
 }
