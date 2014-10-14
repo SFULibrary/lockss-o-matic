@@ -3,7 +3,9 @@
 namespace LOCKSSOMatic\SWORDBundle\Controller;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Content;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
+use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -165,32 +167,21 @@ class DefaultController extends Controller
             return new Response('', Response::HTTP_PRECONDITION_FAILED);
         }
 
-        $depositUuid = preg_replace('/^urn:uuid:/', '',
-                $atomEntry->children(self::$namespaces['atom'])->id[0]);
-        $depositTitle = $atomEntry->children(self::$namespaces['atom'])->title[0];
-
-        // Create a Deposit entity.
-        $deposit = new Deposits();
+        $depositBuilder = new DepositBuilder();
+        $deposit = $depositBuilder->fromSimpleXML($atomEntry);
         $deposit->setContentProvider($contentProvider);
-        $deposit->setUuid($depositUuid);
-        $deposit->setTitle($depositTitle);
         $em->persist($deposit);
         $em->flush();
 
         // Parse lom:content elements. We need the checksum type, checksum value,
         // file size, and URL.
+        $contentBuilder = new ContentBuilder();
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
             // Create a new Content entity.
-            $content = new Content();
+            $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
-            $au = $this->getDestinationAu($inProgress, $collectionId,
-                    $contentChunk[0]->attributes()->size);
+            $au = $this->getDestinationAu($inProgress, $collectionId, $contentChunk[0]->attributes()->size);
             $content->setAu($au);
-            $content->setUrl($contentChunk);
-            $content->setTitle('Some generatic title');
-            $content->setSize($contentChunk[0]->attributes()->size);
-            $content->setChecksumType($contentChunk[0]->attributes()->checksumType);
-            $content->setChecksumValue($contentChunk[0]->attributes()->checksumValue);
             $content->setRecrawl(1);
             $em->persist($content);
             $em->flush();
@@ -209,7 +200,7 @@ class DefaultController extends Controller
         $editIri = $this->get('router')->generate('lockssomatic_deposit_receipt',
                 array(
             'collectionId' => $collectionId,
-            'uuid'         => $depositUuid
+            'uuid'         => $deposit->getUuid()
         ));
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(201);
