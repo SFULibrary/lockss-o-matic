@@ -7,6 +7,7 @@ use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\HeaderBag;
@@ -16,15 +17,16 @@ use Symfony\Component\HttpFoundation\Response;
 class DefaultController extends Controller
 {
 
-    private static $namespaces = array(
-        'dcterms' => "http://purl.org/dc/terms/",
-        'sword'   => "http://purl.org/net/sword/terms/",
-        'atom'    => "http://www.w3.org/2005/Atom",
-        'lom'     => "http://lockssomatic.info/SWORD2",
-        'rdf'     => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-        'app'     => "http://www.w3.org/2007/app",
-    );
+    /**
+     *
+     * @var Namespaces
+     */
+    private $namespaces;
 
+    public function __construct() {
+        $this->namespaces = new Namespaces();
+    }
+    
     /**
      * Get the value of the X-On-Behalf-Of header (or it's equivalent), and
      * return it. Returns null if the header is not present, or is not a number.
