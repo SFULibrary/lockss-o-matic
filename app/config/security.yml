@@ -23,6 +23,9 @@ security:
         dev:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        api:
+            pattern: ^/api
+            anonymous: true
         main:
             pattern: ^/
             form_login:
@@ -38,3 +41,4 @@ security:
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: ROLE_ADMIN }
         - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }
