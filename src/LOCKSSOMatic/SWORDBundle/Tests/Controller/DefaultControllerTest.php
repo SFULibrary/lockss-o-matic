@@ -2,12 +2,9 @@
 
 namespace LOCKSSOMatic\SWORDBundle\Tests\Controller;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-use DOMDocument;
-use DOMElement;
-use DOMXPath;
 use J20\Uuid\Uuid;
+use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,14 +12,54 @@ use Symfony\Component\HttpFoundation\Response;
 class DefaultControllerTest extends WebTestCase
 {
 
-    private static $NS = array(
-        'dcterms' => "http://purl.org/dc/terms/",
-        'sword' => "http://purl.org/net/sword/terms/",
-        'atom' => "http://www.w3.org/2005/Atom",
-        'lom' => "http://lockssomatic.info/SWORD2",
-        'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-        'app' => "http://www.w3.org/2007/app",
-    );
+    /**
+     *
+     * @var Namespaces
+     */
+    private $namespaces;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->namespaces = new Namespaces();
+    }
+
+    /**
+     * Get a SimpleXMLElement from a string, and assign the necessary 
+     * xpath namespaces.
+     * 
+     * @param string $string
+     * @return SimpleXMLElement
+     */
+    private function getSimpleXML($string)
+    {
+        $xml = new SimpleXMLElement($string);
+        $this->namespaces->registerNamespaces($xml);
+        return $xml;
+    }
+
+    private function createDepositXML($uuid, $title = 'Untitled deposit') {
+        $xml = new SimpleXMLElement('<entry />');
+        $this->namespaces->registerNamespaces($xml);
+        $xml->addAttribute('xmlns', Namespaces::ATOM);
+
+        $xml->addChild('title', $title, Namespaces::ATOM);
+        $xml->addChild('id', $uuid, Namespaces::ATOM);
+        $xml->addChild('updated', date('c'), Namespaces::ATOM);
+        $author = $xml->addChild('author', null, Namespaces::ATOM);
+        $author->addChild('name', 'Me, A Bunny', Namespaces::ATOM);
+
+        $summary = $xml->addChild('summary', 'No content', Namespaces::ATOM);
+        $summary->addAttribute('type', 'text');
+        return $xml;
+    }
+    
+    private function addContentItem($xml, $url, $size, $csType, $csValue) {
+        $content = $xml->addChild('content', $url, Namespaces::LOM);
+        $content->addAttribute('size', $size);
+        $content->addAttribute('checksumType', $csType);
+        $content->addAttribute('checksumValue', $csValue);
+    }
 
     // MUST CREATE A CONTENT PROVIDER ID FOR THIS TO WORK.
     // AND the content provider must have set the maxUploadSize and uploadChecksumType=md5
@@ -36,22 +73,19 @@ class DefaultControllerTest extends WebTestCase
 
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertRegexp('/text\/xml/', $response->headers->get('Content-type'));
 
-        $xml = new SimpleXMLElement($response->getContent());
-        foreach (self::$NS as $k => $v) {
-            $xml->registerXPathNamespace($k, $v);
-        }
+        $xml = $this->getSimpleXML($response->getContent());
 
-        $this->assertEquals('2.0', $xml->children(self::$NS['sword'])->version[0]);
-        $this->assertGreaterThan(1, $xml->children(self::$NS['sword'])->maxUploadSize[0]);
-        $this->assertEquals('md5', $xml->children(self::$NS['lom'])->uploadChecksumType[0]);
+        $this->assertEquals('2.0', $xml->children(Namespaces::SWORD)->version[0]);
+        $this->assertGreaterThan(1, $xml->children(Namespaces::SWORD)->maxUploadSize[0]);
+        $this->assertEquals('md5', $xml->children(Namespaces::LOM)->uploadChecksumType[0]);
 
-        foreach ($xml->children(self::$NS['app'])->collection as $coll) {
+        foreach ($xml->children(Namespaces::APP)->collection as $coll) {
             $this->assertStringEndsWith('/api/sword/2.0/col-iri/1', $coll['href']);
         }
 
-        $tmp = $xml->xpath('//app:accept/text()');
-        $accept = $tmp[0];
+        $accept = array_shift($xml->xpath('//app:accept/text()'));
         $this->assertTrue(strlen($accept) > 0);
     }
 
@@ -105,30 +139,23 @@ class DefaultControllerTest extends WebTestCase
         $content = $response->getContent();
         $this->assertTrue($content === NULL || $content === '');
     }
-
+    
     //6.3.3. Creating a Resource with an Atom Entry
     public function testCreateNoResource()
     {
         $uuid = Uuid::v4();
 
-        $xml = new SimpleXMLElement('<entry />');
-        foreach (self::$NS as $k => $v) {
-            $xml->registerXPathNamespace($k, $v);
-        }
-        $xml->addAttribute('xmlns', self::$NS['atom']);
-
-        $xml->addChild('title', 'Empty deposit', self::$NS['atom']);
-        $xml->addChild('id', $uuid, self::$NS['atom']);
-        $xml->addChild('updated', date('c'), self::$NS['atom']);
-        $author = $xml->addChild('author', null, self::$NS['atom']);
-        $author->addChild('name', 'Me, A Bunny', self::$NS['atom']);
-
-        $summary = $xml->addChild('summary', 'No content', self::$NS['atom']);
-        $summary->addAttribute('type', 'text');
+        $xml = $this->createDepositXML($uuid, 'Empty deposit');
 
         $client = static::createClient();
         $crawler = $client->request(
-                'POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $xml->asXML());
+            'POST', 
+            '/api/sword/2.0/col-iri/1', 
+            array(), 
+            array(), 
+            array(),
+            $xml->asXML()
+            );
 
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
@@ -147,28 +174,22 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
         $uuid = Uuid::v4();
 
-        $depositXml = new SimpleXMLElement('<entry />');
-        foreach (self::$NS as $k => $v) {
-            $depositXml->registerXPathNamespace($k, $v);
-        }
-        $depositXml->addAttribute('xmlns', self::$NS['atom']);
-
-        $depositXml->addChild('title', 'Single content deposit');
-        $depositXml->addChild('id', $uuid);
-        $depositXml->addChild('updated', date('c'));
-        $author = $depositXml->addChild('author');
-        $author->addChild('name', 'Me, A Bunny');
-
-        $summary = $depositXml->addChild('summary', 'One content element');
-        $summary->addAttribute('type', 'text');
-
-        $content = $depositXml->addChild('content', 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', self::$NS['lom']);
-        $content->addAttribute('size', '899922');
-        $content->addAttribute('checksumType', 'md5');
-        $content->addAttribute('checksumValue', 'ed5697c06b97f95e1221f857a3c08661');
+        $depositXml = $this->createDepositXML($uuid);
+        $this->addContentItem(
+            $depositXml, 
+            'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg',
+            899922, 
+            'md5', 
+            'ed5697c06b97f95e1221f857a3c08661'
+        );
 
         $crawler = $client->request(
-                'POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML()
+                'POST', 
+            '/api/sword/2.0/col-iri/1', 
+            array(), 
+            array(), 
+            array(), 
+            $depositXml->asXML()
         );
         $response = $client->getResponse();
 
@@ -176,10 +197,7 @@ class DefaultControllerTest extends WebTestCase
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
 
-        $responseXml = new SimpleXMLElement($response->getContent());
-        foreach (self::$NS as $k => $v) {
-            $responseXml->registerXPathNamespace($k, $v);
-        }
+        $responseXml = $this->getSimpleXML($response->getContent());
 
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="edit"]')));
         $this->assertGreaterThan(0, count($responseXml->xpath('atom:link[@rel="edit-media"]')));
@@ -199,10 +217,7 @@ class DefaultControllerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
-        $recieptXml = new SimpleXMLElement($response->getContent());
-        foreach (self::$NS as $k => $v) {
-            $recieptXml->registerXPathNamespace($k, $v);
-        }
+        $recieptXml = $this->getSimpleXML($response->getContent());
 
         $this->assertEquals(1, count($recieptXml->xpath('atom:link[@rel="edit"]')));
         $this->assertGreaterThan(0, count($recieptXml->xpath('atom:link[@rel="edit-media"]')));
@@ -213,35 +228,20 @@ class DefaultControllerTest extends WebTestCase
     public function testCreateMultipleResources()
     {
         $uuid = Uuid::v4();
-        $depositXml = new SimpleXMLElement('<entry />');
-        foreach (self::$NS as $k => $v) {
-            $depositXml->registerXPathNamespace($k, $v);
-        }
-        $depositXml->addAttribute('xmlns', self::$NS['atom']);
+        $depositXml = $this->createDepositXML($uuid);
+        $this->addContentItem(
+            $depositXml,
+            'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg',
+            899922, 
+            'md5', 
+            'ed5697c06b97f95e1221f857a3c08661');
 
-        $depositXml->addChild('title', 'Single content deposit');
-        $depositXml->addChild('id', $uuid);
-        $depositXml->addChild('updated', date('c'));
-        $author = $depositXml->addChild('author');
-        $author->addChild('name', 'Me, A Bunny');
-
-        $summary = $depositXml->addChild('summary', 'One content element');
-        $summary->addAttribute('type', 'text');
-
-        $content = $depositXml->addChild('content', 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', self::$NS['lom']);
-        $content->addAttribute('size', '899922');
-        $content->addAttribute('checksumType', 'md5');
-        $content->addAttribute('checksumValue', 'ed5697c06b97f95e1221f857a3c08661');
-
-        $content = $depositXml->addChild('content', 'http://www.ibiblio.org/wm/paint/auth/monet/parliament/parliament.jpg', self::$NS['lom']);
-        $content->addAttribute('size', '198423');
-        $content->addAttribute('checksumType', 'md5');
-        $content->addAttribute('checksumValue', '5619bbabea01c0841cd99c6cf4ad3b33');
-
-        $content = $depositXml->addChild('content', 'http://www.ibiblio.org/wm/paint/auth/gauguin/gauguin.alyscamps.jpg', self::$NS['lom']);
-        $content->addAttribute('size', '176098');
-        $content->addAttribute('checksumType', 'md5');
-        $content->addAttribute('checksumValue', 'ff9a208611f892d147ef0f213150323e');
+        $this->addContentItem(
+            $depositXml,
+            'http://www.ibiblio.org/wm/paint/auth/monet/parliament/parliament.jpg',
+            899922, 
+            'md5', 
+            'ed5697c06b97f95e1221f857a3c08661');
 
         $client = static::createClient();
         $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
@@ -250,11 +250,8 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
-
-        $responseXml = new SimpleXMLElement($response->getContent());
-        foreach (self::$NS as $k => $v) {
-            $responseXml->registerXPathNamespace($k, $v);
-        }
+        
+        $responseXml = $this->getSimpleXML($response->getContent());
 
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="edit"]')));
         $this->assertGreaterThan(0, count($responseXml->xpath('atom:link[@rel="edit-media"]')));
@@ -264,45 +261,37 @@ class DefaultControllerTest extends WebTestCase
     public function testSwordStatement()
     {
         $uuid = Uuid::v4();
-        $depositXml = new SimpleXMLElement('<entry />');
-        foreach (self::$NS as $k => $v) {
-            $depositXml->registerXPathNamespace($k, $v);
-        }
-        $depositXml->addAttribute('xmlns', self::$NS['atom']);
+        $depositXml = $this->createDepositXML($uuid);
+        $this->addContentItem(
+            $depositXml,
+            'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg',
+            899922, 
+            'md5', 
+            'ed5697c06b97f95e1221f857a3c08661');
 
-        $depositXml->addChild('title', 'Single content deposit');
-        $depositXml->addChild('id', $uuid);
-        $depositXml->addChild('updated', date('c'));
-        $author = $depositXml->addChild('author');
-        $author->addChild('name', 'Me, A Bunny');
-
-        $summary = $depositXml->addChild('summary', 'One content element');
-        $summary->addAttribute('type', 'text');
-
-        $content = $depositXml->addChild('content', 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', self::$NS['lom']);
-        $content->addAttribute('size', '899922');
-        $content->addAttribute('checksumType', 'md5');
-        $content->addAttribute('checksumValue', 'ed5697c06b97f95e1221f857a3c08661');
-        
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $crawler = $client->request(
+            'POST', 
+            '/api/sword/2.0/col-iri/1', 
+            array(), 
+            array(), 
+            array(), 
+            $depositXml->asXML()
+            );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
 
-        $responseXml = new SimpleXMLElement($response->getContent());
-        foreach (self::$NS as $k => $v) {
-            $responseXml->registerXPathNamespace($k, $v);
-        }
-        
+        $responseXml = $this->getSimpleXML($response->getContent());
+
         $tmp = $responseXml->xpath('//atom:link[@rel="http://purl.org/net/sword/terms/statement"]/@href');
         $stateIri = $tmp[0];
         $location = preg_replace('/^http.*app_dev.php/', '', $stateIri);
-        
+
         $crawler = $client->request('GET', $location);
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        
-        $client->getContainer()->get('monolog.logger.sword')->log('error', $response->getContent());
+
+        $client->getContainer()->get('monolog.logger.sword')->log('error', 'uri: ' . $location);
         // @TODO finish testing this - right now everything is stubbed out.
     }
 

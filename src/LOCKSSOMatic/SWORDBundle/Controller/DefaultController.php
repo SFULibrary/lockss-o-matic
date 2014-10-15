@@ -14,8 +14,7 @@ use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DefaultController extends Controller
-{
+class DefaultController extends Controller {
 
     /**
      *
@@ -23,8 +22,7 @@ class DefaultController extends Controller
      */
     private $namespaces;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->namespaces = new Namespaces();
     }
 
@@ -36,8 +34,7 @@ class DefaultController extends Controller
      * 
      * @return int the header value or null if not present.
      */
-    private function getOnBehalfOfHeader(Request $request)
-    {
+    private function getOnBehalfOfHeader(Request $request) {
         $headers = array(
             'x-on-behalf-of',
             'on-behalf-of'
@@ -59,18 +56,16 @@ class DefaultController extends Controller
      * @param Request $request
      * @return boolean
      */
-    private function getInProgressHeader(Request $request)
-    {
+    private function getInProgressHeader(Request $request) {
         $headers = array(
             'x-in-progress',
             'in-progress'
         );
         foreach ($headers as $h) {
             $value = $request->headers->get($h);
-            if (in_array($value,
-                            array(
-                        'true',
-                        'false'))) {
+            if (in_array($value, array(
+                    'true',
+                    'false'))) {
                 return $value;
             }
         }
@@ -78,12 +73,24 @@ class DefaultController extends Controller
     }
 
     /**
+     * Get a SimpleXMLElement from a string, and assign the necessary 
+     * xpath namespaces.
+     * 
+     * @param string $xml
+     * @return SimpleXMLElement
+     */
+    private function getSimpleXML($xml) {
+        $xml = new SimpleXMLElement($xml);
+        $this->namespaces->registerNamespaces($xml);
+        return $xml;
+    }
+
+    /**
      * 
      * @param type $onBehalfOf
      * @return ContentProviders
      */
-    private function getContentProvider($onBehalfOf)
-    {
+    private function getContentProvider($onBehalfOf) {
         return $this->getDoctrine()->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')->find($onBehalfOf);
     }
 
@@ -94,10 +101,9 @@ class DefaultController extends Controller
      * This value is also used for the collection ID (in other words, each
      * content provider has its own SWORD collection).
      * 
-     * @return string The Service Document.
+     * @return Response The Service Document.
      */
-    public function serviceDocumentAction(Request $request)
-    {
+    public function serviceDocumentAction(Request $request) {
         $onBehalfOf = $this->getOnBehalfOfHeader($request);
 
         if (is_null($onBehalfOf)) {
@@ -113,31 +119,14 @@ class DefaultController extends Controller
             return new Response('', Response::HTTP_FORBIDDEN);
         }
 
-        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
-                array(
-            'site_name'             => $this->container->getParameter('site_name'),
-            'base_url'              => $this->container->getParameter('base_url'),
-            'onBehalfOf'            => $onBehalfOf,
-            'maxFileSize'           => $contentProvider->getMaxFileSize(),
-            'checksumType'          => $contentProvider->getChecksumType(),
-            'content_provider_name' => $contentProvider->getName())
+        $response = $this->render(
+            'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig', 
+            array(
+                'contentProvider' => $contentProvider,
+            )
         );
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
-    }
-
-    /**
-     * Get a SimpleXMLElement from a string, and assign the necessary 
-     * xpath namespaces.
-     * 
-     * @param string $xml
-     * @return SimpleXMLElement
-     */
-    private function getSimpleXML($xml)
-    {
-        $xml = new SimpleXMLElement($xml);
-        $this->namespaces->registerNamespaces($xml);
-        return $xml;
     }
 
     /**
@@ -146,8 +135,7 @@ class DefaultController extends Controller
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return string The Deposit Receipt response.
      */
-    public function createDepositAction(Request $request, $collectionId)
-    {
+    public function createDepositAction(Request $request, $collectionId) {
         $em = $this->getDoctrine()->getManager();
 
         // Query the ContentProvider entity so we can get its name.
@@ -181,31 +169,52 @@ class DefaultController extends Controller
             // Create a new Content entity.
             $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
-            $au = $this->getDestinationAu($inProgress, $collectionId,
-                    $contentChunk[0]->attributes()->size);
+            $au = $this->getDestinationAu($inProgress, $collectionId, $contentChunk[0]->attributes()->size);
             $content->setAu($au);
             $content->setRecrawl(1);
             $em->persist($content);
             $em->flush();
         }
 
-        // @TODO this should be a call to render depsoitReceiptAction() or something.
-        // Return the deposit receipt.
-        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
-                array(
-                    'contentProvider' => $contentProvider,
-                    'deposit'         => $deposit
-                )
-        );
-        $response->headers->set('Content-Type', 'text/xml');
-        // Return the Edit-IRI in a Location header, as per the SWORD spec.
-        $editIri = $this->get('router')->generate('lockssomatic_deposit_receipt',
-                array(
+        $response = $this->renderDepositReceipt($contentProvider, $deposit);
+        $editIri = $this->get('router')->generate('lockssomatic_deposit_receipt', array(
             'collectionId' => $collectionId,
-            'uuid'         => $deposit->getUuid()
+            'uuid' => $deposit->getUuid()
         ));
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(201);
+        return $response;
+    }
+
+    /**
+     * Returns a deposit receipt, in response to a request to the SWORD Edit-IRI.
+     * 
+     * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
+     * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
+     * @return string The Deposit Receipt response.
+     */
+    public function depositReceiptAction($collectionId, $uuid) {
+        $contentProvider = $this->getContentProvider($collectionId);
+        if ($contentProvider === null) {
+            // Return a "Forbidden" response.
+            return new Response('', Response::HTTP_FORBIDDEN);
+        }
+        $deposit = $this->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
+            ->findOneBy(array('uuid' => $uuid));
+
+        return $this->renderDepositReceipt($contentProvider, $deposit);
+    }
+    
+    private function renderDepositReceipt($contentProvider, $deposit) {
+        // @TODO this should be a call to render depsoitReceiptAction() or something.
+        // Return the deposit receipt.
+        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig', array(
+            'contentProvider' => $contentProvider,
+            'deposit' => $deposit
+            )
+        );
+        $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
 
@@ -216,8 +225,7 @@ class DefaultController extends Controller
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      * @return string The Statement response.
      */
-    public function swordStatementAction($collectionId, $uuid)
-    {
+    public function swordStatementAction($collectionId, $uuid) {
         // Check to verify the content provider identified by $collectionId
         // exists. If not, return an appropriate error code.
         $contentProviderExists = $this->confirmContentProvider($collectionId);
@@ -230,9 +238,9 @@ class DefaultController extends Controller
         // Get the URLs for all the Content chunks added in the deposit identifed
         // by $uuid.
         $stmt = $this->getDoctrine()
-                ->getManager()
-                ->getConnection()
-                ->prepare('SELECT DISTINCT content.id, content.url FROM content, deposits WHERE
+            ->getManager()
+            ->getConnection()
+            ->prepare('SELECT DISTINCT content.id, content.url FROM content, deposits WHERE
                     content.deposits_id = deposits.id AND deposits.uuid = :uuid');
         $stmt->bindValue('uuid', $uuid);
         $stmt->execute();
@@ -246,22 +254,21 @@ class DefaultController extends Controller
                 // @todo: Query each server in the PLN for the real values.
                 for ($i = 1; $i <= 6; $i++) {
                     $boxDetails = array(
-                        'contentUrl'         => $contentItem['url'],
-                        'serverId'           => $i,
+                        'contentUrl' => $contentItem['url'],
+                        'serverId' => $i,
                         'boxServeContentUrl' => 'http://lockss' . $i . '.example.org:8083/ServeContent?url=',
-                        'checksumType'       => 'md5',
-                        'checksumValue'      => 'fake9b64256fake754086de2fake6b7d',
-                        'state'              => 'agreement'
+                        'checksumType' => 'md5',
+                        'checksumValue' => 'fake9b64256fake754086de2fake6b7d',
+                        'state' => 'agreement'
                     );
                     $detailsForContentItems['boxes'][] = $boxDetails;
                 }
                 $contentDetails[] = array(
                     'contentUrl' => $contentItem['url'],
-                    'boxes'      => $detailsForContentItems['boxes']
+                    'boxes' => $detailsForContentItems['boxes']
                 );
             }
-            $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
-                    array(
+            $response = $this->render('LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig', array(
                 'contentDetails' => $contentDetails));
             $response->headers->set('Content-Type', 'text/xml');
         } else {
@@ -290,8 +297,7 @@ class DefaultController extends Controller
      *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
      * @return object The Edit-IRI response.
      */
-    public function editDepositAction($collectionId, $uuid)
-    {
+    public function editDepositAction($collectionId, $uuid) {
         // Check to verify the content provider identified by $collectionId
         // exists. If not, return an appropriate error code.
         $contentProviderExists = $this->confirmContentProvider($collectionId);
@@ -309,10 +315,8 @@ class DefaultController extends Controller
         // the Content entity's 'recrawl' property if the value is false.
         $atomEntry = simplexml_load_string($editIriXml);
         $atomEntry->registerXPathNamespace('atom', 'http://www.w3.org/2005/Atom');
-        $atomEntry->registerXPathNamespace('lom',
-                'http://lockssomatic.info/SWORD2');
-        $atomEntry->registerXPathNamespace('dcterms',
-                'http://purl.org/dc/terms/');
+        $atomEntry->registerXPathNamespace('lom', 'http://lockssomatic.info/SWORD2');
+        $atomEntry->registerXPathNamespace('dcterms', 'http://purl.org/dc/terms/');
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
             foreach ($contentChunk[0]->attributes() as $key => $value) {
                 // Get the value of 'recrawl'.
@@ -321,8 +325,8 @@ class DefaultController extends Controller
                     $em = $this->getDoctrine()->getManager();
                     // Update the Content entity by finding its url value.
                     $content = $em
-                            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Content')
-                            ->findOneByUrl($contentChunk);
+                        ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Content')
+                        ->findOneByUrl($contentChunk);
                     if ($content) {
                         $content->setRecrawl('0');
                         $em->flush();
@@ -346,37 +350,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * Returns a deposit receipt, in response to a request to the SWORD Edit-IRI.
-     * 
-     * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
-     * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
-     * @return string The Deposit Receipt response.
-     */
-    public function depositReceiptAction($collectionId, $uuid)
-    {
-        $contentProvider = $this->getContentProvider($collectionId);
-
-        if ($contentProvider === null) {
-            // Return a "Forbidden" response.
-            return new Response('', Response::HTTP_FORBIDDEN);
-        }
-
-        $deposit = $this->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
-                ->findOneBy(array('uuid' => $uuid));
-
-        // Return the deposit receipt.
-        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
-                array(
-                    'contentProvider' => $contentProvider,
-                    'deposit'         => $deposit
-                )
-        );
-        $response->headers->set('Content-Type', 'text/xml');
-        return $response;
-    }
-
-    /**
      * Determines which AU to put the content in.
      * 
      * @param bool $inProgress Whether the AU is 'open' or 'closed'.
@@ -385,8 +358,7 @@ class DefaultController extends Controller
      * @param string $contentSize The size of the content, in kB.
      * @return object $au.
      */
-    public function getDestinationAu($inProgress, $collectionId, $contentSize)
-    {
+    public function getDestinationAu($inProgress, $collectionId, $contentSize) {
         // @todo: For open AUs, if $contentSize is less than remaining capacity
         // of the newest AU for the Content Provider, put the content in this AU.
         // If $contentSize is greater, create a new AU and put the content in this
@@ -395,8 +367,8 @@ class DefaultController extends Controller
         //
         // Query for the Au. For now, just pick the Au with id 1.
         $au = $this->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')
-                ->find(1);
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')
+            ->find(1);
         return $au;
     }
 
@@ -406,11 +378,10 @@ class DefaultController extends Controller
      * @param bool $contentProviderId The ID of the content provider.
      * @return bool
      */
-    public function confirmContentProvider($contentProviderId)
-    {
+    public function confirmContentProvider($contentProviderId) {
         $cp = $this->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders')
-                ->find($contentProviderId);
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders')
+            ->find($contentProviderId);
         if ($cp) {
             return true;
         } else {
