@@ -23,10 +23,11 @@ class DefaultController extends Controller
      */
     private $namespaces;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->namespaces = new Namespaces();
     }
-    
+
     /**
      * Get the value of the X-On-Behalf-Of header (or it's equivalent), and
      * return it. Returns null if the header is not present, or is not a number.
@@ -135,9 +136,7 @@ class DefaultController extends Controller
     private function getSimpleXML($xml)
     {
         $xml = new SimpleXMLElement($xml);
-        foreach (self::$namespaces as $prefix => $ns) {
-            $xml->registerXPathNamespace($prefix, $ns);
-        }
+        $this->namespaces->registerNamespaces($xml);
         return $xml;
     }
 
@@ -182,20 +181,21 @@ class DefaultController extends Controller
             // Create a new Content entity.
             $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
-            $au = $this->getDestinationAu($inProgress, $collectionId, $contentChunk[0]->attributes()->size);
+            $au = $this->getDestinationAu($inProgress, $collectionId,
+                    $contentChunk[0]->attributes()->size);
             $content->setAu($au);
             $content->setRecrawl(1);
             $em->persist($content);
             $em->flush();
         }
 
+        // @TODO this should be a call to render depsoitReceiptAction() or something.
         // Return the deposit receipt.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
                 array(
-            'siteName'          => $this->container->getParameter('site_name'),
-            'baseUrl'           => $this->container->getParameter('base_url'),
-            'contentProviderId' => $collectionId,
-            'depositUuid'       => $deposit->getUuid())
+                    'contentProvider' => $contentProvider,
+                    'deposit'         => $deposit
+                )
         );
         $response->headers->set('Content-Type', 'text/xml');
         // Return the Edit-IRI in a Location header, as per the SWORD spec.
@@ -354,22 +354,23 @@ class DefaultController extends Controller
      */
     public function depositReceiptAction($collectionId, $uuid)
     {
-        // Check to verify the content provider identified by $collectionId
-        // exists. If not, return an appropriate error code.
-        $contentProviderExists = $this->confirmContentProvider($collectionId);
-        if (!$contentProviderExists) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;
+        $contentProvider = $this->getContentProvider($collectionId);
+
+        if ($contentProvider === null) {
+            // Return a "Forbidden" response.
+            return new Response('', Response::HTTP_FORBIDDEN);
         }
+
+        $deposit = $this->getDoctrine()
+                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
+                ->findOneBy(array('uuid' => $uuid));
 
         // Return the deposit receipt.
         $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
                 array(
-            'siteName'          => $this->container->getParameter('site_name'),
-            'baseUrl'           => $this->container->getParameter('base_url'),
-            'contentProviderId' => $collectionId,
-            'depositUuid'       => $uuid)
+                    'contentProvider' => $contentProvider,
+                    'deposit'         => $deposit
+                )
         );
         $response->headers->set('Content-Type', 'text/xml');
         return $response;

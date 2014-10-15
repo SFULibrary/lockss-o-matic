@@ -182,7 +182,7 @@ class DefaultControllerTest extends WebTestCase
         }
 
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="edit"]')));
-        $this->assertGreaterThan(1, count($responseXml->xpath('atom:link[@rel="edit-media"]')));
+        $this->assertGreaterThan(0, count($responseXml->xpath('atom:link[@rel="edit-media"]')));
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
 
         // Follow the location header, which should give the same deposit receipt.
@@ -205,7 +205,7 @@ class DefaultControllerTest extends WebTestCase
         }
 
         $this->assertEquals(1, count($recieptXml->xpath('atom:link[@rel="edit"]')));
-        $this->assertGreaterThan(1, count($recieptXml->xpath('atom:link[@rel="edit-media"]')));
+        $this->assertGreaterThan(0, count($recieptXml->xpath('atom:link[@rel="edit-media"]')));
         $this->assertEquals(1, count($recieptXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
     }
 
@@ -257,7 +257,7 @@ class DefaultControllerTest extends WebTestCase
         }
 
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="edit"]')));
-        $this->assertGreaterThan(1, count($responseXml->xpath('atom:link[@rel="edit-media"]')));
+        $this->assertGreaterThan(0, count($responseXml->xpath('atom:link[@rel="edit-media"]')));
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
     }
 
