@@ -25,9 +25,9 @@ class DefaultControllerTest extends WebTestCase
     }
 
     /**
-     * Get a SimpleXMLElement from a string, and assign the necessary 
+     * Get a SimpleXMLElement from a string, and assign the necessary
      * xpath namespaces.
-     * 
+     *
      * @param string $string
      * @return SimpleXMLElement
      */
@@ -38,7 +38,8 @@ class DefaultControllerTest extends WebTestCase
         return $xml;
     }
 
-    private function createDepositXML($uuid, $title = 'Untitled deposit') {
+    private function createDepositXML($uuid, $title = 'Untitled deposit')
+    {
         $xml = new SimpleXMLElement('<entry />');
         $this->namespaces->registerNamespaces($xml);
         $xml->addAttribute('xmlns', Namespaces::ATOM);
@@ -54,7 +55,8 @@ class DefaultControllerTest extends WebTestCase
         return $xml;
     }
     
-    private function addContentItem($xml, $url, $size, $csType, $csValue) {
+    private function addContentItem($xml, $url, $size, $csType, $csValue)
+    {
         $content = $xml->addChild('content', $url, Namespaces::LOM);
         $content->addAttribute('size', $size);
         $content->addAttribute('checksumType', $csType);
@@ -68,7 +70,7 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
 
         $crawler = $client->request(
-                'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => 1)
+            'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => 1)
         );
 
         $response = $client->getResponse();
@@ -97,30 +99,30 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
 
         $crawler = $client->request(
-                'GET', '/api/sword/2.0/sd-iri'
+            'GET', '/api/sword/2.0/sd-iri'
         );
 
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
         $content = $response->getContent();
-        $this->assertTrue($content === NULL || $content === '');
+        $this->assertTrue($content === null || $content === '');
     }
 
     /**
-     * On-Behalf-Of header should be a number. 
+     * On-Behalf-Of header should be a number.
      */
     public function testServiceDocumentStringOnBehalfOf()
     {
         $client = static::createClient();
 
         $crawler = $client->request(
-                'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => 'Magneto')
+            'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => 'Magneto')
         );
 
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
         $content = $response->getContent();
-        $this->assertTrue($content === NULL || $content === '');
+        $this->assertTrue($content === null || $content === '');
     }
 
     /**
@@ -131,13 +133,13 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
 
         $crawler = $client->request(
-                'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => 297845)
+            'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => 297845)
         );
 
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
         $content = $response->getContent();
-        $this->assertTrue($content === NULL || $content === '');
+        $this->assertTrue($content === null || $content === '');
     }
     
     //6.3.3. Creating a Resource with an Atom Entry
@@ -149,18 +151,18 @@ class DefaultControllerTest extends WebTestCase
 
         $client = static::createClient();
         $crawler = $client->request(
-            'POST', 
-            '/api/sword/2.0/col-iri/1', 
-            array(), 
-            array(), 
+            'POST',
+            '/api/sword/2.0/col-iri/1',
+            array(),
+            array(),
             array(),
             $xml->asXML()
-            );
+        );
 
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
         $content = $response->getContent();
-        $this->assertTrue($content === NULL || $content === '');
+        $this->assertTrue($content === null || $content === '');
 
         /** @var EntityManager */
         $em = $client->getContainer()->get('doctrine')->getManager();
@@ -176,19 +178,19 @@ class DefaultControllerTest extends WebTestCase
 
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 
+            $depositXml,
             'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg',
-            899922, 
-            'md5', 
+            899922,
+            'md5',
             'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $crawler = $client->request(
-                'POST', 
-            '/api/sword/2.0/col-iri/1', 
-            array(), 
-            array(), 
-            array(), 
+            'POST',
+            '/api/sword/2.0/col-iri/1',
+            array(),
+            array(),
+            array(),
             $depositXml->asXML()
         );
         $response = $client->getResponse();
@@ -206,10 +208,10 @@ class DefaultControllerTest extends WebTestCase
         // Follow the location header, which should give the same deposit receipt.
         $oldContent = $response->getContent();
 
-        // get the location, in a URI that the kernel can understand. Full, absolute URIs 
+        // get the location, in a URI that the kernel can understand. Full, absolute URIs
         // will throw 404 errors.
-        // 
-        //Symfony simulates an http client and tests against an instance of the 
+        //
+        //Symfony simulates an http client and tests against an instance of the
         //Kernel created for that test. There are no web servers involved.
         $location = preg_replace('/^http.*app_dev.php/', '', $response->headers->get('location'));
 
@@ -232,16 +234,18 @@ class DefaultControllerTest extends WebTestCase
         $this->addContentItem(
             $depositXml,
             'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg',
-            899922, 
-            'md5', 
-            'ed5697c06b97f95e1221f857a3c08661');
+            899922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
+        );
 
         $this->addContentItem(
             $depositXml,
             'http://www.ibiblio.org/wm/paint/auth/monet/parliament/parliament.jpg',
-            899922, 
-            'md5', 
-            'ed5697c06b97f95e1221f857a3c08661');
+            899922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
+        );
 
         $client = static::createClient();
         $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
@@ -265,19 +269,20 @@ class DefaultControllerTest extends WebTestCase
         $this->addContentItem(
             $depositXml,
             'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg',
-            899922, 
-            'md5', 
-            'ed5697c06b97f95e1221f857a3c08661');
+            899922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
+        );
 
         $client = static::createClient();
         $crawler = $client->request(
-            'POST', 
-            '/api/sword/2.0/col-iri/1', 
-            array(), 
-            array(), 
-            array(), 
+            'POST',
+            '/api/sword/2.0/col-iri/1',
+            array(),
+            array(),
+            array(),
             $depositXml->asXML()
-            );
+        );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
 
@@ -294,5 +299,4 @@ class DefaultControllerTest extends WebTestCase
         $client->getContainer()->get('monolog.logger.sword')->log('error', 'uri: ' . $location);
         // @TODO finish testing this - right now everything is stubbed out.
     }
-
 }

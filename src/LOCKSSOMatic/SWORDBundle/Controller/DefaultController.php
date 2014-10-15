@@ -2,19 +2,17 @@
 
 namespace LOCKSSOMatic\SWORDBundle\Controller;
 
-use LOCKSSOMatic\CRUDBundle\Entity\Content;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
-use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DefaultController extends Controller {
+class DefaultController extends Controller
+{
 
     /**
      *
@@ -22,19 +20,24 @@ class DefaultController extends Controller {
      */
     private $namespaces;
 
-    public function __construct() {
+    /**
+     * Construct the controller.
+     */
+    public function __construct()
+    {
         $this->namespaces = new Namespaces();
     }
 
     /**
      * Get the value of the X-On-Behalf-Of header (or it's equivalent), and
      * return it. Returns null if the header is not present, or is not a number.
-     * 
+     *
      * @param Request $request
-     * 
+     *
      * @return int the header value or null if not present.
      */
-    private function getOnBehalfOfHeader(Request $request) {
+    private function getOnBehalfOfHeader(Request $request)
+    {
         $headers = array(
             'x-on-behalf-of',
             'on-behalf-of'
@@ -49,14 +52,15 @@ class DefaultController extends Controller {
     }
 
     /**
-     * Get the value of the in-progress HTTP header, which must be either 
+     * Get the value of the in-progress HTTP header, which must be either
      * true or false. Returns false if the header is not present or is a
      * value other than true or false.
-     * 
+     *
      * @param Request $request
      * @return boolean
      */
-    private function getInProgressHeader(Request $request) {
+    private function getInProgressHeader(Request $request)
+    {
         $headers = array(
             'x-in-progress',
             'in-progress'
@@ -66,44 +70,47 @@ class DefaultController extends Controller {
             if (in_array($value, array(
                     'true',
                     'false'))) {
-                return $value;
+                return $value == 'true';
             }
         }
         return false;
     }
 
     /**
-     * Get a SimpleXMLElement from a string, and assign the necessary 
+     * Get a SimpleXMLElement from a string, and assign the necessary
      * xpath namespaces.
-     * 
+     *
      * @param string $xml
      * @return SimpleXMLElement
      */
-    private function getSimpleXML($xml) {
+    private function getSimpleXML($xml)
+    {
         $xml = new SimpleXMLElement($xml);
         $this->namespaces->registerNamespaces($xml);
         return $xml;
     }
 
     /**
-     * 
+     *
      * @param type $onBehalfOf
      * @return ContentProviders
      */
-    private function getContentProvider($onBehalfOf) {
+    private function getContentProvider($onBehalfOf)
+    {
         return $this->getDoctrine()->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')->find($onBehalfOf);
     }
 
     /**
      * Controller for the SWORD Service Document request.
-     * 
+     *
      * The 'On-Behalf-Of' request header identifies the content provider.
      * This value is also used for the collection ID (in other words, each
      * content provider has its own SWORD collection).
-     * 
+     *
      * @return Response The Service Document.
      */
-    public function serviceDocumentAction(Request $request) {
+    public function serviceDocumentAction(Request $request)
+    {
         $onBehalfOf = $this->getOnBehalfOfHeader($request);
 
         if (is_null($onBehalfOf)) {
@@ -120,7 +127,7 @@ class DefaultController extends Controller {
         }
 
         $response = $this->render(
-            'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig', 
+            'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
             array(
                 'contentProvider' => $contentProvider,
             )
@@ -131,11 +138,12 @@ class DefaultController extends Controller {
 
     /**
      * Controller for the Col-IRI (create resource) request.
-     * 
+     *
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return string The Deposit Receipt response.
      */
-    public function createDepositAction(Request $request, $collectionId) {
+    public function createDepositAction(Request $request, $collectionId)
+    {
         $em = $this->getDoctrine()->getManager();
 
         // Query the ContentProvider entity so we can get its name.
@@ -188,12 +196,13 @@ class DefaultController extends Controller {
 
     /**
      * Returns a deposit receipt, in response to a request to the SWORD Edit-IRI.
-     * 
+     *
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      * @return string The Deposit Receipt response.
      */
-    public function depositReceiptAction($collectionId, $uuid) {
+    public function depositReceiptAction($collectionId, $uuid)
+    {
         $contentProvider = $this->getContentProvider($collectionId);
         if ($contentProvider === null) {
             // Return a "Forbidden" response.
@@ -206,10 +215,12 @@ class DefaultController extends Controller {
         return $this->renderDepositReceipt($contentProvider, $deposit);
     }
     
-    private function renderDepositReceipt($contentProvider, $deposit) {
+    private function renderDepositReceipt($contentProvider, $deposit)
+    {
         // @TODO this should be a call to render depsoitReceiptAction() or something.
         // Return the deposit receipt.
-        $response = $this->render('LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig', array(
+        $response = $this->render(
+            'LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig', array(
             'contentProvider' => $contentProvider,
             'deposit' => $deposit
             )
@@ -220,12 +231,13 @@ class DefaultController extends Controller {
 
     /**
      * Controller for the SWORD Statement request.
-     * 
+     *
      * @param integer $collectionId The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      * @return string The Statement response.
      */
-    public function swordStatementAction($collectionId, $uuid) {
+    public function swordStatementAction($collectionId, $uuid)
+    {
         // Check to verify the content provider identified by $collectionId
         // exists. If not, return an appropriate error code.
         $contentProviderExists = $this->confirmContentProvider($collectionId);
@@ -281,23 +293,24 @@ class DefaultController extends Controller {
 
     /**
      * Controller for the Edit-IRI request.
-     * 
+     *
      * LOCKSS-O-Matic supports only one edit operation: content providers can change the
      * value of the 'recrawl' attribute to indicate that LOM should not recrawl the content.
-     * 
+     *
      * @todo: Add logic to return:
      * HTTP 200 (OK) meaning AU config stanzas have been updated.
      * HTTP 202 (Accepted) meaning LOM is updating the LOCKSS config files to prevent
      *     reharvest but it is not done yet.
      * HTTP 204 (No Content) if there is no matching Content URL.
      * HTTP 409 (Conflict) There are files in the LOCKSS AU that do not have ‘recrawl=false’.
-     * 
+     *
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
      * @return object The Edit-IRI response.
      */
-    public function editDepositAction($collectionId, $uuid) {
+    public function editDepositAction($collectionId, $uuid)
+    {
         // Check to verify the content provider identified by $collectionId
         // exists. If not, return an appropriate error code.
         $contentProviderExists = $this->confirmContentProvider($collectionId);
@@ -351,14 +364,15 @@ class DefaultController extends Controller {
 
     /**
      * Determines which AU to put the content in.
-     * 
+     *
      * @param bool $inProgress Whether the AU is 'open' or 'closed'.
      * @param string $collectionId The collection ID (i.e., Content Provider ID).
      *   We use this to determine some AU properties like title, journal title, etc.
      * @param string $contentSize The size of the content, in kB.
      * @return object $au.
      */
-    public function getDestinationAu($inProgress, $collectionId, $contentSize) {
+    public function getDestinationAu($inProgress, $collectionId, $contentSize)
+    {
         // @todo: For open AUs, if $contentSize is less than remaining capacity
         // of the newest AU for the Content Provider, put the content in this AU.
         // If $contentSize is greater, create a new AU and put the content in this
@@ -374,11 +388,12 @@ class DefaultController extends Controller {
 
     /**
      * Confirm existence of content provider.
-     * 
+     *
      * @param bool $contentProviderId The ID of the content provider.
      * @return bool
      */
-    public function confirmContentProvider($contentProviderId) {
+    public function confirmContentProvider($contentProviderId)
+    {
         $cp = $this->getDoctrine()
             ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders')
             ->find($contentProviderId);
@@ -388,5 +403,4 @@ class DefaultController extends Controller {
             return false;
         }
     }
-
 }

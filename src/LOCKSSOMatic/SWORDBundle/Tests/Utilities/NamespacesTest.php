@@ -17,18 +17,18 @@ class NamespacesTest extends PHPUnit_Framework_TestCase
         $this->assertNull($ns->getNamespace('FOO'));
     }
 
-    public function testRegisterNamespaces() {
+    public function testRegisterNamespaces()
+    {
         
         $ns = new Namespaces();
         $xml = new SimpleXMLElement('<foo />');
         $ns->registerNamespaces($xml);
         
-        // the attribute needs a prefix, but it doesn't have to match the 
+        // the attribute needs a prefix, but it doesn't have to match the
         // default namespace prefix.
         $xml->addAttribute('dd:a', "foooo", $ns::DCTERMS);
         
         $attr = array_shift($xml->xpath('/foo/@dcterms:a'));
         $this->assertEquals('foooo', $attr);
     }
-    
 }
