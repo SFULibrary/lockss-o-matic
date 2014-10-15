@@ -24,6 +24,9 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">              
             <li class="active"><a href="{{ path('lom_default_homepage') }}">Home</a></li> 
+            
+            {% if app.user %}
+            
             <li class="dropdown" role="menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Entities <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li><a href="{{ path('aus') }}">Archival Units</a></li>
@@ -44,8 +47,11 @@
                     <li><a href="{{ path('plugins') }}">Plugins</a></li>
                 </ul>
             </li>
-          </ul>
             
+            {% endif %}
+
+          </ul>
+          
           <ul class="nav navbar-nav navbar-right">              
               {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
                     <li>

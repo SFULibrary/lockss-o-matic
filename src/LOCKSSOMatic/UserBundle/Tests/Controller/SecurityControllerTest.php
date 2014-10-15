@@ -69,7 +69,9 @@ class SecurityControllerTest extends FixturesWebTestCase
         
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
         $crawler = $this->client->followRedirect();
+        $crawler = $this->client->followRedirect(); // two redirects here, because security.
         $response = $this->client->getResponse();
+        $this->client->getContainer()->get('monolog.logger.sword')->log('error', $response->getContent());
         $this->assertGreaterThan(0, $crawler->filter('a:contains("Login")')->count());
     }
 
