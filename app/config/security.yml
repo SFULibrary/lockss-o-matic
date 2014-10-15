@@ -17,13 +17,20 @@ security:
             id: fos_user.user_provider.username
     
     firewalls:
+        login:
+            pattern: ^/(login$|resetting)
+            anonymous: true
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
         main:
             pattern: ^/
             form_login:
                 provider: fos_userbundle
                 csrf_provider: form.csrf_provider
-            logout:       true
-            anonymous:    true        
+            logout:       
+                path:   fos_user_security_logout
+            anonymous:    false
             switch_user:  { role: ROLE_ADMIN }
             
     access_control:
