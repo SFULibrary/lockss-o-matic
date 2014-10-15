@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" 
+             xmlns:dcterms="http://purl.org/dc/terms/" 
+             xmlns:sword="http://purl.org/net/sword/terms/" 
+             xmlns:atom="http://www.w3.org/2005/Atom" 
+             xmlns:lom="http://lockssomatic.info/SWORD2" 
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+             xmlns:app="http://www.w3.org/2007/app">
+    <title>Image samples from the internet</title>
+    <id>e59d9233-f6ad-49db-af6e-5f5c601e6f99</id>
+    <updated>2014-10-07T12:07:43-07:00</updated>
+    <author>
+        <name>various</name>
+    </author>
+    <summary type="text">Image samples from the internet</summary>
+
+    <lom:content size="899922" checksumType="md5" checksumValue="ed5697c06b97f95e1221f857a3c08661">
+        https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg
+    </lom:content>
+
+    <lom:content size="198423" checksumType="md5" checksumValue="5619bbabea01c0841cd99c6cf4ad3b33">
+        http://www.ibiblio.org/wm/paint/auth/monet/parliament/parliament.jpg
+    </lom:content>
+
+    <lom:content size="176098" checksumType="md5" checksumValue="ff9a208611f892d147ef0f213150323e">
+        http://www.ibiblio.org/wm/paint/auth/gauguin/gauguin.alyscamps.jpg
+    </lom:content>
+</entry>

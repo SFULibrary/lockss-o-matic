@@ -54,12 +54,12 @@ class PlnPropertiesController extends Controller
     }
 
     /**
-    * Creates a form to create a PlnProperties entity.
-    *
-    * @param PlnProperties $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to create a PlnProperties entity.
+     *
+     * @param PlnProperties $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createCreateForm(PlnProperties $entity)
     {
         $form = $this->createForm(new PlnPropertiesType(), $entity, array(
@@ -105,7 +105,8 @@ class PlnPropertiesController extends Controller
 
         return $this->render('LOCKSSOMaticCRUDBundle:PlnProperties:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        ));
+            'delete_form' => $deleteForm->createView(),
+        ));
     }
 
     /**

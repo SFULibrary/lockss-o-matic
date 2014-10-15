@@ -2,59 +2,56 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * ContentOwners
- *
- * @ORM\Table(name="content_owners")
- * @ORM\Entity
  */
 class ContentOwners
 {
-	/**
-	 * Property required for one-to-many relationship with ContentProviders.
-	 * 
-	 * @ORM\OneToMany(targetEntity="ContentProviders", mappedBy="ContentOwner")
-	 */
-	protected $contentProviders;
-	
-	/**
-	 * Initializes the $collectionowner property.
-	 */
-	public function __construct()
-	{
-		$this->contentProviders = new ArrayCollection();
-	}
-	
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="name", type="text", nullable=true)
      */
     private $name;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="email_address", type="text", nullable=true)
      */
     private $emailAddress;
 
     /**
+     * @var Collection
+     */
+    private $contentProviders;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->contentProviders = new ArrayCollection();
+    }
+
+    /**
+     * Stringify the entity
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->name;
+    }
+
+    /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -77,7 +74,7 @@ class ContentOwners
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -100,7 +97,7 @@ class ContentOwners
     /**
      * Get emailAddress
      *
-     * @return string 
+     * @return string
      */
     public function getEmailAddress()
     {
@@ -110,10 +107,10 @@ class ContentOwners
     /**
      * Add contentProviders
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders
+     * @param ContentProviders $contentProviders
      * @return ContentOwners
      */
-    public function addContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders)
+    public function addContentProvider(ContentProviders $contentProviders)
     {
         $this->contentProviders[] = $contentProviders;
 
@@ -123,9 +120,9 @@ class ContentOwners
     /**
      * Remove contentProviders
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders
+     * @param ContentProviders $contentProviders
      */
-    public function removeContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProviders)
+    public function removeContentProvider(ContentProviders $contentProviders)
     {
         $this->contentProviders->removeElement($contentProviders);
     }
@@ -133,7 +130,7 @@ class ContentOwners
     /**
      * Get contentProviders
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getContentProviders()
     {

@@ -8,17 +8,17 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class AuPropertiesType extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('ausId')
-            ->add('parentId')
             ->add('propertyKey')
             ->add('propertyValue')
+            ->add('au')
+            ->add('parent')
         ;
     }
     

@@ -1,0 +1,34 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<h1>Profile</h1>
+
+    <table class="record_properties table table-striped table-hover table-bordered">
+        <tbody>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Fullname</th>
+                <td>{{ user.fullname }}</td>
+            </tr>
+            <tr>
+                <th>Institution</th>
+                <td>{{ user.institution }}</td>
+            </tr>
+            <tr>
+                <th>Most recent login</th>
+                <td>
+                    {% if user.lastLogin %}
+                        {{ user.lastLogin|date('Y-m-d H:i:s') }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+<ul class="record_actions">
+    <li><a href="{{ path('fos_user_profile_edit') }}">Edit profile</a></li>
+</ul>

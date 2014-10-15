@@ -1,11 +1,10 @@
-==================================================
 Testing the LOCKSS-O-Matic SWORD server using Curl
 ==================================================
 
 Below are example URLs you can use to test the LOCKSS-O-Matic SWORD server. Note that LOCKSS-O-Matic
 does not implement a complete SWORD server. It only implements the minimum functionality required
 for a content provider to post a set of content URLs for harvesting by a LOCKSS network, for the
-content provider to retrieve s SWORD Statement about those URLs, and to update a 'recrawl' flag
+content provider to retrieve a SWORD Statement about those URLs, and to update a 'recrawl' flag
 for one or more of those URLs.
 
 Get Service Document

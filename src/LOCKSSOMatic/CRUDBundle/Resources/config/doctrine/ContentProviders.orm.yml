@@ -3,7 +3,7 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
     manyToOne:
         contentOwner:
             targetEntity: ContentOwners
-            inversedBy: contentProvider
+            inversedBy: contentProviders
             joinColumn:
                 name: content_owners_id
                 referencedColumnName: id
@@ -32,42 +32,26 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             generator:
                 strategy: IDENTITY
     fields:
-        contentOwnersId:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: 'Foreign key for the content_owners table.'
-            column: content_owners_id
         type:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 24
             comment: 'Either "application" (deposits content via SWORD interface) or "manual" (deposits content via web form).'
         name:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 255
             comment: 'The name of the content provider.'
         ipAddress:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 16
             comment: 'The IP address of the content provider application.'
             column: ip_address
         hostname:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 255
             comment: 'The hostname of the content provider application.'
         checksumType:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 24
             comment: 'A standard identifier for commonly used checksum algorithms such as md5, sha1, etc.'
             column: checksum_type
         maxFileSize:
@@ -82,4 +66,3 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             unsigned: false
             comment: 'The maximum cumulative size for an Archival Unit containing deposits from the content provider, in kB.'
             column: max_au_size            
-    lifecycleCallbacks: {  }

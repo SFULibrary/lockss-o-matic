@@ -2,10 +2,11 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Controller;
 
-
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use LOCKSSOMatic\CRUDBundle\Entity\BoxStatus;
+use LOCKSSOMatic\CRUDBundle\Form\BoxStatusType;
 
 /**
  * BoxStatus controller.

@@ -28,16 +28,12 @@ LOCKSSOMatic\CRUDBundle\Entity\Plns:
                 strategy: IDENTITY
     fields:
         name:
-            type: text
-            nullable: true
-            length: null
-            fixed: false
+            type: string
+            length: 255
+            nullable: false
             comment: 'The name of the PLN.'
         propsPath:
             type: text
             nullable: true
-            length: null
-            fixed: false
             comment: 'The URL of the lockss.xml file for the PLN.'
             column: props_path
-    lifecycleCallbacks: {  }

@@ -2,23 +2,30 @@
 
 namespace LOCKSSOMatic\CRUDBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 
-class LoadAusData implements FixtureInterface
+class LoadAusData extends AbstractFixture implements OrderedFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    
+    public function getOrder()
+    {
+        return 2; // after plns and plugins
+    }
+
     public function load(ObjectManager $manager)
     {
-        $au = new Aus();
-        $au->setPlnsId('1');
-        $au->setAuid('TestAuId');
-        $au->setManifestUrl('http://foo.example.com/manifest.htm');
-
-        $manager->persist($au);
+        $object = new Aus();
+        $object->setAuid('uniq-au-id-1');
+        $object->setManifestUrl('https://manifest.example.com/au1');
+        $object->setOpen(1);
+        $object->setPlugin($this->getReference('plugin-1'));
+        $object->setPln($this->getReference('pln-1'));
+        
+        $manager->persist($object);
         $manager->flush();
+        $this->setReference('au-1', $object);
     }
 }
