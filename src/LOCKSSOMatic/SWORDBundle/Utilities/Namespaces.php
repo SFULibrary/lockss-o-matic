@@ -19,9 +19,9 @@ class Namespaces
     const APP = 'http://www.w3.org/2007/app';
     
     /**
-     * Get the FQDN for the prefix, in a case-insensitive 
+     * Get the FQDN for the prefix, in a case-insensitive
      * fashion.
-     * 
+     *
      * @param string $prefix
      * @return string
      */
@@ -35,8 +35,8 @@ class Namespaces
     }
     
     /**
-     * Register all the known namespaces in a SimpleXMLElement. 
-     * 
+     * Register all the known namespaces in a SimpleXMLElement.
+     *
      * @param SimpleXMLElement $xml
      */
     public function registerNamespaces(SimpleXMLElement $xml)

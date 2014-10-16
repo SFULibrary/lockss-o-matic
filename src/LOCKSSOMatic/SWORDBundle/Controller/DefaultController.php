@@ -5,6 +5,7 @@ namespace LOCKSSOMatic\SWORDBundle\Controller;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
+use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -118,18 +119,14 @@ class DefaultController extends Controller
             return new Response('', Response::HTTP_PRECONDITION_FAILED);
         }
 
-        // Query the ContentProvider entity so we can get its name.
         $contentProvider = $this->getContentProvider($onBehalfOf);
-
         if ($contentProvider === null) {
-            // Return a "Forbidden" response.
             return new Response('', Response::HTTP_FORBIDDEN);
         }
 
         $response = $this->render(
-            'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
-            array(
-                'contentProvider' => $contentProvider,
+            'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig', array(
+            'contentProvider' => $contentProvider,
             )
         );
         $response->headers->set('Content-Type', 'text/xml');
@@ -214,7 +211,7 @@ class DefaultController extends Controller
 
         return $this->renderDepositReceipt($contentProvider, $deposit);
     }
-    
+
     private function renderDepositReceipt($contentProvider, $deposit)
     {
         // @TODO this should be a call to render depsoitReceiptAction() or something.
@@ -292,74 +289,100 @@ class DefaultController extends Controller
     }
 
     /**
+     * Get an ATOM XML representation of the deposit, suitable for PUTting
+     * after an edit.
+     *
+     * Section 6.4 of the SWORD spec.
+     *
+     * @param Request $request
+     * @param integer $collectionId
+     * @param string $uuid
+     */
+    public function viewDepositAction(Request $request, $collectionId, $uuid)
+    {
+        $contentProvider = $this->getContentProvider($collectionId);
+        if ($contentProvider === null) {
+            return new Response('', Response::HTTP_FORBIDDEN);
+        }
+        /** @var Deposits */
+        $deposit = $this->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
+            ->findOneBy(array('uuid' => $uuid));
+        if ($deposit === null) {
+            return new Response('', Response::HTTP_FORBIDDEN);
+        }
+        if ($deposit->getContentProvider()->getId() !== (int) $collectionId) {
+            return new Response('', Response::HTTP_FORBIDDEN);
+        }
+        $response = $this->render(
+            'LOCKSSOMaticSWORDBundle:Default:viewDeposit.xml.twig', array(
+            'contentProvider' => $contentProvider,
+            'deposit' => $deposit
+            )
+        );
+        $response->headers->set('Content-Type', 'text/xml');
+        return $response;
+    }
+
+    /**
      * Controller for the Edit-IRI request.
+     * Section 6.5.2 of SWORDv2-Profile
+     *
+     * http://swordapp.github.io/SWORDv2-Profile/SWORDProfile.html#protocoloperations_editingcontent_metadata
      *
      * LOCKSS-O-Matic supports only one edit operation: content providers can change the
      * value of the 'recrawl' attribute to indicate that LOM should not recrawl the content.
      *
-     * @todo: Add logic to return:
      * HTTP 200 (OK) meaning AU config stanzas have been updated.
-     * HTTP 202 (Accepted) meaning LOM is updating the LOCKSS config files to prevent
-     *     reharvest but it is not done yet.
      * HTTP 204 (No Content) if there is no matching Content URL.
-     * HTTP 409 (Conflict) There are files in the LOCKSS AU that do not have ‘recrawl=false’.
      *
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
-     *   Not used in this function (is required as a parameter in the SWORD Edit-IRI).
      * @return object The Edit-IRI response.
      */
-    public function editDepositAction($collectionId, $uuid)
+    public function editDepositAction(Request $request, $collectionId, $uuid)
     {
-        // Check to verify the content provider identified by $collectionId
-        // exists. If not, return an appropriate error code.
-        $contentProviderExists = $this->confirmContentProvider($collectionId);
-        if (!$contentProviderExists) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;
+        $em = $this->getDoctrine()->getManager();
+
+        $contentProvider = $this->getContentProvider($collectionId);
+        if ($contentProvider === null) {
+            return new Response('', Response::HTTP_FORBIDDEN);
+        }
+        /** @var Deposits */
+        $deposit = $this->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
+            ->findOneBy(array('uuid' => $uuid));
+        if ($deposit === null) {
+            return new Response('', Response::HTTP_FORBIDDEN);
+        }
+        if ($deposit->getContentProvider()->getId() !== (int) $collectionId) {
+            return new Response('', Response::HTTP_FORBIDDEN);
         }
 
-        // Get the request body.
-        $request = new Request();
-        $editIriXml = $request->getContent();
-
-        // Parse the 'recrawl' attribute of each lom:content element and update
-        // the Content entity's 'recrawl' property if the value is false.
-        $atomEntry = simplexml_load_string($editIriXml);
-        $atomEntry->registerXPathNamespace('atom', 'http://www.w3.org/2005/Atom');
-        $atomEntry->registerXPathNamespace('lom', 'http://lockssomatic.info/SWORD2');
-        $atomEntry->registerXPathNamespace('dcterms', 'http://purl.org/dc/terms/');
+        $atomEntry = $this->getSimpleXML($request->getContent());
+        $updated = 0;
+        
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
-            foreach ($contentChunk[0]->attributes() as $key => $value) {
-                // Get the value of 'recrawl'.
-                $recrawl = $contentChunk[0]->attributes()->recrawl;
-                if ($recrawl == 'false') {
-                    $em = $this->getDoctrine()->getManager();
-                    // Update the Content entity by finding its url value.
-                    $content = $em
-                        ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Content')
-                        ->findOneByUrl($contentChunk);
-                    if ($content) {
-                        $content->setRecrawl('0');
-                        $em->flush();
-                    } else {
-                        $response = new Response();
-                        // Return 204 No Content.
-                        $response->setStatusCode(204);
-                    }
-                }
+            $content = $em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
+                array(
+                    'url' => (string)$contentChunk,
+                    'deposit' => $deposit
+                )
+            );
+            if ($content === null) {
+                continue;
             }
+            $recrawl = $contentChunk[0]->attributes()->recrawl;
+            $content->setRecrawl($recrawl === 'true');
+            $updated++;
         }
-
-        // @todo: Each time a request is made to the Edit-IRI, check to see if all of the content
-        // in the relevant AUs has a false is their recrawl properties, and if so, update
-        // the AU properties with a 'pub_down' property and regenerate the AU's configuration
-        // block in the title db file.
-
-        $response = new Response();
-        $response->setStatusCode(202);
-        return $response;
+        
+        $em->flush();
+        if ($updated > 0) {
+            return new Response('', Response::HTTP_OK);
+        } else {
+            return new Response('', Response::HTTP_NO_CONTENT);
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ namespace LOCKSSOMatic\SWORDBundle\Tests\Controller;
 
 use Doctrine\ORM\EntityManager;
 use J20\Uuid\Uuid;
+use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -54,7 +55,7 @@ class DefaultControllerTest extends WebTestCase
         $summary->addAttribute('type', 'text');
         return $xml;
     }
-    
+
     private function addContentItem($xml, $url, $size, $csType, $csValue)
     {
         $content = $xml->addChild('content', $url, Namespaces::LOM);
@@ -141,7 +142,7 @@ class DefaultControllerTest extends WebTestCase
         $content = $response->getContent();
         $this->assertTrue($content === null || $content === '');
     }
-    
+
     //6.3.3. Creating a Resource with an Atom Entry
     public function testCreateNoResource()
     {
@@ -151,12 +152,7 @@ class DefaultControllerTest extends WebTestCase
 
         $client = static::createClient();
         $crawler = $client->request(
-            'POST',
-            '/api/sword/2.0/col-iri/1',
-            array(),
-            array(),
-            array(),
-            $xml->asXML()
+            'POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $xml->asXML()
         );
 
         $response = $client->getResponse();
@@ -178,20 +174,11 @@ class DefaultControllerTest extends WebTestCase
 
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml,
-            'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg',
-            899922,
-            'md5',
-            'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $crawler = $client->request(
-            'POST',
-            '/api/sword/2.0/col-iri/1',
-            array(),
-            array(),
-            array(),
-            $depositXml->asXML()
+            'POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML()
         );
         $response = $client->getResponse();
 
@@ -232,19 +219,11 @@ class DefaultControllerTest extends WebTestCase
         $uuid = Uuid::v4();
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml,
-            'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg',
-            899922,
-            'md5',
-            'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $this->addContentItem(
-            $depositXml,
-            'http://www.ibiblio.org/wm/paint/auth/monet/parliament/parliament.jpg',
-            899922,
-            'md5',
-            'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml, 'http://www.ibiblio.org/wm/paint/auth/monet/parliament/parliament.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $client = static::createClient();
@@ -254,7 +233,7 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
-        
+
         $responseXml = $this->getSimpleXML($response->getContent());
 
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="edit"]')));
@@ -262,26 +241,91 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
     }
 
+    public function testViewDepositAction()
+    {
+        $uuid = Uuid::v4();
+        $depositXml = $this->createDepositXML($uuid);
+        $this->addContentItem(
+            $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+        );
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $response = $client->getResponse();
+
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('Location'));
+        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
+
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals(1, count($responseXml->xpath('//lom:content')));
+    }
+    
+    public function testEditDepositAction()
+    {
+        $uuid = Uuid::v4();
+        $depositXml = $this->createDepositXML($uuid);
+        $url = 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg';
+        $this->addContentItem(
+            $depositXml, $url, 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+        );
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $response = $client->getResponse();
+
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('Location'));
+        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
+
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals(1, count($responseXml->xpath('//lom:content')));
+        
+        $responseXml->children(Namespaces::LOM)->content[0]->recrawl = 'false';
+        
+        $crawler = $client->request(
+            'PUT',
+            '/api/sword/2.0/cont-iri/1/' . $uuid . '/edit',
+            array(),
+            array(),
+            array(),
+            $responseXml->asXML()
+        );
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        
+        /** @var EntityManager */
+        $em = $client->getContainer()->get('doctrine')->getManager();
+        
+        $deposit = $em->getRepository('LOCKSSOMaticCRUDBundle:Deposits')->findOneBy(
+            array('uuid' => $uuid)
+        );
+        $content = $em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
+            array(
+                'url' => $url,
+                'deposit' => $deposit,
+            )
+        );
+        $this->assertFalse($content->getRecrawl());
+    }
+
+    // @TODO finish this test, once the swordStatementAction is
+    // finished.
     public function testSwordStatement()
     {
         $uuid = Uuid::v4();
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml,
-            'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg',
-            899922,
-            'md5',
-            'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $client = static::createClient();
         $crawler = $client->request(
-            'POST',
-            '/api/sword/2.0/col-iri/1',
-            array(),
-            array(),
-            array(),
-            $depositXml->asXML()
+            'POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML()
         );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -296,7 +340,7 @@ class DefaultControllerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
-        $client->getContainer()->get('monolog.logger.sword')->log('error', 'uri: ' . $location);
+        //$client->getContainer()->get('monolog.logger.sword')->log('error', 'uri: ' . $location);
         // @TODO finish testing this - right now everything is stubbed out.
     }
 }

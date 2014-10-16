@@ -13,6 +13,11 @@ framework:
     profiler:
         collect: false
 
+monolog:
+    handlers:
+        main:
+            level:  warning
+
 web_profiler:
     toolbar: false
     intercept_redirects: false
