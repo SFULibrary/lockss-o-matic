@@ -104,9 +104,14 @@ class DefaultControllerTest extends WebTestCase
         );
 
         $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
-        $content = $response->getContent();
-        $this->assertTrue($content === null || $content === '');
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertStringStartsWith('text/xml', $response->headers->get('Content-type'));
+
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/ErrorBadRequest', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
     }
 
     /**
@@ -121,9 +126,12 @@ class DefaultControllerTest extends WebTestCase
         );
 
         $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
-        $content = $response->getContent();
-        $this->assertTrue($content === null || $content === '');
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/TargetOwnerUnknown', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
     }
 
     /**
@@ -140,7 +148,29 @@ class DefaultControllerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
         $content = $response->getContent();
-        $this->assertTrue($content === null || $content === '');
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/TargetOwnerUnknown', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
+    }
+     
+    public function testCreateBadProvider()
+    {
+        $uuid = Uuid::v4();
+       $xml = $this->createDepositXML($uuid, 'Empty deposit');
+        $client = static::createClient();
+        $crawler = $client->request(
+            'POST', '/api/sword/2.0/col-iri/27', array(), array(), array(), $xml->asXML()
+        );
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        $content = $response->getContent();
+        $responseXml = $this->getSimpleXML($content);
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/TargetOwnerUnknown', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
     }
 
     //6.3.3. Creating a Resource with an Atom Entry
@@ -156,9 +186,13 @@ class DefaultControllerTest extends WebTestCase
         );
 
         $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $content = $response->getContent();
-        $this->assertTrue($content === null || $content === '');
+        $responseXml = $this->getSimpleXML($content);
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/ErrorBadRequest', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
 
         /** @var EntityManager */
         $em = $client->getContainer()->get('doctrine')->getManager();
@@ -240,7 +274,73 @@ class DefaultControllerTest extends WebTestCase
         $this->assertGreaterThan(0, count($responseXml->xpath('atom:link[@rel="edit-media"]')));
         $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
     }
+    
+    // fetch a deposit receipt
+    public function testDepositReceiptAction()
+    {
+        $uuid = Uuid::v4();
+        $depositXml = $this->createDepositXML($uuid);
+        $this->addContentItem(
+            $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+        );
+        $client = static::createClient();
+        $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid . '/edit');
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
+        $recieptXml = $this->getSimpleXML($response->getContent());
+
+        $this->assertEquals(1, count($recieptXml->xpath('atom:link[@rel="edit"]')));
+        $this->assertGreaterThan(0, count($recieptXml->xpath('atom:link[@rel="edit-media"]')));
+        $this->assertEquals(1, count($recieptXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
+    }
+    
+    // fetch a deposit receipt with a bad collectionId.
+    public function testDepositReceiptBadCollection()
+    {
+        $uuid = Uuid::v4();
+        $depositXml = $this->createDepositXML($uuid);
+        $this->addContentItem(
+            $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+        );
+        $client = static::createClient();
+        $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/2/' . $uuid . '/edit');
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/TargetOwnerUnknown', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
+    }
+    
+    // fetch a deposit receipt with a bad uuid.
+    public function testDepositReceiptBadId()
+    {
+        $uuid = Uuid::v4();
+
+        $client = static::createClient();
+        
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid . '/edit');
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/ErrorBadRequest', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
+    }
+    
     public function testViewDepositAction()
     {
         $uuid = Uuid::v4();
@@ -261,6 +361,48 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $responseXml = $this->getSimpleXML($response->getContent());
         $this->assertEquals(1, count($responseXml->xpath('//lom:content')));
+    }
+    
+    // fetch a deposit receipt with a bad collectionId.
+    public function testViewDepositBadCollection()
+    {
+        $uuid = Uuid::v4();
+        $depositXml = $this->createDepositXML($uuid);
+        $this->addContentItem(
+            $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+        );
+        $client = static::createClient();
+        $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/2/' . $uuid);
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/TargetOwnerUnknown', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
+    }
+    
+    // fetch a deposit receipt with a bad uuid.
+    public function testViewDepositBadId()
+    {
+        $uuid = Uuid::v4();
+
+        $client = static::createClient();
+        
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/ErrorBadRequest', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
     }
     
     public function testEditDepositAction()
@@ -313,6 +455,118 @@ class DefaultControllerTest extends WebTestCase
         $this->assertFalse($content->getRecrawl());
     }
 
+    public function testEditDepositBadCollection()
+    {
+        $uuid = Uuid::v4();
+        $depositXml = $this->createDepositXML($uuid);
+        $url = 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg';
+        $this->addContentItem(
+            $depositXml, $url, 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+        );
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $response = $client->getResponse();
+
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('Location'));
+        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
+
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals(1, count($responseXml->xpath('//lom:content')));
+        
+        $responseXml->children(Namespaces::LOM)->content[0]->recrawl = 'false';
+        
+        $crawler = $client->request(
+            'PUT',
+            '/api/sword/2.0/cont-iri/2/' . $uuid . '/edit',
+            array(),
+            array(),
+            array(),
+            $responseXml->asXML()
+        );
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/TargetOwnerUnknown', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
+        
+        /** @var EntityManager */
+        $em = $client->getContainer()->get('doctrine')->getManager();
+        
+        $deposit = $em->getRepository('LOCKSSOMaticCRUDBundle:Deposits')->findOneBy(
+            array('uuid' => $uuid)
+        );
+        $content = $em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
+            array(
+                'url' => $url,
+                'deposit' => $deposit,
+            )
+        );
+        $this->assertTrue($content->getRecrawl() === 1 || $content->getRecrawl());
+    }
+
+    public function testEditDepositBadId()
+    {
+        $uuid = Uuid::v4();
+        $depositXml = $this->createDepositXML($uuid);
+        $url = 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg';
+        $this->addContentItem(
+            $depositXml, $url, 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+        );
+        $client = static::createClient();
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $response = $client->getResponse();
+
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('Location'));
+        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
+
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals(1, count($responseXml->xpath('//lom:content')));
+        
+        $responseXml->children(Namespaces::LOM)->content[0]->recrawl = 'false';
+        
+        $crawler = $client->request(
+            'PUT',
+            '/api/sword/2.0/cont-iri/1/' . Uuid::v4() . '/edit',
+            array(),
+            array(),
+            array(),
+            $responseXml->asXML()
+        );
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        
+        $responseXml = $this->getSimpleXML($response->getContent());
+        $this->assertEquals('error', $responseXml->getName());
+        $this->assertEquals('http://purl.org/net/sword/error/ErrorBadRequest', $responseXml['href']);
+        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
+        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
+        
+        /** @var EntityManager */
+        $em = $client->getContainer()->get('doctrine')->getManager();
+        
+        $deposit = $em->getRepository('LOCKSSOMaticCRUDBundle:Deposits')->findOneBy(
+            array('uuid' => $uuid)
+        );
+        $content = $em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
+            array(
+                'url' => $url,
+                'deposit' => $deposit,
+            )
+        );
+        $this->assertTrue($content->getRecrawl() === 1 || $content->getRecrawl());
+    }
+    
     // @TODO finish this test, once the swordStatementAction is
     // finished.
     public function testSwordStatement()

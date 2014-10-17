@@ -12,7 +12,7 @@ class Namespaces
 {
     
     const DCTERMS = 'http://purl.org/dc/terms/';
-    const SWORD = 'http://purl.org/net/sword/terms/';
+    const SWORD = 'http://purl.org/net/sword/';
     const ATOM = 'http://www.w3.org/2005/Atom';
     const LOM = 'http://lockssomatic.info/SWORD2';
     const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';

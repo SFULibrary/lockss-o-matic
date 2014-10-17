@@ -1,5 +1,8 @@
-<entry xmlns="http://www.w3.org/2005/Atom" xmlns:sword="http://purl.org/net/sword/">
-    <sword:treatment>Content URLs deposited to {{ lom_sitename }}, collection {{ contentProvider.name }}.</sword:treatment>
+<entry xmlns="http://www.w3.org/2005/Atom" 
+       xmlns:sword="http://purl.org/net/sword/">
+    
+    <sword:treatment>Content URLs deposited to {{ lom_sitename }}, 
+        collection {{ contentProvider.name }}.</sword:treatment>
     
     <content src="{{ url('deposits_show', {'id': deposit.id}) }}"/>
     
