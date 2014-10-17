@@ -28,7 +28,8 @@ class NamespacesTest extends PHPUnit_Framework_TestCase
         // default namespace prefix.
         $xml->addAttribute('dd:a', "foooo", $ns::DCTERMS);
         
-        $attr = array_shift($xml->xpath('/foo/@dcterms:a'));
+        $tmp = $xml->xpath('/foo/@dcterms:a');
+        $attr = $tmp[0];
         $this->assertEquals('foooo', $attr);
     }
 }

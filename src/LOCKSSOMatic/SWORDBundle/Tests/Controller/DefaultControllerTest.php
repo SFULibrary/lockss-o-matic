@@ -88,8 +88,8 @@ class DefaultControllerTest extends WebTestCase
             $this->assertStringEndsWith('/api/sword/2.0/col-iri/1', $coll['href']);
         }
 
-        $accept = array_shift($xml->xpath('//app:accept/text()'));
-        $this->assertTrue(strlen($accept) > 0);
+        $tmp = $xml->xpath('//app:accept/text()');
+        $this->assertTrue(strlen($tmp[0]) > 0);
     }
 
     /**
