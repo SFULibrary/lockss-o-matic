@@ -56,6 +56,11 @@ class Aus
     private $plugin;
 
     /**
+     * @var boolean
+     */
+    private $managed;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -297,5 +302,28 @@ class Aus
     public function getPlugin()
     {
         return $this->plugin;
+    }
+
+    /**
+     * Set managed
+     *
+     * @param boolean $managed
+     * @return Aus
+     */
+    public function setManaged($managed)
+    {
+        $this->managed = $managed;
+
+        return $this;
+    }
+
+    /**
+     * Get managed
+     *
+     * @return boolean 
+     */
+    public function getManaged()
+    {
+        return $this->managed;
     }
 }

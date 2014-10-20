@@ -66,6 +66,21 @@ class ContentProviders
     private $pln;
 
     /**
+     * @var string
+     */
+    private $uuid;
+
+    /**
+     * @var string
+     */
+    private $permissionUrl;
+
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plugins
+     */
+    private $plugin;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -331,5 +346,74 @@ class ContentProviders
     public function getPln()
     {
         return $this->pln;
+    }
+
+    /**
+     * Set uuid
+     *
+     * @param string $uuid
+     * @return ContentProviders
+     */
+    public function setUuid($uuid)
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    /**
+     * Get uuid
+     *
+     * @return string 
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * Set permissionUrl
+     *
+     * @param string $permissionUrl
+     * @return ContentProviders
+     */
+    public function setPermissionUrl($permissionUrl)
+    {
+        $this->permissionUrl = $permissionUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get permissionUrl
+     *
+     * @return string 
+     */
+    public function getPermissionUrl()
+    {
+        return $this->permissionUrl;
+    }
+
+    /**
+     * Set plugin
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin
+     * @return ContentProviders
+     */
+    public function setPlugin(\LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin = null)
+    {
+        $this->plugin = $plugin;
+
+        return $this;
+    }
+
+    /**
+     * Get plugin
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plugins 
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
     }
 }

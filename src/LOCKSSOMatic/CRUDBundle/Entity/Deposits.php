@@ -43,6 +43,11 @@ class Deposits
     private $contentProvider;
 
     /**
+     * @var string
+     */
+    private $summary;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -193,5 +198,28 @@ class Deposits
     public function getContentProvider()
     {
         return $this->contentProvider;
+    }
+
+    /**
+     * Set summary
+     *
+     * @param string $summary
+     * @return Deposits
+     */
+    public function setSummary($summary)
+    {
+        $this->summary = $summary;
+
+        return $this;
+    }
+
+    /**
+     * Get summary
+     *
+     * @return string 
+     */
+    public function getSummary()
+    {
+        return $this->summary;
     }
 }

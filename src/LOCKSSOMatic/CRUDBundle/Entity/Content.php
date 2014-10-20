@@ -60,6 +60,11 @@ class Content
     private $au;
 
     /**
+     * @var boolean
+     */
+    private $verifiedFileSize;
+
+    /**
      * Stringify the entity
      *
      * @return string
@@ -284,5 +289,28 @@ class Content
     public function getAu()
     {
         return $this->au;
+    }
+
+    /**
+     * Set verifiedFileSize
+     *
+     * @param boolean $verifiedFileSize
+     * @return Content
+     */
+    public function setVerifiedFileSize($verifiedFileSize)
+    {
+        $this->verifiedFileSize = $verifiedFileSize;
+
+        return $this;
+    }
+
+    /**
+     * Get verifiedFileSize
+     *
+     * @return boolean 
+     */
+    public function getVerifiedFileSize()
+    {
+        return $this->verifiedFileSize;
     }
 }

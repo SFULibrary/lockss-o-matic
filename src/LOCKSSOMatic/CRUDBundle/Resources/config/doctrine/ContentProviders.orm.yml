@@ -12,11 +12,17 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             inversedBy: contentProviders
             joinColumn:
                 name: plns_id
-                referencedColumnName: id   
+                referencedColumnName: id
+        plugin:
+            targetEntity: Plugins
+            inversedBy: contentProviders
+            joinColumn:
+                name: plugins_id
+                referencedColumnName: id
     oneToMany:
         deposits:
             targetEntity: Deposits
-            mappedBy: contentProvider         
+            mappedBy: contentProvider    
     table: content_providers
     indexes:
         content_owners_id_idx:
@@ -36,6 +42,16 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             type: string
             length: 24
             comment: 'Either "application" (deposits content via SWORD interface) or "manual" (deposits content via web form).'
+        uuid:
+            type: string
+            length: 36
+            comment: 'UUID for the content provider, to be used in the SWORD API.'
+            nullable: false
+        permissionUrl:
+            type: string
+            length: 255
+            comment: 'The URL for the permission file.'
+            nullable: false
         name:
             type: string
             length: 255

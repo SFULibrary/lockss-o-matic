@@ -14,6 +14,7 @@
                 <th>Checksumtype</th>
                 <th>Checksumvalue</th>
                 <th>Recrawl</th>
+                <th>Verifiedfilesize</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -24,10 +25,11 @@
                 <td>{{ entity.url }}</td>
                 <td>{{ entity.title }}</td>
                 <td>{{ entity.size }}</td>
-                <td>{{ entity.dateDeposited|date('Y-m-d H:i:s') }}</td>
+                <td>{% if entity.dateDeposited %}{{ entity.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{{ entity.checksumType }}</td>
                 <td>{{ entity.checksumValue }}</td>
                 <td>{{ entity.recrawl }}</td>
+                <td>{{ entity.verifiedFileSize }}</td>
                 <td>
                 <ul>
                     <li>

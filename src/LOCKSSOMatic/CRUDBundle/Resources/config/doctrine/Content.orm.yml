@@ -40,7 +40,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             comment: 'The title of the content, supplied by the content provider in the <lom:content> title attribute if there is one; if missing, generated from url value.'
         size:
             type: integer
-            nullable: false
+            nullable: true
             unsigned: false
             comment: 'The size of the content, in kB.'
         dateDeposited:
@@ -51,19 +51,24 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
         checksumType:
             type: string
             length: 24
-            nullable: false
+            nullable: true
             comment: 'A standard identifier for commonly used checksum algorithms such as md5, sha1, etc. supplied by the content provider in the <lom:content> checksumType attribute.'
             column: checksum_type
         checksumValue:
             type: string
             length: 255
-            nullable: false
+            nullable: true
             comment: 'The checksum value, supplied by the content provider in the <lom:content> checksumValue attribute.'
             column: checksum_value
         recrawl:
-            type: integer
+            type: boolean
             nullable: false
-            unsigned: false
             comment: 'Either 1 (indicating that LOCKSS boxes should recrawl the content) or 0 (indicating that they should not).'
+            default: true
+        verifiedFileSize:
+            type: boolean
+            nullable: false
+            default: false
+            comment: 'Has this content item''s file size been verified.'
     lifecycleCallbacks:
         prePersist: [setDateDeposited]
