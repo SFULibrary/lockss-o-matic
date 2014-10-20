@@ -68,7 +68,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
         verifiedSize:
             type: boolean
             nullable: false
-            default: false
             comment: 'Has this content item''s file size been verified.'
+            default: false
     lifecycleCallbacks:
         prePersist: [setDateDeposited]

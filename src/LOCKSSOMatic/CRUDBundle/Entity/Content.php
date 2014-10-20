@@ -64,6 +64,10 @@ class Content
      */
     private $verifiedSize;
 
+    public function __construct() {
+        $this->verifiedSize = false;
+    }
+    
     /**
      * Stringify the entity
      *
