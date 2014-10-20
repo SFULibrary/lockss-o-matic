@@ -151,7 +151,7 @@ class DefaultController extends Controller
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return string The Deposit Receipt response.
      */
-    public function createDepositAction(Request $request, $collectionId)
+    public function createDepositAction(Request $request, $contentProviderId)
     {
         $inProgress = $this->getInProgressHeader($request);
         $em = $this->getDoctrine()->getManager();
@@ -159,7 +159,7 @@ class DefaultController extends Controller
         $response->headers->set('Content-Type', 'text/xml');
 
         // Query the ContentProvider entity so we can get its name.
-        $contentProvider = $this->getContentProvider($collectionId);
+        $contentProvider = $this->getContentProvider($contentProviderId);
         if ($contentProvider === null) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             return $this->render('LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig', array(
@@ -191,7 +191,7 @@ class DefaultController extends Controller
             // Create a new Content entity.
             $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
-            $au = $this->getDestinationAu($inProgress, $collectionId, $contentChunk[0]->attributes()->size);
+            $au = $this->getDestinationAu($inProgress, $contentProviderId, $contentChunk[0]->attributes()->size);
             $content->setAu($au);
             $content->setRecrawl(1);
             $em->persist($content);
@@ -200,7 +200,7 @@ class DefaultController extends Controller
 
         $response = $this->renderDepositReceipt($contentProvider, $deposit);
         $editIri = $this->get('router')->generate('lockssomatic_deposit_receipt', array(
-            'collectionId' => $collectionId,
+            'contentProviderId' => $contentProviderId,
             'uuid' => $deposit->getUuid()
         ));
         $response->headers->set('Location', $editIri);
@@ -215,12 +215,12 @@ class DefaultController extends Controller
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      * @return string The Deposit Receipt response.
      */
-    public function depositReceiptAction($collectionId, $uuid)
+    public function depositReceiptAction($contentProviderId, $uuid)
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
 
-        $contentProvider = $this->getContentProvider($collectionId);
+        $contentProvider = $this->getContentProvider($contentProviderId);
         if ($contentProvider === null) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             return $this->render('LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig', array(
@@ -271,15 +271,15 @@ class DefaultController extends Controller
     /**
      * Controller for the SWORD Statement request.
      *
-     * @param integer $collectionId The SWORD Collection ID (same as the original On-Behalf-Of value).
+     * @param integer $contentProviderId The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      * @return string The Statement response.
      */
-    public function swordStatementAction($collectionId, $uuid)
+    public function swordStatementAction($contentProviderId, $uuid)
     {
-        // Check to verify the content provider identified by $collectionId
+        // Check to verify the content provider identified by $contentProviderId
         // exists. If not, return an appropriate error code.
-        $contentProviderExists = $this->confirmContentProvider($collectionId);
+        $contentProviderExists = $this->confirmContentProvider($contentProviderId);
         if (!$contentProviderExists) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -337,15 +337,15 @@ class DefaultController extends Controller
      * Section 6.4 of the SWORD spec.
      *
      * @param Request $request
-     * @param integer $collectionId
+     * @param integer $contentProviderId
      * @param string $uuid
      */
-    public function viewDepositAction(Request $request, $collectionId, $uuid)
+    public function viewDepositAction(Request $request, $contentProviderId, $uuid)
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
 
-        $contentProvider = $this->getContentProvider($collectionId);
+        $contentProvider = $this->getContentProvider($contentProviderId);
         if ($contentProvider === null) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             return $this->render('LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig', array(
@@ -402,13 +402,13 @@ class DefaultController extends Controller
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      * @return object The Edit-IRI response.
      */
-    public function editDepositAction(Request $request, $collectionId, $uuid)
+    public function editDepositAction(Request $request, $contentProviderId, $uuid)
     {
         $em = $this->getDoctrine()->getManager();
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
 
-        $contentProvider = $this->getContentProvider($collectionId);
+        $contentProvider = $this->getContentProvider($contentProviderId);
         if ($contentProvider === null) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             return $this->render('LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig', array(
@@ -479,12 +479,12 @@ class DefaultController extends Controller
      * Determines which AU to put the content in.
      *
      * @param bool $inProgress Whether the AU is 'open' or 'closed'.
-     * @param string $collectionId The collection ID (i.e., Content Provider ID).
+     * @param string $contentProviderId The collection ID (i.e., Content Provider ID).
      *   We use this to determine some AU properties like title, journal title, etc.
      * @param string $contentSize The size of the content, in kB.
      * @return object $au.
      */
-    public function getDestinationAu($inProgress, $collectionId, $contentSize)
+    public function getDestinationAu($inProgress, $contentProviderId, $contentSize)
     {
         // @todo: For open AUs, if $contentSize is less than remaining capacity
         // of the newest AU for the Content Provider, put the content in this AU.

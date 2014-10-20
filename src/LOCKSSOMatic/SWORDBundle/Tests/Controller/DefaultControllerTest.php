@@ -299,7 +299,7 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(1, count($recieptXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
     }
     
-    // fetch a deposit receipt with a bad collectionId.
+    // fetch a deposit receipt with a bad contentProviderId.
     public function testDepositReceiptBadCollection()
     {
         $uuid = Uuid::v4();
@@ -363,7 +363,7 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(1, count($responseXml->xpath('//lom:content')));
     }
     
-    // fetch a deposit receipt with a bad collectionId.
+    // fetch a deposit receipt with a bad contentProviderId.
     public function testViewDepositBadCollection()
     {
         $uuid = Uuid::v4();

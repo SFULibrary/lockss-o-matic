@@ -4,9 +4,9 @@
     <sword:treatment>Content URLs deposited to {{ lom_sitename }}, collection {{ contentProvider.name }}.</sword:treatment>
     
     <!-- Edit-IRI -->
-    <link rel="edit" href="{{ url('lockssomatic_deposit_receipt', { 'collectionId': contentProvider.id, 'uuid': deposit.uuid } ) }}" />
+    <link rel="edit" href="{{ url('lockssomatic_deposit_receipt', { 'contentProviderId': contentProvider.id, 'uuid': deposit.uuid } ) }}" />
 
-    <content src="{{ url('lockssomatic_sword_cont_iri', {'collectionId': contentProvider.id, 'uuid': deposit.uuid}) }}"/>
+    <content src="{{ url('lockssomatic_sword_cont_iri', {'contentProviderId': contentProvider.id, 'uuid': deposit.uuid}) }}"/>
 
     <title>{{ deposit.title }}</title>
     <id>urn:uuid:{{ deposit.uuid }}</id>

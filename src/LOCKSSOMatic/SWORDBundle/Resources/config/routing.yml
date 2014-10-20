@@ -7,48 +7,48 @@ lockssomatic_sword_service_document:
 # Route to the SWORD Col-IRI. The SWORD client POSTs to this URL to create
 # a deposit.
 lockssomatic_sword_collection_iri:
-    path: /api/sword/2.0/col-iri/{collectionId}
+    path: /api/sword/2.0/col-iri/{contentProviderId}
     defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:createDeposit }
     methods: [POST]
     requirements:
-        collectionId: \d+
+        contentProviderId: \d+
 
 # Route to the SWORD State-IRI.
 lockssomatic_sword_state_iri:
-    path: /api/sword/2.0/cont-iri/{collectionId}/{uuid}/state
+    path: /api/sword/2.0/cont-iri/{contentProviderId}/{uuid}/state
     defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:swordStatement }
     methods: [GET]
     requirements:
-        collectionId: \d+
+        contentProviderId: \d+
         # UUIDs are 36 characters long.
         uuid: .{36}
 
 # Route to the SWORD Edit-IRI, to return the Deposit Receipt.
 lockssomatic_deposit_receipt:
-    path: /api/sword/2.0/cont-iri/{collectionId}/{uuid}/edit
+    path: /api/sword/2.0/cont-iri/{contentProviderId}/{uuid}/edit
     defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:depositReceipt }
     methods: [GET]
     requirements:
-        collectionId: \d+
+        contentProviderId: \d+
         # UUIDs are 36 characters long.
         uuid: .{36}
 
 # Route to the SWORD Cont-IRI, to fetch a representation of the deposit
 lockssomatic_sword_cont_iri:
-    path: /api/sword/2.0/cont-iri/{collectionId}/{uuid}
+    path: /api/sword/2.0/cont-iri/{contentProviderId}/{uuid}
     defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:viewDeposit }
     methods: [GET]
     requirements:
-        collectionId: \d+
+        contentProviderId: \d+
         uuid: .{36}
 
 # Route to the SWORD Edit-IRI, to edit the deposit.
 lockssomatic_sword_edit_iri:
-    path: /api/sword/2.0/cont-iri/{collectionId}/{uuid}/edit
+    path: /api/sword/2.0/cont-iri/{contentProviderId}/{uuid}/edit
     defaults: { _controller: LOCKSSOMaticSWORDBundle:Default:editDeposit }
     methods: [PUT]
     requirements:
-        collectionId: \d+
+        contentProviderId: \d+
         # UUIDs are 36 characters long.
         uuid: .{36}
 
