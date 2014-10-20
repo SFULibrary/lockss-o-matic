@@ -19,7 +19,8 @@ class LoadDepositsData extends AbstractFixture implements OrderedFixtureInterfac
     {
         $object = new Deposits();
         $object->setUuid('123456-1234-12345678-123456');
-        $object->setTitle('An example deposit');
+        $object->setTitle('First deposit');
+        $object->setSummary('An example deposit for testing purposes.');
         $object->setContentProvider($this->getReference('cp-1'));
         
         $manager->persist($object);

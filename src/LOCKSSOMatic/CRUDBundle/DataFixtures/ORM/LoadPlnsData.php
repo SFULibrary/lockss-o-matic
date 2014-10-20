@@ -20,6 +20,7 @@ class LoadPlnsData extends AbstractFixture implements OrderedFixtureInterface
         $object = new Plns();
         $object->setName('Test PLN');
         $object->setPropsPath('/some/path/to/a/file');
+        $object->setPropServer('http://lockss.example.com/path');
         $manager->persist($object);
         $manager->flush();
         $this->setReference('pln-1', $object);

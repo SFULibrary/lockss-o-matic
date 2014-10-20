@@ -17,6 +17,7 @@ class LoadPlnData extends AbstractFixture implements OrderedFixtureInterface
         $pln = new Plns();
         $pln->setName('Test Pln');
         $pln->addContentProvider($this->getReference('cp-1'));
+        $pln->setPropServer('http://props.example.com/path');
         $this->setReference('network-1', $pln);
         
         $manager->persist($pln);
