@@ -62,7 +62,7 @@ class Content
     /**
      * @var boolean
      */
-    private $verifiedFileSize;
+    private $verifiedSize;
 
     /**
      * Stringify the entity
@@ -292,25 +292,25 @@ class Content
     }
 
     /**
-     * Set verifiedFileSize
+     * Set verifiedSize
      *
-     * @param boolean $verifiedFileSize
+     * @param boolean $verifiedSize
      * @return Content
      */
-    public function setVerifiedFileSize($verifiedFileSize)
+    public function setVerifiedSize($verifiedSize)
     {
-        $this->verifiedFileSize = $verifiedFileSize;
+        $this->verifiedSize = $verifiedSize;
 
         return $this;
     }
 
     /**
-     * Get verifiedFileSize
+     * Get verifiedSize
      *
      * @return boolean 
      */
-    public function getVerifiedFileSize()
+    public function getVerifiedSize()
     {
-        return $this->verifiedFileSize;
+        return $this->verifiedSize;
     }
 }

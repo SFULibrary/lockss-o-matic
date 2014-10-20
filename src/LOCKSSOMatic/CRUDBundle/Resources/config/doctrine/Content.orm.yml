@@ -65,7 +65,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             nullable: false
             comment: 'Either 1 (indicating that LOCKSS boxes should recrawl the content) or 0 (indicating that they should not).'
             default: true
-        verifiedFileSize:
+        verifiedSize:
             type: boolean
             nullable: false
             default: false

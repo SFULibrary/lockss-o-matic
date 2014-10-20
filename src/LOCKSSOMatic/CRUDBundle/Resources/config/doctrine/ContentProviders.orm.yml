@@ -45,7 +45,7 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
         uuid:
             type: string
             length: 36
-            comment: 'UUID for the content provider, to be used in the SWORD API.'
+            comment: 'UUID for the content provider.'
             nullable: false
         permissionUrl:
             type: string

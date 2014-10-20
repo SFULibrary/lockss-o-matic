@@ -41,7 +41,6 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             comment: 'The title of the deposit.'
         summary:
             type: string
-            length: 255
             nullable: true
             comment: 'A summary for the deposit.'
         dateDeposited:
