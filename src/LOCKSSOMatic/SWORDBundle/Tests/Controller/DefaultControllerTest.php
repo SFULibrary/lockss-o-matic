@@ -211,7 +211,7 @@ class DefaultControllerTest extends WebTestCase
         $em = $client->getContainer()->get('doctrine')->getManager();
         $deposits = $em->getRepository('LOCKSSOMaticCRUDBundle:Deposits')->findBy(array('title' => 'Empty deposit'));
         $this->assertEquals(0, count($deposits));
- }
+    }
 
     //6.3.3. Creating a Resource with an Atom Entry
     public function testCreateSingleResource()

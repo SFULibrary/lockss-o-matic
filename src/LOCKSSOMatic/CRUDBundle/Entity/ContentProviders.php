@@ -41,6 +41,8 @@ class ContentProviders
     private $checksumType;
 
     /**
+     * Maximum size of a single content item, in kB (1,000 bytes).
+     * 
      * @var integer
      */
     private $maxFileSize;
@@ -225,6 +227,8 @@ class ContentProviders
 
     /**
      * Set maxFileSize
+     * 
+     * Maximum size of a single content item, in kB (1,000 bytes).
      *
      * @param integer $maxFileSize
      * @return ContentProviders
@@ -239,6 +243,8 @@ class ContentProviders
     /**
      * Get maxFileSize
      *
+     * Maximum size of a single content item, in kB (1,000 bytes).
+     * 
      * @return integer
      */
     public function getMaxFileSize()

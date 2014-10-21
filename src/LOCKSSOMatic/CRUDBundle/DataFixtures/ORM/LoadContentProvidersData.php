@@ -25,6 +25,7 @@ class LoadContentProvidersData extends AbstractFixture implements OrderedFixture
         $object->setIpAddress('192.168.100.200');
         $object->setHostname('cp1.example.com');
         $object->setChecksumType('md5');
+        // maxFileSize is in kB (1,000 bytes).
         $object->setMaxFileSize('123456');
         $object->setMaxAuSize('987654321');
         $object->setContentOwner($this->getReference('owner-1'));

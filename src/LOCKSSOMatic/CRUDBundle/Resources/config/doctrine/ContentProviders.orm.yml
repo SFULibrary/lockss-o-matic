@@ -74,11 +74,11 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             type: integer
             nullable: true
             unsigned: false
-            comment: 'The maximum allowed size for a single file included in deposits from the content provider, in kB.'
+            comment: 'The maximum allowed size for a single file included in deposits from the content provider, in kB (1,000 bytes).'
             column: max_file_size
         maxAuSize:
             type: integer
             nullable: true
             unsigned: false
-            comment: 'The maximum cumulative size for an Archival Unit containing deposits from the content provider, in kB.'
+            comment: 'The maximum cumulative size for an Archival Unit containing deposits from the content provider, in kB (1,000 bytes).'
             column: max_au_size            

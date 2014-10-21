@@ -218,6 +218,18 @@ class DefaultController extends Controller
                         ), $response
                 );
             }
+            
+            if($contentChunk->attributes()->size() > $contentProvider->getMaxFileSize()) {
+                $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+                return $this->render(
+                    'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
+                    array(
+                            'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
+                            'summary'   => 'Content exceeds size limit.',
+                            'verbose'   => 'One or more content size attributes is larger than the content provider\s maximum file size (' . $contentProvider->getMaxFileSize() . 'kb)'
+                        ), $response
+                );
+            }
         }
 
         $depositBuilder = new DepositBuilder();
