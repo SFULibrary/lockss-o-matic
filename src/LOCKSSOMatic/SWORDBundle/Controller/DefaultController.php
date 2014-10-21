@@ -219,7 +219,7 @@ class DefaultController extends Controller
                 );
             }
             
-            if($contentChunk->attributes()->size() > $contentProvider->getMaxFileSize()) {
+            if($contentChunk->attributes()->size > $contentProvider->getMaxFileSize()) {
                 $response->setStatusCode(Response::HTTP_BAD_REQUEST);
                 return $this->render(
                     'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
