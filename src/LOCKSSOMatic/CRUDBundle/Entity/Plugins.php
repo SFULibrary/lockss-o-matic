@@ -31,6 +31,11 @@ class Plugins
     private $aus;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $contentProviders;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -146,5 +151,38 @@ class Plugins
     public function getAus()
     {
         return $this->aus;
+    }
+
+    /**
+     * Add contentProviders
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\contentProviders $contentProviders
+     * @return Plugins
+     */
+    public function addContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\contentProviders $contentProviders)
+    {
+        $this->contentProviders[] = $contentProviders;
+
+        return $this;
+    }
+
+    /**
+     * Remove contentProviders
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\contentProviders $contentProviders
+     */
+    public function removeContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\contentProviders $contentProviders)
+    {
+        $this->contentProviders->removeElement($contentProviders);
+    }
+
+    /**
+     * Get contentProviders
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getContentProviders()
+    {
+        return $this->contentProviders;
     }
 }

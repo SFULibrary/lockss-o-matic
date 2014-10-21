@@ -19,6 +19,8 @@ class LoadContentProvidersData extends AbstractFixture implements OrderedFixture
     {
         $object = new ContentProviders();
         $object->setType('application');
+        $object->setUuid('f705d95b-7a0a-451c-a51e-242bc4ab53cf');
+        $object->setPermissionUrl('http://provider.example.com/path');
         $object->setName('Example Provider Inc.');
         $object->setIpAddress('192.168.100.200');
         $object->setHostname('cp1.example.com');

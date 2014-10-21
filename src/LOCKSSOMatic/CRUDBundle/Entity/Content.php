@@ -60,6 +60,15 @@ class Content
     private $au;
 
     /**
+     * @var boolean
+     */
+    private $verifiedSize;
+
+    public function __construct() {
+        $this->verifiedSize = false;
+    }
+    
+    /**
      * Stringify the entity
      *
      * @return string
@@ -284,5 +293,28 @@ class Content
     public function getAu()
     {
         return $this->au;
+    }
+
+    /**
+     * Set verifiedSize
+     *
+     * @param boolean $verifiedSize
+     * @return Content
+     */
+    public function setVerifiedSize($verifiedSize)
+    {
+        $this->verifiedSize = $verifiedSize;
+
+        return $this;
+    }
+
+    /**
+     * Get verifiedSize
+     *
+     * @return boolean 
+     */
+    public function getVerifiedSize()
+    {
+        return $this->verifiedSize;
     }
 }

@@ -23,6 +23,7 @@ class LoadAusData extends AbstractFixture implements OrderedFixtureInterface
         $object->setOpen(1);
         $object->setPlugin($this->getReference('plugin-1'));
         $object->setPln($this->getReference('pln-1'));
+        $object->setManaged(false);
         
         $manager->persist($object);
         $manager->flush();

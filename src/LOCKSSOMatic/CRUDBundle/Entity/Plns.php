@@ -51,6 +51,11 @@ class Plns
     private $boxes;
 
     /**
+     * @var string
+     */
+    private $propServer;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -291,5 +296,28 @@ class Plns
     public function getBoxes()
     {
         return $this->boxes;
+    }
+
+    /**
+     * Set propServer
+     *
+     * @param string $propServer
+     * @return Plns
+     */
+    public function setPropServer($propServer)
+    {
+        $this->propServer = $propServer;
+
+        return $this;
+    }
+
+    /**
+     * Get propServer
+     *
+     * @return string 
+     */
+    public function getPropServer()
+    {
+        return $this->propServer;
     }
 }

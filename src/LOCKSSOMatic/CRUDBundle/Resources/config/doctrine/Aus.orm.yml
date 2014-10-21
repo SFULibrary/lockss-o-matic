@@ -41,7 +41,12 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             generator:
                 strategy: IDENTITY
     fields:
-        auid:
+        managed:
+            type: boolean
+            nullable: false
+            default: true
+            comment: 'Should LOCKSSOMatic manage this PLN.'
+        auid:            
             type: string
             length: 255
             nullable: false

@@ -26,7 +26,7 @@ class LoadContentData extends AbstractFixture implements OrderedFixtureInterface
         $object->setRecrawl(1);
         $object->setDeposit($this->getReference('deposit-1'));
         $object->setAu($this->getReference('au-1'));
-        
+        $object->setVerifiedSize(false);
         $manager->persist($object);
         $manager->flush();
         $this->setReference('cp-1', $object);
