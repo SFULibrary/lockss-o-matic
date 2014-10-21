@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DefaultControllerTest extends WebTestCase
 {
+    /**
+     * UUID used in the contentProvider data fixture.
+     */
+    const UUID='f705d95b-7a0a-451c-a51e-242bc4ab53cf';
 
     /**
      *
@@ -71,7 +75,7 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
 
         $crawler = $client->request(
-            'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => 1)
+            'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => self::UUID)
         );
 
         $response = $client->getResponse();
@@ -115,26 +119,6 @@ class DefaultControllerTest extends WebTestCase
     }
 
     /**
-     * On-Behalf-Of header should be a number.
-     */
-    public function testServiceDocumentStringOnBehalfOf()
-    {
-        $client = static::createClient();
-
-        $crawler = $client->request(
-            'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => 'Magneto')
-        );
-
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-        $responseXml = $this->getSimpleXML($response->getContent());
-        $this->assertEquals('error', $responseXml->getName());
-        $this->assertEquals('http://purl.org/net/sword/error/TargetOwnerUnknown', $responseXml['href']);
-        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
-        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
-    }
-
-    /**
      * On-Behalf-Of must match a content provider
      */
     public function testServiceDocumentBadOnBehalfOf()
@@ -158,10 +142,10 @@ class DefaultControllerTest extends WebTestCase
     public function testCreateBadProvider()
     {
         $uuid = Uuid::v4();
-       $xml = $this->createDepositXML($uuid, 'Empty deposit');
+        $xml = $this->createDepositXML($uuid, 'Empty deposit');
         $client = static::createClient();
         $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/27', array(), array(), array(), $xml->asXML()
+            'POST', '/api/sword/2.0/col-iri/' . Uuid::v4(), array(), array(), array(), $xml->asXML()
         );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
@@ -182,7 +166,7 @@ class DefaultControllerTest extends WebTestCase
 
         $client = static::createClient();
         $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $xml->asXML()
+            'POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $xml->asXML()
         );
 
         $response = $client->getResponse();
@@ -212,7 +196,7 @@ class DefaultControllerTest extends WebTestCase
         );
 
         $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML()
+            'POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML()
         );
         $response = $client->getResponse();
 
@@ -261,7 +245,7 @@ class DefaultControllerTest extends WebTestCase
         );
 
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
         $response = $client->getResponse();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -284,11 +268,11 @@ class DefaultControllerTest extends WebTestCase
             $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid . '/edit');
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid . '/edit');
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
@@ -308,11 +292,11 @@ class DefaultControllerTest extends WebTestCase
             $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/2/' . $uuid . '/edit');
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . Uuid::v4() . '/' . $uuid . '/edit');
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
         
@@ -330,7 +314,7 @@ class DefaultControllerTest extends WebTestCase
 
         $client = static::createClient();
         
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid . '/edit');
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid . '/edit');
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
 
@@ -349,14 +333,14 @@ class DefaultControllerTest extends WebTestCase
             $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
         $response = $client->getResponse();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
 
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid);
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $responseXml = $this->getSimpleXML($response->getContent());
@@ -372,11 +356,11 @@ class DefaultControllerTest extends WebTestCase
             $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/2/' . $uuid);
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . Uuid::v4() . '/' . $uuid);
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
         
@@ -394,7 +378,7 @@ class DefaultControllerTest extends WebTestCase
 
         $client = static::createClient();
         
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid);
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
 
@@ -414,14 +398,14 @@ class DefaultControllerTest extends WebTestCase
             $depositXml, $url, 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
         $response = $client->getResponse();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
 
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid);
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $responseXml = $this->getSimpleXML($response->getContent());
@@ -431,7 +415,7 @@ class DefaultControllerTest extends WebTestCase
         
         $crawler = $client->request(
             'PUT',
-            '/api/sword/2.0/cont-iri/1/' . $uuid . '/edit',
+            '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid . '/edit',
             array(),
             array(),
             array(),
@@ -464,14 +448,14 @@ class DefaultControllerTest extends WebTestCase
             $depositXml, $url, 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
+        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
         $response = $client->getResponse();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
 
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
+        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid);
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $responseXml = $this->getSimpleXML($response->getContent());
@@ -481,7 +465,7 @@ class DefaultControllerTest extends WebTestCase
         
         $crawler = $client->request(
             'PUT',
-            '/api/sword/2.0/cont-iri/2/' . $uuid . '/edit',
+            '/api/sword/2.0/cont-iri/'. Uuid::v4() . '/' . $uuid . '/edit',
             array(),
             array(),
             array(),
@@ -509,186 +493,5 @@ class DefaultControllerTest extends WebTestCase
             )
         );
         $this->assertTrue($content->getRecrawl() === 1 || $content->getRecrawl());
-    }
-
-    public function testEditDepositBadId()
-    {
-        $uuid = Uuid::v4();
-        $depositXml = $this->createDepositXML($uuid);
-        $url = 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg';
-        $this->addContentItem(
-            $depositXml, $url, 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
-        );
-        $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
-        $response = $client->getResponse();
-
-        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
-        $this->assertTrue($response->headers->has('Location'));
-        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
-
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $responseXml = $this->getSimpleXML($response->getContent());
-        $this->assertEquals(1, count($responseXml->xpath('//lom:content')));
-        
-        $responseXml->children(Namespaces::LOM)->content[0]->recrawl = 'false';
-        
-        $crawler = $client->request(
-            'PUT',
-            '/api/sword/2.0/cont-iri/1/' . Uuid::v4() . '/edit',
-            array(),
-            array(),
-            array(),
-            $responseXml->asXML()
-        );
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        
-        $responseXml = $this->getSimpleXML($response->getContent());
-        $this->assertEquals('error', $responseXml->getName());
-        $this->assertEquals('http://purl.org/net/sword/error/ErrorBadRequest', $responseXml['href']);
-        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
-        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
-        
-        /** @var EntityManager */
-        $em = $client->getContainer()->get('doctrine')->getManager();
-        
-        $deposit = $em->getRepository('LOCKSSOMaticCRUDBundle:Deposits')->findOneBy(
-            array('uuid' => $uuid)
-        );
-        $content = $em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
-            array(
-                'url' => $url,
-                'deposit' => $deposit,
-            )
-        );
-        $this->assertTrue($content->getRecrawl() === 1 || $content->getRecrawl());
-    }
-    
-    public function testEditDepositNoContent()
-    {
-        $uuid = Uuid::v4();
-        $depositXml = $this->createDepositXML($uuid);
-        $url = 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg';
-        $this->addContentItem(
-            $depositXml, $url, 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
-        );
-        $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
-        $response = $client->getResponse();
-
-        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
-        $this->assertTrue($response->headers->has('Location'));
-        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
-
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $responseXml = $this->getSimpleXML($response->getContent());
-        $this->assertEquals(1, count($responseXml->xpath('//lom:content')));
-        
-        unset($responseXml->children(Namespaces::LOM)->content);
-        
-        $crawler = $client->request(
-            'PUT',
-            '/api/sword/2.0/cont-iri/1/' . Uuid::v4() . '/edit',
-            array(),
-            array(),
-            array(),
-            $responseXml->asXML()
-        );
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        
-        $responseXml = $this->getSimpleXML($response->getContent());
-        $this->assertEquals('error', $responseXml->getName());
-        $this->assertEquals('http://purl.org/net/sword/error/ErrorBadRequest', $responseXml['href']);
-        $this->assertNotNull($responseXml->children(Namespaces::ATOM)->summary[0]);
-        $this->assertNotNull($responseXml->children(Namespaces::SWORD)->verboseDescription[0]);
-        
-        /** @var EntityManager */
-        $em = $client->getContainer()->get('doctrine')->getManager();
-        
-        $deposit = $em->getRepository('LOCKSSOMaticCRUDBundle:Deposits')->findOneBy(
-            array('uuid' => $uuid)
-        );
-        $content = $em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
-            array(
-                'url' => $url,
-                'deposit' => $deposit,
-            )
-        );
-        $this->assertTrue($content->getRecrawl() === 1 || $content->getRecrawl());
-    }
-    
-    public function testEditDepositNoContentUpdated()
-    {
-        $uuid = Uuid::v4();
-        $depositXml = $this->createDepositXML($uuid);
-        $url = 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg';
-        $this->addContentItem(
-            $depositXml, $url, 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
-        );
-        $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML());
-        $response = $client->getResponse();
-
-        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
-        $this->assertTrue($response->headers->has('Location'));
-        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
-
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/1/' . $uuid);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $responseXml = $this->getSimpleXML($response->getContent());
-        $this->assertEquals(1, count($responseXml->xpath('//lom:content')));
-        
-        unset($responseXml->children(Namespaces::LOM)->content);
-        $responseXml->addChild('content', 'http://example.com/', Namespaces::LOM);
-            
-        $crawler = $client->request(
-            'PUT',
-            '/api/sword/2.0/cont-iri/1/' . $uuid . '/edit',
-            array(),
-            array(),
-            array(),
-            $responseXml->asXML()
-        );
-        $response = $client->getResponse();
-        print $response->getContent();
-        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-    
-    // @TODO finish this test, once the swordStatementAction is
-    // finished.
-    public function testSwordStatement()
-    {
-        $uuid = Uuid::v4();
-        $depositXml = $this->createDepositXML($uuid);
-        $this->addContentItem(
-            $depositXml, 'https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
-        );
-
-        $client = static::createClient();
-        $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/1', array(), array(), array(), $depositXml->asXML()
-        );
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
-
-        $responseXml = $this->getSimpleXML($response->getContent());
-
-        $tmp = $responseXml->xpath('//atom:link[@rel="http://purl.org/net/sword/terms/statement"]/@href');
-        $stateIri = $tmp[0];
-        $location = preg_replace('/^http.*app_dev.php/', '', $stateIri);
-
-        $crawler = $client->request('GET', $location);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-
-        //$client->getContainer()->get('monolog.logger.sword')->log('error', 'uri: ' . $location);
-        // @TODO finish testing this - right now everything is stubbed out.
     }
 }

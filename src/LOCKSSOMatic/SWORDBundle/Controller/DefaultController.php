@@ -93,15 +93,18 @@ class DefaultController extends Controller
 
     /**
      *
-     * @param type $onBehalfOf
+     * @param type $uuid
      * @return ContentProviders
      */
-    private function getContentProvider($onBehalfOf = null)
+    private function getContentProvider($uuid = null)
     {
-        if ($onBehalfOf === null) {
+        if ($uuid === null) {
             return null;
         }
-        return $this->getDoctrine()->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')->find($onBehalfOf);
+        return $this
+                ->getDoctrine()
+                ->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
+                ->findOneBy(array('uuid' => $uuid));
     }
 
     /**

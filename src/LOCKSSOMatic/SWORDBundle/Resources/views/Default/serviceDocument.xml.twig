@@ -17,7 +17,7 @@
         <!-- Each LOCKSS-O-Matic content provider will have its own SWORD collection,
             identified in the 'On-Behalf-Of' header sent along with the GET request
             for this document. -->
-        <collection href="{{ url('lockssomatic_sword_collection_iri', {'contentProviderId': contentProvider.id}) }}">
+        <collection href="{{ url('lockssomatic_sword_collection_iri', {'contentProviderId': contentProvider.uuid}) }}">
             <atom:title>{{ contentProvider.name }}</atom:title>
             <accept>application/atom+xml;type=entry</accept> 
             <sword:mediation>true</sword:mediation>

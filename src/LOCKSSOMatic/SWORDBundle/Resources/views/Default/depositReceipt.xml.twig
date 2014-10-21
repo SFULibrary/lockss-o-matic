@@ -7,16 +7,16 @@
     <content src="{{ url('deposits_show', {'id': deposit.id}) }}"/>
     
     <!-- Col-IRI. -->
-    <link rel="edit-media" href="{{ url('lockssomatic_sword_collection_iri', { 'contentProviderId': contentProvider.id } ) }}" />
+    <link rel="edit-media" href="{{ url('lockssomatic_sword_collection_iri', { 'contentProviderId': contentProvider.uuid } ) }}" />
 
     <!-- SE-IRI (can be same as Edit-IRI) -->
-    <link rel="http://purl.org/net/sword/terms/add" href="{{ url('lockssomatic_deposit_receipt', { 'contentProviderId': contentProvider.id, 'uuid': deposit.uuid } ) }}" />
+    <link rel="http://purl.org/net/sword/terms/add" href="{{ url('lockssomatic_deposit_receipt', { 'contentProviderId': contentProvider.uuid, 'uuid': deposit.uuid } ) }}" />
 
     <!-- Edit-IRI -->
-    <link rel="edit" href="{{ url('lockssomatic_deposit_receipt', { 'contentProviderId': contentProvider.id, 'uuid': deposit.uuid } ) }}" />
+    <link rel="edit" href="{{ url('lockssomatic_deposit_receipt', { 'contentProviderId': contentProvider.uuid, 'uuid': deposit.uuid } ) }}" />
 
     <!-- In LOCKSS-O-Matic, the State-IRI will be the EM-IRI/Cont-IRI with the string ‘/state’ appended. -->
     <link rel="http://purl.org/net/sword/terms/statement" type="application/atom+xml;type=feed" 
-          href="{{ url('lockssomatic_sword_state_iri', { 'contentProviderId': contentProvider.id, 'uuid': deposit.uuid } ) }}" />
+          href="{{ url('lockssomatic_sword_state_iri', { 'contentProviderId': contentProvider.uuid, 'uuid': deposit.uuid } ) }}" />
 </entry>
 
