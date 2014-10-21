@@ -6,6 +6,12 @@ use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
+use LOCKSSOMatic\SWORDBundle\Exceptions\DepositUnknownException;
+use LOCKSSOMatic\SWORDBundle\Exceptions\HostMismatchException;
+use LOCKSSOMatic\SWORDBundle\Exceptions\MaxUploadSizeExceededException;
+use LOCKSSOMatic\SWORDBundle\Exceptions\OnBehalfOfMissingException;
+use LOCKSSOMatic\SWORDBundle\Exceptions\TargetOwnerUnknownException;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -49,7 +55,7 @@ class DefaultController extends Controller
                 return $value;
             }
         }
-        return null;
+        throw new OnBehalfOfMissingException();
     }
 
     /**
@@ -69,11 +75,11 @@ class DefaultController extends Controller
         foreach ($headers as $h) {
             $value = $request->headers->get($h);
             if (in_array(
-                $value,
-                array(
+                            $value,
+                            array(
                         'true',
                         'false')
-            )) {
+                    )) {
                 return $value == 'true';
             }
         }
@@ -101,13 +107,50 @@ class DefaultController extends Controller
      */
     private function getContentProvider($uuid = null)
     {
-        if ($uuid === null) {
-            return null;
+        $contentProvider = $this
+                ->getDoctrine()
+                ->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
+                ->findOneBy(array('uuid' => $uuid));
+        if ($contentProvider === null) {
+            throw new TargetOwnerUnknownException();
         }
-        return $this
-                        ->getDoctrine()
-                        ->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
-                        ->findOneBy(array('uuid' => $uuid));
+
+        return $contentProvider;
+    }
+
+    private function getDeposit($uuid = null)
+    {
+        $deposit = $this
+                ->getDoctrine()
+                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
+                ->findOneBy(array('uuid' => $uuid));
+
+        if ($deposit === null) {
+            throw new DepositUnknownException();
+        }
+
+        return $deposit;
+    }
+    
+    private function matchDepositToProvider(Deposits $deposit, ContentProviders $contentProvider) {
+        if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
+            throw new BadRequestException('Deposit or Content Provider incorrect. The requested deposit does not belong to the requested content provider.');
+        }        
+    }
+    
+    private function getContent($deposit, $url) {
+        $content = $this
+                ->getDoctrine()
+                ->getRepository('LOCKSSOMaticCRUDBundle:Content')
+                ->findOneBy(array(
+                    'url' => $url,
+                    'deposit' => $deposit,
+                ));
+        if($content === null) {
+            throw new BadRequestException('Content item not in database: ' . $url);
+        }
+        
+        return $content;
     }
 
     /**
@@ -122,40 +165,17 @@ class DefaultController extends Controller
     public function serviceDocumentAction(Request $request)
     {
         $onBehalfOf = $this->getOnBehalfOfHeader($request);
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/xml');
-
-        if (is_null($onBehalfOf)) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'On-Behalf-Of header missing.',
-                        'verbose'   => 'LOCKSSOMatic requires mediated deposit via the On-Behalf-Of HTTP header. '
-                            ), $response
-            );
-        }
 
         $contentProvider = $this->getContentProvider($onBehalfOf);
-        if ($onBehalfOf !== null && $contentProvider === null) {
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/TargetOwnerUnknown',
-                        'summary'   => 'Unknown ID in the On-Behalf-Of header.',
-                        'verbose'   => 'The On-Behalf-Of HTTP header is present in the request but references an unknown content provider: ' . $onBehalfOf
-                            ), $response
-            );
-        }
 
-        return $this->render(
+        $response = $this->render(
             'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
             array(
                     'contentProvider' => $contentProvider,
-                        ), $response
-        );
+                )
+            );
+        $response->headers->set('Content-type', 'text/xml');
+        return $response;
     }
 
     /**
@@ -173,62 +193,27 @@ class DefaultController extends Controller
 
         // Query the ContentProvider entity so we can get its name.
         $contentProvider = $this->getContentProvider($contentProviderId);
-        if ($contentProvider === null) {
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/TargetOwnerUnknown',
-                        'summary'   => 'Unknown content provider in URL.',
-                        'verbose'   => 'The content provider identifed in the deposit URL is unknown.'
-                            ), $response
-            );
-        }
 
         $atomEntry = $this->getSimpleXML($request->getContent());
         if (count($atomEntry->xpath('//lom:content')) === 0) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Empty deposits not allowed.',
-                        'verbose'   => 'At least one lom:content element is required in a deposit.'
-                            ), $response
-            );
+            throw new BadRequestException('Empty deposits not allowed. At least one lom:content element is required in a deposit.');
         }
 
         // precheck the deposit - all lom:content items must have a file size
         // less than the maxFileSize and must share a common host name with
         // the content provider's permissions url.
+        // @TODO move this to contentProvider.getPermissionHost().
         $permissionHost = parse_url(
-            $contentProvider->getPermissionUrl(),
-            PHP_URL_HOST
+                $contentProvider->getPermissionUrl(), PHP_URL_HOST
         );
         foreach ($atomEntry->children(Namespaces::LOM) as $contentChunk) {
             $contentHost = parse_url((string) $contentChunk, PHP_URL_HOST);
             if ($permissionHost !== $contentHost) {
-                $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-                return $this->render(
-                    'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                    array(
-                            'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                            'summary'   => 'Content URL does not match a corresponding LOCKSS permission URL.',
-                            'verbose'   => 'One or more content URLs is either unparseable or points to a host which is different from the content provider\'s permission statement host.'
-                        ), $response
-                );
+                throw new HostMismatchException();
             }
-            
-            if($contentChunk->attributes()->size > $contentProvider->getMaxFileSize()) {
-                $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-                return $this->render(
-                    'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                    array(
-                            'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                            'summary'   => 'Content exceeds size limit.',
-                            'verbose'   => 'One or more content size attributes is larger than the content provider\s maximum file size (' . $contentProvider->getMaxFileSize() . 'kb)'
-                        ), $response
-                );
+
+            if ($contentChunk->attributes()->size > $contentProvider->getMaxFileSize()) {
+                throw new MaxUploadSizeExceededException();
             }
         }
 
@@ -245,8 +230,8 @@ class DefaultController extends Controller
             $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
             $au = $this->getDestinationAu(
-                $inProgress, $contentProviderId,
-                $contentChunk[0]->attributes()->size
+                    $inProgress, $contentProviderId,
+                    $contentChunk[0]->attributes()->size
             );
             $content->setAu($au);
             $content->setRecrawl(1);
@@ -256,11 +241,11 @@ class DefaultController extends Controller
 
         $response = $this->renderDepositReceipt($contentProvider, $deposit);
         $editIri = $this->get('router')->generate(
-            'lockssomatic_deposit_receipt',
-            array(
+                'lockssomatic_deposit_receipt',
+                array(
             'contentProviderId' => $contentProviderId,
             'uuid'              => $deposit->getUuid()
-            )
+                )
         );
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(201);
@@ -280,44 +265,8 @@ class DefaultController extends Controller
         $response->headers->set('Content-Type', 'text/xml');
 
         $contentProvider = $this->getContentProvider($contentProviderId);
-        if ($contentProvider === null) {
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/TargetOwnerUnknown',
-                        'summary'   => 'Unknown content provider in URL.',
-                        'verbose'   => 'The content provider identifed in the deposit URL is unknown.'
-                            ), $response
-            );
-        }
-
-        $deposit = $this->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
-                ->findOneBy(array('uuid' => $uuid));
-        if ($deposit === null) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Unknown deposit.',
-                        'verbose'   => 'The deposit requested in the URL does not exist.'
-                            ), $response
-            );
-        }
-
-        if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Deposit or Content Provider incorrect.',
-                        'verbose'   => 'The requested deposit does not belong to the requested content provider.'
-                            ), $response
-            );
-        }
+        $deposit = $this->getDeposit($uuid);
+        $this->matchDepositToProvider($deposit, $contentProvider);
 
         return $this->renderDepositReceipt($contentProvider, $deposit);
     }
@@ -327,8 +276,8 @@ class DefaultController extends Controller
         // @TODO this should be a call to render depsoitReceiptAction() or something.
         // Return the deposit receipt.
         $response = $this->render(
-            'LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
-            array(
+                'LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
+                array(
             'contentProvider' => $contentProvider,
             'deposit'         => $deposit
                 )
@@ -349,68 +298,30 @@ class DefaultController extends Controller
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
 
-        /** @var ContentProviders */
         $contentProvider = $this->getContentProvider($contentProviderId);
-        if ($contentProvider === null) {
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/TargetOwnerUnknown',
-                        'summary'   => 'Unknown content provider in URL.',
-                        'verbose'   => 'The content provider identifed in the deposit URL is unknown.'
-                            ), $response
-            );
-        }
-
-        /** @var Deposits */
-        $deposit = $this->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
-                ->findOneBy(array('uuid' => $uuid));
-        if ($deposit === null) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Unknown deposit.',
-                        'verbose'   => 'The deposit requested in the URL does not exist.'
-                            ), $response
-            );
-        }
-        
-        if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Deposit or Content Provider incorrect.',
-                        'verbose'   => 'The requested deposit does not belong to the requested content provider.'
-                            ), $response
-            );
-        }
+        $deposit = $this->getDeposit($uuid);
+        $this->matchDepositToProvider($deposit, $contentProvider);
 
         $boxes = $contentProvider->getPln()->getBoxes();
         $content = $deposit->getContent();
-        
+
         $status = array();
-        foreach($content as $item) {
-            foreach($boxes as $box) {
+        foreach ($content as $item) {
+            foreach ($boxes as $box) {
                 $status[$item->getId()][$box->getId()] = 'unknown';
                 // get the item's status from the box via http request.                
             }
         }
-        
+
         return $this->render(
-            'LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
-            array(
-                'contentProvider' => $contentProvider,
-                'boxes' => $boxes,
-                'deposit' => $deposit,
-                'content' => $content,
-                'status' => $status
-            ), $response
+                        'LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
+                        array(
+                    'contentProvider' => $contentProvider,
+                    'boxes'           => $boxes,
+                    'deposit'         => $deposit,
+                    'content'         => $content,
+                    'status'          => $status
+                        ), $response
         );
     }
 
@@ -430,48 +341,12 @@ class DefaultController extends Controller
         $response->headers->set('Content-Type', 'text/xml');
 
         $contentProvider = $this->getContentProvider($contentProviderId);
-        if ($contentProvider === null) {
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/TargetOwnerUnknown',
-                        'summary'   => 'Unknown content provider in URL.',
-                        'verbose'   => 'The content provider identifed in the deposit URL is unknown.'
-                            ), $response
-            );
-        }
-
-        $deposit = $this->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
-                ->findOneBy(array('uuid' => $uuid));
-        if ($deposit === null) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Unknown deposit.',
-                        'verbose'   => 'The deposit requested in the URL does not exist.'
-                            ), $response
-            );
-        }
-
-        if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Deposit or Content Provider incorrect.',
-                        'verbose'   => 'The requested deposit does not belong to the requested content provider.'
-                            ), $response
-            );
-        }
+        $deposit = $this->getDeposit($uuid);
+        $this->matchDepositToProvider($deposit, $contentProvider);
 
         $response = $this->render(
-            'LOCKSSOMaticSWORDBundle:Default:viewDeposit.xml.twig',
-            array(
+                'LOCKSSOMaticSWORDBundle:Default:viewDeposit.xml.twig',
+                array(
             'contentProvider' => $contentProvider,
             'deposit'         => $deposit
                 )
@@ -498,82 +373,33 @@ class DefaultController extends Controller
      */
     public function editDepositAction(Request $request, $contentProviderId, $uuid)
     {
-        $em = $this->getDoctrine()->getManager();
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
 
         $contentProvider = $this->getContentProvider($contentProviderId);
-        if ($contentProvider === null) {
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/TargetOwnerUnknown',
-                        'summary'   => 'Unknown content provider in URL.',
-                        'verbose'   => 'The content provider identifed in the deposit URL is unknown.'
-                            ), $response
-            );
-        }
-
-        /** @var Deposits */
-        $deposit = $this->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
-                ->findOneBy(array('uuid' => $uuid));
-        if ($deposit === null) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Unknown deposit.',
-                        'verbose'   => 'The deposit requested in the URL does not exist.'
-                            ), $response
-            );
-        }
-
-        if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Deposit or Content Provider incorrect.',
-                        'verbose'   => 'The requested deposit does not belong to the requested content provider.'
-                            ), $response
-            );
-        }
+        $deposit = $this->getDeposit($uuid);
+        $this->matchDepositToProvider($deposit, $contentProvider);
 
         $atomEntry = $this->getSimpleXML($request->getContent());
         if (count($atomEntry->xpath('//lom:content')) === 0) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            return $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:errorDocument.xml.twig',
-                array(
-                        'error_iri' => 'http://purl.org/net/sword/error/ErrorBadRequest',
-                        'summary'   => 'Empty deposit edits are not allowed.',
-                        'verbose'   => 'At least one lom:content element is required in a deposit edit request.'
-                            ), $response
-            );
+            throw new BadRequestException('Empty deposits not allowed. At least one lom:content element is required in a deposit.');
         }
 
         $updated = 0;
-
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
-            $content = $em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
-                array(
-                        'url'     => (string) $contentChunk,
-                        'deposit' => $deposit
-                    )
-            );
-            if ($content === null) {
-                continue;
+            try {
+                $content = $this->getContent($deposit, (string)$contentChunk);
+            } catch(Exception $e) {
+                continue; 
+                // this is not an exception according to the SWORD spec.
+                // Well, 6.5.2 of the SWORD spec is silent on the issue.
             }
             $recrawl = $contentChunk[0]->attributes()->recrawl;
             $content->setRecrawl($recrawl === 'true');
             $updated++;
         }
 
-        $em->flush();
+        $this->getDoctrine()->getManager()->flush();
         if ($updated > 0) {
             return new Response('', Response::HTTP_OK);
         } else {
@@ -605,21 +431,4 @@ class DefaultController extends Controller
         return $au;
     }
 
-    /**
-     * Confirm existence of content provider.
-     *
-     * @param bool $contentProviderId The ID of the content provider.
-     * @return bool
-     */
-    public function confirmContentProvider($contentProviderId)
-    {
-        $cp = $this->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\ContentProviders')
-                ->find($contentProviderId);
-        if ($cp) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 }
