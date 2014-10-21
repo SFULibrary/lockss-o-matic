@@ -63,7 +63,9 @@ class DefaultControllerTest extends WebTestCase
     private function addContentItem($xml, $url, $size, $csType, $csValue)
     {
         $content = $xml->addChild('content', $url, Namespaces::LOM);
-        $content->addAttribute('size', $size);
+        if($size !== null) {
+            $content->addAttribute('size', $size);
+        }
         $content->addAttribute('checksumType', $csType);
         $content->addAttribute('checksumValue', $csValue);
     }
@@ -289,6 +291,53 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(1, count($recieptXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
     }
 
+        //6.3.3. Creating a Resource with an Atom Entry
+    public function testCreateResourceNoFilesize()
+    {
+        $client = static::createClient();
+        $uuid = Uuid::v4();
+
+        $depositXml = $this->createDepositXML($uuid);
+        $this->addContentItem(
+            $depositXml, 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg', null, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+        );
+
+        $crawler = $client->request(
+            'POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML()
+        );
+        $response = $client->getResponse();
+
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('Location'));
+        $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
+
+        $responseXml = $this->getSimpleXML($response->getContent());
+
+        $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="edit"]')));
+        $this->assertGreaterThan(0, count($responseXml->xpath('atom:link[@rel="edit-media"]')));
+        $this->assertEquals(1, count($responseXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
+
+        // Follow the location header, which should give the same deposit receipt.
+        $oldContent = $response->getContent();
+
+        // get the location, in a URI that the kernel can understand. Full, absolute URIs
+        // will throw 404 errors.
+        //
+        //Symfony simulates an http client and tests against an instance of the
+        //Kernel created for that test. There are no web servers involved.
+        $location = preg_replace('/^http.*app_dev.php/', '', $response->headers->get('location'));
+
+        $crawler = $client->request('GET', $location);
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $recieptXml = $this->getSimpleXML($response->getContent());
+
+        $this->assertEquals(1, count($recieptXml->xpath('atom:link[@rel="edit"]')));
+        $this->assertGreaterThan(0, count($recieptXml->xpath('atom:link[@rel="edit-media"]')));
+        $this->assertEquals(1, count($recieptXml->xpath('atom:link[@rel="http://purl.org/net/sword/terms/add"]')));
+    }
+    
     //6.3.3. Creating a Resource with an Atom Entry
     public function testCreateMultipleResources()
     {
