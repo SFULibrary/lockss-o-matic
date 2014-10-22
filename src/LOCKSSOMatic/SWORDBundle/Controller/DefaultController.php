@@ -187,7 +187,10 @@ class DefaultController extends Controller
     private function matchDepositToProvider(Deposits $deposit, ContentProviders $contentProvider)
     {
         if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
-            throw new BadRequestException('Deposit or Content Provider incorrect. The requested deposit does not belong to the requested content provider.');
+            throw new BadRequestException(
+                'Deposit or Content Provider incorrect. The '
+                . 'requested deposit does not belong to the requested content provider.'
+            );
         }
     }
     
@@ -271,16 +274,17 @@ class DefaultController extends Controller
 
         $atomEntry = $this->getSimpleXML($request->getContent());
         if (count($atomEntry->xpath('//lom:content')) === 0) {
-            throw new BadRequestException('Empty deposits not allowed. At least one lom:content element is required in a deposit.');
+            throw new BadRequestException(
+                'Empty deposits not allowed. At least one '
+                . 'lom:content element is required in a deposit.'
+            );
         }
 
         // precheck the deposit - all lom:content items must have a file size
         // less than the maxFileSize and must share a common host name with
         // the content provider's permissions url.
         // @TODO move this to contentProvider.getPermissionHost().
-        $permissionHost = parse_url(
-            $contentProvider->getPermissionUrl(), PHP_URL_HOST
-        );
+        $permissionHost = parse_url($contentProvider->getPermissionUrl(), PHP_URL_HOST);
         foreach ($atomEntry->children(Namespaces::LOM) as $contentChunk) {
             $contentHost = parse_url((string) $contentChunk, PHP_URL_HOST);
             if ($permissionHost !== $contentHost) {
@@ -305,7 +309,8 @@ class DefaultController extends Controller
             $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
             $au = $this->getDestinationAu(
-                $inProgress, $contentProviderId,
+                $inProgress,
+                $contentProviderId,
                 $contentChunk[0]->attributes()->size
             );
             $content->setAu($au);
@@ -404,7 +409,8 @@ class DefaultController extends Controller
                     'deposit'         => $deposit,
                     'content'         => $content,
                     'status'          => $status
-                        ), $response
+            ),
+            $response
         );
     }
 

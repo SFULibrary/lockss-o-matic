@@ -101,7 +101,11 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
 
         $crawler = $client->request(
-            'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => self::UUID)
+            'GET',
+            '/api/sword/2.0/sd-iri',
+            array(),
+            array(),
+            array('HTTP_X-On-Behalf-Of' => self::UUID)
         );
 
         $response = $client->getResponse();
@@ -130,7 +134,8 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
 
         $crawler = $client->request(
-            'GET', '/api/sword/2.0/sd-iri'
+            'GET',
+            '/api/sword/2.0/sd-iri'
         );
 
         $response = $client->getResponse();
@@ -152,7 +157,11 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
 
         $crawler = $client->request(
-            'GET', '/api/sword/2.0/sd-iri', array(), array(), array('HTTP_X-On-Behalf-Of' => 297845)
+            'GET',
+            '/api/sword/2.0/sd-iri',
+            array(),
+            array(),
+            array('HTTP_X-On-Behalf-Of' => 297845)
         );
 
         $response = $client->getResponse();
@@ -171,7 +180,12 @@ class DefaultControllerTest extends WebTestCase
         $xml = $this->createDepositXML($uuid, 'Empty deposit');
         $client = static::createClient();
         $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/' . Uuid::v4(), array(), array(), array(), $xml->asXML()
+            'POST',
+            '/api/sword/2.0/col-iri/' . Uuid::v4(),
+            array(),
+            array(),
+            array(),
+            $xml->asXML()
         );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
@@ -192,7 +206,12 @@ class DefaultControllerTest extends WebTestCase
 
         $client = static::createClient();
         $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $xml->asXML()
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $xml->asXML()
         );
 
         $response = $client->getResponse();
@@ -218,11 +237,20 @@ class DefaultControllerTest extends WebTestCase
 
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 'http://notareal.farmanimal.com/3691/11186563486_8796f4f843_o_d.jpg', 899922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://notareal.farmanimal.com/3691/11186563486_8796f4f843_o_d.jpg',
+            899922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML()
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
         );
         $response = $client->getResponse();
 
@@ -247,11 +275,20 @@ class DefaultControllerTest extends WebTestCase
 
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 'http://notareal.farmanimal.com/3691/11186563486_8796f4f843_o_d.jpg', 993456, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://notareal.farmanimal.com/3691/11186563486_8796f4f843_o_d.jpg',
+            993456,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML()
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
         );
         $response = $client->getResponse();
 
@@ -276,11 +313,20 @@ class DefaultControllerTest extends WebTestCase
 
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg', 8922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+            8922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML()
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
         );
         $response = $client->getResponse();
 
@@ -323,11 +369,20 @@ class DefaultControllerTest extends WebTestCase
 
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg', null, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+            null,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $crawler = $client->request(
-            'POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML()
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
         );
         $response = $client->getResponse();
 
@@ -368,15 +423,30 @@ class DefaultControllerTest extends WebTestCase
         $uuid = Uuid::v4();
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg', 8922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+            8922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $this->addContentItem(
-            $depositXml, 'http://provider.example.com/wm/paint/auth/monet/parliament/parliament.jpg', 8922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://provider.example.com/wm/paint/auth/monet/parliament/parliament.jpg',
+            8922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
 
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
+        $crawler = $client->request(
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
+        );
         $response = $client->getResponse();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -396,10 +466,21 @@ class DefaultControllerTest extends WebTestCase
         $uuid = Uuid::v4();
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg', 8922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+            8922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
+        $client->request(
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
+        );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         
@@ -420,14 +501,28 @@ class DefaultControllerTest extends WebTestCase
         $uuid = Uuid::v4();
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg', 8922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+            8922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
+        $client->request(
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
+        );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . Uuid::v4() . '/' . $uuid . '/edit');
+        $crawler = $client->request(
+            'GET',
+            '/api/sword/2.0/cont-iri/' . Uuid::v4() . '/' . $uuid . '/edit'
+        );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
         
@@ -445,7 +540,10 @@ class DefaultControllerTest extends WebTestCase
 
         $client = static::createClient();
         
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid . '/edit');
+        $crawler = $client->request(
+            'GET',
+            '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid . '/edit'
+        );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
 
@@ -461,7 +559,11 @@ class DefaultControllerTest extends WebTestCase
         $uuid = Uuid::v4();
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg', 8922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+            8922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
         $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
@@ -484,10 +586,21 @@ class DefaultControllerTest extends WebTestCase
         $uuid = Uuid::v4();
         $depositXml = $this->createDepositXML($uuid);
         $this->addContentItem(
-            $depositXml, 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg', 8922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+            8922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
+        $client->request(
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
+        );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         
@@ -509,7 +622,10 @@ class DefaultControllerTest extends WebTestCase
 
         $client = static::createClient();
         
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid);
+        $crawler = $client->request(
+            'GET',
+            '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid
+        );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
 
@@ -526,17 +642,31 @@ class DefaultControllerTest extends WebTestCase
         $depositXml = $this->createDepositXML($uuid);
         $url = 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg';
         $this->addContentItem(
-            $depositXml, $url, 8922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            $url,
+            8922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
+        $crawler = $client->request(
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
+        );
         $response = $client->getResponse();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
 
-        $crawler = $client->request('GET', '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid);
+        $crawler = $client->request(
+            'GET',
+            '/api/sword/2.0/cont-iri/' . self::UUID . '/' . $uuid
+        );
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $responseXml = $this->getSimpleXML($response->getContent());
@@ -576,10 +706,21 @@ class DefaultControllerTest extends WebTestCase
         $depositXml = $this->createDepositXML($uuid);
         $url = 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg';
         $this->addContentItem(
-            $depositXml, $url, 8922, 'md5', 'ed5697c06b97f95e1221f857a3c08661'
+            $depositXml,
+            $url,
+            8922,
+            'md5',
+            'ed5697c06b97f95e1221f857a3c08661'
         );
         $client = static::createClient();
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . self::UUID, array(), array(), array(), $depositXml->asXML());
+        $crawler = $client->request(
+            'POST',
+            '/api/sword/2.0/col-iri/' . self::UUID,
+            array(),
+            array(),
+            array(),
+            $depositXml->asXML()
+        );
         $response = $client->getResponse();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());

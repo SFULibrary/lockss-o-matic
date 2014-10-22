@@ -43,8 +43,12 @@ class HostMismatchException extends BadRequestException
      * @param array $headers
      * @param int $code
      */
-    public function __construct($message = '', \Exception $previous = null, array $headers = array(), $code = 0)
-    {
+    public function __construct(
+        $message = '',
+        \Exception $previous = null,
+        array $headers = array(),
+        $code = 0
+) {
         $str =  'Content URL does not match a corresponding LOCKSS permission '
                 . 'URL. One or more content URLs is either unparseable or '
                 . 'points to a host which is different from the content '
