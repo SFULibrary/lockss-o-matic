@@ -26,7 +26,7 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Controller;
 
-use Symfony\Component\HttpKernel\Tests\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * BoxStatus controller.
