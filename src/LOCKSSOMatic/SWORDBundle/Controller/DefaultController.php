@@ -284,7 +284,7 @@ class DefaultController extends Controller
         // less than the maxFileSize and must share a common host name with
         // the content provider's permissions url.
         // @TODO move this to contentProvider.getPermissionHost().
-        $permissionHost = parse_url($contentProvider->getPermissionUrl(), PHP_URL_HOST);
+        $permissionHost = $contentProvider->getPermissionHost();
         foreach ($atomEntry->children(Namespaces::LOM) as $contentChunk) {
             $contentHost = parse_url((string) $contentChunk, PHP_URL_HOST);
             if ($permissionHost !== $contentHost) {
@@ -335,7 +335,7 @@ class DefaultController extends Controller
     /**
      * Returns a deposit receipt, in response to a request to the SWORD Edit-IRI.
      *
-     * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
+     * @param integer $collectionId The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
      * @return string The Deposit Receipt response.
      */
