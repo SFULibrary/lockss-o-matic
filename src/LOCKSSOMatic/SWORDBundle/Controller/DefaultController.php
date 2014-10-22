@@ -1,5 +1,29 @@
 <?php
 
+/* 
+ * The MIT License
+ *
+ * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\SWORDBundle\Controller;
 
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
@@ -18,6 +42,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Controller for all SWORD requests. Error handling is done through
+ * subclasses of LOCKSSOMatic\SWORDBundle\Exceptions\ApiException which are caught
+ * in an event listener and handled appropriately.
+ *
+ * The event listener also handles unknown exceptions.
+ *
+ * @see LOCKSSOMatic\SWORDBundle\EventListener\SWORDEventListener
+ */
 class DefaultController extends Controller
 {
 
@@ -101,9 +134,12 @@ class DefaultController extends Controller
     }
 
     /**
+     * Get a content provider for a UUID.
      *
      * @param type $uuid
-     * @return ContentProviders
+     * @return type
+     *
+     * @throws TargetOwnerUnknownException if the uuid does not match any provider.
      */
     private function getContentProvider($uuid = null)
     {
@@ -118,6 +154,14 @@ class DefaultController extends Controller
         return $contentProvider;
     }
 
+    /**
+     * Get a deposit for a UUID
+     *
+     * @param type $uuid
+     * @return type
+     *
+     * @throws DepositUnknownException if the UUID does not match any deposit.
+     */
     private function getDeposit($uuid = null)
     {
         $deposit = $this
@@ -132,6 +176,14 @@ class DefaultController extends Controller
         return $deposit;
     }
     
+    /**
+     * Ensure that a deposit matches a content provider.
+     *
+     * @param Deposits $deposit
+     * @param ContentProviders $contentProvider
+     *
+     * @throws BadRequestException if the deposit does not belong to the provider.
+     */
     private function matchDepositToProvider(Deposits $deposit, ContentProviders $contentProvider)
     {
         if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
@@ -139,6 +191,15 @@ class DefaultController extends Controller
         }
     }
     
+    /**
+     * Get a content entity from the database, based on a deposit and URL.
+     *
+     * @param type $deposit
+     * @param type $url
+     * @return Content
+     *
+     * @throws BadRequestException if the content cannot be found.
+     */
     private function getContent($deposit, $url)
     {
         $content = $this
@@ -185,6 +246,18 @@ class DefaultController extends Controller
      *
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return string The Deposit Receipt response.
+     */
+    
+    /**
+     * Controller for the Col-IRI (create resource) request.
+     *
+     * @param Request $request
+     * @param type $contentProviderId
+     * @return type
+     *
+     * @throws BadRequestException
+     * @throws HostMismatchException
+     * @throws MaxUploadSizeExceededException
      */
     public function createDepositAction(Request $request, $contentProviderId)
     {
@@ -273,6 +346,14 @@ class DefaultController extends Controller
         return $this->renderDepositReceipt($contentProvider, $deposit);
     }
 
+    /**
+     * Render and return a deposit receipt. This isn't a controller action, but is used by
+     * controller actions.
+     *
+     * @param type $contentProvider
+     * @param type $deposit
+     * @return type
+     */
     private function renderDepositReceipt($contentProvider, $deposit)
     {
         // @TODO this should be a call to render depsoitReceiptAction() or something.
@@ -292,7 +373,7 @@ class DefaultController extends Controller
      * Controller for the SWORD Statement request.
      *
      * @param integer $contentProviderId The SWORD Collection ID (same as the original On-Behalf-Of value).
-     * @param string $uuid The UUID of the resource as provided by the content provider on resource creation.
+     * @param string $uuid The UUID of the deposit as provided by the content provider on resource creation.
      * @return string The Statement response.
      */
     public function swordStatementAction($contentProviderId, $uuid)
@@ -333,15 +414,11 @@ class DefaultController extends Controller
      *
      * Section 6.4 of the SWORD spec.
      *
-     * @param Request $request
      * @param integer $contentProviderId
      * @param string $uuid
      */
-    public function viewDepositAction(Request $request, $contentProviderId, $uuid)
+    public function viewDepositAction($contentProviderId, $uuid)
     {
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/xml');
-
         $contentProvider = $this->getContentProvider($contentProviderId);
         $deposit = $this->getDeposit($uuid);
         $this->matchDepositToProvider($deposit, $contentProvider);

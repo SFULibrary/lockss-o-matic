@@ -1,5 +1,29 @@
 <?php
 
+/* 
+ * The MIT License
+ *
+ * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\SWORDBundle\EventListener;
 
 use LOCKSSOMatic\SWORDBundle\Controller\DefaultController as SWORDController;
@@ -10,6 +34,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 
+/**
+ * Event listener for the SWORD bundle. This listener intercepts exceptions
+ * and renders them as SWORD error documents.
+ *
+ * The listener only involves itself in ApiException objects, or when the
+ * active controller is the SWORD controller.
+ */
 class SWORDEventListener
 {
 
@@ -28,12 +59,23 @@ class SWORDEventListener
      */
     private $logger;
 
+    /**
+     * Construct the logger. Parameters are configured in services.yml.
+     *
+     * @param TwigEngine $templating
+     * @param Logger $logger
+     */
     public function __construct(TwigEngine $templating, Logger $logger)
     {
         $this->templating = $templating;
         $this->logger = $logger;
     }
 
+    /**
+     * Catch the uncaught exceptions, and produce an error document.
+     *
+     * @param GetResponseForExceptionEvent $event
+     */
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
         $exception = $event->getException();
@@ -60,9 +102,16 @@ class SWORDEventListener
                 array('exception' => $exception)
             ));
             $event->setResponse($response);
+            return;
         }
     }
 
+    /**
+     * Once the controller has been initialized, this event is fired. Grab
+     * a reference to the active controller.
+     *
+     * @param FilterControllerEvent $event
+     */
     public function onKernelController(FilterControllerEvent $event)
     {
         $this->controller = $event->getController();
