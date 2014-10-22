@@ -411,6 +411,15 @@ class ContentProviders
     {
         return $this->permissionUrl;
     }
+    
+    /**
+     * Get the hostname from the permission URL
+     * 
+     * @return string
+     */
+    public function getPermissionHost() {
+        return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
+    }
 
     /**
      * Set plugin
