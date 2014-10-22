@@ -63,7 +63,7 @@ class DefaultControllerTest extends WebTestCase
     private function addContentItem($xml, $url, $size, $csType, $csValue)
     {
         $content = $xml->addChild('content', $url, Namespaces::LOM);
-        if($size !== null) {
+        if ($size !== null) {
             $content->addAttribute('size', $size);
         }
         $content->addAttribute('checksumType', $csType);
@@ -293,7 +293,7 @@ class DefaultControllerTest extends WebTestCase
 
         //6.3.3. Creating a Resource with an Atom Entry
     public function testCreateResourceNoFilesize()
-    {
+        {
         $client = static::createClient();
         $uuid = Uuid::v4();
 

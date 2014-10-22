@@ -75,11 +75,11 @@ class DefaultController extends Controller
         foreach ($headers as $h) {
             $value = $request->headers->get($h);
             if (in_array(
-                            $value,
-                            array(
+                $value,
+                array(
                         'true',
                         'false')
-                    )) {
+            )) {
                 return $value == 'true';
             }
         }
@@ -132,13 +132,15 @@ class DefaultController extends Controller
         return $deposit;
     }
     
-    private function matchDepositToProvider(Deposits $deposit, ContentProviders $contentProvider) {
+    private function matchDepositToProvider(Deposits $deposit, ContentProviders $contentProvider)
+    {
         if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
             throw new BadRequestException('Deposit or Content Provider incorrect. The requested deposit does not belong to the requested content provider.');
-        }        
+        }
     }
     
-    private function getContent($deposit, $url) {
+    private function getContent($deposit, $url)
+    {
         $content = $this
                 ->getDoctrine()
                 ->getRepository('LOCKSSOMaticCRUDBundle:Content')
@@ -146,7 +148,7 @@ class DefaultController extends Controller
                     'url' => $url,
                     'deposit' => $deposit,
                 ));
-        if($content === null) {
+        if ($content === null) {
             throw new BadRequestException('Content item not in database: ' . $url);
         }
         
@@ -167,13 +169,13 @@ class DefaultController extends Controller
         $onBehalfOf = $this->getOnBehalfOfHeader($request);
 
         $contentProvider = $this->getContentProvider($onBehalfOf);
-
+        
         $response = $this->render(
             'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
             array(
                     'contentProvider' => $contentProvider,
                 )
-            );
+        );
         $response->headers->set('Content-type', 'text/xml');
         return $response;
     }
@@ -204,7 +206,7 @@ class DefaultController extends Controller
         // the content provider's permissions url.
         // @TODO move this to contentProvider.getPermissionHost().
         $permissionHost = parse_url(
-                $contentProvider->getPermissionUrl(), PHP_URL_HOST
+            $contentProvider->getPermissionUrl(), PHP_URL_HOST
         );
         foreach ($atomEntry->children(Namespaces::LOM) as $contentChunk) {
             $contentHost = parse_url((string) $contentChunk, PHP_URL_HOST);
@@ -230,8 +232,8 @@ class DefaultController extends Controller
             $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
             $au = $this->getDestinationAu(
-                    $inProgress, $contentProviderId,
-                    $contentChunk[0]->attributes()->size
+                $inProgress, $contentProviderId,
+                $contentChunk[0]->attributes()->size
             );
             $content->setAu($au);
             $content->setRecrawl(1);
@@ -241,8 +243,8 @@ class DefaultController extends Controller
 
         $response = $this->renderDepositReceipt($contentProvider, $deposit);
         $editIri = $this->get('router')->generate(
-                'lockssomatic_deposit_receipt',
-                array(
+            'lockssomatic_deposit_receipt',
+            array(
             'contentProviderId' => $contentProviderId,
             'uuid'              => $deposit->getUuid()
                 )
@@ -276,8 +278,8 @@ class DefaultController extends Controller
         // @TODO this should be a call to render depsoitReceiptAction() or something.
         // Return the deposit receipt.
         $response = $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
-                array(
+            'LOCKSSOMaticSWORDBundle:Default:depositReceipt.xml.twig',
+            array(
             'contentProvider' => $contentProvider,
             'deposit'         => $deposit
                 )
@@ -309,13 +311,13 @@ class DefaultController extends Controller
         foreach ($content as $item) {
             foreach ($boxes as $box) {
                 $status[$item->getId()][$box->getId()] = 'unknown';
-                // get the item's status from the box via http request.                
+                // get the item's status from the box via http request.
             }
         }
 
         return $this->render(
-                        'LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
-                        array(
+            'LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
+            array(
                     'contentProvider' => $contentProvider,
                     'boxes'           => $boxes,
                     'deposit'         => $deposit,
@@ -345,8 +347,8 @@ class DefaultController extends Controller
         $this->matchDepositToProvider($deposit, $contentProvider);
 
         $response = $this->render(
-                'LOCKSSOMaticSWORDBundle:Default:viewDeposit.xml.twig',
-                array(
+            'LOCKSSOMaticSWORDBundle:Default:viewDeposit.xml.twig',
+            array(
             'contentProvider' => $contentProvider,
             'deposit'         => $deposit
                 )
@@ -389,8 +391,8 @@ class DefaultController extends Controller
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
             try {
                 $content = $this->getContent($deposit, (string)$contentChunk);
-            } catch(Exception $e) {
-                continue; 
+            } catch (Exception $e) {
+                continue;
                 // this is not an exception according to the SWORD spec.
                 // Well, 6.5.2 of the SWORD spec is silent on the issue.
             }
@@ -430,5 +432,4 @@ class DefaultController extends Controller
                 ->find(1);
         return $au;
     }
-
 }

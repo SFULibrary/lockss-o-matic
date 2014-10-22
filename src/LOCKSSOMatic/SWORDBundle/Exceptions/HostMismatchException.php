@@ -4,7 +4,8 @@ namespace LOCKSSOMatic\SWORDBundle\Exceptions;
 
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
 
-class HostMismatchException extends BadRequestException{
+class HostMismatchException extends BadRequestException
+{
     
     public function __construct($message = '', \Exception $previous = null, array $headers = array(), $code = 0)
     {
@@ -14,5 +15,4 @@ class HostMismatchException extends BadRequestException{
                 . 'provider\'s permission statement host.';
         parent::__construct($str . $message, $previous, $headers, $code);
     }
-    
 }

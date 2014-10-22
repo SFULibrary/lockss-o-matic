@@ -4,7 +4,8 @@ namespace LOCKSSOMatic\SWORDBundle\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-abstract class ApiException extends HttpException {
+abstract class ApiException extends HttpException
+{
     
     protected $errorUri = '';
     
@@ -14,8 +15,8 @@ abstract class ApiException extends HttpException {
         $this->headers['Content-type'] = 'text/xml';
     }
     
-    public function getErrorUri() {
+    public function getErrorUri()
+    {
         return $this->errorUri;
     }
-    
 }
