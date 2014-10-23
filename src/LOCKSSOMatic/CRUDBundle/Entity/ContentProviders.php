@@ -390,6 +390,18 @@ class ContentProviders
 
         return $this;
     }
+    
+    /**
+     * Generate a UUID for the provider if it does not have one.
+     * 
+     * Called automatically by doctrine before creating a record for the entity
+     * in the database.
+     */
+    public function generateUuid() {
+        if($this->uuid === null) {
+            $this->uuid = \J20\Uuid\Uuid::v4();
+        }
+    }
 
     /**
      * Get uuid
