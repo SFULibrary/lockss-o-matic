@@ -25,14 +25,6 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
-doctrine:
-    dbal:
-        # variables are defined in parameters.yml
-        host: 127.0.0.1
-        dbname: lomtest
-        user: lomtest
-        password: abc123
-
 monolog:
     handlers:
         main:
@@ -42,3 +34,10 @@ monolog:
         console:
             type:   console
             bubble: false
+#doctrine:
+#    dbal:
+#        # variables are defined in parameters.yml
+#        host: 127.0.0.1
+#        dbname: lomtest
+#        user: lomtest
+#        password: abc123
