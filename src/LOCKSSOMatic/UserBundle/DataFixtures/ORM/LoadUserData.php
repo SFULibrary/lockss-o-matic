@@ -96,8 +96,6 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         if ($role !== null) {
             $user->addRole($role);
         }
-        $user->setPassword('$2y$12$et77fvuoslwsk440c04g4u6S86lV9OR752BePdUOK8ad.IN2Kts7K');
-        // supersecret
         $user->setPlainPassword('supersecret');
         $manager->persist($user);
 
