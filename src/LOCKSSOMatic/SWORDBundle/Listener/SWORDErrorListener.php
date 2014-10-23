@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\SWORDBundle\EventListener;
+namespace LOCKSSOMatic\SWORDBundle\Listener;
 
 use LOCKSSOMatic\SWORDBundle\Controller\DefaultController as SWORDController;
 use LOCKSSOMatic\SWORDBundle\Exceptions\ApiException;
@@ -41,7 +41,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
  * The listener only involves itself in ApiException objects, or when the
  * active controller is the SWORD controller.
  */
-class SWORDEventListener
+class SWORDErrorListener
 {
 
     /**

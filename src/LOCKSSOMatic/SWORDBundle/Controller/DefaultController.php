@@ -30,6 +30,7 @@ use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\SWORDBundle\EventListener\SWORDErrorListener;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\DepositUnknownException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\HostMismatchException;
@@ -49,7 +50,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * The event listener also handles unknown exceptions.
  *
- * @see LOCKSSOMatic\SWORDBundle\EventListener\SWORDEventListener
+ * @see SWORDErrorListener
  */
 class DefaultController extends Controller
 {
