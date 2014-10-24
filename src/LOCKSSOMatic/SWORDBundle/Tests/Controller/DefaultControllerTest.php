@@ -28,7 +28,7 @@ namespace LOCKSSOMatic\SWORDBundle\Tests\Controller;
 
 use Doctrine\ORM\EntityManager;
 use J20\Uuid\Uuid;
-use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -37,20 +37,51 @@ use Symfony\Component\HttpFoundation\Response;
 class DefaultControllerTest extends WebTestCase
 {
     /**
-     * UUID used in the contentProvider data fixture.
-     */
-    const UUID='f705d95b-7a0a-451c-a51e-242bc4ab53cf';
-
-    /**
      *
      * @var Namespaces
      */
     private $namespaces;
 
+    /**
+     * @var EntityManager
+     */
+    private static $em;
+    
+    /**
+     * @var ContentProviders
+     */
+    private static $provider;
+        
+    // called before the the class is run.
+    public static function setUpBeforeClass()
+    {
+        $provider = new ContentProviders();
+        $provider->setType('test');
+        $provider->setName('Test provider 1');
+        $provider->setIpAddress('127.0.0.1');
+        $provider->setHostname('provider.example.com');
+        $provider->setChecksumType('md5');
+        $provider->setMaxFileSize('1000'); // in kB
+        $provider->setMaxAuSize('1000000'); // also in kB
+        $provider->setPermissionUrl('http://example.com/path/to/permissions');
+        static::$em->persist($provider);
+        static::$em->flush();
+        static::$provider = $provider;
+    }
+    
+    public static function tearDownAfterClass()
+    {
+        static::$em->remove(static::$provider);
+        static::$em->flush();
+    }
+    
     public function __construct()
     {
         parent::__construct();
+        static::bootKernel();
+        
         $this->namespaces = new Namespaces();
+        static::$em = static::$kernel->getContainer()->get('doctrine')->getManager();
     }
 
     /**
@@ -94,8 +125,6 @@ class DefaultControllerTest extends WebTestCase
         $content->addAttribute('checksumValue', $csValue);
     }
 
-    // MUST CREATE A CONTENT PROVIDER ID FOR THIS TO WORK.
-    // AND the content provider must have set the maxUploadSize and uploadChecksumType=md5
     public function testServiceDocument()
     {
         $client = static::createClient();
@@ -105,7 +134,7 @@ class DefaultControllerTest extends WebTestCase
             '/api/sword/2.0/sd-iri',
             array(),
             array(),
-            array('HTTP_X-On-Behalf-Of' => self::UUID)
+            array('HTTP_X-On-Behalf-Of' => self::$provider->getUuid())
         );
 
         $response = $client->getResponse();
@@ -118,8 +147,8 @@ class DefaultControllerTest extends WebTestCase
         $this->assertGreaterThan(1, $xml->children(Namespaces::SWORD)->maxUploadSize[0]);
         $this->assertEquals('md5', $xml->children(Namespaces::LOM)->uploadChecksumType[0]);
 
-        foreach ($xml->xpath('//collection') as $coll) {
-            $this->assertRegExp('[/api/sword/2.0/col-iri/.{36}$]', $coll['href']);
+        foreach ($xml->xpath('//app:collection') as $coll) {
+            $this->assertStringEndsWith('/api/sword/2.0/col-iri/' . self::$provider->getUuid(), (string)$coll['href']);
         }
 
         $tmp = $xml->xpath('//app:accept/text()');
