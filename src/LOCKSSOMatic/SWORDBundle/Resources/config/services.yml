@@ -3,7 +3,7 @@ parameters:
 
 services:
     kernel.listener.sword_exception_listener:
-        class: LOCKSSOMatic\SWORDBundle\ErrorListener\SWORDErrorListener
+        class: LOCKSSOMatic\SWORDBundle\Listener\SWORDErrorListener
         arguments: [@templating, @logger]
         tags:
             - {name: kernel.event_listener, event: kernel.exception, method: onKernelException} 

@@ -30,7 +30,7 @@ use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
-use LOCKSSOMatic\SWORDBundle\EventListener\SWORDErrorListener;
+use LOCKSSOMatic\SWORDBundle\Listener\SWORDErrorListener;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\DepositUnknownException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\HostMismatchException;
