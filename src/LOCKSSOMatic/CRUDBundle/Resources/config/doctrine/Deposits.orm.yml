@@ -6,7 +6,8 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             inversedBy: deposits
             joinColumn:
                 name: content_providers_id
-                referencedColumnName: id    
+                referencedColumnName: id
+                onDelete: cascade
     oneToMany:
         content:
             targetEntity: Content

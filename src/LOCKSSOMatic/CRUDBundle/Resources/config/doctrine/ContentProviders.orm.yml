@@ -6,23 +6,26 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             inversedBy: contentProviders
             joinColumn:
                 name: content_owners_id
-                referencedColumnName: id
+                referencedColumnName: id                
+                onDelete: cascade
         pln:
             targetEntity: Plns
             inversedBy: contentProviders
             joinColumn:
                 name: plns_id
                 referencedColumnName: id
+                onDelete: cascade
         plugin:
             targetEntity: Plugins
             inversedBy: contentProviders
             joinColumn:
                 name: plugins_id
                 referencedColumnName: id
+                onDelete: cascade
     oneToMany:
         deposits:
             targetEntity: Deposits
-            mappedBy: contentProvider    
+            mappedBy: contentProvider  
     table: content_providers
     indexes:
         content_owners_id_idx:
