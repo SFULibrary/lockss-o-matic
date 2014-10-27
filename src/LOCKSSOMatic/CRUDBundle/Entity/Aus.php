@@ -209,11 +209,25 @@ class Aus
     /**
      * Get content
      *
-     * @return Collection
+     * @return Content
      */
     public function getContent()
     {
         return $this->content;
+    }
+    
+    /**
+     * Get the total size of the AU by adding the size of the 
+     * content items. Returns size in kB (1,000 bytes).
+     * 
+     * @return int
+     */
+    public function getContentSize() {
+        $size = 0;
+        foreach($this->getContent() as $content) {
+            $size += $content->getSize();
+        }
+        return $size;
     }
 
     /**
