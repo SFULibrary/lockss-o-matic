@@ -92,6 +92,7 @@ class ContentProviders
     public function __construct()
     {
         $this->deposits = new ArrayCollection();
+        $this->aus = new ArrayCollection();
     }
 
     /**
@@ -445,25 +446,27 @@ class ContentProviders
     }
 
     /**
-     * Add aus
+     * Add aus. Sets the AUs contentProvider automatically.
      *
      * @param Aus $aus
      * @return ContentProviders
      */
     public function addAus(Aus $aus)
     {
+        $aus->setContentProvider($this);
         $this->aus[] = $aus;
 
         return $this;
     }
 
     /**
-     * Remove aus
+     * Remove aus. Clear's the AUs content provider.
      *
      * @param Aus $aus
      */
     public function removeAus(Aus $aus)
     {
+        $aus->setContentProvider();
         $this->aus->removeElement($aus);
     }
 
@@ -499,7 +502,25 @@ class ContentProviders
         }
 
         $au = new Aus();
-        $au->setContentProvider($this);
+        $this->addAus($au);
+        return $au;
+    }
+    
+    /**
+     * Get a new AU and close any existing, open AU.
+     */
+    public function getNewAu() {
+        $callback = function(Aus $au) {
+            return $au->getOpen() === true;
+        };
+        
+        $aus = $this->getAus()->filter($callback);
+        foreach($aus as $au) {
+            $au->setOpen(false);
+        }
+        $au = new Aus();
+        $au->setOpen(true);
+        $this->addAus($au);
         return $au;
     }
 
