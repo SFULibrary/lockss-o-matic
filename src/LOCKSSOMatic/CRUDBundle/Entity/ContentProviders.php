@@ -538,6 +538,8 @@ class ContentProviders
     
     /**
      * Get a new AU and close any existing, open AU.
+     * 
+     * @return Aus
      */
     public function getNewAu() {
         $callback = function(Aus $au) {
@@ -550,6 +552,9 @@ class ContentProviders
         }
         $au = new Aus();
         $au->setOpen(true);
+        $au->setManaged(true);
+        $au->setAuid('generated-au');
+        $au->setManifestUrl('http://provider.example.com');
         $this->addAus($au);
         return $au;
     }

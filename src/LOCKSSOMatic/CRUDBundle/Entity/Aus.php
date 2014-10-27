@@ -92,6 +92,7 @@ class Aus
         $this->content = new ArrayCollection();
         $this->auStatus = new ArrayCollection();
         $this->auProperties = new ArrayCollection();
+        $this->managed = true;
     }
 
     /**
@@ -101,7 +102,7 @@ class Aus
      */
     public function __toString()
     {
-        return sprintf('%d (%s)', array($this->id, $this->plugin->getName()));
+        return sprintf('AU %d', array($this->id));
     }
     
     /**

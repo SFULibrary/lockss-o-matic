@@ -47,6 +47,8 @@ class DefaultControllerTest extends WebTestCase
      * @var EntityManager
      */
     private static $em;
+    
+    private static $logger;
 
     /**
      * @var ContentProviders
@@ -68,10 +70,22 @@ class DefaultControllerTest extends WebTestCase
         static::$em->persist($provider);
         static::$em->flush();
         static::$provider = $provider;
+        static::$logger->error('steup');
     }
 
     public static function tearDownAfterClass()
     {
+        $em = static::$em;
+        $em->refresh(self::$provider);
+        foreach(static::$provider->getDeposits() as $deposit) {
+            foreach($deposit->getContent() as $content) {
+                $em->remove($content);
+            }
+            $em->remove($deposit);
+        }
+        foreach(static::$provider->getAus() as $au) {
+            $em->remove($au);
+        }
         static::$em->remove(static::$provider);
         static::$em->flush();
     }
@@ -83,6 +97,7 @@ class DefaultControllerTest extends WebTestCase
 
         $this->namespaces = new Namespaces();
         static::$em = static::$kernel->getContainer()->get('doctrine')->getManager();
+        static::$logger = static::$kernel->getContainer()->get('logger');
     }
 
     /**
@@ -285,6 +300,8 @@ class DefaultControllerTest extends WebTestCase
         $client = $this->postDeposit($depositXml, self::$provider->getUuid());
         $response = $client->getResponse();
 
+        $client->getContainer()->get('logger')->log('error', $response->getContent());
+        
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
