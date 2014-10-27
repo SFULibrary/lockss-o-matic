@@ -26,17 +26,18 @@
 
 namespace LOCKSSOMatic\SWORDBundle\Controller;
 
+use LOCKSSOMatic\CRUDBundle\Entity\Content;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
-use LOCKSSOMatic\SWORDBundle\Listener\SWORDErrorListener;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\DepositUnknownException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\HostMismatchException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\MaxUploadSizeExceededException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\OnBehalfOfMissingException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\TargetOwnerUnknownException;
+use LOCKSSOMatic\SWORDBundle\Listener\SWORDErrorListener;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -90,34 +91,6 @@ class DefaultController extends Controller
             }
         }
         throw new OnBehalfOfMissingException();
-    }
-
-    /**
-     * Get the value of the in-progress HTTP header, which must be either
-     * true or false. Returns false if the header is not present or is a
-     * value other than true or false.
-     *
-     * @param Request $request
-     * @return boolean
-     */
-    private function getInProgressHeader(Request $request)
-    {
-        $headers = array(
-            'x-in-progress',
-            'in-progress'
-        );
-        foreach ($headers as $h) {
-            $value = $request->headers->get($h);
-            if (in_array(
-                $value,
-                array(
-                        'true',
-                        'false')
-            )) {
-                return $value == 'true';
-            }
-        }
-        return false;
     }
 
     /**
@@ -265,7 +238,6 @@ class DefaultController extends Controller
      */
     public function createDepositAction(Request $request, $contentProviderId)
     {
-        $inProgress = $this->getInProgressHeader($request);
         $em = $this->getDoctrine()->getManager();
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
@@ -310,9 +282,8 @@ class DefaultController extends Controller
             $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
             $au = $this->getDestinationAu(
-                $inProgress,
-                $contentProviderId,
-                $contentChunk[0]->attributes()->size
+                $contentProvider,
+                $contentChunk
             );
             $content->setAu($au);
             $content->setRecrawl(1);
@@ -502,15 +473,8 @@ class DefaultController extends Controller
      * @param string $contentSize The size of the content, in kB.
      * @return object $au.
      */
-    public function getDestinationAu($inProgress, $contentProviderId, $contentSize)
-    {
-        // @todo: For open AUs, if $contentSize is less than remaining capacity
-        // of the newest AU for the Content Provider, put the content in this AU.
-        // If $contentSize is greater, create a new AU and put the content in this
-        // one. For closed AUs, create a new AU and put all content in this deposit
-        // in it.
-        //
-        // Query for the Au. For now, just pick the Au with id 1.
+    public function getDestinationAu(ContentProviders $contentProvider, SimpleXMLElement $contentXml)
+    {        
         $au = $this->getDoctrine()
                 ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')
                 ->find(1);
