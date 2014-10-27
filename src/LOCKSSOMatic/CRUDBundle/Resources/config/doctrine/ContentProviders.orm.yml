@@ -22,7 +22,10 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
     oneToMany:
         deposits:
             targetEntity: Deposits
-            mappedBy: contentProvider    
+            mappedBy: contentProvider
+        aus:
+            targetEntity: Aus
+            mappedBy: contentProvider
     table: content_providers
     indexes:
         content_owners_id_idx:

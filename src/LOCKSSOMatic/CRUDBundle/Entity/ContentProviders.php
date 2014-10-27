@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
  */
 class ContentProviders
 {
+
     /**
      * @var integer
      */
@@ -76,9 +77,14 @@ class ContentProviders
     private $permissionUrl;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plugins
+     * @var Plugins
      */
     private $plugin;
+
+    /**
+     * @var Collection
+     */
+    private $aus;
 
     /**
      * Constructor
@@ -397,10 +403,10 @@ class ContentProviders
     /**
      * Set plugin
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin
+     * @param Plugins $plugin
      * @return ContentProviders
      */
-    public function setPlugin(\LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin = null)
+    public function setPlugin(Plugins $plugin = null)
     {
         $this->plugin = $plugin;
 
@@ -410,10 +416,70 @@ class ContentProviders
     /**
      * Get plugin
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plugins 
+     * @return Plugins 
      */
     public function getPlugin()
     {
         return $this->plugin;
     }
+
+    /**
+     * Add aus
+     *
+     * @param Aus $aus
+     * @return ContentProviders
+     */
+    public function addAus(Aus $aus)
+    {
+        $this->aus[] = $aus;
+
+        return $this;
+    }
+
+    /**
+     * Remove aus
+     *
+     * @param Aus $aus
+     */
+    public function removeAus(Aus $aus)
+    {
+        $this->aus->removeElement($aus);
+    }
+
+    /**
+     * Get aus
+     *
+     * @return Collection 
+     */
+    public function getAus()
+    {
+        return $this->aus;
+    }
+
+    /**
+     * Get the open AU for the content provider, or create a new one
+     * if necessary.
+     * 
+     * @return Aus
+     */
+    public function getOpenAu()
+    {
+        $callback = function(Aus $au) {
+            return $au->getOpen() === true;
+        };
+        
+        $aus = $this->getAus()->filter($callback);
+        if($aus->count() === 1) {
+            return $aus->last();
+        }
+        if ($aus->count() > 1) {
+            // this is an error.
+            return $aus->last();
+        }
+
+        $au = new Aus();
+        $au->setContentProvider($this);
+        return $au;
+    }
+
 }

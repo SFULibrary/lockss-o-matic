@@ -185,11 +185,25 @@ class Aus
     /**
      * Get content
      *
-     * @return Collection
+     * @return Content
      */
     public function getContent()
     {
         return $this->content;
+    }
+    
+    /**
+     * Get the total size of the AU by adding the size of the 
+     * content items. Returns size in kB (1,000 bytes).
+     * 
+     * @return int
+     */
+    public function getContentSize() {
+        $size = 0;
+        foreach($this->getContent() as $content) {
+            $size += $content->getSize();
+        }
+        return $size;
     }
 
     /**
@@ -325,5 +339,33 @@ class Aus
     public function getManaged()
     {
         return $this->managed;
+    }
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders
+     */
+    private $contentProvider;
+
+
+    /**
+     * Set contentProvider
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider
+     * @return Aus
+     */
+    public function setContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider = null)
+    {
+        $this->contentProvider = $contentProvider;
+
+        return $this;
+    }
+
+    /**
+     * Get contentProvider
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders 
+     */
+    public function getContentProvider()
+    {
+        return $this->contentProvider;
     }
 }
