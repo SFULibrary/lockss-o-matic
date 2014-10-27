@@ -364,4 +364,32 @@ class Aus
     {
         return $this->managed;
     }
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders
+     */
+    private $contentProvider;
+
+
+    /**
+     * Set contentProvider
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider
+     * @return Aus
+     */
+    public function setContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider = null)
+    {
+        $this->contentProvider = $contentProvider;
+
+        return $this;
+    }
+
+    /**
+     * Get contentProvider
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders 
+     */
+    public function getContentProvider()
+    {
+        return $this->contentProvider;
+    }
 }
