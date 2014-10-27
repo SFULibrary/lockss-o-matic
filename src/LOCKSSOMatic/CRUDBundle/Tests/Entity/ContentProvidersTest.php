@@ -107,9 +107,10 @@ class ContentProvidersTest extends KernelTestCase
         $au->setOpen(0);
         $au->setAuid('test au');
         
-        $newau = $contentProvider->getOpenAu();        
+        $newau = $contentProvider->getOpenAu();
+        $newau->setAuid('newau');
         $this->assertInstanceOf('LOCKSSOMatic\CRUDBundle\Entity\Aus', $newau);
-        $this->assertNull($newau->getAuid()); // not 'test au'
+        $this->assertEquals('newau', $newau->getAuid()); // not 'test au'
     }
     
     public function testGetOpenAuNotEmpty() {
