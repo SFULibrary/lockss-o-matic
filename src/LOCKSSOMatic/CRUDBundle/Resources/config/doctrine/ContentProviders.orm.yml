@@ -85,3 +85,5 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             unsigned: false
             comment: 'The maximum cumulative size for an Archival Unit containing deposits from the content provider, in kB.'
             column: max_au_size            
+    lifecycleCallbacks:
+        prePersist: [generateUuid]
