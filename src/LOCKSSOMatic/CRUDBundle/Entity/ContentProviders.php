@@ -530,10 +530,8 @@ class ContentProviders
             // this is an error.
             return $aus->last();
         }
-
-        $au = new Aus();
-        $this->addAus($au);
-        return $au;
+        
+        return $this->getNewAu();
     }
     
     /**
