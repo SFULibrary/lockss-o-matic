@@ -26,116 +26,123 @@
 
 namespace LOCKSSOMatic\UserBundle\Tests\Controller;
 
+use Doctrine\ORM\EntityManager;
+use LOCKSSOMatic\UserBundle\Entity\User;
+use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\BrowserKit\Cookie;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-use LOCKSSOMatic\DefaultBundle\TestCases\FixturesWebTestCase;
-
-class AdminUserControllerAccessTest extends FixturesWebTestCase
+class AdminUserControllerAccessTest extends WebTestCase
 {
+    /**
+     * @var EntityManager
+     */
+    private static $em;
     
+    /**
+     * @var Logger 
+     */
+    private $logger;
+    
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+    
+    public function __construct()
+    {
+        parent::__construct();        
+        static::bootKernel();
+        $this->container = static::$kernel->getContainer();
+        $this->logger = $this->container->get('logger');
+        self::$em = $this->container->get('doctrine')->getManager();
+    }
+    
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        $user = new User();
+        $user->setUsername('user@example.com');
+        $user->setEmail('user@example.com');
+        $user->setFullname('Test User');
+        $user->setInstitution('Test Institution');
+        $user->setEnabled(true);
+        $user->setPlainPassword('supersecret');
+        self::$em->persist($user);
+        
+        $admin = new User();
+        $admin->setUsername('admin@example.com');
+        $admin->setEmail('admin@example.com');
+        $admin->setFullname('Test User');
+        $admin->setInstitution('Test Institution');
+        $admin->setEnabled(true);
+        $admin->setPlainPassword('supersecret');
+        $admin->addRole('ROLE_ADMIN');
+        self::$em->persist($admin);
+        
+        self::$em->flush();
+    }
+    
+    public static function tearDownAfterClass()
+    {
+        parent::tearDownAfterClass();
+        $user = self::$em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array(
+            'email' => 'user@example.com'
+        ));
+        self::$em->remove($user);
+        $admin = self::$em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array(
+            'email' => 'admin@example.com'
+        ));
+        self::$em->remove($admin);
+        self::$em->flush();
+    }
+
+    public function doLogin($username, $password)
+    {
+        $client = self::createClient();
+        $client->restart();
+        
+        $crawler = $client->request('GET', '/login');
+        $response = $client->getResponse();
+        $form = $crawler->selectButton('Login')->form();
+        $form['_username'] = $username;
+        $form['_password'] = $password;
+        
+        $crawler = $client->submit($form);
+        $response = $client->getResponse();
+        if($response->getStatusCode() !== 200) {
+            $this->logger->error($response->getContent());
+        }
+        return $client;
+    }
+
     public function testAccessControlAnon()
     {
-        $crawler = $this->client->request('GET', '/admin/user/');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
+        $client = self::createClient();
+        $client->restart();
         
-        $crawler = $this->client->request('GET', '/admin/user/2/show');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
-
-        $crawler = $this->client->request('GET', '/admin/user/new');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
-
-        $crawler = $this->client->request('POST', '/admin/user/create');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
-
-        $crawler = $this->client->request('GET', '/admin/user/2/edit');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
-        
-        $crawler = $this->client->request('POST', '/admin/user/2/update');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
-        
-        $crawler = $this->client->request('POST', '/admin/user/2/delete');
-        $response = $this->client->getResponse();
+        $crawler = $client->request('GET', '/admin/user/');
+        $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
     }
     
     public function testAccessControlUser()
     {
+        $client=$this->doLogin('user@example.com', 'supersecret');
         
-        $this->doLogin('user@example.com');
-        
-        $crawler = $this->client->request('GET', '/admin/user/');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-        
-        $crawler = $this->client->request('GET', '/admin/user/2/show');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-
-        $crawler = $this->client->request('GET', '/admin/user/new');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-
-        $crawler = $this->client->request('POST', '/admin/user/create');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-
-        $crawler = $this->client->request('GET', '/admin/user/2/edit');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-        
-        $crawler = $this->client->request('POST', '/admin/user/2/update');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-        
-        $crawler = $this->client->request('POST', '/admin/user/2/delete');
-        $response = $this->client->getResponse();
+        $crawler = $client->request('GET', '/admin/user/');
+        $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
     }
     
     public function testAccessControlAdmin()
     {
-        $this->doLogin('admin@example.com');
+        $client=$this->doLogin('admin@example.com', 'supersecret');
         
-        $crawler = $this->client->request('GET', '/admin/user/');
-        $response = $this->client->getResponse();
+        $crawler = $client->request('GET', '/admin/user/');
+        $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        
-        $crawler = $this->client->request('GET', '/admin/user/2/show');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-
-        $crawler = $this->client->request('GET', '/admin/user/new');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-
-        $crawler = $this->client->request('POST', '/admin/user/create');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-
-        $crawler = $this->client->request('GET', '/admin/user/2/edit');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        
-        $crawler = $this->client->request('POST', '/admin/user/2/update');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        
-        // Not a successful delete - no button clicked. But still a
-        // redirect to the user list. HTTP_FOUND.
-        $crawler = $this->client->request('POST', '/admin/user/2/delete');
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
     }
     
 }

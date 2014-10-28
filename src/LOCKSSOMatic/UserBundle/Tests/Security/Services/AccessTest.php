@@ -26,31 +26,51 @@
 
 namespace LOCKSSOMatic\UserBundle\Tests\Security\Services;
 
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\UserBundle\Security\Serivces\Access;
+use Symfony\Bridge\Monolog\Logger;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-
-use LOCKSSOMatic\DefaultBundle\TestCases\FixturesTestCase;
-
-require_once 'app/AppKernel.php';
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use LOCKSSOMatic\UserBundle\Entity\User;
 
 // http://stackoverflow.com/questions/8455776
 // http://stackoverflow.com/questions/9621016/
 
-class AccessTest extends FixturesTestCase
+class AccessTest extends WebTestCase
 {
+
+    /**
+     * @var EntityManager
+     */
+    private $em;
+    
+    /**
+     * @var Logger 
+     */
+    private $logger;
+    
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
 
     public function __construct()
     {
         parent::__construct();
+        
+        static::bootKernel();
+        $this->container = static::$kernel->getContainer();
+        $this->em = $this->container->get('doctrine')->getManager();
+        $this->logger = $this->container->get('logger');
     }
     
     public function testServiceDefinition()
     {
         $this->assertEquals(
             'LOCKSSOMatic\\UserBundle\\Security\\Services\\Access',
-            get_class($this->get('lom.access'))
+            get_class($this->container->get('lom.access'))
         );
     }
 
@@ -60,55 +80,49 @@ class AccessTest extends FixturesTestCase
     public function testRoleCheckFail()
     {
         // testing roles with fake users is totally fine.
-        self::$container->get('security.context')->setToken(
+        $securityContext = $this->container->get('security.context');
+        $securityContext->setToken(
             new UsernamePasswordToken('testuser', null, 'main', array('ROLE_USER'))
         );
-        $am = $this->get('lom.access');
+        /** @var Access */
+        $am = $this->container->get('lom.access');
         $am->checkAccess('ROLE_PHONY');
     }
 
     public function testRoleCheckSuccess()
     {
         // testing roles with fake users is totally fine.
-        self::$container->get('security.context')->setToken(
+        $this->container->get('security.context')->setToken(
             new UsernamePasswordToken('testuser', null, 'main', array('ROLE_ADMIN'))
         );
-        $am = $this->get('lom.access');
+        $am = $this->container->get('lom.access');
         $am->checkAccess('ROLE_ADMIN');
     }
 
     public function testHasAccess()
     {
-        $em = $this->get('doctrine')->getManager();
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.admin@example.com'));
-        $this->assertNotNull($user);
-        self::$container->get('security.context')->setToken(
+        $user = new User();
+        $user->addRole('ROLE_LOMADMIN');
+        $user->addRole('ROLE_USER');
+
+        $this->container->get('security.context')->setToken(
             new UsernamePasswordToken($user, null, 'main', $user->getRoles())
         );
-        $am = $this->get('lom.access');
+        $am = $this->container->get('lom.access');
         
         // roles
         $this->assertFalse($am->hasAccess('ROLE_ADMIN'));
         $this->assertTrue($am->hasAccess('ROLE_LOMADMIN'));
         $this->assertTrue($am->hasAccess('ROLE_USER'));
-        
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.monitor@example.com'));
-        self::$container->get('security.context')->setToken(
-            new UsernamePasswordToken($user, null, 'main', $user->getRoles())
-        );
-        
-        $this->assertFalse($am->hasAccess('ROLE_ADMIN'));
-        $this->assertFalse($am->hasAccess('ROLE_LOMADMIN'));
-        $this->assertTrue($am->hasAccess('ROLE_USER'));
     }
 
     public function testHasAccessWithUser()
     {
-        $em = $this->get('doctrine')->getManager();
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.admin@example.com'));
-        $em->refresh($user);
+        $user = new User();
+        $user->addRole('ROLE_LOMADMIN');
+        $user->addRole('ROLE_USER');
 
-        $am = $this->get('lom.access');
+        $am = $this->container->get('lom.access');
         
         $this->assertFalse($am->hasAccess('ROLE_ADMIN', null, $user));
         $this->assertTrue($am->hasAccess('ROLE_LOMADMIN', null, $user));
@@ -117,19 +131,17 @@ class AccessTest extends FixturesTestCase
     
     public function testGrantRevokeRole()
     {
-        $em = $this->get('doctrine')->getManager();
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'franklin.admin@example.com'));
-        $em->refresh($user);
+        $user = new User();
+        $user->addRole('ROLE_LOMADMIN');
+        $user->addRole('ROLE_USER');
 
-        $am = $this->get('lom.access');
+        $am = $this->container->get('lom.access');
         
         $this->assertTrue($user->hasRole('ROLE_LOMADMIN'));
         $am->revokeRole('ROLE_LOMADMIN', $user);
-        $em->flush();
         
         $this->assertFalse($user->hasRole('ROLE_LOMADMIN'));
         $am->grantRole('ROLE_LOMADMIN', $user);
         $this->assertTrue($user->hasRole('ROLE_LOMADMIN'));
-        $em->flush();
     }
 }

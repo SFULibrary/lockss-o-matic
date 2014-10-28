@@ -26,65 +26,120 @@
 
 namespace LOCKSSOMatic\UserBundle\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Client;
+use Doctrine\ORM\EntityManager;
+use LOCKSSOMatic\UserBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Form\Form;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
-
-use LOCKSSOMatic\DefaultBundle\TestCases\FixturesWebTestCase;
+use Symfony\Component\HttpKernel\Tests\Logger;
 
 /**
  * Test that the registration controller is properly overridden and 
  * requires an admin user for all actions.
  */
-class ProfileControllerTest extends FixturesWebTestCase
+class ProfileControllerTest extends WebTestCase
 {
+    /**
+     * @var EntityManager
+     */
+    private static $em;
+    
+    /**
+     * @var Logger 
+     */
+    private $logger;
+    
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+    
+    public function __construct()
+    {
+        parent::__construct();        
+        static::bootKernel();
+        $this->container = static::$kernel->getContainer();
+        $this->logger = $this->container->get('logger');
+        self::$em = $this->container->get('doctrine')->getManager();
+    }
+    
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        $user = new User();
+        $user->setUsername('profiletest@example.com');
+        $user->setEmail('profiletest@example.com');
+        $user->setFullname('Test User');
+        $user->setInstitution('Test Institution');
+        $user->setEnabled(true);
+        $user->setPlainPassword('supersecret');
+        
+        self::$em->persist($user);
+        self::$em->flush();
+    }
+    
+    public static function tearDownAfterClass()
+    {
+        parent::tearDownAfterClass();
+        $user = self::$em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array(
+            'email' => 'anonyx@example.com' // gets changed during the test.
+        ));
+        self::$em->remove($user);
+        self::$em->flush();
+    }
 
     public function testAnonProfileAccess()
     {
-        /** @var Crawler */
-        $crawler = $this->client->request('GET', '/profile/');
+        $client = self::createClient();
+        $client->request('GET', '/profile/');
 
         /** @var Response */
-        $response = $this->client->getResponse();
+        $response = $client->getResponse();
         
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
         $this->assertStringEndsWith('/login', $response->headers->get('location'));
     }
 
-    public function testProfileEditAction() {
-        $this->doLogin('user@example.com');
+    public function doLogin($username, $password)
+    {
+        $client = self::createClient();
+        $client->restart();
         
-        /** @var Crawler */
-        $crawler = $this->client->request('GET', '/profile/');
+        $crawler = $client->request('GET', '/login');
+        $response = $client->getResponse();
+        $form = $crawler->selectButton('Login')->form();
+        $form['_username'] = $username;
+        $form['_password'] = $password;
+        
+        $crawler = $client->submit($form);
+        return $client;
+    }
 
-        /** @var Response */
-        $response = $this->client->getResponse();
+    public function testProfileEditAction() {
+        $client = $this->doLogin('profiletest@example.com', 'supersecret');
+        
+        $crawler = $client->request('GET', '/profile/');
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertGreaterThan(0, $crawler->filter('h1:contains("Profile")')->count());
 
-        $crawler = $this->client->request('GET', '/profile/edit');
-        /** @var Form */
+        $crawler = $client->request('GET', '/profile/edit');
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
         $form = $crawler->selectButton('Update')->form();
         $form['fos_user_profile_form[email]'] = 'anonyx@example.com';
         $form['fos_user_profile_form[fullname]'] = 'Anony Xavier';
         $form['fos_user_profile_form[institution]'] = 'A school for the not very gifted';
         $form['fos_user_profile_form[current_password]'] = 'supersecret';        
         
-        $crawler = $this->client->submit($form);
-        $crawler = $this->client->followRedirect();
+        $crawler = $client->submit($form);
+        $this->logger->error($crawler->html());
+        $crawler = $client->followRedirect();
         
         $this->assertGreaterThan(0, $crawler->filter('td:contains("anonyx@example.com")')->count());
         $this->assertGreaterThan(0, $crawler->filter('td:contains("Anony Xavier")')->count());
         $this->assertGreaterThan(0, $crawler->filter('td:contains("A school for the not very gifted")')->count());
-        
-        // make sure the username and email were both updated.
-        $em = $this->get('doctrine')->getManager();
-        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'anonyx@example.com'));
-        $em->refresh($user); // refresh the user - may be cached from a previous test.
-        $this->assertNotNull($user);
-        $this->assertEquals('anonyx@example.com', $user->getEmail());
-        $this->assertEquals('anonyx@example.com', $user->getUsername());
     }
     
 }
