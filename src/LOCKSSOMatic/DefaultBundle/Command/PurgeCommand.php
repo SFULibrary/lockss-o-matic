@@ -84,10 +84,15 @@ class PurgeCommand extends ContainerAwareCommand
             return;
         }
 
+        $question = new ConfirmationQuestion('Load database fixtures y/N? ', false);
+        $fixtures = $helper->ask($input, $output, $question);
+
         $this->exec('doctrine:schema:drop', array('--force' => true), $output);
         $this->exec('doctrine:schema:create', array(), $output);
-        $this->exec('doctrine:fixtures:load', array('--append' => true), $output);
-        $this->exec('cache:clear', array(), $output);
+        if($fixtures) {
+            $this->exec('doctrine:fixtures:load', array('--append' => true), $output);
+        }
+        $this->exec('cache:clear', array('--no-warmup' => true), $output);
         $this->exec('doctrine:cache:clear-metadata', array(), $output);
         $this->exec('doctrine:cache:clear-query', array(), $output);
         $this->exec('doctrine:cache:clear-result', array(), $output);
