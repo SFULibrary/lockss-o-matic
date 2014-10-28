@@ -483,7 +483,6 @@ class ContentProviders
      */
     public function addAus(Aus $aus)
     {
-        $aus->setContentProvider($this);
         $this->aus[] = $aus;
 
         return $this;
@@ -496,7 +495,6 @@ class ContentProviders
      */
     public function removeAus(Aus $aus)
     {
-        $aus->setContentProvider();
         $this->aus->removeElement($aus);
     }
 
@@ -509,52 +507,4 @@ class ContentProviders
     {
         return $this->aus;
     }
-
-    /**
-     * Get the open AU for the content provider, or create a new one
-     * if necessary.
-     * 
-     * @return Aus
-     */
-    public function getOpenAu()
-    {
-        $callback = function(Aus $au) {
-            return $au->getOpen() === true;
-        };
-        
-        $aus = $this->getAus()->filter($callback);
-        if($aus->count() === 1) {
-            return $aus->last();
-        }
-        if ($aus->count() > 1) {
-            // this is an error.
-            return $aus->last();
-        }
-        
-        return $this->getNewAu();
-    }
-    
-    /**
-     * Get a new AU and close any existing, open AU.
-     * 
-     * @return Aus
-     */
-    public function getNewAu() {
-        $callback = function(Aus $au) {
-            return $au->getOpen() === true;
-        };
-        
-        $aus = $this->getAus()->filter($callback);
-        foreach($aus as $au) {
-            $au->setOpen(false);
-        }
-        $au = new Aus();
-        $au->setOpen(true);
-        $au->setManaged(true);
-        $au->setAuid('generated-au');
-        $au->setManifestUrl('http://provider.example.com');
-        $this->addAus($au);
-        return $au;
-    }
-
 }

@@ -76,57 +76,5 @@ class ContentProvidersTest extends KernelTestCase
         $this->assertEquals($id, $contentProvider->getUuid());
         $this->em->remove($contentProvider);        
     }
-
-    public function testAddAu() {
-        $contentProvider = new ContentProviders();
-        $au = new Aus();
-        $contentProvider->addAus($au);
-        
-        $this->assertEquals($contentProvider, $au->getContentProvider());
-        $contentProvider->removeAus($au);
-        
-        $this->assertNull($au->getContentProvider());
-    }
-
-    public function testGetNewAu() {
-        $contentProvider = new ContentProviders();
-        $au1 = $contentProvider->getNewAu();
-        $this->assertTrue($au1->getOpen());
-        
-        $au2 = $contentProvider->getNewAu();
-        $this->assertTrue($au2->getOpen());
-        $this->assertFalse($au1->getOpen());
-    }
-    
-    public function testGetOpenAuEmpty() {
-        $contentProvider = new ContentProviders();
-        $au = $contentProvider->getOpenAu();
-        $this->assertInstanceOf('LOCKSSOMatic\CRUDBundle\Entity\Aus', $au);
-        $this->assertEquals(0, $au->getContent()->count());
-
-        $au->setOpen(0);
-        $au->setAuid('test au');
-        
-        $newau = $contentProvider->getOpenAu();
-        $newau->setAuid('newau');
-        $this->assertInstanceOf('LOCKSSOMatic\CRUDBundle\Entity\Aus', $newau);
-        $this->assertEquals('newau', $newau->getAuid()); // not 'test au'
-    }
-    
-    public function testGetOpenAuNotEmpty() {
-        $contentProvider = new ContentProviders();
-        
-        $au1 = $contentProvider->getNewAu();
-        $au1->setAuid('au');
-        
-        $au2 = $contentProvider->getOpenAu();
-        $this->assertEquals('au', $au2->getAuid());
-        $this->assertEquals($au1, $au2);
-        
-        $au2->setOpen(false);
-        $au3 = $contentProvider->getOpenAu();
-        
-        $this->assertNotEquals($au2, $au3);        
-    }
     
 }
