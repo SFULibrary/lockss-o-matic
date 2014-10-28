@@ -46,6 +46,7 @@ twig:
     strict_variables: "%kernel.debug%"
     globals:
         lom_access: "@lom.access"
+        lom_sitename: "%site_name%"
         
 # Assetic Configuration
 assetic:

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<atom:feed xmlns:sword="http://purl.org/net/sword/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:lom="http://lockssomatic.info/SWORD2">
+  <atom:entry>
+    
+    <atom:category
+        scheme="http://purl.org/net/sword/terms/"
+        term="http://purl.org/net/sword/terms/originalDeposit"
+        label="Orignal Deposit"/>
+    
+    <!-- This lom:content node is for a chunk (i.e. a specific file). During initial testing, details such as LOCKSS box URL and checksums are placeholders. -->
+    <lom:content id="https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg">
+      <lom:serverlist>
+        <lom:server id="1"
+                    state="agreement"
+                    src="http://lockss1.example.org:8083/ServeContent?url=https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg"
+                    checksumType="md5"
+                    checksumValue="fake9b64256fake754086de2fake6b7d"/>
+        <lom:server id="2" state="agreement" src="http://lockss2.example.org:8083/ServeContent?url=https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg" checksumType="md5" checksumValue="fake9b64256fake754086de2fake6b7d"/>
+        <lom:server id="3" state="agreement" src="http://lockss3.example.org:8083/ServeContent?url=https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg" checksumType="md5" checksumValue="fake9b64256fake754086de2fake6b7d"/>
+        <lom:server id="4" state="agreement" src="http://lockss4.example.org:8083/ServeContent?url=https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg" checksumType="md5" checksumValue="fake9b64256fake754086de2fake6b7d"/>
+        <lom:server id="5" state="agreement" src="http://lockss5.example.org:8083/ServeContent?url=https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg" checksumType="md5" checksumValue="fake9b64256fake754086de2fake6b7d"/>
+        <lom:server id="6" state="agreement" src="http://lockss6.example.org:8083/ServeContent?url=https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg" checksumType="md5" checksumValue="fake9b64256fake754086de2fake6b7d"/>
+      </lom:serverlist>
+    </lom:content>
+  </atom:entry>
+</atom:feed>

@@ -1,5 +1,29 @@
 <?php
 
+/* 
+ * The MIT License
+ *
+ * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -42,6 +66,8 @@ class ContentProviders
     private $checksumType;
 
     /**
+     * Maximum size of a single content item, in kB (1,000 bytes).
+     * 
      * @var integer
      */
     private $maxFileSize;
@@ -232,6 +258,8 @@ class ContentProviders
 
     /**
      * Set maxFileSize
+     * 
+     * Maximum size of a single content item, in kB (1,000 bytes).
      *
      * @param integer $maxFileSize
      * @return ContentProviders
@@ -246,6 +274,8 @@ class ContentProviders
     /**
      * Get maxFileSize
      *
+     * Maximum size of a single content item, in kB (1,000 bytes).
+     * 
      * @return integer
      */
     public function getMaxFileSize()
@@ -453,7 +483,6 @@ class ContentProviders
      */
     public function addAus(Aus $aus)
     {
-        $aus->setContentProvider($this);
         $this->aus[] = $aus;
 
         return $this;
@@ -466,7 +495,6 @@ class ContentProviders
      */
     public function removeAus(Aus $aus)
     {
-        $aus->setContentProvider();
         $this->aus->removeElement($aus);
     }
 
@@ -479,49 +507,4 @@ class ContentProviders
     {
         return $this->aus;
     }
-
-    /**
-     * Get the open AU for the content provider, or create a new one
-     * if necessary.
-     * 
-     * @return Aus
-     */
-    public function getOpenAu()
-    {
-        $callback = function(Aus $au) {
-            return $au->getOpen() === true;
-        };
-        
-        $aus = $this->getAus()->filter($callback);
-        if($aus->count() === 1) {
-            return $aus->last();
-        }
-        if ($aus->count() > 1) {
-            // this is an error.
-            return $aus->last();
-        }
-
-        $au = new Aus();
-        $this->addAus($au);
-        return $au;
-    }
-    
-    /**
-     * Get a new AU and close any existing, open AU.
-     */
-    public function getNewAu() {
-        $callback = function(Aus $au) {
-            return $au->getOpen() === true;
-        };
-        
-        $aus = $this->getAus()->filter($callback);
-        foreach($aus as $au) {
-            $au->setOpen(false);
-        }
-        $au = new Aus();
-        $au->setOpen(true);
-        $this->addAus($au);
-        return $au;
-    }
-
 }

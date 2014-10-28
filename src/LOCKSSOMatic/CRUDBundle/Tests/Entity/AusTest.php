@@ -30,4 +30,22 @@ class AusTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(225, $au->getContentSize());
     }
     
+    public function testGetSizeWithNulls() {
+        $au = new Aus();
+        $content = new Content();
+        $content->setSize(120);
+        $au->addContent($content);
+        $this->assertEquals(120, $au->getContentSize());
+        
+        $content = new Content(); 
+        // no setSize()
+        $au->addContent($content);
+        $this->assertEquals(120, $au->getContentSize());
+        
+        $content = new Content();
+        $content->setSize(105);
+        $au->addContent($content);
+        $this->assertEquals(225, $au->getContentSize());
+    }
+    
 }

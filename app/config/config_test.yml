@@ -13,20 +13,17 @@ framework:
     profiler:
         collect: false
 
+monolog:
+    handlers:
+        main:
+            level:  warning
+
 web_profiler:
     toolbar: false
     intercept_redirects: false
 
 swiftmailer:
     disable_delivery: true
-
-doctrine:
-    dbal:
-        # variables are defined in parameters.yml
-        host: 127.0.0.1
-        dbname: lomtest
-        user: lomtest
-        password: abc123
 
 monolog:
     handlers:
@@ -37,3 +34,11 @@ monolog:
         console:
             type:   console
             bubble: false
+            
+doctrine:
+    dbal:
+        # variables are defined in parameters.yml
+        host: 127.0.0.1
+        dbname: lomtest
+        user: lomtest
+        password: abc123

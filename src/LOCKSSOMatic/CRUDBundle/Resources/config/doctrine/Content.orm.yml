@@ -7,12 +7,14 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
             joinColumn:
                 name: deposits_id
                 referencedColumnName: id
+                onDelete: cascade
         au:
             targetEntity: Aus
             inversedBy: content
             joinColumn:
                 name: aus_id
                 referencedColumnName: id                       
+                onDelete: cascade
     table: content
     indexes:
         deposits_id_idx:
