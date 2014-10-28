@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
  */
 class ContentProviders
 {
+
     /**
      * @var integer
      */
@@ -76,9 +77,14 @@ class ContentProviders
     private $permissionUrl;
 
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\Plugins
+     * @var Plugins
      */
     private $plugin;
+
+    /**
+     * @var Collection
+     */
+    private $aus;
 
     /**
      * Constructor
@@ -86,6 +92,7 @@ class ContentProviders
     public function __construct()
     {
         $this->deposits = new ArrayCollection();
+        $this->aus = new ArrayCollection();
     }
 
     /**
@@ -360,6 +367,18 @@ class ContentProviders
 
         return $this;
     }
+    
+    /**
+     * Generate a UUID for the provider if it does not have one.
+     * 
+     * Called automatically by doctrine before creating a record for the entity
+     * in the database.
+     */
+    public function generateUuid() {
+        if($this->uuid === null) {
+            $this->uuid = \J20\Uuid\Uuid::v4();
+        }
+    }
 
     /**
      * Get uuid
@@ -393,14 +412,23 @@ class ContentProviders
     {
         return $this->permissionUrl;
     }
+    
+    /**
+     * Get the hostname from the permission URL
+     * 
+     * @return string
+     */
+    public function getPermissionHost() {
+        return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
+    }
 
     /**
      * Set plugin
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin
+     * @param Plugins $plugin
      * @return ContentProviders
      */
-    public function setPlugin(\LOCKSSOMatic\CRUDBundle\Entity\Plugins $plugin = null)
+    public function setPlugin(Plugins $plugin = null)
     {
         $this->plugin = $plugin;
 
@@ -410,10 +438,90 @@ class ContentProviders
     /**
      * Get plugin
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\Plugins 
+     * @return Plugins 
      */
     public function getPlugin()
     {
         return $this->plugin;
     }
+
+    /**
+     * Add aus. Sets the AUs contentProvider automatically.
+     *
+     * @param Aus $aus
+     * @return ContentProviders
+     */
+    public function addAus(Aus $aus)
+    {
+        $aus->setContentProvider($this);
+        $this->aus[] = $aus;
+
+        return $this;
+    }
+
+    /**
+     * Remove aus. Clear's the AUs content provider.
+     *
+     * @param Aus $aus
+     */
+    public function removeAus(Aus $aus)
+    {
+        $aus->setContentProvider();
+        $this->aus->removeElement($aus);
+    }
+
+    /**
+     * Get aus
+     *
+     * @return Collection 
+     */
+    public function getAus()
+    {
+        return $this->aus;
+    }
+
+    /**
+     * Get the open AU for the content provider, or create a new one
+     * if necessary.
+     * 
+     * @return Aus
+     */
+    public function getOpenAu()
+    {
+        $callback = function(Aus $au) {
+            return $au->getOpen() === true;
+        };
+        
+        $aus = $this->getAus()->filter($callback);
+        if($aus->count() === 1) {
+            return $aus->last();
+        }
+        if ($aus->count() > 1) {
+            // this is an error.
+            return $aus->last();
+        }
+
+        $au = new Aus();
+        $this->addAus($au);
+        return $au;
+    }
+    
+    /**
+     * Get a new AU and close any existing, open AU.
+     */
+    public function getNewAu() {
+        $callback = function(Aus $au) {
+            return $au->getOpen() === true;
+        };
+        
+        $aus = $this->getAus()->filter($callback);
+        foreach($aus as $au) {
+            $au->setOpen(false);
+        }
+        $au = new Aus();
+        $au->setOpen(true);
+        $this->addAus($au);
+        return $au;
+    }
+
 }

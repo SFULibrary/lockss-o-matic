@@ -22,7 +22,10 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
     oneToMany:
         deposits:
             targetEntity: Deposits
-            mappedBy: contentProvider    
+            mappedBy: contentProvider
+        aus:
+            targetEntity: Aus
+            mappedBy: contentProvider
     table: content_providers
     indexes:
         content_owners_id_idx:
@@ -82,3 +85,5 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             unsigned: false
             comment: 'The maximum cumulative size for an Archival Unit containing deposits from the content provider, in kB.'
             column: max_au_size            
+    lifecycleCallbacks:
+        prePersist: [generateUuid]
