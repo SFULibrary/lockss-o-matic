@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
@@ -26,6 +26,8 @@
 
 namespace LOCKSSOMatic\SWORDBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
+use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\Content;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
@@ -118,9 +120,9 @@ class DefaultController extends Controller
     private function getContentProvider($uuid = null)
     {
         $contentProvider = $this
-                ->getDoctrine()
-                ->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
-                ->findOneBy(array('uuid' => $uuid));
+            ->getDoctrine()
+            ->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
+            ->findOneBy(array('uuid' => $uuid));
         if ($contentProvider === null) {
             throw new TargetOwnerUnknownException();
         }
@@ -139,9 +141,9 @@ class DefaultController extends Controller
     private function getDeposit($uuid = null)
     {
         $deposit = $this
-                ->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
-                ->findOneBy(array('uuid' => $uuid));
+            ->getDoctrine()
+            ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Deposits')
+            ->findOneBy(array('uuid' => $uuid));
 
         if ($deposit === null) {
             throw new DepositUnknownException();
@@ -149,7 +151,7 @@ class DefaultController extends Controller
 
         return $deposit;
     }
-    
+
     /**
      * Ensure that a deposit matches a content provider.
      *
@@ -162,34 +164,34 @@ class DefaultController extends Controller
     {
         if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
             throw new BadRequestException(
-                'Deposit or Content Provider incorrect. The '
-                . 'requested deposit does not belong to the requested content provider.'
+            'Deposit or Content Provider incorrect. The '
+            . 'requested deposit does not belong to the requested content provider.'
             );
         }
     }
-    
+
     /**
      * Get a content entity from the database, based on a deposit and URL.
      *
-     * @param type $deposit
-     * @param type $url
+     * @param Deposits $deposit
+     * @param string $url
      * @return Content
      *
      * @throws BadRequestException if the content cannot be found.
      */
-    private function getContent($deposit, $url)
+    private function getContent(Deposits $deposit, $url)
     {
         $content = $this
-                ->getDoctrine()
-                ->getRepository('LOCKSSOMaticCRUDBundle:Content')
-                ->findOneBy(array(
-                    'url' => $url,
-                    'deposit' => $deposit,
-                ));
+            ->getDoctrine()
+            ->getRepository('LOCKSSOMaticCRUDBundle:Content')
+            ->findOneBy(array(
+            'url'     => $url,
+            'deposit' => $deposit,
+        ));
         if ($content === null) {
             throw new BadRequestException('Content item not in database: ' . $url);
         }
-        
+
         return $content;
     }
 
@@ -207,12 +209,12 @@ class DefaultController extends Controller
         $onBehalfOf = $this->getOnBehalfOfHeader($request);
 
         $contentProvider = $this->getContentProvider($onBehalfOf);
-        
+
         $response = $this->render(
             'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
             array(
-                    'contentProvider' => $contentProvider,
-                )
+            'contentProvider' => $contentProvider,
+            )
         );
         $response->headers->set('Content-type', 'text/xml');
         return $response;
@@ -224,7 +226,7 @@ class DefaultController extends Controller
      * @param integer $collectionID The SWORD Collection ID (same as the original On-Behalf-Of value).
      * @return string The Deposit Receipt response.
      */
-    
+
     /**
      * Controller for the Col-IRI (create resource) request.
      *
@@ -239,8 +241,6 @@ class DefaultController extends Controller
     public function createDepositAction(Request $request, $contentProviderId)
     {
         $em = $this->getDoctrine()->getManager();
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/xml');
 
         // Query the ContentProvider entity so we can get its name.
         $contentProvider = $this->getContentProvider($contentProviderId);
@@ -248,15 +248,12 @@ class DefaultController extends Controller
         $atomEntry = $this->getSimpleXML($request->getContent());
         if (count($atomEntry->xpath('//lom:content')) === 0) {
             throw new BadRequestException(
-                'Empty deposits not allowed. At least one '
-                . 'lom:content element is required in a deposit.'
+            'Empty deposits not allowed. At least one '
+            . 'lom:content element is required in a deposit.'
             );
         }
 
-        // precheck the deposit - all lom:content items must have a file size
-        // less than the maxFileSize and must share a common host name with
-        // the content provider's permissions url.
-        // @TODO move this to contentProvider.getPermissionHost().
+        // precheck the deposit
         $permissionHost = $contentProvider->getPermissionHost();
         foreach ($atomEntry->children(Namespaces::LOM) as $contentChunk) {
             $contentHost = parse_url((string) $contentChunk, PHP_URL_HOST);
@@ -274,22 +271,24 @@ class DefaultController extends Controller
         $deposit->setContentProvider($contentProvider);
         $em->persist($deposit);
 
-        // Parse lom:content elements. We need the checksum type, checksum value,
-        // file size, and URL.
+        // Parse lom:content elements.
         $contentBuilder = new ContentBuilder();
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
             // Create a new Content entity.
             $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
             $au = $this->getDestinationAu(
-                $contentProvider,
-                $contentChunk
+                $contentProvider, $contentChunk
             );
+            if (!$em->contains($au)) {
+                $em->persist($au);
+            }
+            $au->addContent($content);
             $content->setAu($au);
             $content->setRecrawl(1);
             $em->persist($content);
+            $em->flush();
         }
-        $em->flush();
 
         $response = $this->renderDepositReceipt($contentProvider, $deposit);
         $editIri = $this->get('router')->generate(
@@ -297,7 +296,7 @@ class DefaultController extends Controller
             array(
             'contentProviderId' => $contentProviderId,
             'uuid'              => $deposit->getUuid()
-                )
+            )
         );
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(201);
@@ -340,7 +339,7 @@ class DefaultController extends Controller
             array(
             'contentProvider' => $contentProvider,
             'deposit'         => $deposit
-                )
+            )
         );
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
@@ -374,15 +373,14 @@ class DefaultController extends Controller
         }
 
         return $this->render(
-            'LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
-            array(
-                    'contentProvider' => $contentProvider,
-                    'boxes'           => $boxes,
-                    'deposit'         => $deposit,
-                    'content'         => $content,
-                    'status'          => $status
-            ),
-            $response
+                'LOCKSSOMaticSWORDBundle:Default:swordStatement.xml.twig',
+                array(
+                'contentProvider' => $contentProvider,
+                'boxes'           => $boxes,
+                'deposit'         => $deposit,
+                'content'         => $content,
+                'status'          => $status
+                ), $response
         );
     }
 
@@ -406,7 +404,7 @@ class DefaultController extends Controller
             array(
             'contentProvider' => $contentProvider,
             'deposit'         => $deposit
-                )
+            )
         );
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
@@ -445,7 +443,7 @@ class DefaultController extends Controller
         $updated = 0;
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
             try {
-                $content = $this->getContent($deposit, (string)$contentChunk);
+                $content = $this->getContent($deposit, (string) $contentChunk);
             } catch (Exception $e) {
                 continue;
                 // this is not an exception according to the SWORD spec.
@@ -465,19 +463,44 @@ class DefaultController extends Controller
     }
 
     /**
-     * Determines which AU to put the content in.
+     * Determines which AU to put the content in. At the moment, this is only 
+     * determined by AU size and content size.
      *
-     * @param bool $inProgress Whether the AU is 'open' or 'closed'.
-     * @param string $contentProviderId The collection ID (i.e., Content Provider ID).
-     *   We use this to determine some AU properties like title, journal title, etc.
-     * @param string $contentSize The size of the content, in kB.
-     * @return object $au.
+     * @param ContentProviders $contentProvider The content provider for the deposit
+     * @param SimpleXMLElement $contentXml the XML fragment describing the content item.
+     * 
+     * @return Aus $au.
      */
-    public function getDestinationAu(ContentProviders $contentProvider, SimpleXMLElement $contentXml)
-    {        
-        $au = $this->getDoctrine()
-                ->getRepository('LOCKSSOMatic\CRUDBundle\Entity\Aus')
-                ->find(1);
+    private function getDestinationAu(ContentProviders $contentProvider, SimpleXMLElement $contentXml)
+    {
+        /** @var EntityManager */
+        $em = $this->getDoctrine()->getManager();
+
+        $callback = function(Aus $au) {
+            return $au->getOpen() === true;
+        };
+
+        $aus = $contentProvider->getAus()->filter($callback);
+        if ($aus->count() >= 1) {
+            $au = $aus->last();
+            if($au->getContentSize() + $contentXml->attributes()->size < $contentProvider->getMaxAuSize()) {
+                return $au;
+            }
+        }
+        
+        foreach($contentProvider->getAus() as $au) {
+            $au->setOpen(false);
+        }
+        
+        $au = new Aus();
+        $em->persist($au);
+        $contentProvider->addAus($au);
+        $au->setContentProvider($contentProvider);
+        $au->setOpen(true);
+        $au->setManaged(true);
+        $au->setAuid('generated-au');
+        $au->setManifestUrl('http://provider.example.com');
         return $au;
     }
+
 }

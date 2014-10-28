@@ -28,6 +28,7 @@ namespace LOCKSSOMatic\SWORDBundle\Tests\Controller;
 
 use Doctrine\ORM\EntityManager;
 use J20\Uuid\Uuid;
+use LOCKSSOMatic\CRUDBundle\Entity\Content;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
@@ -55,6 +56,16 @@ class DefaultControllerTest extends WebTestCase
      */
     private static $provider;
 
+    public function __construct()
+    {
+        parent::__construct();
+        static::bootKernel();
+
+        $this->namespaces = new Namespaces();
+        static::$em = static::$kernel->getContainer()->get('doctrine')->getManager();
+        static::$logger = static::$kernel->getContainer()->get('logger');
+    }
+
     // called before the the class is run.
     public static function setUpBeforeClass()
     {
@@ -64,13 +75,12 @@ class DefaultControllerTest extends WebTestCase
         $provider->setIpAddress('127.0.0.1');
         $provider->setHostname('provider.example.com');
         $provider->setChecksumType('md5');
-        $provider->setMaxFileSize('1000'); // in kB
-        $provider->setMaxAuSize('1000000'); // also in kB
+        $provider->setMaxFileSize('8000'); // in kB
+        $provider->setMaxAuSize('10000'); // also in kB
         $provider->setPermissionUrl('http://provider.example.com/path/to/permissions');
         static::$em->persist($provider);
         static::$em->flush();
         static::$provider = $provider;
-        static::$logger->error('steup');
     }
 
     public static function tearDownAfterClass()
@@ -88,16 +98,6 @@ class DefaultControllerTest extends WebTestCase
         }
         static::$em->remove(static::$provider);
         static::$em->flush();
-    }
-
-    public function __construct()
-    {
-        parent::__construct();
-        static::bootKernel();
-
-        $this->namespaces = new Namespaces();
-        static::$em = static::$kernel->getContainer()->get('doctrine')->getManager();
-        static::$logger = static::$kernel->getContainer()->get('logger');
     }
 
     /**
@@ -147,6 +147,20 @@ class DefaultControllerTest extends WebTestCase
             $content->addAttribute('checksumValue', $csValue);
         }
     }
+    
+    private function postDeposit($xml, $uuid)
+    {
+        $client = static::createClient();
+        $client->request(
+            'POST', 
+            '/api/sword/2.0/col-iri/' . $uuid, 
+            array(), 
+            array(), 
+            array(), 
+            $xml->asXML()
+        );
+        return $client;
+    }    
 
     public function testServiceDocument()
     {
@@ -202,20 +216,6 @@ class DefaultControllerTest extends WebTestCase
 
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-    }
-
-    private function postDeposit($xml, $uuid)
-    {
-        $client = static::createClient();
-        $client->request(
-            'POST', 
-            '/api/sword/2.0/col-iri/' . $uuid, 
-            array(), 
-            array(), 
-            array(), 
-            $xml->asXML()
-        );
-        return $client;
     }
 
     public function testCreateBadProvider()
@@ -300,8 +300,6 @@ class DefaultControllerTest extends WebTestCase
         $client = $this->postDeposit($depositXml, self::$provider->getUuid());
         $response = $client->getResponse();
 
-        $client->getContainer()->get('logger')->log('error', $response->getContent());
-        
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
@@ -330,6 +328,10 @@ class DefaultControllerTest extends WebTestCase
         $client = $this->postDeposit($depositXml, self::$provider->getUuid());
         $response = $client->getResponse();
 
+        if($response->getStatusCode() !== 201) {            
+            self::$logger->error($response->getContent());
+        }
+        
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertTrue($response->headers->has('Location'));
         $this->assertStringEndsWith($uuid . '/edit', $response->headers->get('location'));
@@ -338,6 +340,72 @@ class DefaultControllerTest extends WebTestCase
         $this->assertNotNull($deposits);
         $content = $deposits->getContent();
         $this->assertEquals(2, count($content));
+        
+        $deposit = self::$em->getRepository('LOCKSSOMaticCRUDBundle:Deposits')->findOneBy(
+            array('uuid' => $uuid)
+        );
+        /** @var Content */
+        $c1 = self::$em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
+            array(
+                'url' => 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+                'deposit' => $deposit,
+            )
+        );
+        /** @var Content */
+        $c2 = self::$em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
+            array(
+                'url' => 'http://provider.example.com/wm/paint/auth/monet/parliament/parliament.jpg',
+                'deposit' => $deposit,
+            )
+        );
+        
+        $this->assertEquals($c1->getAu()->getId(), $c2->getAu()->getId());
+    }
+    
+    public function testCreateMultipleAus() {
+        $uuid = Uuid::v4();
+        $depositXml = $this->createDepositXML($uuid);
+        $this->addContentItem(
+            $depositXml,
+            'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+            7000
+        );
+
+        $this->addContentItem(
+            $depositXml,
+            'http://provider.example.com/wm/paint/auth/monet/parliament/parliament.jpg',
+            7000
+            
+        );
+
+        $client = $this->postDeposit($depositXml, self::$provider->getUuid());
+        $response = $client->getResponse();
+
+        
+        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('Location'));
+        
+        $em = static::$em;        
+        $deposit = self::$em->getRepository('LOCKSSOMaticCRUDBundle:Deposits')->findOneBy(
+            array('uuid' => $uuid)
+        );
+
+        /** @var Content */
+        $c1 = self::$em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
+            array(
+                'url' => 'http://provider.example.com/3691/11186563486_8796f4f843_o_d.jpg',
+                'deposit' => $deposit,
+            )
+        );
+        /** @var Content */
+        $c2 = self::$em->getRepository('LOCKSSOMaticCRUDBundle:Content')->findOneBy(
+            array(
+                'url' => 'http://provider.example.com/wm/paint/auth/monet/parliament/parliament.jpg',
+                'deposit' => $deposit,
+            )
+        );
+        
+        $this->assertNotEquals($c1->getAu()->getId(), $c2->getAu()->getId());
     }
     
     // fetch a deposit receipt
