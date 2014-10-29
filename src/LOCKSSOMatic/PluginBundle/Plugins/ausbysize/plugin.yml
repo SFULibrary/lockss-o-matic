@@ -3,5 +3,6 @@
 services:
     aus.year:
         class: LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize
+        arguments: [ 'aus.year', @doctrine.orm.entity_manager ]
         tags:
             - { name: kernel.event_listener, event: sword.servicedoc, method: onServiceDocument }

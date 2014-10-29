@@ -2,8 +2,9 @@
 
 namespace LOCKSSOMatic\PluginBundle;
 
-// http://symfony.com/doc/current/components/event_dispatcher/introduction.html
-
+/**
+ * Define the event names as constants and document them.
+ */
 final class LOCKSSOMaticEvents {
     
     /**

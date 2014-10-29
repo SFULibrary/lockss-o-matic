@@ -212,17 +212,17 @@ class DefaultController extends Controller
         $onBehalfOf = $this->getOnBehalfOfHeader($request);
 
         $contentProvider = $this->getContentProvider($onBehalfOf);
-            
+
         $xml = $this->getSimpleXML('<root/>');
         $event = new ServiceDocumentEvent($xml);
         $dispatcher = $this->get('event_dispatcher');
         $dispatcher->dispatch(LOCKSSOMaticEvents::SERVICE_DOCUMENT, $event);
-        
+
         $response = $this->render(
             'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
             array(
             'contentProvider' => $contentProvider,
-            'xml' => $xml
+            'xml'             => $xml
             )
         );
         $response->headers->set('Content-type', 'text/xml');
@@ -264,9 +264,13 @@ class DefaultController extends Controller
 
         // precheck the deposit
         $permissionHost = $contentProvider->getPermissionHost();
-        foreach ($atomEntry->children(Namespaces::LOM) as $contentChunk) {
-            $contentHost = parse_url((string) $contentChunk, PHP_URL_HOST);
+        foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
+            $chunk = preg_replace('/\s*/', '', (string) $contentChunk);
+            $contentHost = parse_url((string) $chunk, PHP_URL_HOST);
             if ($permissionHost !== $contentHost) {
+                $this->get('monolog.logger.sword')->error('host mismatch');
+                $this->get('monolog.logger.sword')->error(' -- ' . $permissionHost);
+                $this->get('monolog.logger.sword')->error(' -- ' . (string) $contentChunk);
                 throw new HostMismatchException();
             }
 
@@ -275,6 +279,15 @@ class DefaultController extends Controller
             }
         }
 
+        $pluginAttr = $atomEntry->xpath('lom:plugin/@name');
+        if (count($pluginAttr)) {
+            $pluginName = (string)$pluginAttr[0];
+        } else {
+            $pluginName = 'LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize';
+        }
+
+        $plugin = $this->get($pluginName);
+        
         $depositBuilder = new DepositBuilder();
         $deposit = $depositBuilder->fromSimpleXML($atomEntry);
         $deposit->setContentProvider($contentProvider);
@@ -286,7 +299,7 @@ class DefaultController extends Controller
             // Create a new Content entity.
             $content = $contentBuilder->fromSimpleXML($contentChunk);
             $content->setDeposit($deposit);
-            $au = $this->getDestinationAu(
+            $au = $plugin->getDestinationAu(
                 $contentProvider, $contentChunk
             );
             if (!$em->contains($au)) {
@@ -492,15 +505,15 @@ class DefaultController extends Controller
         $aus = $contentProvider->getAus()->filter($callback);
         if ($aus->count() >= 1) {
             $au = $aus->last();
-            if($au->getContentSize() + $contentXml->attributes()->size < $contentProvider->getMaxAuSize()) {
+            if ($au->getContentSize() + $contentXml->attributes()->size < $contentProvider->getMaxAuSize()) {
                 return $au;
             }
         }
-        
-        foreach($contentProvider->getAus() as $au) {
+
+        foreach ($contentProvider->getAus() as $au) {
             $au->setOpen(false);
         }
-        
+
         $au = new Aus();
         $em->persist($au);
         $contentProvider->addAus($au);

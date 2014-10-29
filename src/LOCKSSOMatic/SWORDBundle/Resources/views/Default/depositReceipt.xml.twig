@@ -15,7 +15,7 @@
     <!-- Edit-IRI -->
     <link rel="edit" href="{{ url('lockssomatic_deposit_receipt', { 'contentProviderId': contentProvider.uuid, 'uuid': deposit.uuid } ) }}" />
 
-    <!-- In LOCKSS-O-Matic, the State-IRI will be the EM-IRI/Cont-IRI with the string ‘/state’ appended. -->
+    <!-- In LOCKSS-O-Matic, the State-IRI will be the EM-IRI/Cont-IRI with the string '/state' appended. -->
     <link rel="http://purl.org/net/sword/terms/statement" type="application/atom+xml;type=feed" 
           href="{{ url('lockssomatic_sword_state_iri', { 'contentProviderId': contentProvider.uuid, 'uuid': deposit.uuid } ) }}" />
 </entry>
