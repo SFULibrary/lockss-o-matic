@@ -2,5 +2,6 @@
 # define a plugin as a service
 services:
     aus.size:
-        class: LOCKSSOMatic\PluginBundle\Plugins\AusBySize
-
+        class: LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize
+        tags:
+            - { name: kernel.event_listener, event: sword.servicedoc, method: onServiceDocument }

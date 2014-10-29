@@ -34,6 +34,7 @@ use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
 use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
+use LOCKSSOMatic\PluginBundle\LOCKSSOMaticEvents;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\DepositUnknownException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\HostMismatchException;
@@ -214,8 +215,8 @@ class DefaultController extends Controller
             
         $xml = new SimpleXMLElement('<root/>');
         $event = new ServiceDocumentEvent($xml);
-        $dispatcher = new EventDispatcher();
-        $dispatcher->dispatch($event);
+        $dispatcher = $this->get('event_dispatcher');
+        $dispatcher->dispatch(LOCKSSOMaticEvents::SERVICE_DOCUMENT, $event);
         
         $response = $this->render(
             'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
