@@ -213,7 +213,7 @@ class DefaultController extends Controller
 
         $contentProvider = $this->getContentProvider($onBehalfOf);
             
-        $xml = new SimpleXMLElement('<root/>');
+        $xml = $this->getSimpleXML('<root/>');
         $event = new ServiceDocumentEvent($xml);
         $dispatcher = $this->get('event_dispatcher');
         $dispatcher->dispatch(LOCKSSOMaticEvents::SERVICE_DOCUMENT, $event);

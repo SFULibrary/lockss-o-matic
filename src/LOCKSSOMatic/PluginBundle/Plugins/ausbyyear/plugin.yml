@@ -1,2 +1,7 @@
-## YAML Template.
----
+
+# define a plugin as a service
+services:
+    aus.size:
+        class: LOCKSSOMatic\PluginBundle\Plugins\ausbyyear\AusByYear
+        tags:
+            - { name: kernel.event_listener, event: sword.servicedoc, method: onServiceDocument }

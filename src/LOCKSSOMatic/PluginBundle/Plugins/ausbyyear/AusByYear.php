@@ -1,14 +1,14 @@
 <?php
 
-namespace LOCKSSOMatic\PluginBundle\Plugins\ausbysize;
+namespace LOCKSSOMatic\PluginBundle\Plugins\ausbyyear;
 
 use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use ReflectionClass;
 use SimpleXMLElement;
 
-class AusBySize {
-    
+class AusByYear {
+
     private $name;
     
     public function __construct() {
@@ -21,7 +21,7 @@ class AusBySize {
         $xml = $event->getXml();
         $plugin = $xml->addChild('plugin', null, Namespaces::LOM);
         $plugin->addAttribute('name', $this->name);
-        $plugin->addAttribute('attributes', 'size');
+        $plugin->addAttribute('attributes', 'year');
     }
     
 }
