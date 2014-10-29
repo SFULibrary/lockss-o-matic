@@ -1,0 +1,6 @@
+
+# define a plugin as a service
+services:
+    aus.size:
+        class: LOCKSSOMatic\PluginBundle\Plugins\AusBySize
+

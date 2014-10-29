@@ -1,0 +1,3 @@
+locksso_matic_plugin_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: LOCKSSOMaticPluginBundle:Default:index }

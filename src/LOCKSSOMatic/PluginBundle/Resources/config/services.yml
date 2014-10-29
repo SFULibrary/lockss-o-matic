@@ -1,0 +1,4 @@
+services:
+#    locksso_matic_plugin.example:
+#        class: LOCKSSOMatic\PluginBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

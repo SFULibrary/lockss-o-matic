@@ -33,6 +33,7 @@ use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\DepositUnknownException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\HostMismatchException;
@@ -43,6 +44,7 @@ use LOCKSSOMatic\SWORDBundle\Listener\SWORDErrorListener;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -209,11 +211,17 @@ class DefaultController extends Controller
         $onBehalfOf = $this->getOnBehalfOfHeader($request);
 
         $contentProvider = $this->getContentProvider($onBehalfOf);
-
+            
+        $xml = new SimpleXMLElement('<root/>');
+        $event = new ServiceDocumentEvent($xml);
+        $dispatcher = new EventDispatcher();
+        $dispatcher->dispatch($event);
+        
         $response = $this->render(
             'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
             array(
             'contentProvider' => $contentProvider,
+            'xml' => $xml
             )
         );
         $response->headers->set('Content-type', 'text/xml');
