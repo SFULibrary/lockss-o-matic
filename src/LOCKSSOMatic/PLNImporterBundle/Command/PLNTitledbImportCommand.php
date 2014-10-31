@@ -60,10 +60,22 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $titlesXml = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
         $total = count($titlesXml);
         $output->writeln("Found {$total} title elements.");
+        $output->writeln("Each . is 10 AUs successfully imported.");
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
+        $errors = array();
         $i = 0;
         foreach ($titlesXml as $titleXml) {
-            $result = $this->addAu($titleXml);
+            try {
+                $result = $this->addAu($titleXml);
+            } catch(Exception $e) {
+                $m = $e->getMessage();
+                if(! array_key_exists($e->getMessage(), $errors)) {
+                    $errors[$m] = 0;
+                }
+                $errors[$m]++;
+                continue;
+            }
             if($result !== null && $result !== '') {
                 $output->writeln($result);
             }
@@ -71,12 +83,20 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             if($i % 10 === 0) {
                 $output->write('.');
             }
-            if($i % 100 === 0) {
-                $output->writeln(" $i / $total");
+            if($i % 200 === 0) {
+                $output->writeln(" $i / $total - " . sprintf('%dM', memory_get_usage() / (1024 * 1024)) . '/' . ini_get('memory_limit'));
+                $this->em->flush();
+                $this->em->clear();
+                gc_collect_cycles();
             }
         }
         $output->writeln("\nFinished\n");
         $this->em->flush();
+        if(count($errors) > 0) {
+            foreach($errors as $k => $v) {
+                $output->writeln("Error ($v) $k");
+            }
+        }
     }
 
     protected function getPropertyValue(SimpleXMLElement $xml, $name)
@@ -86,7 +106,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             return null;
         }
         if (count($dataNodes === 1)) {
-            return $dataNodes[0];
+            return (string)$dataNodes[0];
         }
         throw new Exception('Too many elements for property name ' . $name);
     }
@@ -180,10 +200,9 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             $owner->setEmailAddress('unknown');
             $owner->setPlugin($plugin);
             $this->em->persist($owner);
-            $this->em->flush();
         }
         $cache[$name] = $owner;
-        return $owner;
+        return $cache[$name];
     }
 
 }
