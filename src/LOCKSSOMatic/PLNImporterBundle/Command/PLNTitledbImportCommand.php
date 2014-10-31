@@ -55,15 +55,11 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             return;
         }
         $output->writeln('Loading the XML file. This may take some time.');
-//
-//        $dom = new DOMDocument();
-//        $dom->loadXML($pathToTitledb);
-//        $xpath = new DOMXPath($dom);
-//        $titlesNodes = $xpath->query('//lockss-config/property[@name="org.lockss.title"]/property');
 
         $xml = simplexml_load_file($pathToTitledb);
         $titlesXml = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
-        $output->writeln("Found " . count($titlesXml) . " title elements.");
+        $total = count($titlesXml);
+        $output->writeln("Found {$total} title elements.");
 
         $i = 0;
         foreach ($titlesXml as $titleXml) {
@@ -73,9 +69,13 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             }
             $i++;
             if($i % 10 === 0) {
-                $output->writeln(microtime(true));
+                $output->write('.');
+            }
+            if($i % 100 === 0) {
+                $output->writeln(" $i / $total");
             }
         }
+        $output->writeln("\nFinished\n");
         $this->em->flush();
     }
 
