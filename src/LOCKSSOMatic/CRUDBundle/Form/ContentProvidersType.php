@@ -43,6 +43,7 @@ class ContentProvidersType extends AbstractType
             ->add('name')
             ->add('ipAddress')
             ->add('hostname')
+            ->add('permissionUrl')
             ->add('checksumType')
             ->add('maxFileSize')
             ->add('maxAuSize')
