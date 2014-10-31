@@ -228,7 +228,9 @@ class PLNPluginImportCommand extends ContainerAwareCommand
     }
 
     /**
-     * Import the data from the plugin.
+     * Import the data from the plugin. Does not create content
+     * owners for the plugins, that's handled by the titledb import
+     * command.
      *
      * @param SplFileInfo $pluginPath
      */
@@ -248,6 +250,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
 
         $this->newPluginProperty($plugin, 'plugin_name', $pluginName);
         $this->newPluginProperty($plugin, 'plugin_version', $this->findXmlPropString($xml, 'plugin_version'));
+        $this->newPluginProperty($plugin, 'plugin_identifier', $this->findXmlPropString($xml, 'plugin_identifier'));
         $this->newPluginProperty($plugin, 'au_name', $this->findXmlPropString($xml, 'au_name'));
 
         $configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
