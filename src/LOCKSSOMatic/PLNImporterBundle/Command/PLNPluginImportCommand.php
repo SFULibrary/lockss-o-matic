@@ -40,8 +40,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this
-            ->setName('lockssomatic:plnpluginimport')
+        $this->setName('lockssomatic:plnpluginimport')
             ->setDescription('Import PLN plugins.')
             ->addArgument('plugin_folder_path', InputArgument::REQUIRED, 'Local path to the folder containing the PLN plugin JAR files?');
     }
