@@ -15,8 +15,9 @@ monolog:
     handlers:
         main:
             type:   stream
+            buffer_size: 200
             path:   "%kernel.logs_dir%/%kernel.environment%.log"
-            level:  warning
+            level:  error
         console:
             type:   console
             bubble: false
