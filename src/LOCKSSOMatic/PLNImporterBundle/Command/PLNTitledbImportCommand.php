@@ -6,20 +6,15 @@ namespace LOCKSSOMatic\PLNImporterBundle\Command;
 
 use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
-use DOMDocument;
-use DOMXPath;
 use Exception;
-use LOCKSSOMatic\CoreBundle\DependencyInjection\LomLogger;
 use LOCKSSOMatic\CRUDBundle\Entity\AuProperties;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentOwners;
-use LOCKSSOMatic\CRUDBundle\Entity\PluginProperties;
 use LOCKSSOMatic\CRUDBundle\Entity\Plugins;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -60,14 +55,13 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $titlesXml = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
         $total = count($titlesXml);
         $output->writeln("Found {$total} title elements.");
-        $output->writeln("Each . is 10 AUs successfully imported.");
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $errors = array();
         $i = 0;
         foreach ($titlesXml as $titleXml) {
             try {
-                $result = $this->addAu($titleXml);
+                $this->addAu($titleXml);
             } catch(Exception $e) {
                 $m = $e->getMessage();
                 if(! array_key_exists($e->getMessage(), $errors)) {
@@ -76,13 +70,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
                 $errors[$m]++;
                 continue;
             }
-            if($result !== null && $result !== '') {
-                $output->writeln($result);
-            }
             $i++;
-            if($i % 10 === 0) {
-                $output->write('.');
-            }
             if($i % 200 === 0) {
                 $output->writeln(" $i / $total - " . sprintf('%dM', memory_get_usage() / (1024 * 1024)) . '/' . ini_get('memory_limit'));
                 $this->em->flush();
