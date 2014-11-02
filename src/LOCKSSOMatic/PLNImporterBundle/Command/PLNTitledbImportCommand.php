@@ -115,7 +115,9 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
     {
         $pluginId = $this->getPropertyValue($xml, 'plugin');
         $plugin = $this->getPlugin($pluginId);
-
+        if( ! $this->em->contains($plugin)) {
+            die("not contains: " . Debug::dump($plugin));
+        }
         $publisherName = (string)$this->getPropertyValue($xml, 'attributes.publisher');
         $owner = $this->getContentOwner($publisherName, $plugin);
 
@@ -169,6 +171,13 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
      */
     protected function getPlugin($pluginId)
     {
+        static $cache = array();
+        // $this->em->clear() may disconnect entities in this cache
+        // for some reason.
+        if(array_key_exists($pluginId, $cache) && $this->em->contains($cache[$pluginId])) {
+            return $cache[$pluginId];
+        }
+        
         $property = $this->em->getRepository('LOCKSSOMaticCRUDBundle:PluginProperties')
             ->findOneBy(array(
             'propertyKey' => 'plugin_identifier',
@@ -179,6 +188,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             throw new Exception("Unknown pluginId property: {$pluginId}");
         }
 
+        $cache[$pluginId] = $property->getPlugin();
         return $property->getPlugin();
     }
 
