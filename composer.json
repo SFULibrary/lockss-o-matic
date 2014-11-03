@@ -27,7 +27,8 @@
         "ircmaxell/password-compat": "~1.0",
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "problematic/acl-manager-bundle": "dev-master",
-        "j20/php-uuid": "dev-master"
+        "j20/php-uuid": "dev-master",
+        "knplabs/knp-paginator-bundle": "~2.4"
     },
     "require-dev": {
         "phpunit/phpunit": "4.2.*"
