@@ -42,7 +42,11 @@ class PLNPluginImportCommand extends ContainerAwareCommand
     {
         $this->setName('lockssomatic:plnpluginimport')
             ->setDescription('Import PLN plugins.')
-            ->addArgument('plugin_folder_path', InputArgument::REQUIRED, 'Local path to the folder containing the PLN plugin JAR files?');
+            ->addArgument(
+                'plugin_folder_path', 
+                InputArgument::REQUIRED,
+                'Local path to the folder containing the PLN plugin JAR files?'
+            );
     }
 
     /**
@@ -61,24 +65,22 @@ class PLNPluginImportCommand extends ContainerAwareCommand
         $output->writeln("The JAR files will be extracted to " . $tmpDir);
 
         $this->em->getConnection()->beginTransaction();
-        try {
-            foreach ($jarFiles as $fileInfo) {
+        foreach ($jarFiles as $fileInfo) {
+            try {
                 $extractedDir = $this->extractJarFile($fileInfo, $tmpDir);
                 $pluginPath = $this->getPluginPath($extractedDir);
                 if ($pluginPath === '') {
                     continue;
                 }
                 $result = $this->importPlugin($pluginPath);
-                if ($result !== '') {
-                    $output->writeln($result);
-                }
+                $output->writeln($result);
+            } catch (Exception $e) {
+                $output->writeln('Internal error while processing ' . $fileInfo->getPathname());
+                $output->writeln($e->getMessage());
+                $output->writeln($e->getTraceAsString());
+                $this->em->getConnection()->rollback();
+                return;
             }
-        } catch (Exception $e) {
-            $output->writeln('Internal error while processing ' . $fileInfo->getPathname());
-            $output->writeln($e->getMessage());
-            $output->writeln($e->getTraceAsString());
-            $this->em->getConnection()->rollback();
-            return;
         }
         $this->em->flush();
         $this->em->getConnection()->commit();
@@ -91,7 +93,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      *
      * @throws UnexpectedValueException if the path cannot be opened.
      * @throws RuntimeException if the path is an empty string.
-     * 
+     *
      * @return SplFileInfo[]
      */
     protected function getJarFiles($dirPath)
@@ -114,7 +116,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      *
      * @param SplFileInfo $fileInfo
      * @param string $tmpDir
-     * 
+     *
      * @return string
      */
     protected function extractJarFile(SplFileInfo$fileInfo, $tmpDir)
@@ -135,7 +137,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      * Find the plugin .xml file from the manifest file.
      *
      * @param string $extractedDir path to the extracted JAR file.
-     * 
+     *
      * @return SplFileInfo
      */
     protected function getPluginPath($extractedDir)
@@ -170,7 +172,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      * @param string $propName
      *
      * @return string
-     * 
+     *
      * @throws Exception
      */
     public function findXmlPropString(SimpleXMLElement $xml, $propName)
@@ -192,7 +194,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      * @param type $propName
      *
      * @return SimpleXMLElement
-     * 
+     *
      * @throws Exception
      */
     public function findXmlPropElement(SimpleXMLElement $xml, $propName)
@@ -213,7 +215,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      * @param Plugins $plugin
      * @param string $name
      * @param string $value
-     * 
+     *
      * @return PluginProperties
      */
     public function newPluginProperty(Plugins $plugin, $name, $value)
@@ -271,7 +273,6 @@ class PLNPluginImportCommand extends ContainerAwareCommand
 
         return "Added $pluginName";
     }
-
 }
 
 // end of class

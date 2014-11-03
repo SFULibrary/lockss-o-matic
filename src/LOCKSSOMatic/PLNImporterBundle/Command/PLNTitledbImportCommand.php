@@ -62,16 +62,16 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         foreach ($titlesXml as $titleXml) {
             try {
                 $this->addAu($titleXml);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 $m = $e->getMessage();
-                if(! array_key_exists($e->getMessage(), $errors)) {
+                if (! array_key_exists($e->getMessage(), $errors)) {
                     $errors[$m] = 0;
                 }
                 $errors[$m]++;
                 continue;
             }
             $i++;
-            if($i % 200 === 0) {
+            if ($i % 200 === 0) {
                 $output->writeln(" $i / $total - " . sprintf('%dM', memory_get_usage() / (1024 * 1024)) . '/' . ini_get('memory_limit'));
                 $this->em->flush();
                 $this->em->clear();
@@ -80,8 +80,8 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         }
         $output->writeln("\nFinished\n");
         $this->em->flush();
-        if(count($errors) > 0) {
-            foreach($errors as $k => $v) {
+        if (count($errors) > 0) {
+            foreach ($errors as $k => $v) {
                 $output->writeln("Error ($v) $k");
             }
         }
@@ -98,12 +98,12 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         }
         throw new Exception('Too many elements for property name ' . $name);
     }
-
+    
     protected function addAu(SimpleXMLElement $xml)
     {
         $pluginId = $this->getPropertyValue($xml, 'plugin');
         $plugin = $this->getPlugin($pluginId);
-        if( ! $this->em->contains($plugin)) {
+        if (! $this->em->contains($plugin)) {
             die("not contains: " . Debug::dump($plugin));
         }
         $publisherName = (string)$this->getPropertyValue($xml, 'attributes.publisher');
@@ -121,7 +121,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $this->em->persist($auProperties);
         $propRoot = $auProperties;
 
-        foreach($xml->xpath('property[starts-with(@name, "param.")]') as $node) {
+        foreach ($xml->xpath('property[starts-with(@name, "param.")]') as $node) {
             $nameData = $node->xpath('property[@name="key"]/@value');
             $name = $nameData[0];
             $valueData = $node->xpath('property[@name="value"]/@value');
@@ -154,7 +154,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
      * @todo some caching here would be very good.
      *
      * @param string $pluginId
-     * 
+     *
      * @return Plugins
      */
     protected function getPlugin($pluginId)
@@ -162,7 +162,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         static $cache = array();
         // $this->em->clear() may disconnect entities in this cache
         // for some reason.
-        if(array_key_exists($pluginId, $cache) && $this->em->contains($cache[$pluginId])) {
+        if (array_key_exists($pluginId, $cache) && $this->em->contains($cache[$pluginId])) {
             return $cache[$pluginId];
         }
         
@@ -184,7 +184,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
     {
         static $cache = array();
 
-        if(array_key_exists($name, $cache)) {
+        if (array_key_exists($name, $cache)) {
             return $cache[$name];
         }
 
@@ -202,5 +202,4 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $cache[$name] = $owner;
         return $cache[$name];
     }
-
 }
