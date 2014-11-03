@@ -53,37 +53,43 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $tmpDir = sys_get_temp_dir() . '/plnimport';
         $pathToPlugins = $input->getArgument('plugin_folder_path');
         $jarFiles = $this->getJarFiles($pathToPlugins);
 
         $output->writeln("There are " . count($jarFiles) . " JAR files in the directory.");
-        $output->writeln("The JAR files will be extracted to " . $tmpDir);
 
-        $this->em->getConnection()->beginTransaction();
         foreach ($jarFiles as $fileInfo) {
-            try {
-                $extractedDir = $this->extractJarFile($fileInfo, $tmpDir);
-                $pluginPath = $this->getPluginPath($extractedDir);
-                if ($pluginPath === '') {
-                    continue;
-                }
-                $result = $this->importPlugin($pluginPath);
+            $result = $this->processJarFile($fileInfo);
+            if($result !== null) {
                 $output->writeln($result);
-            } catch (Exception $e) {
-                $output->writeln('Internal error while processing ' . $fileInfo->getPathname());
-                $output->writeln($e->getMessage());
-                $output->writeln($e->getTraceAsString());
-                $this->em->getConnection()->rollback();
-                return;
+            } else {
+                $output->writeln("Imported {$fileInfo->getFileName()}");
             }
         }
         $this->em->flush();
-        $this->em->getConnection()->commit();
     }
 
+    public function processJarFile(SplFileInfo $fileInfo) {
+        $zip = new ZipArchive();
+        $res = $zip->open($fileInfo->getPathname());
+        if($res !== true) {
+            return " ** Error: Cannot open {$fileInfo->getPathName()}. Error code {$res}.";
+            
+        }            
+        $manifest = $zip->getFromName('META-INF/MANIFEST.MF');
+        $pluginPath = $this->getPluginPath($manifest);
+        $pluginData = $zip->getFromName($pluginPath);
+        $pluginXml = new SimpleXMLElement($pluginData);
+        try {
+            $this->importPlugin($pluginXml);
+        } catch(Exception $e) {
+            return " ** Error processing {$fileInfo->getFileName()}: {$e->getMessage()}";
+        }
+        return null;
+    }
+    
     /**
-     * Count the JAR files in a directory.
+     * Get the JAR files in a directory.
      *
      * @param type $dirPath
      *
@@ -108,39 +114,15 @@ class PLNPluginImportCommand extends ContainerAwareCommand
     }
 
     /**
-     * Extract the content of a single JAR file.
+     * Find the plugin .xml file from the manifest file.
      *
-     * @param SplFileInfo $fileInfo
-     * @param string $tmpDir
+     * @param string $rawManifest the Jar file manifest.
      *
      * @return string
      */
-    protected function extractJarFile(SplFileInfo$fileInfo, $tmpDir)
+    protected function getPluginPath($rawManifest)
     {
-        $zip = new ZipArchive();
-        if ($zip->open($fileInfo->getPathname()) !== true) {
-            throw new Exception('Cannot open ' . $fileInfo->getPathname() . ': ' . $zip->getStatusString());
-        }
-        $extractPath = $tmpDir . '/' . $fileInfo->getBasename('.jar');
-        if ($zip->extractTo($extractPath) !== true) {
-            throw new Exception('Cannot extract ' . $fileInfo->getPathname() . ': ' . $zip->getStatusString());
-        }
-        $zip->close();
-        return $extractPath;
-    }
-
-    /**
-     * Find the plugin .xml file from the manifest file.
-     *
-     * @param string $extractedDir path to the extracted JAR file.
-     *
-     * @return SplFileInfo
-     */
-    protected function getPluginPath($extractedDir)
-    {
-        $manifestPath = $extractedDir . '/META-INF/MANIFEST.MF';
-        $dosManifest = file_get_contents($manifestPath);
-        $manifest = preg_replace('/\r\n/', "\n", $dosManifest);
+        $manifest = preg_replace('/\r\n/', "\n", $rawManifest);
         $blocks = preg_split('/\n\s*\n/s', $manifest);
 
         foreach ($blocks as $block) {
@@ -155,7 +137,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
                 $keys = array_merge($keys, array($k => $v));
             }
             if (array_key_exists('Lockss-Plugin', $keys) && $keys['Lockss-Plugin'] === 'true') {
-                return new SplFileInfo($extractedDir . '/' . $keys['Name']);
+                return $keys['Name'];
             }
         }
         return '';
@@ -229,16 +211,15 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      * owners for the plugins, that's handled by the titledb import
      * command.
      *
-     * @param SplFileInfo $pluginPath
+     * @param SimpleXMLElement $xml
      */
-    protected function importPlugin($pluginPath)
+    protected function importPlugin(SimpleXMLElement $xml)
     {
         $pluginRepo = $this->em->getRepository('LOCKSSOMaticCRUDBundle:Plugins');
-        $xml = new SimpleXMLElement(file_get_contents($pluginPath));
 
         $pluginName = $this->findXmlPropString($xml, 'plugin_name');
         if ($pluginRepo->findOneBy(array('name' => $pluginName)) !== null) {
-            return " ** WARNING: Plugin {$pluginPath->getFilename()} has already been imported.";
+            throw new Exception('Plugin has already been imported.');
         }
 
         $plugin = new Plugins();
@@ -252,7 +233,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
 
         $configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
         if ($configProps === null) {
-            return " ** WARNING: No PluginConfigProps found for " . $pluginPath->getFilename();
+            throw new Exception('No PluginConfigProps element.');
         }
 
         $parameters = $configProps->children();
@@ -266,9 +247,5 @@ class PLNPluginImportCommand extends ContainerAwareCommand
                 $childProp->setParent($pluginProperties);
             }
         }
-
-        return "Added $pluginName";
     }
 }
-
-// end of class
