@@ -1,0 +1,32 @@
+LOCKSSOMatic\PluginBundle\Entity\LomPlugin:
+    type: entity
+    table: lom_plugin
+    oneToMany:
+        pluginData:
+            targetEntity: LomPluginData
+            mappedBy: data
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: Primary key for this table
+            id: true
+            generator:
+                strategy:
+                    IDENTITY
+    fields:
+        name:
+            type: string
+            length: 512
+            nullable: false
+            comment: The fully-qualified class name.
+        path:
+            type: string
+            length: 512
+            nullable: false
+            comment: The file system path to the plugin.
+        enabled:
+            type: boolean
+            nullable: true
+            comment: True if the plugin is enabled.

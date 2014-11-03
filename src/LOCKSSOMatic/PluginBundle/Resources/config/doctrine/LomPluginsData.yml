@@ -1,0 +1,38 @@
+LOCKSSOMatic\PluginBundle\Entity\LomPluginData:
+    type: entity
+    manyToOne:
+        lomPlugin:
+            targetEntity: LomPlugin
+            inversedBy: data
+            joinColumn:
+                name: lomplugin_id
+                referencedColumnName: id                
+    table: lom_plugin_data
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: 'Primary key for this table.'
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        domain:
+            type: string
+            length: 512
+            nullable: true
+            comment: The domain for the plugin's data.
+        objectId:
+            type: int
+            nullable: true
+            comment: The identifier of the object for the data.
+        key:
+            type: string
+            length: 512
+            nullable: false
+            comment: The key for accessing the data
+        value:
+            type: object
+            comment: The serialized data for the plugin
+            
