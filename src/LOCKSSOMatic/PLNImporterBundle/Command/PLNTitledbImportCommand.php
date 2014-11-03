@@ -39,7 +39,8 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
     {
         $this->setName('lockssomatic:plntitledbimport')
             ->setDescription('Import PLN titledb file.')
-            ->addArgument('path_to_titledb', InputArgument::REQUIRED, 'Local path to the titledb xml file.');
+            ->addArgument('path_to_titledb', InputArgument::REQUIRED,
+                'Local path to the titledb xml file.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -49,7 +50,6 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             $output->writeln("Cannot find {$pathToTitledb}");
             return;
         }
-        $output->writeln('Loading the XML file. This may take some time.');
 
         $xml = simplexml_load_file($pathToTitledb);
         $titlesXml = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
@@ -60,31 +60,38 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $errors = array();
         $i = 0;
         foreach ($titlesXml as $titleXml) {
-            try {
-                $this->addAu($titleXml);
-            } catch (Exception $e) {
-                $m = $e->getMessage();
-                if (! array_key_exists($e->getMessage(), $errors)) {
-                    $errors[$m] = 0;
-                }
-                $errors[$m]++;
-                continue;
+            $result = $this->processTitle($titleXml);
+            if($result !== null) {
+                $errors[$result] = (array_key_exists($result, $errors) ? $errors[$result] + 1 : 1);
             }
             $i++;
             if ($i % 200 === 0) {
-                $output->writeln(" $i / $total - " . sprintf('%dM', memory_get_usage() / (1024 * 1024)) . '/' . ini_get('memory_limit'));
-                $this->em->flush();
-                $this->em->clear();
-                gc_collect_cycles();
+                $this->progressReport($output, $total, $i);
             }
         }
-        $output->writeln("\nFinished\n");
-        $this->em->flush();
+        $this->progressReport($output, $total, $total);
         if (count($errors) > 0) {
             foreach ($errors as $k => $v) {
                 $output->writeln("Error ($v) $k");
             }
         }
+    }
+
+    protected function progressReport(OutputInterface $output, $total, $i) {
+        $this->em->flush();
+        $this->em->clear();
+        gc_collect_cycles();
+        $output->writeln(" $i / $total - " . sprintf('%dM', memory_get_usage() / (1024 * 1024)) . '/' . ini_get('memory_limit'));
+    }
+    
+    protected function processTitle(SimpleXMLElement $titleXml)
+    {
+        try {
+            $this->addAu($titleXml);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return null;
     }
 
     protected function getPropertyValue(SimpleXMLElement $xml, $name)
@@ -94,19 +101,19 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             return null;
         }
         if (count($dataNodes === 1)) {
-            return (string)$dataNodes[0];
+            return (string) $dataNodes[0];
         }
         throw new Exception('Too many elements for property name ' . $name);
     }
-    
+
     protected function addAu(SimpleXMLElement $xml)
     {
         $pluginId = $this->getPropertyValue($xml, 'plugin');
         $plugin = $this->getPlugin($pluginId);
-        if (! $this->em->contains($plugin)) {
+        if (!$this->em->contains($plugin)) {
             die("not contains: " . Debug::dump($plugin));
         }
-        $publisherName = (string)$this->getPropertyValue($xml, 'attributes.publisher');
+        $publisherName = (string) $this->getPropertyValue($xml, 'attributes.publisher');
         $owner = $this->getContentOwner($publisherName, $plugin);
 
         $aus = new Aus();
@@ -116,8 +123,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
 
         $auProperties = new AuProperties();
         $auProperties->setAu($aus);
-        $propertyKey = (string) $xml->attributes()->name;
-        $auProperties->setPropertyKey($propertyKey);
+        $auProperties->setPropertyKey((string) $xml->attributes()->name);
         $this->em->persist($auProperties);
         $propRoot = $auProperties;
 
@@ -148,6 +154,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             $this->em->persist($valProp);
         }
     }
+
     /**
      * Get a plugin based on its identifier property.
      *
@@ -165,10 +172,10 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         if (array_key_exists($pluginId, $cache) && $this->em->contains($cache[$pluginId])) {
             return $cache[$pluginId];
         }
-        
+
         $property = $this->em->getRepository('LOCKSSOMaticCRUDBundle:PluginProperties')
             ->findOneBy(array(
-            'propertyKey' => 'plugin_identifier',
+            'propertyKey'   => 'plugin_identifier',
             'propertyValue' => $pluginId
         ));
 
@@ -202,4 +209,5 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $cache[$name] = $owner;
         return $cache[$name];
     }
+
 }
