@@ -14,9 +14,7 @@ class PluginCompilerPass implements CompilerPassInterface {
         
         $definition = $container->getDefinition('lomplugin.manager');
         $plugins = $container->findTaggedServiceIds('lomplugin.plugin');
-        error_log('Found plugins ' . count($plugins));
         foreach($plugins as $id => $attributes) {
-            error_log('adding ' . $id);
             $definition->addMethodCall('addPlugin', array(new Reference($id)));
         }
     }
