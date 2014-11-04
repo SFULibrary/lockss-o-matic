@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>LomPluginsData list</h1>
+
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Domain</th>
+                <th>Objectid</th>
+                <th>Key</th>
+                <th>Value</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('lompluginsdata_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.domain }}</td>
+                <td>{{ entity.objectId }}</td>
+                <td>{{ entity.key }}</td>
+                <td>{{ entity.value }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('lompluginsdata_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('lompluginsdata_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('lompluginsdata_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

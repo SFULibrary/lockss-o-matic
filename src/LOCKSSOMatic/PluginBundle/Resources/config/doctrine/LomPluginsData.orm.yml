@@ -1,13 +1,20 @@
-LOCKSSOMatic\PluginBundle\Entity\LomPluginData:
+LOCKSSOMatic\PluginBundle\Entity\LomPluginsData:
     type: entity
     manyToOne:
         lomPlugin:
-            targetEntity: LomPlugin
-            inversedBy: data
+            targetEntity: LomPlugins
+            inversedBy: lomPlugin
             joinColumn:
                 name: lomplugin_id
                 referencedColumnName: id                
     table: lom_plugin_data
+    indexes:
+        domain_index: 
+            columns: [ domain ]
+        object_index:
+            columns: [ objectId ]
+        key_index:
+            columns: [ key ]
     id:
         id:
             type: integer
@@ -20,16 +27,16 @@ LOCKSSOMatic\PluginBundle\Entity\LomPluginData:
     fields:
         domain:
             type: string
-            length: 512
+            length: 255
             nullable: true
             comment: The domain for the plugin's data.
         objectId:
-            type: int
+            type: integer
             nullable: true
             comment: The identifier of the object for the data.
         key:
             type: string
-            length: 512
+            length: 255
             nullable: false
             comment: The key for accessing the data
         value:

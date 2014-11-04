@@ -1,0 +1,30 @@
+lompluginsdata:
+    path:     /
+    defaults: { _controller: "LOCKSSOMaticPluginBundle:LomPluginsData:index" }
+
+lompluginsdata_show:
+    path:     /{id}/show
+    defaults: { _controller: "LOCKSSOMaticPluginBundle:LomPluginsData:show" }
+
+lompluginsdata_new:
+    path:     /new
+    defaults: { _controller: "LOCKSSOMaticPluginBundle:LomPluginsData:new" }
+
+lompluginsdata_create:
+    path:     /create
+    defaults: { _controller: "LOCKSSOMaticPluginBundle:LomPluginsData:create" }
+    requirements: { _method: post }
+
+lompluginsdata_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "LOCKSSOMaticPluginBundle:LomPluginsData:edit" }
+
+lompluginsdata_update:
+    path:     /{id}/update
+    defaults: { _controller: "LOCKSSOMaticPluginBundle:LomPluginsData:update" }
+    requirements: { _method: post|put }
+
+lompluginsdata_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "LOCKSSOMaticPluginBundle:LomPluginsData:delete" }
+    requirements: { _method: post|delete }

@@ -15,6 +15,12 @@ use SimpleXMLElement;
 class AusByYear extends AbstractPlugin implements DestinationAuInterface {
 
     /**
+     * @todo Convert this to ContainerAware:
+     * 
+     * http://stackoverflow.com/questions/17126277/how-to-give-container-as-argument-to-services
+     */
+    
+    /**
      * Automatically called when a service document is requested.
      * 
      * @param ServiceDocumentEvent $event
@@ -23,7 +29,7 @@ class AusByYear extends AbstractPlugin implements DestinationAuInterface {
         /** @var SimpleXMLElement */
         $xml = $event->getXml();
         $plugin = $xml->addChild('plugin', null, Namespaces::LOM);
-        $plugin->addAttribute('name', $this->name);
+        $plugin->addAttribute('name', get_class($this));
         $plugin->addAttribute('attributes', 'year');
     }
 
@@ -34,6 +40,16 @@ class AusByYear extends AbstractPlugin implements DestinationAuInterface {
     {
         // find the content provider's open au for the content item.
         // $contentXml must include a year attribute.
+    }
+
+    public function getDescription()
+    {
+        return "Organize archival units by year.";
+    }
+
+    public function getName()
+    {
+        return "AUsByYear";
     }
 
 }

@@ -1,8 +1,10 @@
 
 # define a plugin as a service
 services:
-    aus.size:
+    lomplugin.aus.size:
         class: LOCKSSOMatic\PluginBundle\Plugins\ausbyyear\AusByYear
-        arguments: [ 'aus.size', @doctrine.orm.entity_manager ]
+        calls:
+          - [ setContainer,[ @service_container ] ]
         tags:
+            - { name: lomplugin.plugin }
             - { name: kernel.event_listener, event: sword.servicedoc, method: onServiceDocument }

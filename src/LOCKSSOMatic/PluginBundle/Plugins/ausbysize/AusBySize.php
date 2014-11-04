@@ -27,7 +27,7 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
         /** @var SimpleXMLElement */
         $xml = $event->getXml();
         $plugin = $xml->addChild('plugin', null, Namespaces::LOM);
-        $plugin->addAttribute('name', $this->name);
+        $plugin->addAttribute('name', get_class($this));
         $plugin->addAttribute('attributes', 'size');
     }
 
@@ -59,14 +59,22 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
         }
 
         $au = new Aus();
-        $this->em->persist($au);
+        $this->container->get('doctrine')->em->getManager()->persist($au);
         $contentProvider->addAus($au);
         $au->setContentProvider($contentProvider);
         $au->setOpen(true);
         $au->setManaged(true);
-        $au->setAuid('generated-au');
-        $au->setManifestUrl('http://provider.example.com');
         return $au;
+    }
+
+    public function getDescription()
+    {
+        return "Organize archival units by size.";
+    }
+
+    public function getName()
+    {
+        return "AUsBySize";
     }
 
 }

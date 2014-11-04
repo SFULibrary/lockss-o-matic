@@ -3,45 +3,29 @@
 namespace LOCKSSOMatic\PluginBundle\Plugins;
 
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\DependencyInjection\ContainerAware;
 
 /**
  * Base class for plugins.
  */
-abstract class AbstractPlugin {
+abstract class AbstractPlugin extends ContainerAware {
     
     /**
-     * Plugin name, from the plugin.yml file.
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * Enity manager for database access.
-     *
-     * @var EntityManager
-     */
-    protected $em;
-
-    /**
-     * Constructor using dependency injection
-     * 
-     * @param string $name
-     * @param EntityManager $em
-     */
-    public function __construct($name, EntityManager $em)
-    {
-        $this->name = $name;
-        $this->em = $em;
-    }
-    
-    /**
-     * Return the name of the plugin
+     * Get the name of the plugin.
      * 
      * @return string
      */
-    public function getName() {
-        return $this->name;
-    }
+    abstract function getName();
 
+    /**
+     * Get a description of the plugin.
+     * 
+     * @return string
+     */
+    abstract function getDescription();
+    
+    public function __toString()
+    {
+        return $this->getName();
+    }
 }

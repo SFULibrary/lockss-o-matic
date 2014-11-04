@@ -1,1 +1,13 @@
-Hello {{ name }}!
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+
+    <p>Found {{plugins|length}} plugins.</p>
+    <dl>
+    {% for plugin in plugins %}
+        <dt>{{ plugin.name }}</dt>
+        <dd>{{ plugin.description }}</dd>
+    {% endfor %}
+    </dt>
+    
+{% endblock %}

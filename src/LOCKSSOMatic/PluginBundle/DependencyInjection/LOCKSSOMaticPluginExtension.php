@@ -24,11 +24,12 @@ class LOCKSSOMaticPluginExtension extends Extension
      * {@inheritdocs}
      */
     public function load(array $configs, ContainerBuilder $container)
-    {
+    {        
         // load all the plugins as services here.        
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Plugins/'));
+        $loader->load('../Resources/config/services.yml');
 
         // find the plugin.yml files and load them.
         $directoryIterator = new RecursiveDirectoryIterator(__DIR__ . '/../Plugins');
