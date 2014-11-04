@@ -28,8 +28,12 @@ class LOCKSSOMaticPluginExtension extends Extension
         // load all the plugins as services here.        
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Plugins/'));
-        $loader->load('../Resources/config/services.yml');
+        
+        $svcLoader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $svcLoader->load('services.yml');
+
+        
+        $pluginLoader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Plugins/'));
 
         // find the plugin.yml files and load them.
         $directoryIterator = new RecursiveDirectoryIterator(__DIR__ . '/../Plugins');
@@ -37,7 +41,7 @@ class LOCKSSOMaticPluginExtension extends Extension
         $ymlFiles = new RegexIterator($flattenedIterator, '/plugin\.yml$/');
         
         foreach($ymlFiles as $yml) {            
-            $loader->load($yml->getPath() . '/' . $yml->getFileName());
+            $pluginLoader->load($yml->getPath() . '/' . $yml->getFileName());
         }
         
     }
