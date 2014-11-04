@@ -1,5 +1,29 @@
 <?php
 
+/* 
+ * The MIT License
+ *
+ * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,6 +34,7 @@ use Doctrine\Common\Collections\Collection;
  */
 class ContentProviders
 {
+
     /**
      * @var integer
      */
@@ -41,6 +66,8 @@ class ContentProviders
     private $checksumType;
 
     /**
+     * Maximum size of a single content item, in kB (1,000 bytes).
+     * 
      * @var integer
      */
     private $maxFileSize;
@@ -66,11 +93,27 @@ class ContentProviders
     private $pln;
 
     /**
+     * @var string
+     */
+    private $uuid;
+
+    /**
+     * @var string
+     */
+    private $permissionUrl;
+
+    /**
+     * @var Collection
+     */
+    private $aus;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->deposits = new ArrayCollection();
+        $this->aus = new ArrayCollection();
     }
 
     /**
@@ -210,6 +253,8 @@ class ContentProviders
 
     /**
      * Set maxFileSize
+     * 
+     * Maximum size of a single content item, in kB (1,000 bytes).
      *
      * @param integer $maxFileSize
      * @return ContentProviders
@@ -224,6 +269,8 @@ class ContentProviders
     /**
      * Get maxFileSize
      *
+     * Maximum size of a single content item, in kB (1,000 bytes).
+     * 
      * @return integer
      */
     public function getMaxFileSize()
@@ -331,5 +378,105 @@ class ContentProviders
     public function getPln()
     {
         return $this->pln;
+    }
+
+    /**
+     * Set uuid
+     *
+     * @param string $uuid
+     * @return ContentProviders
+     */
+    public function setUuid($uuid)
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+    
+    /**
+     * Generate a UUID for the provider if it does not have one.
+     * 
+     * Called automatically by doctrine before creating a record for the entity
+     * in the database.
+     */
+    public function generateUuid() {
+        if($this->uuid === null) {
+            $this->uuid = \J20\Uuid\Uuid::v4();
+        }
+    }
+
+    /**
+     * Get uuid
+     *
+     * @return string 
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * Set permissionUrl
+     *
+     * @param string $permissionUrl
+     * @return ContentProviders
+     */
+    public function setPermissionUrl($permissionUrl)
+    {
+        $this->permissionUrl = $permissionUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get permissionUrl
+     *
+     * @return string 
+     */
+    public function getPermissionUrl()
+    {
+        return $this->permissionUrl;
+    }
+    
+    /**
+     * Get the hostname from the permission URL
+     * 
+     * @return string
+     */
+    public function getPermissionHost() {
+        return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
+    }
+
+    /**
+     * Add aus. Sets the AUs contentProvider automatically.
+     *
+     * @param Aus $aus
+     * @return ContentProviders
+     */
+    public function addAus(Aus $aus)
+    {
+        $this->aus[] = $aus;
+
+        return $this;
+    }
+
+    /**
+     * Remove aus. Clear's the AUs content provider.
+     *
+     * @param Aus $aus
+     */
+    public function removeAus(Aus $aus)
+    {
+        $this->aus->removeElement($aus);
+    }
+
+    /**
+     * Get aus
+     *
+     * @return Collection 
+     */
+    public function getAus()
+    {
+        return $this->aus;
     }
 }

@@ -1,0 +1,7 @@
+<sword:error xmlns="http://www.w3.org/2005/Atom" 
+             xmlns:sword="http://purl.org/net/sword/"
+             href="{{ error_iri }}">    
+    <summary>{{ summary }}</summary>
+    {% if treatment is defined %}<sword:treatment>{{ treatment }}</sword:treatment>{% endif %}
+    {% if verbose is defined %}<sword:verboseDescription>{{ verbose }}</sword:verboseDescription>{% endif %}    
+</sword:error>

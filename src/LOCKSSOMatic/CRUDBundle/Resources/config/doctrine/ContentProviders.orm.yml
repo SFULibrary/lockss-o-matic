@@ -6,17 +6,22 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             inversedBy: contentProviders
             joinColumn:
                 name: content_owners_id
-                referencedColumnName: id
+                referencedColumnName: id                
+                onDelete: cascade
         pln:
             targetEntity: Plns
             inversedBy: contentProviders
             joinColumn:
                 name: plns_id
-                referencedColumnName: id   
+                referencedColumnName: id
+                onDelete: cascade
     oneToMany:
         deposits:
             targetEntity: Deposits
-            mappedBy: contentProvider         
+            mappedBy: contentProvider  
+        aus:
+            targetEntity: Aus
+            mappedBy: contentProvider
     table: content_providers
     indexes:
         content_owners_id_idx:
@@ -36,6 +41,16 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             type: string
             length: 24
             comment: 'Either "application" (deposits content via SWORD interface) or "manual" (deposits content via web form).'
+        uuid:
+            type: string
+            length: 36
+            comment: 'UUID for the content provider.'
+            nullable: false
+        permissionUrl:
+            type: string
+            length: 255
+            comment: 'The URL for the permission file.'
+            nullable: false
         name:
             type: string
             length: 255
@@ -58,11 +73,13 @@ LOCKSSOMatic\CRUDBundle\Entity\ContentProviders:
             type: integer
             nullable: true
             unsigned: false
-            comment: 'The maximum allowed size for a single file included in deposits from the content provider, in kB.'
+            comment: 'The maximum allowed size for a single file included in deposits from the content provider, in kB (1,000 bytes).'
             column: max_file_size
         maxAuSize:
             type: integer
             nullable: true
             unsigned: false
-            comment: 'The maximum cumulative size for an Archival Unit containing deposits from the content provider, in kB.'
+            comment: 'The maximum cumulative size for an Archival Unit containing deposits from the content provider, in kB (1,000 bytes).'
             column: max_au_size            
+    lifecycleCallbacks:
+        prePersist: [generateUuid]

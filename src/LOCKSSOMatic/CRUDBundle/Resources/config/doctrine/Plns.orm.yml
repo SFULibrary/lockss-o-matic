@@ -32,6 +32,11 @@ LOCKSSOMatic\CRUDBundle\Entity\Plns:
             length: 255
             nullable: false
             comment: 'The name of the PLN.'
+        propServer:
+            type: string
+            length: 255
+            nullable: false
+            comment: 'The URL to the prop server (which may be the LOCKSSOMatic URL).'
         propsPath:
             type: text
             nullable: true

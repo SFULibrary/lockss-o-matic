@@ -1,5 +1,29 @@
 <?php
 
+/* 
+ * The MIT License
+ *
+ * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -56,6 +80,11 @@ class Aus
     private $plugin;
 
     /**
+     * @var boolean
+     */
+    private $managed;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -63,6 +92,7 @@ class Aus
         $this->content = new ArrayCollection();
         $this->auStatus = new ArrayCollection();
         $this->auProperties = new ArrayCollection();
+        $this->managed = true;
     }
 
     /**
@@ -72,7 +102,7 @@ class Aus
      */
     public function __toString()
     {
-            return 'unknown au';
+        return sprintf('AU %d', array($this->id));
     }
     
     /**
@@ -180,11 +210,25 @@ class Aus
     /**
      * Get content
      *
-     * @return Collection
+     * @return Content
      */
     public function getContent()
     {
         return $this->content;
+    }
+    
+    /**
+     * Get the total size of the AU by adding the size of the 
+     * content items. Returns size in kB (1,000 bytes).
+     * 
+     * @return int
+     */
+    public function getContentSize() {
+        $size = 0;
+        foreach($this->getContent() as $content) {
+            $size += $content->getSize();
+        }
+        return $size;
     }
 
     /**
@@ -297,5 +341,56 @@ class Aus
     public function getPlugin()
     {
         return $this->plugin;
+    }
+
+    /**
+     * Set managed
+     *
+     * @param boolean $managed
+     * @return Aus
+     */
+    public function setManaged($managed)
+    {
+        $this->managed = $managed;
+
+        return $this;
+    }
+
+    /**
+     * Get managed
+     *
+     * @return boolean 
+     */
+    public function getManaged()
+    {
+        return $this->managed;
+    }
+    /**
+     * @var \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders
+     */
+    private $contentProvider;
+
+
+    /**
+     * Set contentProvider
+     *
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider
+     * @return Aus
+     */
+    public function setContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider = null)
+    {
+        $this->contentProvider = $contentProvider;
+
+        return $this;
+    }
+
+    /**
+     * Get contentProvider
+     *
+     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders 
+     */
+    public function getContentProvider()
+    {
+        return $this->contentProvider;
     }
 }

@@ -22,7 +22,13 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             inversedBy: aus
             joinColumn:
                 name: plugins_id
-                referencedColumnName: id                
+                referencedColumnName: id
+        contentProvider:
+            targetEntity: ContentProviders
+            inversedBy: aus
+            joinColumn:
+                name: contentproviders_id
+                referencedColumnName: id
     table: aus
     indexes:
         plns_id_idx:
@@ -41,7 +47,12 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             generator:
                 strategy: IDENTITY
     fields:
-        auid:
+        managed:
+            type: boolean
+            nullable: false
+            default: true
+            comment: 'Should LOCKSSOMatic manage this PLN.'
+        auid:            
             type: string
             length: 255
             nullable: true

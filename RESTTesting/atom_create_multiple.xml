@@ -14,6 +14,7 @@
     </author>
     <summary type="text">Image samples from the internet</summary>
 
+    <!-- @size is the file size in kB (1,000 bytes) -->
     <lom:content size="899922" checksumType="md5" checksumValue="ed5697c06b97f95e1221f857a3c08661">
         https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg
     </lom:content>

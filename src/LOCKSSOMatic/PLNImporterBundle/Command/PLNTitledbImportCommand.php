@@ -1,229 +1,213 @@
 <?php
+
 // src/LOCKSSOMatic/PLNImporterBundle/Command/PLNTitledbImportCommand.php
+
 namespace LOCKSSOMatic\PLNImporterBundle\Command;
 
 use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use LOCKSSOMatic\CoreBundle\DependencyInjection\LomLogger;
 use LOCKSSOMatic\CRUDBundle\Entity\AuProperties;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
-use LOCKSSOMatic\CRUDBundle\Entity\PluginProperties;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentOwners;
 use LOCKSSOMatic\CRUDBundle\Entity\Plugins;
+use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Private Lockss network plugin import command-line
  */
 class PLNTitledbImportCommand extends ContainerAwareCommand
 {
+
+    /**
+     * @var EntityManager
+     */
+    private $em;
+
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+        $this->em = $container->get('doctrine')->getManager();
+    }
+
     protected function configure()
     {
-        $this
-            ->setName('lockssomatic:plntitledbimport')
-            ->setDescription('Import PLN titledb file - using return value for testing.')
-            ->addArgument('path_to_titledb', InputArgument::OPTIONAL, 'Local path to the titledb xml file.');
+        $this->setName('lockssomatic:plntitledbimport')
+            ->setDescription('Import PLN titledb file.')
+            ->addArgument('path_to_titledb', InputArgument::REQUIRED,
+                'Local path to the titledb xml file.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $pathToTitledb = $input->getArgument('path_to_titledb');
-        if (file_exists($pathToTitledb)) {
-            $xml = simplexml_load_file($pathToTitledb);
-            $text = "Loading the titledb XML.\n";
-            $text .= "Depeding on the file size, this may take some time.\n";
-            $text .= "Please be patient while the script runs.";
-            $output->writeln($text);
-            $AUs = $this->parseAUsFromTitledbXML($xml);
-            $text = "The number of AUs is " . count($AUs);
-            $output->writeln($text);
+        if (!file_exists($pathToTitledb)) {
+            $output->writeln("Cannot find {$pathToTitledb}");
+            return;
+        }
 
-            $text = "Adding AUs:\n";
-            $output->writeln($text);
-            $count = 0;
-            foreach ($AUs as $au) {
-                $gcValue = gc_collect_cycles(); // force PHP garbage collection.
-                $result = $this->addAU($au);
-                $count+=1;
-                $text = "Result: $result . Added $count AUs. GC value = $gcValue";
-                $output->writeln($text);
+        $xml = simplexml_load_file($pathToTitledb);
+        $titlesXml = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
+        $total = count($titlesXml);
+        $output->writeln("Found {$total} title elements.");
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
+
+        $errors = array();
+        $i = 0;
+        foreach ($titlesXml as $titleXml) {
+            $result = $this->processTitle($titleXml);
+            if($result !== null) {
+                $errors[$result] = (array_key_exists($result, $errors) ? $errors[$result] + 1 : 1);
             }
-
-            $text = "Completing added AUs.  Please verify.";
-            $output->writeln($text);
-
-        } else {
-            $text = 'An invalid path was provided.  Aborting PLN plugin import.';
-            $output->writeln($text);
+            $i++;
+            if ($i % 200 === 0) {
+                $this->progressReport($output, $total, $i);
+            }
+        }
+        $this->progressReport($output, $total, $total);
+        if (count($errors) > 0) {
+            foreach ($errors as $k => $v) {
+                $output->writeln("Error ($v) $k");
+            }
         }
     }
 
-    protected function parseAUsFromTitledbXML($xml)
-    {
-      // Grab all AUs in the titledb xml
-      // Root element of an AU is the property element with name "org.lockss.title"
-      // All child property elements of parent wrapper element of org.lockss.title
-      $xpathRule = '//lockss-config/property[@name="org.lockss.title"]/property';
-      $AUs = $xml->xpath($xpathRule);
-
-      return $AUs;
+    protected function progressReport(OutputInterface $output, $total, $i) {
+        $this->em->flush();
+        $this->em->clear();
+        gc_collect_cycles();
+        $output->writeln(" $i / $total - " . sprintf('%dM', memory_get_usage() / (1024 * 1024)) . '/' . ini_get('memory_limit'));
     }
-
-    protected function addAU($auXml)
+    
+    protected function processTitle(SimpleXMLElement $titleXml)
     {
-        $xpathRule = 'property[@name="plugin"]';
-
-        $pluginPropertyElement = $auXml->xpath($xpathRule)[0];
-        $pluginIdentifier = $pluginPropertyElement->attributes()->value;
-
         try {
-          $plugin = $this->getPlugin($pluginIdentifier);
-        } catch (Exception $exception) {
-          return "Exception: " . $e->getMessage() .  "\n PluginIdentifier: $pluginIdentifier";
+            $this->addAu($titleXml);
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
+        return null;
+    }
 
-//        // grab all the data from the AU
-//        // First get the pluginIndentifier value
-//        // the top-level property (parentId and propertyValue will be NULL)
-        $auTopLevelPropertyKey = 'au_top_level_property_name';  // value will be NULL for INSERT.
-//        // Cast to string before using in array to avoid illegal offset type Warnings.
-        $auTopLevelPropertyValue = (string) $auXml->attributes()->name;
-//
-        $propertiesKeyValueArray = array();
-        $childrenPropertiesOfTopLevel = $auXml->property;
-        
-        foreach ($childrenPropertiesOfTopLevel as $property) {
-          // cast to string before using in array to avoid Illegal offset type warnings.
-          $propertyName = (string) $property->attributes()->name;
-          $propertyValue = (string) $property->attributes()->value;
-
-          if (preg_match('/^param\./', $propertyName)) {
-              $paramName = (string) $propertyName; // Will be like param.1, param.2 
-              // The key $paramName will have value NULL - but track parentId
-              $nameValueArray = array(); // will hold the name(key) and value for the parameter
-
-              // parameters for lockss plugin 
-              // grab the parameter property with $propertyName and any children.
-              $xpathRule = 'property[@name="'. $paramName . '"]/*';
-              $paramNameValues = $auXml->xpath($xpathRule);
-
-              // Add the name and value for the parameter from the children propety elements.
-              foreach ($paramNameValues as $propertyChild) {
-
-                $propKey = (string) $propertyChild->attributes()->name;
-                $propValue = (string) $propertyChild->attributes()->value;
-
-                $nameValueArray[$propKey] = $propValue;
-
-              }
-
-              $propertiesKeyValueArray[$propertyName] = $nameValueArray;
-          } else {
-            $propertiesKeyValueArray[$propertyName] = $propertyValue;
-          }
-
+    protected function getPropertyValue(SimpleXMLElement $xml, $name)
+    {
+        $dataNodes = $xml->xpath("property[@name='{$name}']/@value");
+        if (count($dataNodes) === 0) {
+            return null;
         }
+        if (count($dataNodes === 1)) {
+            return (string) $dataNodes[0];
+        }
+        throw new Exception('Too many elements for property name ' . $name);
+    }
 
-        // Grab pluginsId via the pluginsProperties table.
-        // AU stanzas use pluginIdentifier rather than pluginName.
-        // [Add pluginIdentifier to plugins table?]
+    protected function addAu(SimpleXMLElement $xml)
+    {
+        $pluginId = $this->getPropertyValue($xml, 'plugin');
+        $plugin = $this->getPlugin($pluginId);
+        if (!$this->em->contains($plugin)) {
+            die("not contains: " . Debug::dump($plugin));
+        }
+        $publisherName = (string) $this->getPropertyValue($xml, 'attributes.publisher');
+        $owner = $this->getContentOwner($publisherName, $plugin);
 
-        // Instantiate an entity manager.
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        
-        // Aus table - add plugins id into Aus table.
         $aus = new Aus();
         $plugin->addAus($aus);
         $aus->setPlugin($plugin);
-        $em->persist($aus);
-        $em->flush();
-        
-//        $em->clear();
-//
+        $this->em->persist($aus);
+
         $auProperties = new AuProperties();
-//
         $auProperties->setAu($aus);
-        $propertyKey = (string) $auXml->attributes()->name;
-        $auProperties->setPropertyKey($propertyKey);
-        $em->persist($auProperties);
-        $em->flush();
-//        
-        $auParent = $auProperties;
-//        $em->clear();
-//
-        foreach ($propertiesKeyValueArray as $key => $value) {
-          if (gettype($value) == 'array' && preg_match('/^param\./', $key)) {
-              // key will be param.n where n is some whole number.
-              // if we get something else, then we need to investigate.
-              // Instantiate an entity manager.
-                        
-              // $key with value NULL - record insertId 
-              $auProperties = new AuProperties();
-              $auProperties->setAu($aus);
-              $auProperties->setParent($auParent);
-              $propertyKey = (string) $key;
-              $auProperties->setPropertyKey($propertyKey);
-              $em->persist($auProperties);
-              $em->flush();
-              $parent = $auProperties;
+        $auProperties->setPropertyKey((string) $xml->attributes()->name);
+        $this->em->persist($auProperties);
+        $propRoot = $auProperties;
 
-              // iterate thought the key=>values in the value array using parent insertId
-              foreach ($value as $childKey => $childValue) {
-                $auProperties = new AuProperties();
-                $auProperties->setParent($auParent);
-                $propertyKey = (string) $childKey;
-                $propertyValue = (string) $childValue;
-                $auProperties->setPropertyKey($propertyKey);
-                $auProperties->setPropertyValue($propertyValue);
-                $auProperties->setAu($aus);
-                $em->persist($auProperties);
-                $em->persist($aus);
-                $em->flush();
-              }
+        foreach ($xml->xpath('property[starts-with(@name, "param.")]') as $node) {
+            $nameData = $node->xpath('property[@name="key"]/@value');
+            $name = $nameData[0];
+            $valueData = $node->xpath('property[@name="value"]/@value');
+            $value = $valueData[0];
 
-          } else {
-            /*
-            $query = $dbh->prepare('INSERT INTO auProperties 
-                                      (
-                                        `ausId`, 
-                                        `parentId`,
-                                        `propertyKey`, 
-                                        `propertyValue`
-                                      ) 
-                                      VALUES (?, ?, ?, ?)');
-            $propertyKey = (string) $key;
-            $propertyValue = (string) $value;
-            $query->execute(array($ausId, $auParentId, $propertyKey, $propertyValue));
-            */
-            //$lastAuPropInsertId = $dbh->lastInsertId();
-          }
+            $childProp = new AuProperties();
+            $childProp->setAu($aus);
+            $childProp->setParent($propRoot);
+            $childProp->setPropertyKey($node->attributes()->name);
+            $this->em->persist($childProp);
 
+            $keyProp = new AuProperties();
+            $keyProp->setAu($aus);
+            $keyProp->setParent($childProp);
+            $keyProp->setPropertyKey('key');
+            $keyProp->setPropertyValue($name);
+            $this->em->persist($keyProp);
+
+            $valProp = new AuProperties();
+            $valProp->setAu($aus);
+            $valProp->setParent($childProp);
+            $valProp->setPropertyKey('value');
+            $valProp->setPropertyValue($value);
+            $this->em->persist($valProp);
         }
-
     }
 
     /**
      * Get a plugin based on its identifier property.
-     * 
-     * @param type $pluginIdentifier
-     * @return type
+     *
+     * @todo some caching here would be very good.
+     *
+     * @param string $pluginId
+     *
+     * @return Plugins
      */
-    protected function getPlugin($pluginIdentifier)
+    protected function getPlugin($pluginId)
     {
+        static $cache = array();
+        // $this->em->clear() may disconnect entities in this cache
+        // for some reason.
+        if (array_key_exists($pluginId, $cache) && $this->em->contains($cache[$pluginId])) {
+            return $cache[$pluginId];
+        }
 
-        // AUs only record the pluginIdentifier
+        $property = $this->em->getRepository('LOCKSSOMaticCRUDBundle:PluginProperties')
+            ->findOneBy(array(
+            'propertyKey'   => 'plugin_identifier',
+            'propertyValue' => $pluginId
+        ));
 
-        // Instantiate an entity manager.
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        if ($property === null) {
+            throw new Exception("Unknown pluginId property: {$pluginId}");
+        }
 
-        //$repository = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\PluginProperties')->findOneBy(array('propertyValue' => $pluginIdentifier));
-        $result = $em->getRepository('LOCKSSOMatic\CRUDBundle\Entity\PluginProperties')
-                    ->findOneByPropertyValue($pluginIdentifier);
-        return $result->getPlugin();
+        $cache[$pluginId] = $property->getPlugin();
+        return $property->getPlugin();
     }
 
-} // end of class
+    protected function getContentOwner($name, Plugins $plugin)
+    {
+        static $cache = array();
+
+        if (array_key_exists($name, $cache)) {
+            return $cache[$name];
+        }
+
+        $owner = $this->em->getRepository('LOCKSSOMaticCRUDBundle:ContentOwners')
+            ->findOneBy(array(
+            'name' => $name
+        ));
+        if ($owner === null) {
+            $owner = new ContentOwners();
+            $owner->setName($name);
+            $owner->setEmailAddress('unknown');
+            $owner->setPlugin($plugin);
+            $this->em->persist($owner);
+        }
+        $cache[$name] = $owner;
+        return $cache[$name];
+    }
+
+}

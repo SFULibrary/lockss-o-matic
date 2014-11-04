@@ -4,6 +4,8 @@ php:
   - 5.3
   - 5.4
   - 5.5
+  
+cache: apt
 
 before_script:
   - cp app/config/LOMSettings.yml.dist app/config/LOMSettings.yml
@@ -11,7 +13,6 @@ before_script:
   - mysql -e 'create database lomtest;'
   - cp app/config/config_test.yml.travis app/config/config_test.yml
   - php app/console --env=test doctrine:schema:update --force
-  - php app/console --env=test doctrine:fixtures:load -n
   - sudo apt-get install apache2
   - sudo a2enmod actions
   - sudo a2enmod rewrite

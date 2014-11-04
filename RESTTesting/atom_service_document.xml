@@ -5,7 +5,8 @@
          xmlns:lom="http://lockssomatic.info/SWORD2" 
          xmlns="http://www.w3.org/2007/app">
   <sword:version>2.0</sword:version>
-  <!-- sword:maxUploadSize is configurable per Content Provider. -->
+  <!-- sword:maxUploadSize is configurable per Content Provider. It is the maximum
+  file size in kB (1,000 bytes) per content item. -->
   <sword:maxUploadSize>123456</sword:maxUploadSize>
   <!-- lom:uploadChecksumType is configurable per Content Provider. -->
   <lom:uploadChecksumType>md5</lom:uploadChecksumType>

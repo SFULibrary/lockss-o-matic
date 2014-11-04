@@ -6,7 +6,8 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             inversedBy: deposits
             joinColumn:
                 name: content_providers_id
-                referencedColumnName: id    
+                referencedColumnName: id
+                onDelete: cascade
     oneToMany:
         content:
             targetEntity: Content
@@ -39,6 +40,10 @@ LOCKSSOMatic\CRUDBundle\Entity\Deposits:
             length: 255
             nullable: false
             comment: 'The title of the deposit.'
+        summary:
+            type: string
+            nullable: true
+            comment: 'A summary for the deposit.'
         dateDeposited:
             type: datetime
             nullable: false

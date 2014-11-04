@@ -6,7 +6,10 @@ LOCKSSOMatic\CRUDBundle\Entity\Plugins:
             mappedBy: plugin
         aus:
             targetEntity: Aus
-            mappedBy: plugin            
+            mappedBy: plugin
+        contentOwners:
+            targetEntity: ContentOwners
+            mappedBy: plugin
     table: plugins
     id:
         id:
