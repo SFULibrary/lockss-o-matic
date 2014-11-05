@@ -63,9 +63,4 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             nullable: false
             comment: 'The LOCKSS manifest URL for the AU.'
             column: manifest_url
-        open:
-            type: integer
-            nullable: false
-            unsigned: false
-            comment: 'Either 1 (indicating that content should still be added to this AU) or 0 (indicating that it should not).'            
     lifecycleCallbacks: {  }

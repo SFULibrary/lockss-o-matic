@@ -41,7 +41,6 @@ class AusType extends AbstractType
         $builder
             ->add('auid')
             ->add('manifestUrl')
-            ->add('open')
             ->add('pln')
             ->add('plugin')
         ;
