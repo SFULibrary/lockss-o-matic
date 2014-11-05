@@ -4,6 +4,8 @@ php:
   - 5.3
   - 5.4
   - 5.5
+  
+cache: apt
 
 before_script:
   - cp app/config/LOMSettings.yml.dist app/config/LOMSettings.yml

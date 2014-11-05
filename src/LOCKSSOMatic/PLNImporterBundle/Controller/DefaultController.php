@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\PLNImporterBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
 #use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
@@ -13,5 +14,4 @@ class DefaultController extends Controller
         $response->headers->set('Content-Type', 'text/html');
         return $response;
     }
-    
 }

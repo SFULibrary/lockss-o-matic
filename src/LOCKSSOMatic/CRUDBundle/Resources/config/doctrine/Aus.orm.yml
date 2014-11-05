@@ -55,12 +55,12 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
         auid:            
             type: string
             length: 255
-            nullable: false
+            nullable: true
             comment: 'The LOCKSS auId. @todo: Explain where this is generated.'
         manifestUrl:
             type: string
             length: 512
-            nullable: false
+            nullable: true
             comment: 'The LOCKSS manifest URL for the AU.'
             column: manifest_url
     lifecycleCallbacks: {  }
