@@ -495,11 +495,7 @@ class DefaultController extends Controller
         /** @var EntityManager */
         $em = $this->getDoctrine()->getManager();
 
-        $callback = function(Aus $au) {
-            return $au->getOpen() === true;
-        };
-
-        $aus = $contentProvider->getAus()->filter($callback);
+        $aus = $contentProvider->getAus();
         if ($aus->count() >= 1) {
             $au = $aus->last();
             if ($au->getContentSize() + $contentXml->attributes()->size < $contentProvider->getMaxAuSize()) {
@@ -507,15 +503,10 @@ class DefaultController extends Controller
             }
         }
 
-        foreach ($contentProvider->getAus() as $au) {
-            $au->setOpen(false);
-        }
-
         $au = new Aus();
         $em->persist($au);
         $contentProvider->addAus($au);
         $au->setContentProvider($contentProvider);
-        $au->setOpen(true);
         $au->setManaged(true);
         $au->setAuid('generated-au');
         $au->setManifestUrl('http://provider.example.com');

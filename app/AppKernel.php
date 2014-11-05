@@ -29,6 +29,7 @@ class AppKernel extends Kernel
             new LOCKSSOMatic\UserBundle\LOCKSSOMaticUserBundle(),
             new LOCKSSOMatic\DefaultBundle\LOCKSSOMaticDefaultBundle(),
             new LOCKSSOMatic\PluginBundle\LOCKSSOMaticPluginBundle(),
+            new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

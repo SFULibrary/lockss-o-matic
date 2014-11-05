@@ -103,11 +103,6 @@ class ContentProviders
     private $permissionUrl;
 
     /**
-     * @var Plugins
-     */
-    private $plugin;
-
-    /**
      * @var Collection
      */
     private $aus;
@@ -450,29 +445,6 @@ class ContentProviders
      */
     public function getPermissionHost() {
         return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
-    }
-
-    /**
-     * Set plugin
-     *
-     * @param Plugins $plugin
-     * @return ContentProviders
-     */
-    public function setPlugin(Plugins $plugin = null)
-    {
-        $this->plugin = $plugin;
-
-        return $this;
-    }
-
-    /**
-     * Get plugin
-     *
-     * @return Plugins 
-     */
-    public function getPlugin()
-    {
-        return $this->plugin;
     }
 
     /**

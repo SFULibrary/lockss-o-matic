@@ -57,7 +57,7 @@ class Plugins
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    private $contentProviders;
+    private $contentOwners;
 
     /**
      * Constructor
@@ -178,35 +178,35 @@ class Plugins
     }
 
     /**
-     * Add contentProviders
+     * Add contentOwners
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\contentProviders $contentProviders
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwners
      * @return Plugins
      */
-    public function addContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\contentProviders $contentProviders)
+    public function addContentOwner(\LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwners)
     {
-        $this->contentProviders[] = $contentProviders;
+        $this->contentOwners[] = $contentOwners;
 
         return $this;
     }
 
     /**
-     * Remove contentProviders
+     * Remove contentOwners
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\contentProviders $contentProviders
+     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwners
      */
-    public function removeContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\contentProviders $contentProviders)
+    public function removeContentOwner(\LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwners)
     {
-        $this->contentProviders->removeElement($contentProviders);
+        $this->contentOwners->removeElement($contentOwners);
     }
 
     /**
-     * Get contentProviders
+     * Get contentOwners
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getContentProviders()
+    public function getContentOwners()
     {
-        return $this->contentProviders;
+        return $this->contentOwners;
     }
 }

@@ -7,8 +7,8 @@ LOCKSSOMatic\CRUDBundle\Entity\Plugins:
         aus:
             targetEntity: Aus
             mappedBy: plugin
-        contentProviders:
-            targetEntity: ContentProviders
+        contentOwners:
+            targetEntity: ContentOwners
             mappedBy: plugin
     table: plugins
     id:

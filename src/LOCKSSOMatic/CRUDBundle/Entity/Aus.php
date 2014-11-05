@@ -50,11 +50,6 @@ class Aus
     private $manifestUrl;
 
     /**
-     * @var integer
-     */
-    private $open;
-
-    /**
      * @var Collection
      */
     private $content;
@@ -159,29 +154,6 @@ class Aus
     public function getManifestUrl()
     {
         return $this->manifestUrl;
-    }
-
-    /**
-     * Set open
-     *
-     * @param integer $open
-     * @return Aus
-     */
-    public function setOpen($open)
-    {
-        $this->open = $open;
-
-        return $this;
-    }
-
-    /**
-     * Get open
-     *
-     * @return integer
-     */
-    public function getOpen()
-    {
-        return $this->open;
     }
 
     /**
