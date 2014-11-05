@@ -1,7 +1,7 @@
 
 # define a plugin as a service
 services:
-    lomplugin.aus.year:
+    lomplugin.aus.size:
         class: LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize
         calls:
           - [ setContainer,[ @service_container ] ]

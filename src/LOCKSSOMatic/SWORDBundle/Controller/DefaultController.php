@@ -281,11 +281,11 @@ class DefaultController extends Controller
 
         $pluginAttr = $atomEntry->xpath('lom:plugin/@name');
         if (count($pluginAttr)) {
-            $pluginName = (string)$pluginAttr[0];
+            $pluginName = (string)$pluginAttr[0];            
         } else {
-            $pluginName = 'LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize';
+            $pluginName = 'lomplugin.aus.size';
         }
-
+        
         $plugin = $this->get($pluginName);
         
         $depositBuilder = new DepositBuilder();
@@ -302,9 +302,6 @@ class DefaultController extends Controller
             $au = $plugin->getDestinationAu(
                 $contentProvider, $contentChunk
             );
-            if (!$em->contains($au)) {
-                $em->persist($au);
-            }
             $au->addContent($content);
             $content->setAu($au);
             $content->setRecrawl(1);

@@ -43,7 +43,8 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
     public function getDestinationAu(ContentProviders $contentProvider, SimpleXMLElement $contentXml)
     {
         $callback = function(Aus $au) {
-            return $au->getOpen() === true;
+            // check if the au is managed by this plugin somehow.
+            return $au->getOpen() === 1;
         };
 
         $aus = $contentProvider->getAus()->filter($callback);
@@ -59,11 +60,15 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
         }
 
         $au = new Aus();
-        $this->container->get('doctrine')->em->getManager()->persist($au);
-        $contentProvider->addAus($au);
+        $this->container->get('doctrine')->getManager()->persist($au);
         $au->setContentProvider($contentProvider);
         $au->setOpen(true);
         $au->setManaged(true);
+        $au->setAuid('some generated auid.');
+        $au->setManifestUrl('http://pln.example.com/foo/bar');
+        $this->container->get('doctrine')->getManager()->flush();
+
+        $this->setData($au, 'AuParams', array('providerId' => $contentProvider->getUuid()));
         return $au;
     }
 
