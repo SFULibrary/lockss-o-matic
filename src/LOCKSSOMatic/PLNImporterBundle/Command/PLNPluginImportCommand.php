@@ -120,7 +120,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      *
      * @return string
      */
-    protected function getPluginPath($rawManifest)
+    public function getPluginPath($rawManifest)
     {
         $manifest = preg_replace('/\r\n/', "\n", $rawManifest);
         $blocks = preg_split('/\n\s*\n/s', $manifest);
@@ -213,7 +213,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      *
      * @param SimpleXMLElement $xml
      */
-    protected function importPlugin(SimpleXMLElement $xml)
+    public function importPlugin(SimpleXMLElement $xml)
     {
         $pluginRepo = $this->em->getRepository('LOCKSSOMaticCRUDBundle:Plugins');
 
