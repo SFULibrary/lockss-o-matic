@@ -10,6 +10,7 @@ LOCKSSOMatic\CRUDBundle\Entity\AuProperties:
         parent:
             targetEntity: AuProperties
             inversedBy: children
+            cascade: [persist]
             joinColumn:
                 name: parent_id
                 referencedColumnName: id

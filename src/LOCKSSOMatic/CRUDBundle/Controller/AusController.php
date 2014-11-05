@@ -46,11 +46,17 @@ class AusController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('LOCKSSOMaticCRUDBundle:Aus')->findAll();
+        $dql = 'SELECT a FROM LOCKSSOMaticCRUDBundle:Aus a';
+        $query = $em->createQuery($dql);
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1),
+            100
+        );
 
         return $this->render('LOCKSSOMaticCRUDBundle:Aus:index.html.twig', array(
-            'entities' => $entities,
+            'pagination' => $pagination
         ));
     }
     /**

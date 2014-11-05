@@ -7,12 +7,14 @@ LOCKSSOMatic\CRUDBundle\Entity\PluginProperties:
             joinColumn:
                 name: plugins_id
                 referencedColumnName: id
+                onDelete: cascade
         parent:
             targetEntity: PluginProperties
             inversedBy: children
             joinColumn:
                 name: parent_id
                 referencedColumnName: id
+                onDelete: cascade
     oneToMany:
         children:
             targetEntity: PluginProperties
