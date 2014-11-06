@@ -10,6 +10,7 @@ use Exception;
 use LOCKSSOMatic\CRUDBundle\Entity\AuProperties;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentOwners;
+use LOCKSSOMatic\CRUDBundle\Entity\PluginProperties;
 use LOCKSSOMatic\CRUDBundle\Entity\Plugins;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -35,7 +36,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $this->em = $container->get('doctrine')->getManager();
     }
 
-    protected function configure()
+    public function configure()
     {
         $this->setName('lockssomatic:plntitledbimport')
             ->setDescription('Import PLN titledb file.')
@@ -43,7 +44,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
                 'Local path to the titledb xml file.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
         $pathToTitledb = $input->getArgument('path_to_titledb');
         if (!file_exists($pathToTitledb)) {
@@ -77,14 +78,14 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         }
     }
 
-    protected function progressReport(OutputInterface $output, $total, $i) {
+    public function progressReport(OutputInterface $output, $total, $i) {
         $this->em->flush();
         $this->em->clear();
         gc_collect_cycles();
         $output->writeln(" $i / $total - " . sprintf('%dM', memory_get_usage() / (1024 * 1024)) . '/' . ini_get('memory_limit'));
     }
     
-    protected function processTitle(SimpleXMLElement $titleXml)
+    public function processTitle(SimpleXMLElement $titleXml)
     {
         try {
             $this->addAu($titleXml);
@@ -94,65 +95,16 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         return null;
     }
 
-    protected function getPropertyValue(SimpleXMLElement $xml, $name)
+    public function getPropertyValue(SimpleXMLElement $xml, $name)
     {
         $dataNodes = $xml->xpath("property[@name='{$name}']/@value");
         if (count($dataNodes) === 0) {
             return null;
         }
-        if (count($dataNodes === 1)) {
+        if (count($dataNodes) === 1) {
             return (string) $dataNodes[0];
         }
         throw new Exception('Too many elements for property name ' . $name);
-    }
-
-    protected function addAu(SimpleXMLElement $xml)
-    {
-        $pluginId = $this->getPropertyValue($xml, 'plugin');
-        $plugin = $this->getPlugin($pluginId);
-        if (!$this->em->contains($plugin)) {
-            die("not contains: " . Debug::dump($plugin));
-        }
-        $publisherName = (string) $this->getPropertyValue($xml, 'attributes.publisher');
-        $owner = $this->getContentOwner($publisherName, $plugin);
-
-        $aus = new Aus();
-        $plugin->addAus($aus);
-        $aus->setPlugin($plugin);
-        $this->em->persist($aus);
-
-        $auProperties = new AuProperties();
-        $auProperties->setAu($aus);
-        $auProperties->setPropertyKey((string) $xml->attributes()->name);
-        $this->em->persist($auProperties);
-        $propRoot = $auProperties;
-
-        foreach ($xml->xpath('property[starts-with(@name, "param.")]') as $node) {
-            $nameData = $node->xpath('property[@name="key"]/@value');
-            $name = $nameData[0];
-            $valueData = $node->xpath('property[@name="value"]/@value');
-            $value = $valueData[0];
-
-            $childProp = new AuProperties();
-            $childProp->setAu($aus);
-            $childProp->setParent($propRoot);
-            $childProp->setPropertyKey($node->attributes()->name);
-            $this->em->persist($childProp);
-
-            $keyProp = new AuProperties();
-            $keyProp->setAu($aus);
-            $keyProp->setParent($childProp);
-            $keyProp->setPropertyKey('key');
-            $keyProp->setPropertyValue($name);
-            $this->em->persist($keyProp);
-
-            $valProp = new AuProperties();
-            $valProp->setAu($aus);
-            $valProp->setParent($childProp);
-            $valProp->setPropertyKey('value');
-            $valProp->setPropertyValue($value);
-            $this->em->persist($valProp);
-        }
     }
 
     /**
@@ -164,7 +116,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
      *
      * @return Plugins
      */
-    protected function getPlugin($pluginId)
+    public function getPlugin($pluginId)
     {
         static $cache = array();
         // $this->em->clear() may disconnect entities in this cache
@@ -187,7 +139,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         return $property->getPlugin();
     }
 
-    protected function getContentOwner($name, Plugins $plugin)
+    public function getContentOwner($name, Plugins $plugin)
     {
         static $cache = array();
 
@@ -209,5 +161,49 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $cache[$name] = $owner;
         return $cache[$name];
     }
+    public function newProperties(Aus $au, $parent, $key, $value) {
+        $prop = new AuProperties();
+        $prop->setAu($au);
+        $prop->setParent($parent);
+        $prop->setPropertyKey($key);
+        $prop->setPropertyValue($value);
+        $this->em->persist($prop);
+        return $prop;
+    }
+
+    public function addAu(SimpleXMLElement $xml)
+    {
+        $logger = $this->getContainer()->get('logger');
+        $logger->error('importing title for ' . $xml->asXML());
+
+        $pluginId = $this->getPropertyValue($xml, 'plugin');
+        $logger->error('plugin id ' . $pluginId);
+
+        $plugin = $this->getPlugin($pluginId);
+        $logger->error('plugin db id' . $plugin->getId());
+
+        $publisherName = (string) $this->getPropertyValue($xml, 'attributes.publisher');
+        $logger->error('pub name' . $publisherName);
+
+        $this->getContentOwner($publisherName, $plugin);
+
+        $aus = new Aus();
+        $plugin->addAus($aus);
+        $aus->setPlugin($plugin);
+        $this->em->persist($aus);
+        
+        $propRoot = $this->newProperties($aus, null, (string) $xml->attributes()->name, null);
+
+        foreach ($xml->xpath('property[starts-with(@name, "param.")]') as $node) {
+            $nameData = $node->xpath('property[@name="key"]/@value');
+            $valueData = $node->xpath('property[@name="value"]/@value');
+
+            $childProp = $this->newProperties($aus, $propRoot, $node->attributes()->name, null);
+            $this->newProperties($aus, $childProp, 'key', $nameData[0]);
+            $this->newProperties($aus, $childProp, 'value', $valueData[0]);
+        }
+        $this->em->flush();
+    }
+
 
 }
