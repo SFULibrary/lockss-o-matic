@@ -7,6 +7,7 @@ LOCKSSOMatic\CRUDBundle\Entity\AuProperties:
             joinColumn:
                 name: aus_id
                 referencedColumnName: id
+                onDelete: cascade
         parent:
             targetEntity: AuProperties
             inversedBy: children
@@ -14,6 +15,7 @@ LOCKSSOMatic\CRUDBundle\Entity\AuProperties:
             joinColumn:
                 name: parent_id
                 referencedColumnName: id
+                onDelete: cascade
     oneToMany:
         children:
             targetEntity: AuProperties

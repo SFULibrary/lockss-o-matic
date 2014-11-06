@@ -7,6 +7,7 @@ LOCKSSOMatic\CRUDBundle\Entity\AuStatus:
             joinColumn:
                 name: aus_id
                 referencedColumnName: id
+                onDelete: cascade
     table: au_status
     indexes:
         aus_id_idx:
