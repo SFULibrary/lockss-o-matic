@@ -11,7 +11,7 @@ class PluginsManager extends ContainerAware
      * @var AbstractPlugin
      */
     private $plugins;
-
+    
     public function __construct() {
         $this->plugins = array();
     }

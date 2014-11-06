@@ -55,15 +55,12 @@ abstract class AbstractPlugin extends ContainerAware
         return $data;
     }
 
-    /**
-     * 
-     * @param mixed $object
-     * @param string $key
-     * @return object
-     */
-    public function getData($object, $key)
+    public function getData($key, $object = null)
     {
-        $data = $this->getDataObject($object, $key);
+        $logger = $this->container->get('logger');
+        $logger->error('getting plugin data for ' . get_class($this) . '////' . $key . '////' . get_class($object) . '#' . $object->getId());
+        $data = $this->getDataObject($key, $object);
+        $logger->error('data object: ' . print_r($data, true));
         if ($data === null) {
             return null;
         }
@@ -72,12 +69,12 @@ abstract class AbstractPlugin extends ContainerAware
         return $res;
     }
 
-    public function setData($object, $key, $value)
+    public function setData($key, $object = null, $value = array())
     {
         $data = $this->getDataObject($object, $key);
         if ($data === null) {
             $data = new LomPluginData();            
-            $em = $this->container->get('doctrine')->getManager()->persist($data);
+            $this->container->get('doctrine')->getManager()->persist($data);
             $data->setPlugin(get_class($this));
             $data->setDataKey($key);
             if ($object !== null && is_object($object)) {
