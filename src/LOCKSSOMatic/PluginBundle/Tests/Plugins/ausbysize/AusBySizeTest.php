@@ -30,7 +30,7 @@ class AusBySizeTest extends KernelTestCase
         $provider->setIpAddress('127.0.0.1');
         $provider->setHostname('provider.example.com');
         $provider->setChecksumType('md5');
-        $provider->setMaxFileSize('1000'); // in kB
+        $provider->setMaxFileSize('8000'); // in kB
         $provider->setMaxAuSize('10000'); // also in kB
         $provider->setPermissionUrl('http://provider.example.com/path/to/permissions');
         static::$em->persist($provider);
@@ -106,4 +106,26 @@ class AusBySizeTest extends KernelTestCase
         $this->assertEquals(1, $provider->getAus()->count());
     }
 
+//    // All of these content items should go in the same au.
+//    public function testOnDepositSingleAu()
+//    {
+//        $provider = static::$provider;
+//        $items = array(
+//            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="6000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+//            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+//            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+//        );
+//        
+//        /** @var AusBySize */
+//        $plugin = $this->container->get('lomplugin.aus.size');
+//
+//        foreach($items as $item) {
+//            $xml = new SimpleXMLElement($item);        
+//            $event = new DepositContentEvent($provider, $xml);
+//            $plugin->onDepositContent($event);
+//        }
+//
+//        self::$em->refresh($provider);
+//        $this->assertEquals(1, $provider->getAus()->count());
+//    }
 }

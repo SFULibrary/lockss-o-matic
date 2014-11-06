@@ -35,9 +35,14 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
     
     // puts the content item into an au.
     public function onDepositContent(DepositContentEvent $event) {
+        /** @var ContentProviders */
         $contentProvider = $event->getContentProvider();
         $contentXml = $event->getXml();
 
+        $logger = $this->container->get('logger');
+        $logger->error('depositing ' . $contentXml->asXML());
+        $logger->error('  into ' . $contentProvider->getId() . ' with max size ' . $contentProvider->getMaxAuSize());
+        
         $maxSize = $contentProvider->getMaxAuSize();
         $contentSize = $contentXml->attributes()->size;
         $filter = function(AUs $au) use($maxSize, $contentSize) {
