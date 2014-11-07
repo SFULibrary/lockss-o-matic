@@ -2,7 +2,9 @@
 
 namespace LOCKSSOMatic\PluginBundle\Tests\Plugins\ausbysize;
 
+use J20\Uuid\Uuid;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
+use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
 use LOCKSSOMatic\PluginBundle\Event\DepositContentEvent;
 use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize;
@@ -42,7 +44,9 @@ class AusBySizeTest extends KernelTestCase
     {
         static::$em->refresh(self::$provider);
         foreach(static::$provider->getDeposits() as $deposit) {
+            static::$em->refresh($deposit);
             foreach($deposit->getContent() as $content) {
+                static::$em->refresh($content);
                 static::$em->remove($content);
             }
             static::$em->remove($deposit);
@@ -92,40 +96,47 @@ class AusBySizeTest extends KernelTestCase
         $this->assertEquals('size', $node['attributes']);
     }
 
-    public function testOnDepositSingleContent()
+//    public function testOnDepositSingleContent()
+//    {
+//        $provider = static::$provider;
+//        $xml = new SimpleXMLElement('<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="10" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>');
+//        $event = new DepositContentEvent($provider, $xml);
+//
+//        /** @var AusBySize */
+//        $plugin = $this->container->get('lomplugin.aus.size');
+//
+//        $plugin->onDepositContent($event);
+//        self::$em->refresh($provider);
+//        $this->assertEquals(1, $provider->getAus()->count());
+//    }
+
+    // All of these content items should go in the same au.
+    public function testOnDepositSingleAu()
     {
         $provider = static::$provider;
-        $xml = new SimpleXMLElement('<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="10" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>');        
-        $event = new DepositContentEvent($provider, $xml);
-
+        $items = array(
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="4000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+        );
+        
         /** @var AusBySize */
         $plugin = $this->container->get('lomplugin.aus.size');
+        $deposit = new Deposits();
+        $deposit->setContentProvider(static::$provider);
+        $deposit->setUuid(Uuid::v4());
+        $deposit->setTitle('Test deposit abst-todsa');
+        static::$em->persist($deposit);
+        static::$em->flush();
 
-        $plugin->onDepositContent($event);
+        foreach($items as $item) {
+            $xml = new SimpleXMLElement($item);        
+            $event = new DepositContentEvent($deposit, $provider, $xml);
+            $plugin->onDepositContent($event);
+        }
+
         self::$em->refresh($provider);
         $this->assertEquals(1, $provider->getAus()->count());
     }
 
-//    // All of these content items should go in the same au.
-//    public function testOnDepositSingleAu()
-//    {
-//        $provider = static::$provider;
-//        $items = array(
-//            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="6000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-//            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-//            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-//        );
-//        
-//        /** @var AusBySize */
-//        $plugin = $this->container->get('lomplugin.aus.size');
-//
-//        foreach($items as $item) {
-//            $xml = new SimpleXMLElement($item);        
-//            $event = new DepositContentEvent($provider, $xml);
-//            $plugin->onDepositContent($event);
-//        }
-//
-//        self::$em->refresh($provider);
-//        $this->assertEquals(1, $provider->getAus()->count());
-//    }
 }

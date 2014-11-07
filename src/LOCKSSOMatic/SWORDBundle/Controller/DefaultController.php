@@ -268,9 +268,6 @@ class DefaultController extends Controller
             $chunk = preg_replace('/\s*/', '', (string) $contentChunk);
             $contentHost = parse_url((string) $chunk, PHP_URL_HOST);
             if ($permissionHost !== $contentHost) {
-                $this->get('monolog.logger.sword')->error('host mismatch');
-                $this->get('monolog.logger.sword')->error(' -- ' . $permissionHost);
-                $this->get('monolog.logger.sword')->error(' -- ' . (string) $contentChunk);
                 throw new HostMismatchException();
             }
 

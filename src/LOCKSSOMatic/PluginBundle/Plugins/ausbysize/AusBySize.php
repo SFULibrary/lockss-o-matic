@@ -4,6 +4,7 @@ namespace LOCKSSOMatic\PluginBundle\Plugins\ausbysize;
 
 use Doctrine\Common\Util\Debug;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
+use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\PluginBundle\Event\DepositContentEvent;
 use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
@@ -32,45 +33,52 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
         $plugin->addAttribute('name', get_class($this));
         $plugin->addAttribute('attributes', 'size');
     }
-    
+
     // puts the content item into an au.
-    public function onDepositContent(DepositContentEvent $event) {
+    public function onDepositContent(DepositContentEvent $event)
+    {
         /** @var ContentProviders */
+        $deposit = $event->getDeposit();
         $contentProvider = $event->getContentProvider();
         $contentXml = $event->getXml();
 
-        $logger = $this->container->get('logger');
-        $logger->error('depositing ' . $contentXml->asXML());
-        $logger->error('  into ' . $contentProvider->getId() . ' with max size ' . $contentProvider->getMaxAuSize());
-        
         $maxSize = $contentProvider->getMaxAuSize();
         $contentSize = $contentXml->attributes()->size;
-        $filter = function(AUs $au) use($maxSize, $contentSize) {
-            if( $au->getContentSize() + $contentSize >= $maxSize) {
+
+        // hack around a PHP 5.3 bug.
+        $self = $this;
+
+        $filter = function(Aus $au) use($logger, $self, $maxSize, $contentSize) {
+            if ($au->getContentSize() + $contentSize >= $maxSize) {
                 return false;
             }
-            $data = $this->getData('AuParams', $au);
-            if($data === null) {
+            $data = $self->getData('AuParams', $au);
+            if ($data === null) {
                 return false;
             }
             return true;
         };
-        
+
+        $this->container->get('doctrine')->getManager()->refresh($contentProvider);
         $aus = $contentProvider->getAus()->filter($filter);
         if ($aus->count() >= 1) {
-            return $aus->first();
+            $au = $aus->first();
+        } else {
+            $au = new Aus();
+            $this->container->get('doctrine')->getManager()->persist($au);
+            $au->setContentProvider($contentProvider);
+            $au->setManaged(true);
+            $au->setAuid('some generated auid - size - odc');
+            $au->setManifestUrl('http://pln.example.com/foo/bar');
+            $this->container->get('doctrine')->getManager()->flush();
+            $this->setData('AuParams', $au, array('ByYear' => true));
         }
-
-        $au = new Aus();
-        $this->container->get('doctrine')->getManager()->persist($au);
-        $au->setContentProvider($contentProvider);
-        $au->setManaged(true);
-        $au->setAuid('some generated auid.');
-        $au->setManifestUrl('http://pln.example.com/foo/bar');
-        $this->container->get('doctrine')->getManager()->flush();
-
-        $this->setData('AuParams', $au, array('ByYear' => true));    
-        
+        $contentBuilder = new ContentBuilder();
+        $content = $contentBuilder->fromSimpleXML($contentXml);
+        $content->setDeposit($deposit);
+        $content->setAu($au);
+        $this->container->get('doctrine')->getManager()->persist($content);
+        $au->addContent($content);
     }
 
     /**
@@ -91,16 +99,16 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
         $self = $this;
 
         $filter = function(AUs $au) use($self, $maxSize, $contentSize) {
-            if( $au->getContentSize() + $contentSize >= $maxSize) {
+            if ($au->getContentSize() + $contentSize >= $maxSize) {
                 return false;
             }
             $data = $self->getData('AuParams', $au);
-            if($data === null) {
+            if ($data === null) {
                 return false;
             }
             return true;
         };
-        
+
         $aus = $contentProvider->getAus()->filter($filter);
         if ($aus->count() >= 1) {
             return $aus->first();
@@ -110,7 +118,7 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
         $this->container->get('doctrine')->getManager()->persist($au);
         $au->setContentProvider($contentProvider);
         $au->setManaged(true);
-        $au->setAuid('some generated auid.');
+        $au->setAuid('some generated auid - size - gda');
         $au->setManifestUrl('http://pln.example.com/foo/bar');
         $this->container->get('doctrine')->getManager()->flush();
 
