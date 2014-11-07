@@ -86,12 +86,15 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
     {
         $maxSize = $contentProvider->getMaxAuSize();
         $contentSize = $contentXml->attributes()->size;
-        
-        $filter = function(AUs $au) use($maxSize, $contentSize) {
+
+        // hack around a PHP 5.3 bug.
+        $self = $this;
+
+        $filter = function(AUs $au) use($self, $maxSize, $contentSize) {
             if( $au->getContentSize() + $contentSize >= $maxSize) {
                 return false;
             }
-            $data = $this->getData('AuParams', $au);
+            $data = $self->getData('AuParams', $au);
             if($data === null) {
                 return false;
             }
