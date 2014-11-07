@@ -48,7 +48,7 @@ class AusBySize extends AbstractPlugin implements DestinationAuInterface
         // hack around a PHP 5.3 bug.
         $self = $this;
 
-        $filter = function(Aus $au) use($logger, $self, $maxSize, $contentSize) {
+        $filter = function(Aus $au) use($self, $maxSize, $contentSize) {
             if ($au->getContentSize() + $contentSize >= $maxSize) {
                 return false;
             }
