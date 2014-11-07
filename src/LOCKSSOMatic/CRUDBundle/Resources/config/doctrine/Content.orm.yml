@@ -8,6 +8,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
                 name: deposits_id
                 referencedColumnName: id
                 onDelete: cascade
+                nullable: false
         au:
             targetEntity: Aus
             inversedBy: content
@@ -15,6 +16,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Content:
                 name: aus_id
                 referencedColumnName: id                       
                 onDelete: cascade
+                nullable: false
     table: content
     indexes:
         deposits_id_idx:

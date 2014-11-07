@@ -43,6 +43,7 @@ class ContentBuilder {
         $content->setChecksumType($xml->attributes()->checksumType);
         $content->setChecksumValue($xml->attributes()->checksumValue);
         $content->setUrl((string)$xml);
+        $content->setRecrawl(true);
         $content->setTitle('Some generated title');
         
         return $content;
