@@ -14,16 +14,18 @@
     </author>
     <summary type="text">Image samples from the internet</summary>
 
+    <lom:plugin name="aus.year" />
+
     <!-- @size is the file size in kB (1,000 bytes) -->
-    <lom:content size="899922" checksumType="md5" checksumValue="ed5697c06b97f95e1221f857a3c08661">
-        https://farm4.staticflickr.com/3691/11186563486_8796f4f843_o_d.jpg
+    <lom:content size="8922" checksumType="md5" checksumValue="ed5697c06b97f95e1221f857a3c08661">
+        http://example.com/3691/11186563486_8796f4f843_o_d.jpg
     </lom:content>
 
-    <lom:content size="198423" checksumType="md5" checksumValue="5619bbabea01c0841cd99c6cf4ad3b33">
-        http://www.ibiblio.org/wm/paint/auth/monet/parliament/parliament.jpg
+    <lom:content size="1923" checksumType="md5" checksumValue="5619bbabea01c0841cd99c6cf4ad3b33">
+        http://example.com/wm/paint/auth/monet/parliament/parliament.jpg
     </lom:content>
 
-    <lom:content size="176098" checksumType="md5" checksumValue="ff9a208611f892d147ef0f213150323e">
-        http://www.ibiblio.org/wm/paint/auth/gauguin/gauguin.alyscamps.jpg
+    <lom:content size="1798" checksumType="md5" checksumValue="ff9a208611f892d147ef0f213150323e">
+        http://example.com/wm/paint/auth/gauguin/gauguin.alyscamps.jpg
     </lom:content>
 </entry>

@@ -28,6 +28,7 @@ class AppKernel extends Kernel
             new Problematic\AclManagerBundle\ProblematicAclManagerBundle(),
             new LOCKSSOMatic\UserBundle\LOCKSSOMaticUserBundle(),
             new LOCKSSOMatic\DefaultBundle\LOCKSSOMaticDefaultBundle(),
+            new LOCKSSOMatic\PluginBundle\LOCKSSOMaticPluginBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
         );
 

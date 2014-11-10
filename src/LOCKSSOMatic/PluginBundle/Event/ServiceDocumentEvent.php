@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,35 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CRUDBundle\Entity;
+namespace LOCKSSOMatic\PluginBundle\Event;
 
-use LOCKSSOMatic\CRUDBundle\Entity\Content;
-use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
-use \SimpleXMLElement;
+use SimpleXMLElement;
+use Symfony\Component\EventDispatcher\Event;
 
-class ContentBuilder {
+/**
+ * This event is fired when a service document is requested.
+ */
+class ServiceDocumentEvent extends Event {
     
+    protected $xml;
+
     /**
+     * Construct the event. Interested services can add nodes to $xml.
      * 
      * @param SimpleXMLElement $xml
-     * @return Content
      */
-    public function fromSimpleXML(SimpleXMLElement $xml) {
-        $content = new Content();
-        $content->setSize($xml->attributes()->size);
-        $content->setChecksumType($xml->attributes()->checksumType);
-        $content->setChecksumValue($xml->attributes()->checksumValue);
-        $content->setUrl((string)$xml);
-        $content->setRecrawl(true);
-        $content->setTitle('Some generated title');
-        
-        return $content;
+    public function __construct(SimpleXMLElement $xml) {
+        $this->xml = $xml;
+    }
+    
+    /**
+     * Get the XML for the event, which will eventually be added to the service
+     * document.
+     * 
+     * @return type
+     */
+    public function getXml() {
+        return $this->xml;
     }
     
 }

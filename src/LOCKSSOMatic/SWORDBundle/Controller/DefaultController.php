@@ -33,6 +33,8 @@ use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\PluginBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\DepositUnknownException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\HostMismatchException;
@@ -43,6 +45,7 @@ use LOCKSSOMatic\SWORDBundle\Listener\SWORDErrorListener;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -210,10 +213,17 @@ class DefaultController extends Controller
 
         $contentProvider = $this->getContentProvider($onBehalfOf);
 
+        $xml = $this->getSimpleXML('<root/>');
+        $event = new ServiceDocumentEvent($xml);
+        /** @var EventDispatcher */
+        $dispatcher = $this->get('event_dispatcher');
+        $dispatcher->dispatch('sword.servicedoc', $event);
+
         $response = $this->render(
             'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
             array(
             'contentProvider' => $contentProvider,
+            'xml'             => $xml
             )
         );
         $response->headers->set('Content-type', 'text/xml');
@@ -255,8 +265,9 @@ class DefaultController extends Controller
 
         // precheck the deposit
         $permissionHost = $contentProvider->getPermissionHost();
-        foreach ($atomEntry->children(Namespaces::LOM) as $contentChunk) {
-            $contentHost = parse_url((string) $contentChunk, PHP_URL_HOST);
+        foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
+            $chunk = preg_replace('/\s*/', '', (string) $contentChunk);
+            $contentHost = parse_url((string) $chunk, PHP_URL_HOST);
             if ($permissionHost !== $contentHost) {
                 throw new HostMismatchException();
             }
@@ -266,29 +277,27 @@ class DefaultController extends Controller
             }
         }
 
+        $pluginAttr = $atomEntry->xpath('lom:plugin/@name');
+        if (count($pluginAttr)) {
+            $pluginName = (string)$pluginAttr[0];            
+        } else {
+            $pluginName = 'lomplugin.aus.size';
+        }
+        
         $depositBuilder = new DepositBuilder();
         $deposit = $depositBuilder->fromSimpleXML($atomEntry);
         $deposit->setContentProvider($contentProvider);
         $em->persist($deposit);
+        
+        /** @var EventDispatcher */
+        $dispatcher = $this->get('event_dispatcher');
 
         // Parse lom:content elements.
-        $contentBuilder = new ContentBuilder();
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
-            // Create a new Content entity.
-            $content = $contentBuilder->fromSimpleXML($contentChunk);
-            $content->setDeposit($deposit);
-            $au = $this->getDestinationAu(
-                $contentProvider, $contentChunk
-            );
-            if (!$em->contains($au)) {
-                $em->persist($au);
-            }
-            $au->addContent($content);
-            $content->setAu($au);
-            $content->setRecrawl(1);
-            $em->persist($content);
-            $em->flush();
+            $event = new DepositContentEvent($pluginName, $deposit, $contentProvider, $contentChunk);
+            $dispatcher->dispatch('sword.depositcontent', $event);
         }
+        $em->flush();
 
         $response = $this->renderDepositReceipt($contentProvider, $deposit);
         $editIri = $this->get('router')->generate(
@@ -479,11 +488,11 @@ class DefaultController extends Controller
         $aus = $contentProvider->getAus();
         if ($aus->count() >= 1) {
             $au = $aus->last();
-            if($au->getContentSize() + $contentXml->attributes()->size < $contentProvider->getMaxAuSize()) {
+            if ($au->getContentSize() + $contentXml->attributes()->size < $contentProvider->getMaxAuSize()) {
                 return $au;
             }
         }
-        
+
         $au = new Aus();
         $em->persist($au);
         $contentProvider->addAus($au);

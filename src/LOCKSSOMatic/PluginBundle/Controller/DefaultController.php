@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,25 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CRUDBundle\Entity;
+namespace LOCKSSOMatic\PluginBundle\Controller;
 
-use LOCKSSOMatic\CRUDBundle\Entity\Content;
-use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
-use \SimpleXMLElement;
+use LOCKSSOMatic\PluginBundle\Plugins\PluginsManager;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class ContentBuilder {
-    
-    /**
-     * 
-     * @param SimpleXMLElement $xml
-     * @return Content
-     */
-    public function fromSimpleXML(SimpleXMLElement $xml) {
-        $content = new Content();
-        $content->setSize($xml->attributes()->size);
-        $content->setChecksumType($xml->attributes()->checksumType);
-        $content->setChecksumValue($xml->attributes()->checksumValue);
-        $content->setUrl((string)$xml);
-        $content->setRecrawl(true);
-        $content->setTitle('Some generated title');
-        
-        return $content;
+/**
+ * The plugins controller just shows a list of plugins with descriptions. 
+ * In future, this controller may be used to configure or enable/disable 
+ * the plugins.
+ */
+class DefaultController extends Controller
+{
+    public function indexAction()
+    {
+        /** @var PluginsManager */
+        $pluginManager = $this->get('lomplugin.manager');
+        $plugins = $pluginManager->getPlugins();
+        return $this->render('LOCKSSOMaticPluginBundle:Default:index.html.twig', array(
+            'plugins' => $plugins
+        ));
     }
-    
 }

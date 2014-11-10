@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,39 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CRUDBundle\Entity;
+namespace LOCKSSOMatic\PluginBundle;
 
-use LOCKSSOMatic\CRUDBundle\Entity\Content;
-use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
-use \SimpleXMLElement;
+use LOCKSSOMatic\PluginBundle\DependencyInjection\Compiler\PluginCompilerPass;
+use LOCKSSOMatic\PluginBundle\DependencyInjection\LOCKSSOMaticPluginExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class ContentBuilder {
-    
+/**
+ * Events and plugins to listen for the events and respond appropriately. Add 
+ * plugins to the Plugins directory.
+ */
+class LOCKSSOMaticPluginBundle extends Bundle
+{
     /**
+     * This bundle uses a non-standard extension, so declare it here.
      * 
-     * @param SimpleXMLElement $xml
-     * @return Content
+     * @return LOCKSSOMaticPluginExtension
      */
-    public function fromSimpleXML(SimpleXMLElement $xml) {
-        $content = new Content();
-        $content->setSize($xml->attributes()->size);
-        $content->setChecksumType($xml->attributes()->checksumType);
-        $content->setChecksumValue($xml->attributes()->checksumValue);
-        $content->setUrl((string)$xml);
-        $content->setRecrawl(true);
-        $content->setTitle('Some generated title');
-        
-        return $content;
+    public function getContainerExtension()
+    {
+        return new LOCKSSOMaticPluginExtension();
     }
     
+    /**
+     * This bundle jumps through an extra hoop for plugins, so get the
+     * compiler set up and declared here.
+     * 
+     * @param ContainerBuilder $container
+     */
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new PluginCompilerPass());
+    }
 }

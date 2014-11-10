@@ -7,7 +7,7 @@
     <author><name>Institute of Foo Studies</name></author>
     <summary type="text">Content deposited to LOCKSS-O-Matic at Institute of Foo Studies Library.</summary>
     <!-- @size is the file size in kB (1,000 bytes) -->
-    <lom:content size="102400" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://contentprovider.example.org/download/file1.zip</lom:content>
-    <lom:content size="46899" checksumType="md5" checksumValue="226190d94b21d1b0c7b1a42d855e419d">http://contentprovider.example.org/download/file2.zip</lom:content>
+    <lom:content size="10" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>
+    <lom:content size="500" checksumType="md5" checksumValue="226190d94b21d1b0c7b1a42d855e419d">http://provider.example.com/download/file2.zip</lom:content>
 </entry>
 

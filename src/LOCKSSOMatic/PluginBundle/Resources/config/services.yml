@@ -1,0 +1,5 @@
+services:
+    lomplugin.manager:
+        class: LOCKSSOMatic\PluginBundle\Plugins\PluginsManager
+        calls:
+          - [ setContainer,[ @service_container ] ]

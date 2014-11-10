@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,30 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CRUDBundle\Entity;
+namespace LOCKSSOMatic\PluginBundle\Tests\Plugins;
 
-use LOCKSSOMatic\CRUDBundle\Entity\Content;
-use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
-use \SimpleXMLElement;
+use LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin;
 
-class ContentBuilder {
-    
+/**
+ * Plugin which does nothing except exist, for the sake of testing.
+ */
+class PluginTester extends AbstractPlugin
+{
+
     /**
-     * 
-     * @param SimpleXMLElement $xml
-     * @return Content
+     * {@inheritDoc}
      */
-    public function fromSimpleXML(SimpleXMLElement $xml) {
-        $content = new Content();
-        $content->setSize($xml->attributes()->size);
-        $content->setChecksumType($xml->attributes()->checksumType);
-        $content->setChecksumValue($xml->attributes()->checksumValue);
-        $content->setUrl((string)$xml);
-        $content->setRecrawl(true);
-        $content->setTitle('Some generated title');
-        
-        return $content;
+    public function getDescription()
+    {
+        return "Simple plugin for testing get/set data.";
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getName()
+    {
+        return "PluginTester";
+    }
+
 }
