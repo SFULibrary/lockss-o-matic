@@ -33,8 +33,8 @@ use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\PluginBundle\Event\DepositContentEvent;
 use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
-use LOCKSSOMatic\PluginBundle\LOCKSSOMaticEvents;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\DepositUnknownException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\HostMismatchException;
@@ -215,6 +215,7 @@ class DefaultController extends Controller
 
         $xml = $this->getSimpleXML('<root/>');
         $event = new ServiceDocumentEvent($xml);
+        /** @var EventDispatcher */
         $dispatcher = $this->get('event_dispatcher');
         $dispatcher->dispatch('sword.servicedoc', $event);
 
@@ -283,28 +284,20 @@ class DefaultController extends Controller
             $pluginName = 'lomplugin.aus.size';
         }
         
-        $plugin = $this->get($pluginName);
-        
         $depositBuilder = new DepositBuilder();
         $deposit = $depositBuilder->fromSimpleXML($atomEntry);
         $deposit->setContentProvider($contentProvider);
         $em->persist($deposit);
+        
+        /** @var EventDispatcher */
+        $dispatcher = $this->get('event_dispatcher');
 
         // Parse lom:content elements.
-        $contentBuilder = new ContentBuilder();
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
-            // Create a new Content entity.
-            $content = $contentBuilder->fromSimpleXML($contentChunk);
-            $content->setDeposit($deposit);
-            $au = $plugin->getDestinationAu(
-                $contentProvider, $contentChunk
-            );
-            $au->addContent($content);
-            $content->setAu($au);
-            $content->setRecrawl(1);
-            $em->persist($content);
-            $em->flush();
+            $event = new DepositContentEvent($pluginName, $deposit, $contentProvider, $contentChunk);
+            $dispatcher->dispatch('sword.depositcontent', $event);
         }
+        $em->flush();
 
         $response = $this->renderDepositReceipt($contentProvider, $deposit);
         $editIri = $this->get('router')->generate(

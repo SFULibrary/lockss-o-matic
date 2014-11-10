@@ -156,7 +156,7 @@ class AusBySizeTest extends KernelTestCase
         $deposit->setUuid(Uuid::v4());
         $deposit->setTitle('Test deposit abst-todsc ');
         $this->em->persist($deposit);
-        $event = new DepositContentEvent($deposit, $provider, $xml);
+        $event = new DepositContentEvent('lomplugin.aus.size', $deposit, $provider, $xml);
 
         /** @var AusBySize */
         $plugin = $this->container->get('lomplugin.aus.size');
@@ -192,7 +192,7 @@ class AusBySizeTest extends KernelTestCase
 
         foreach($items as $item) {
             $xml = new SimpleXMLElement($item);        
-            $event = new DepositContentEvent($deposit, $provider, $xml);
+            $event = new DepositContentEvent('lomplugin.aus.size', $deposit, $provider, $xml);
             $plugin->onDepositContent($event);
         }
 
@@ -232,7 +232,7 @@ class AusBySizeTest extends KernelTestCase
 
         foreach($items as $item) {
             $xml = new SimpleXMLElement($item);        
-            $event = new DepositContentEvent($deposit, $provider, $xml);
+            $event = new DepositContentEvent('lomplugin.aus.size', $deposit, $provider, $xml);
             $plugin->onDepositContent($event);
         }
 

@@ -37,10 +37,24 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class DepositContentEvent extends Event {
     
-    protected $xml;
+    /**
+     * @var string
+     */
+    protected $pluginName;
     
-    protected $provider;
+    /**
+     * @var SimpleXMLElement
+     */
+    protected $xml;
 
+    /**
+     * @var ContentProviders
+     */
+    protected $provider;
+    
+    /**
+     * @var Deposits
+     */
     protected $deposit;
 
     /**
@@ -50,10 +64,15 @@ class DepositContentEvent extends Event {
      * @param ContentProviders $provider
      * @param SimpleXMLElement $xml
      */
-    public function __construct(Deposits $deposit, ContentProviders $provider, SimpleXMLElement $xml) {
+    public function __construct($pluginName, Deposits $deposit, ContentProviders $provider, SimpleXMLElement $xml) {
+        $this->pluginName = $pluginName;
         $this->deposit = $deposit;
         $this->provider = $provider;
         $this->xml = $xml;
+    }
+    
+    public function getPluginName() {
+        return $this->pluginName;
     }
 
     /**

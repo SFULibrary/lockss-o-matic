@@ -1,9 +1,5 @@
 
 # define a plugin as a service
-
-parameters:
-    plugin.id: "lomplugin.aus.size"
-
 services:
     lomplugin.aus.size:
         class: LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize
@@ -13,3 +9,4 @@ services:
         tags:
             - { name: lomplugin.plugin }
             - { name: kernel.event_listener, event: sword.servicedoc, method: onServiceDocument }
+            - { name: kernel.event_listener, event: sword.depositcontent, method: onDepositContent }

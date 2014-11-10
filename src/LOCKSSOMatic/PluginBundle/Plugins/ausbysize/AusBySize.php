@@ -64,6 +64,9 @@ class AusBySize extends AbstractPlugin
      */
     public function onDepositContent(DepositContentEvent $event)
     {
+        if($event->getPluginName() !== $this->getPluginId()) {
+            return;
+        }
         /** @var ContentProviders */
         $contentProvider = $event->getContentProvider();
         $deposit = $event->getDeposit();

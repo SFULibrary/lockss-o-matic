@@ -9,3 +9,4 @@ services:
         tags:
             - { name: lomplugin.plugin}
             - { name: kernel.event_listener, event: sword.servicedoc, method: onServiceDocument }
+            - { name: kernel.event_listener, event: sword.depositcontent, method: onDepositContent }
