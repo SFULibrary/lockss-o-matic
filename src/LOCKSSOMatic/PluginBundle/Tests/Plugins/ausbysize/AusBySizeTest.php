@@ -88,15 +88,13 @@ class AusBySizeTest extends KernelTestCase
 
         /** @var AusBySize */
         $plugin = $this->container->get('lomplugin.aus.size');
-
         $event = new ServiceDocumentEvent($xml);
         $plugin->onServiceDocument($event);
 
         $nodes = $xml->xpath('//lom:plugin');
         $this->assertEquals(1, count($nodes));
-
         $node = $nodes[0];
-        $this->assertEquals(get_class($plugin), $node['name']);
+        $this->assertEquals('lomplugin.aus.size', $node['pluginId']);
         $this->assertEquals('size', $node['attributes']);
     }
 

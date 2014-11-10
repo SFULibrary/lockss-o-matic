@@ -12,6 +12,8 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 abstract class AbstractPlugin extends ContainerAware
 {
 
+    private $pluginId;
+    
     /**
      * Get the name of the plugin.
      * 
@@ -26,6 +28,11 @@ abstract class AbstractPlugin extends ContainerAware
      */
     abstract function getDescription();
 
+    public function setPluginId($pluginId)
+    {
+        $this->pluginId = $pluginId;
+    }
+    
     /**
      * 
      * @param type $object
@@ -55,6 +62,10 @@ abstract class AbstractPlugin extends ContainerAware
         return $data;
     }
 
+    public function getPluginId() {
+        return $this->pluginId;
+    }
+    
     public function getData($key, $object = null)
     {
         $data = $this->getDataObject($key, $object);

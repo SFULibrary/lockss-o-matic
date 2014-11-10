@@ -5,6 +5,7 @@ services:
         class: LOCKSSOMatic\PluginBundle\Plugins\ausbyyear\AusByYear
         calls:
           - [ setContainer,[ @service_container ] ]
+          - [ setPluginId,[ "lomplugin.aus.year" ] ]
         tags:
-            - { name: lomplugin.plugin }
+            - { name: lomplugin.plugin}
             - { name: kernel.event_listener, event: sword.servicedoc, method: onServiceDocument }

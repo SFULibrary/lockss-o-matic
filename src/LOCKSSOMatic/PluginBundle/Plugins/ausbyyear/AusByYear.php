@@ -29,8 +29,8 @@ class AusByYear extends AbstractPlugin implements DestinationAuInterface {
         /** @var SimpleXMLElement */
         $xml = $event->getXml();
         $plugin = $xml->addChild('plugin', null, Namespaces::LOM);
-        $plugin->addAttribute('name', get_class($this));
         $plugin->addAttribute('attributes', 'year');
+        $plugin->addAttribute('pluginId', $this->getPluginId());
     }
 
     /**

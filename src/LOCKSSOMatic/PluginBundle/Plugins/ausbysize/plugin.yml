@@ -1,10 +1,15 @@
 
 # define a plugin as a service
+
+parameters:
+    plugin.id: "lomplugin.aus.size"
+
 services:
     lomplugin.aus.size:
         class: LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize
         calls:
           - [ setContainer,[ @service_container ] ]
+          - [ setPluginId,[ "lomplugin.aus.size" ] ]
         tags:
             - { name: lomplugin.plugin }
             - { name: kernel.event_listener, event: sword.servicedoc, method: onServiceDocument }

@@ -23,7 +23,7 @@
             <accept>application/atom+xml;type=entry</accept> 
             <sword:mediation>true</sword:mediation>
             {% for plugin in xml.children %}{% set attrs = plugin.attributes %}
-                <lom:plugin name="{{ attrs.name }}" attributes="{{ attrs.attributes }}" />
+                <lom:plugin pluginid="{{ attrs.pluginId }}" attributes="{{ attrs.attributes }}" />
             {% endfor %}
         </collection>
         
