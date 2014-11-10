@@ -1,6 +1,30 @@
 <?php
 
-namespace LOCKSSOMatic\PluginBundle\Tests\Plugins\ausbysize;
+/* 
+ * The MIT License
+ *
+ * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+namespace LOCKSSOMatic\PluginBundle\Tests\Plugins\ausbyyear;
 
 use Doctrine\ORM\EntityManager;
 use J20\Uuid\Uuid;
@@ -15,6 +39,9 @@ use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
+/**
+ * Test the AuByYear plugin.
+ */
 class AusByYearTest extends KernelTestCase
 {
 
@@ -26,7 +53,10 @@ class AusByYearTest extends KernelTestCase
     /** @var EntityManager */
     private $em;
 
-    // called before each test is run.
+    /**
+     * Create a new content provider and persist it to the database. The
+     * provider's uuid is stored in $providerId.
+     */
     public function setUp()
     {
         $provider = new ContentProviders();
@@ -43,6 +73,9 @@ class AusByYearTest extends KernelTestCase
         $this->providerId = $provider->getUuid();
     }
 
+    /**
+     * Remove the content provider and all the entities it refers to.
+     */
     public function tearDown()
     {
         $provider = $this->em->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
@@ -63,6 +96,10 @@ class AusByYearTest extends KernelTestCase
         $this->em->flush();
     }
 
+    /**
+     * This test requires a kernel, entity manager, and a container so create them.
+     * The container is the important part, as it provides the plugin service.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -71,6 +108,9 @@ class AusByYearTest extends KernelTestCase
         $this->container = static::$kernel->getContainer();
     }
 
+    /**
+     * Test getting the plugin from the service container.
+     */
     public function testServiceContainer()
     {
         /** @var AusByYear */
@@ -85,6 +125,10 @@ class AusByYearTest extends KernelTestCase
         $this->assertEquals('lomplugin.aus.year', $plugin->getPluginId());
     }
 
+    /**
+     * Test that the plugin provides a description of itself for the 
+     * service document.
+     */
     public function testOnServiceDocument()
     {
         $ns = new Namespaces();
@@ -103,6 +147,9 @@ class AusByYearTest extends KernelTestCase
         $this->assertEquals('year', $node['attributes']);
     }
 
+    /**
+     * Attempt to deposit a single content item.
+     */
     public function testOnDepositSingleContent()
     {
         $provider = $this->em->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
@@ -124,7 +171,10 @@ class AusByYearTest extends KernelTestCase
         $this->assertEquals(1, $provider->getAus()->count());
     }
 
-    // All of these content items should go in the same au.
+    /**
+     * Attempt to deposit multiple content items - they should all go to to the
+     * same AU, because they are all the same year and fit in a single AU.
+     */
     public function testOnDepositSingleAu()
     {
         $provider = $this->em->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
@@ -155,7 +205,10 @@ class AusByYearTest extends KernelTestCase
         $this->assertEquals(1, $provider->getAus()->count());
     }
 
-    // All of these content items should go in the same au.
+    /**
+     * Attempt to deposit multiple content items. They don't fit in a single AU,
+     * and would go in different years anyway.
+     */
     public function testOnDepositMultipleAus()
     {
         $provider = $this->em->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')

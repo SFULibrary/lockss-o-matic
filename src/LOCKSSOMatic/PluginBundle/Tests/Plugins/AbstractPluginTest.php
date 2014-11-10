@@ -1,5 +1,29 @@
 <?php
 
+/* 
+ * The MIT License
+ *
+ * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\PluginBundle\Tests\Plugins;
 
 use Doctrine\ORM\EntityManager;
@@ -8,6 +32,9 @@ use LOCKSSOMatic\PluginBundle\Tests\Plugins\PluginTester;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
+/**
+ * Test the plugin data methods of AbstractPluginTest.
+ */
 class AbstractPluginTest extends KernelTestCase
 {
 
@@ -17,17 +44,10 @@ class AbstractPluginTest extends KernelTestCase
     /** @var EntityManager */
     private static $em;
 
-    // called before the the class is run.
-    public static function setUpBeforeClass()
-    {
-
-    }
-
-    public static function tearDownAfterClass()
-    {
-
-    }
-
+    /**
+     * This test requires a kernel, entity manager, and a container so create them.
+     * The container is the important part, as it provides the plugin service.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -36,12 +56,16 @@ class AbstractPluginTest extends KernelTestCase
         $this->container = static::$kernel->getContainer();
     }
 
+    /**
+     * Test setting some plugin data.
+     */
     public function testSetPluginData()
     {
         $pt = new PluginTester();
         $pt->setContainer($this->container);
-        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
         $pt->setData('test.data');
+        
+        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
         $pluginData = $repo->findOneBy(array(
             'datakey' => 'test.data'
         ));
@@ -53,12 +77,16 @@ class AbstractPluginTest extends KernelTestCase
         static::$em->flush();
     }
 
+    /**
+     * Test getting some plugin data.
+     */
     public function testGetPluginData()
     {
         $pt = new PluginTester();
         $pt->setContainer($this->container);
-        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
         $pt->setData('test.data.1');
+
+        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
 
         $data = $pt->getData('test.data.1');
         $this->assertNull($data);
@@ -73,6 +101,9 @@ class AbstractPluginTest extends KernelTestCase
         static::$em->flush();
     }
 
+    /**
+     * Test getting/setting data with a class name.
+     */
     public function testGetDomainData()
     {
         $pt = new PluginTester();
@@ -93,6 +124,9 @@ class AbstractPluginTest extends KernelTestCase
         static::$em->flush();
     }
 
+    /**
+     * Test getting data with a persisted object.
+     */
     public function testGetObjectData() {
         $lockssPlugin = new Plugins();
         $lockssPlugin->setName('chicanery');
@@ -118,6 +152,9 @@ class AbstractPluginTest extends KernelTestCase
         static::$em->flush();
     }
 
+    /**
+     * Test setting data with a class name.
+     */
     public function testSetDomainData()
     {
         $pt = new PluginTester();
@@ -138,6 +175,9 @@ class AbstractPluginTest extends KernelTestCase
         static::$em->flush();
     }
 
+    /**
+     * Test setting data associated with an object.
+     */
     public function testSetObjectData()
     {
         // build a phony Plugins object for testing.
@@ -165,6 +205,9 @@ class AbstractPluginTest extends KernelTestCase
         static::$em->flush();
     }
 
+    /**
+     * Test setting complex data associated with an object.
+     */
     public function testSetObjectWithData()
     {
         // build a phony Plugins object for testing.

@@ -1,5 +1,29 @@
 <?php
 
+/* 
+ * The MIT License
+ *
+ * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\PluginBundle\Plugins\ausbyyear;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
@@ -12,16 +36,11 @@ use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 
 /**
- * Organize AUs by year published.
+ * Organize AUs by year published, while respecting the content provider's maximum
+ * AU size.
  */
 class AusByYear extends AbstractPlugin
 {
-    /**
-     * @todo Convert this to ContainerAware:
-     * 
-     * http://stackoverflow.com/questions/17126277/how-to-give-container-as-argument-to-services
-     */
-
     /**
      * Automatically called when a service document is requested.
      * 
@@ -37,7 +56,11 @@ class AusByYear extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * Called automatically when new content is deposited. Finds or creates an
+     * Au based on the year and size of the content.
+     * 
+     * @param DepositContentEvent $event
+     * @return Aus
      */
     public function onDepositContent(DepositContentEvent $event)
     {
@@ -89,11 +112,17 @@ class AusByYear extends AbstractPlugin
         return $au;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getDescription()
     {
         return "Organize archival units by year.";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getName()
     {
         return "AUsByYear";

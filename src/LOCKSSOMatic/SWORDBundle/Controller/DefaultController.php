@@ -216,7 +216,7 @@ class DefaultController extends Controller
         $xml = $this->getSimpleXML('<root/>');
         $event = new ServiceDocumentEvent($xml);
         $dispatcher = $this->get('event_dispatcher');
-        $dispatcher->dispatch(LOCKSSOMaticEvents::SERVICE_DOCUMENT, $event);
+        $dispatcher->dispatch('sword.servicedoc', $event);
 
         $response = $this->render(
             'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
