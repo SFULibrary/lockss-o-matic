@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
@@ -28,7 +28,10 @@ namespace LOCKSSOMatic\PluginBundle\Plugins;
 
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\PluginBundle\Entity\LomPluginData;
+use ReflectionClass;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Base class for plugins.
@@ -40,7 +43,7 @@ abstract class AbstractPlugin extends ContainerAware
 {
 
     private $pluginId;
-    
+
     /**
      * Get the name of the plugin.
      * 
@@ -55,11 +58,39 @@ abstract class AbstractPlugin extends ContainerAware
      */
     abstract function getDescription();
 
+    /**
+     * Array built from parsing the settings.yml file for the
+     * plugin, if it exists.
+     *
+     * @var array
+     */
+    private $settings;
+
+    public function __construct()
+    {
+        $classInfo = new ReflectionClass($this);
+        $dir = dirname($classInfo->getFileName());
+        if(file_exists("$dir/settings.yml")) {
+            $this->settings = Yaml::parse("$dir/settings.yml");
+        }
+    }
+
+    public function getSetting($name)
+    {
+        if ($this->settings === null) {
+            return null;
+        }
+        if (!array_key_exists($name, $this->settings)) {
+            return null;
+        }
+        return $this->settings[$name];
+    }
+
     public function setPluginId($pluginId)
     {
         $this->pluginId = $pluginId;
     }
-    
+
     /**
      * 
      * @param type $object
@@ -89,10 +120,11 @@ abstract class AbstractPlugin extends ContainerAware
         return $data;
     }
 
-    public function getPluginId() {
+    public function getPluginId()
+    {
         return $this->pluginId;
     }
-    
+
     public function getData($key, $object = null)
     {
         $data = $this->getDataObject($key, $object);
@@ -108,7 +140,7 @@ abstract class AbstractPlugin extends ContainerAware
     {
         $data = $this->getDataObject($object, $key);
         if ($data === null) {
-            $data = new LomPluginData();            
+            $data = new LomPluginData();
             $this->container->get('doctrine')->getManager()->persist($data);
             $data->setPlugin(get_class($this));
             $data->setDataKey($key);

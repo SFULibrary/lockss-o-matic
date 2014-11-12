@@ -97,7 +97,8 @@ class AusBySize extends AbstractPlugin
             $au = new Aus();
             $au->setContentProvider($contentProvider);
             $au->setManaged(true);
-            $au->setAuid('some generated auid - size - odc');
+            $au->setAuid('auid-size');
+            $au->setComment('Created by AusBySize');
             $au->setManifestUrl('http://pln.example.com/foo/bar');
             $this->container->get('doctrine')->getManager()->persist($au);
             $this->container->get('doctrine')->getManager()->flush();

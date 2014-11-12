@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Plugins\ausbyyear;
+namespace LOCKSSOMatic\PluginBundle\Plugins\ausbytype;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
@@ -36,13 +36,14 @@ use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 
 /**
- * Organize AUs by year published, while respecting the content provider's maximum
- * AU size.
+ * Organize AUs by size.
  */
-class AusByYear extends AbstractPlugin
+class AusByType extends AbstractPlugin
 {
+
     /**
-     * Automatically called when a service document is requested.
+     * This method is automatically called when a service document
+     * is requested.
      * 
      * @param ServiceDocumentEvent $event
      */
@@ -50,17 +51,18 @@ class AusByYear extends AbstractPlugin
     {
         /** @var SimpleXMLElement */
         $xml = $event->getXml();
+        
+        /** @var SimpleXMLElement */        
         $plugin = $xml->addChild('plugin', null, Namespaces::LOM);
-        $plugin->addAttribute('attributes', 'year');
-        $plugin->addAttribute('pluginId', $this->getPluginId());
+        $plugin->addAttribute('attributes', 'size, mimetype');
+        $plugin->addAttribute('pluginId', $this->getPluginId()); 
     }
 
     /**
-     * Called automatically when new content is deposited. Finds or creates an
-     * Au based on the year and size of the content.
+     * Called automatically when content is deposited. Finds or creates an
+     * AU and adds the newly created content item to it.
      * 
      * @param DepositContentEvent $event
-     * @return Aus
      */
     public function onDepositContent(DepositContentEvent $event)
     {
@@ -71,21 +73,24 @@ class AusByYear extends AbstractPlugin
         $contentProvider = $event->getContentProvider();
         $deposit = $event->getDeposit();
         $contentXml = $event->getXml();
-
+        
         $maxSize = $contentProvider->getMaxAuSize();
-        $contentSize = (string) $contentXml->attributes()->size;
-        $contentYear = (string) $contentXml->attributes()->year;
-
+        $contentSize = (string)$contentXml->attributes()->size;
+        $contentType = (string)$contentXml->attributes()->type;
+        
+        // hack around a PHP 5.3 bug.
         $self = $this;
-        $filter = function(Aus $au) use ($self, $maxSize, $contentSize, $contentYear) {
+        $filter = function(Aus $au) use($self, $maxSize, $contentSize, $contentType) {
             if ($au->getContentSize() + $contentSize >= $maxSize) {
                 return false;
             }
             $data = $self->getData('AuParams', $au);
-            if ($data === false) {
+            if ($data === null) {
                 return false;
             }
-            if ($data['ByYear'] === true && $data['year'] === $contentYear) {
+            if(array_key_exists('ByType', $data) 
+                && ($data['ByType'] === true) 
+                && ($data['mimetype'] === $contentType)) {
                 return true;
             }
             return false;
@@ -99,12 +104,12 @@ class AusByYear extends AbstractPlugin
             $au = new Aus();
             $au->setContentProvider($contentProvider);
             $au->setManaged(true);
-            $au->setAuid('auid-year-' . $contentYear);
-            $au->setComment('Created by AusByYear for ' . $contentYear);
-            $au->setManifestUrl('http://pln.example.com/foo/year');
+            $au->setAuid('auid-type- ' . $contentType);
+            $au->setComment('Created by AusByType for ' . $contentType);
+            $au->setManifestUrl('http://pln.example.com/foo/bar');
             $this->container->get('doctrine')->getManager()->persist($au);
             $this->container->get('doctrine')->getManager()->flush();
-            $this->setData('AuParams', $au, array('ByYear' => true, 'year' => $contentYear));
+            $this->setData('AuParams', $au, array('ByType' => true, 'mimetype' => $contentType));
         }
         $contentBuilder = new ContentBuilder();
         $content = $contentBuilder->fromSimpleXML($contentXml);
@@ -112,8 +117,6 @@ class AusByYear extends AbstractPlugin
         $content->setAu($au);
         $this->container->get('doctrine')->getManager()->persist($content);
         $au->addContent($content);
-        $this->container->get('doctrine')->getManager()->flush();
-        return $au;
     }
 
     /**
@@ -121,7 +124,7 @@ class AusByYear extends AbstractPlugin
      */
     public function getDescription()
     {
-        return "Organize archival units by year.";
+        return "Organize archival units by Mimetype.";
     }
 
     /**
@@ -129,7 +132,7 @@ class AusByYear extends AbstractPlugin
      */
     public function getName()
     {
-        return "AUsByYear";
+        return "AUsByType";
     }
 
 }

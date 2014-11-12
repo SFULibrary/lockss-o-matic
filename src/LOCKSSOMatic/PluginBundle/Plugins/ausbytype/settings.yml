@@ -1,0 +1,5 @@
+mimetypes:
+    - 'text/*'
+    - 'image/*'
+    - 'application/pdf'
+    - 'application/*'
