@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
@@ -26,6 +26,7 @@
 
 namespace LOCKSSOMatic\PluginBundle\Plugins\ausbytype;
 
+use Bitworking\Mimeparse;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
@@ -51,13 +52,13 @@ class AusByType extends AbstractPlugin
     {
         /** @var SimpleXMLElement */
         $xml = $event->getXml();
-        
-        /** @var SimpleXMLElement */        
+
+        /** @var SimpleXMLElement */
         $plugin = $xml->addChild('plugin', null, Namespaces::LOM);
         $plugin->addAttribute('attributes', 'size, mimetype');
-        $plugin->addAttribute('pluginId', $this->getPluginId()); 
+        $plugin->addAttribute('pluginId', $this->getPluginId());
     }
-
+    
     /**
      * Called automatically when content is deposited. Finds or creates an
      * AU and adds the newly created content item to it.
@@ -66,21 +67,25 @@ class AusByType extends AbstractPlugin
      */
     public function onDepositContent(DepositContentEvent $event)
     {
-        if($event->getPluginName() !== $this->getPluginId()) {
+        if ($event->getPluginName() !== $this->getPluginId()) {
             return;
         }
         /** @var ContentProviders */
         $contentProvider = $event->getContentProvider();
         $deposit = $event->getDeposit();
         $contentXml = $event->getXml();
-        
+
         $maxSize = $contentProvider->getMaxAuSize();
-        $contentSize = (string)$contentXml->attributes()->size;
-        $contentType = (string)$contentXml->attributes()->type;
+        $contentSize = (string) $contentXml->attributes()->size;
+        $contentType = (string) $contentXml->attributes()->type;
         
+        $mimeTypes = $this->getSetting('mimetypes');
+        $type = Mimeparse::bestMatch($mimeTypes, $contentType);
+        
+        // match the type and subtype to the list of mimetypes in settings.yml.
         // hack around a PHP 5.3 bug.
         $self = $this;
-        $filter = function(Aus $au) use($self, $maxSize, $contentSize, $contentType) {
+        $filter = function(Aus $au) use($self, $maxSize, $type, $contentSize, $type) {
             if ($au->getContentSize() + $contentSize >= $maxSize) {
                 return false;
             }
@@ -88,9 +93,9 @@ class AusByType extends AbstractPlugin
             if ($data === null) {
                 return false;
             }
-            if(array_key_exists('ByType', $data) 
+            if (array_key_exists('ByType', $data) 
                 && ($data['ByType'] === true) 
-                && ($data['mimetype'] === $contentType)) {
+                && ($data['type'] === $type)) {
                 return true;
             }
             return false;
@@ -99,17 +104,19 @@ class AusByType extends AbstractPlugin
         $this->container->get('doctrine')->getManager()->refresh($contentProvider);
         $aus = $contentProvider->getAus()->filter($filter);
         if ($aus->count() >= 1) {
+            // of the aus returned, get the "best" match.
             $au = $aus->first();
         } else {
             $au = new Aus();
             $au->setContentProvider($contentProvider);
             $au->setManaged(true);
-            $au->setAuid('auid-type- ' . $contentType);
-            $au->setComment('Created by AusByType for ' . $contentType);
+            $au->setAuid('auid-type- ' . $type);
+            $au->setComment('Created by AusByType for ' . $type);
             $au->setManifestUrl('http://pln.example.com/foo/bar');
             $this->container->get('doctrine')->getManager()->persist($au);
             $this->container->get('doctrine')->getManager()->flush();
-            $this->setData('AuParams', $au, array('ByType' => true, 'mimetype' => $contentType));
+            $this->setData('AuParams', $au,
+                array('ByType' => true, 'type' => $type));
         }
         $contentBuilder = new ContentBuilder();
         $content = $contentBuilder->fromSimpleXML($contentXml);
