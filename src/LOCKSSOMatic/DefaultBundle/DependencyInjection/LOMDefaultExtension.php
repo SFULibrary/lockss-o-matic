@@ -1,6 +1,6 @@
 <?php
 
-namespace LOM\DefaultBundle\DependencyInjection;
+namespace LOCKSSOMatic\DefaultBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;

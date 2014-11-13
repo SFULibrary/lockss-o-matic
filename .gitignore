@@ -11,3 +11,5 @@
 /bin/
 /composer.phar
 *.php~
+/api/*
+!api/.gitkeep

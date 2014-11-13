@@ -1,0 +1,13 @@
+source:
+	- src
+	
+destination: api
+title: LOCKSSOMatic API
+exclude:
+	- Tests
+	- vendor
+	
+templateTheme: bootstrap
+php: true
+deprecated: true
+todo: true
