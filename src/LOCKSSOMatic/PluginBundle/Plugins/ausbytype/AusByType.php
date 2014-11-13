@@ -37,7 +37,7 @@ use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 
 /**
- * Organize AUs by size.
+ * Organize AUs by type.
  */
 class AusByType extends AbstractPlugin
 {

@@ -40,7 +40,11 @@ use Symfony\Component\Yaml\Yaml;
  */
 abstract class AbstractPlugin extends ContainerAware
 {
-
+    /**
+     * The plugin's serviceId as defined in a plugin.yml file.
+     *
+     * @var string
+     */
     private $pluginId;
 
     /**
@@ -65,6 +69,10 @@ abstract class AbstractPlugin extends ContainerAware
      */
     private $settings;
 
+    /**
+     * Construct the plugin instance. Attempts to find the plugin's settings.yml
+     * file and load it, if it exists.
+     */
     public function __construct()
     {
         $classInfo = new ReflectionClass($this);
@@ -74,6 +82,14 @@ abstract class AbstractPlugin extends ContainerAware
         }
     }
 
+    /**
+     * Get a setting from the yaml settings file, or null if the setting
+     * doesn't exist. The return value may be a string, boolean, or array
+     * depending on how the setting is defined in the file.
+     * 
+     * @param type $name
+     * @return mixed
+     */
     public function getSetting($name)
     {
         if ($this->settings === null) {
@@ -85,15 +101,22 @@ abstract class AbstractPlugin extends ContainerAware
         return $this->settings[$name];
     }
 
+    /**
+     * Set the plugin's ID. Called automatically by the service container as 
+     * needed.
+     * 
+     * @param type $pluginId
+     */
     public function setPluginId($pluginId)
     {
         $this->pluginId = $pluginId;
     }
 
     /**
+     * Get an unserialized object from the database.
      * 
-     * @param type $object
-     * @param type $key
+     * @param string $key
+     * @param mixed $object
      * @return LomPluginData
      */
     private function getDataObject($key, $object = null)
@@ -119,11 +142,24 @@ abstract class AbstractPlugin extends ContainerAware
         return $data;
     }
 
+    /**
+     * Get the pluginId
+     * 
+     * @return string
+     */
     public function getPluginId()
     {
         return $this->pluginId;
     }
 
+    /**
+     * Get unserialized data from the database for a key/object combination. $object
+     * may be null, a class name, or an object for increasing levels of specificity.
+     * 
+     * @param string $key
+     * @param mixed $object
+     * @return mixed
+     */
     public function getData($key, $object = null)
     {
         $data = $this->getDataObject($key, $object);
@@ -135,6 +171,14 @@ abstract class AbstractPlugin extends ContainerAware
         return $res;
     }
 
+    /**
+     * Set serialized data to the database for a key/object combination. $object
+     * may be null, a class name, or an object for increasing levels of specificity.
+     * 
+     * @param string $key
+     * @param mixed $object
+     * @return mixed
+     */
     public function setData($key, $object = null, $value = null)
     {
         $data = $this->getDataObject($object, $key);
@@ -154,6 +198,11 @@ abstract class AbstractPlugin extends ContainerAware
         $this->container->get('doctrine')->getManager()->flush();
     }
 
+    /**
+     * Return the name of the plugin.
+     * 
+     * @return string
+     */
     public function __toString()
     {
         return $this->getName();
