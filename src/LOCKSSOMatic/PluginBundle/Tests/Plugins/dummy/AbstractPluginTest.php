@@ -1,5 +1,4 @@
 <?php
-
 /* 
  * The MIT License
  *
@@ -24,11 +23,11 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Tests\Plugins;
+namespace LOCKSSOMatic\PluginBundle\Tests\Plugins\dummy;
 
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Plugins;
-use LOCKSSOMatic\PluginBundle\Tests\Plugins\PluginTester;
+use LOCKSSOMatic\PluginBundle\Tests\Plugins\dummy\PluginTester;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -54,6 +53,13 @@ class AbstractPluginTest extends KernelTestCase
         static::bootKernel();
         static::$em = static::$kernel->getContainer()->get('doctrine')->getManager();
         $this->container = static::$kernel->getContainer();
+    }
+    
+    public function testSettings() {
+        $pt = new PluginTester();
+        $this->assertEquals(array('foo' => 'bar', 'baz' => 'quux'), $pt->getSetting('setting1'));
+        $this->assertEquals(true, $pt->getSetting('setting2'));
+        $this->assertEquals(array('yes', 'again', 'nothankyou'), $pt->getSetting('setting3'));
     }
 
     /**

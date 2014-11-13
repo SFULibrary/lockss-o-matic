@@ -77,7 +77,7 @@ class AusByType extends AbstractPlugin
 
         $maxSize = $contentProvider->getMaxAuSize();
         $contentSize = (string) $contentXml->attributes()->size;
-        $contentType = (string) $contentXml->attributes()->type;
+        $contentType = (string) $contentXml->attributes()->mimetype;
         
         $mimeTypes = $this->getSetting('mimetypes');
         $type = Mimeparse::bestMatch($mimeTypes, $contentType);

@@ -29,7 +29,6 @@ namespace LOCKSSOMatic\PluginBundle\Plugins;
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\PluginBundle\Entity\LomPluginData;
 use ReflectionClass;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\Yaml\Yaml;
 
