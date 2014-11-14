@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Plugins\ausbysize;
+namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbysize;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;

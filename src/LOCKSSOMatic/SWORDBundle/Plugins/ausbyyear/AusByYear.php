@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Plugins\ausbyyear;
+namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbyyear;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;

@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Tests\Plugins\ausbysize;
+namespace LOCKSSOMatic\SWORDBundle\Tests\Plugins\ausbyyear;
 
 use Doctrine\ORM\EntityManager;
 use J20\Uuid\Uuid;
@@ -33,15 +33,16 @@ use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
 use LOCKSSOMatic\PluginBundle\Event\DepositContentEvent;
 use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize;
+use LOCKSSOMatic\PluginBundle\Plugins\ausbyyear\AusByYear;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
- * Test the AuBySize plugin.
+ * Test the AuByYear plugin.
  */
-class AusBySizeTest extends KernelTestCase
+class AusByYearTest extends KernelTestCase
 {
 
     /** @var Container */
@@ -112,12 +113,16 @@ class AusBySizeTest extends KernelTestCase
      */
     public function testServiceContainer()
     {
-        $plugin = $this->container->get('lomplugin.aus.size');
+        /** @var AusByYear */
+        $plugin = $this->container->get('lomplugin.aus.year');
         $this->assertNotNull($plugin);
-        $this->assertInstanceOf('LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin',
+        $this->assertInstanceOf(
+            'LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin',
             $plugin);
-        $this->assertInstanceOf('LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize',
+        $this->assertInstanceOf(
+            'LOCKSSOMatic\SWORDBundle\Plugins\ausbyyear\AusByYear',
             $plugin);
+        $this->assertEquals('lomplugin.aus.year', $plugin->getPluginId());
     }
 
     /**
@@ -131,15 +136,15 @@ class AusBySizeTest extends KernelTestCase
         $ns->registerNamespaces($xml);
 
         /** @var AusBySize */
-        $plugin = $this->container->get('lomplugin.aus.size');
+        $plugin = $this->container->get('lomplugin.aus.year');
         $event = new ServiceDocumentEvent($xml);
         $plugin->onServiceDocument($event);
 
         $nodes = $xml->xpath('//lom:plugin');
         $this->assertEquals(1, count($nodes));
         $node = $nodes[0];
-        $this->assertEquals('lomplugin.aus.size', $node['pluginId']);
-        $this->assertEquals('size', $node['attributes']);
+        $this->assertEquals('lomplugin.aus.year', $node['pluginId']);
+        $this->assertEquals('year', $node['attributes']);
     }
 
     /**
@@ -150,16 +155,16 @@ class AusBySizeTest extends KernelTestCase
         $provider = $this->em->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
             ->findOneBy(array('uuid' => $this->providerId));
         
-        $xml = new SimpleXMLElement('<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="10" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>');
+        $xml = new SimpleXMLElement('<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2010" size="10" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>');
         $deposit = new Deposits();
         $deposit->setContentProvider($provider);
         $deposit->setUuid(Uuid::v4());
         $deposit->setTitle('Test deposit abst-todsc ');
         $this->em->persist($deposit);
-        $event = new DepositContentEvent('lomplugin.aus.size', $deposit, $provider, $xml);
+        $event = new DepositContentEvent('lomplugin.aus.year', $deposit, $provider, $xml);
 
         /** @var AusBySize */
-        $plugin = $this->container->get('lomplugin.aus.size');
+        $plugin = $this->container->get('lomplugin.aus.year');
 
         $plugin->onDepositContent($event);
         $this->em->refresh($provider);
@@ -168,7 +173,7 @@ class AusBySizeTest extends KernelTestCase
 
     /**
      * Attempt to deposit multiple content items - they should all go to to the
-     * same AU, because they fit.
+     * same AU, because they are all the same year and fit in a single AU.
      */
     public function testOnDepositSingleAu()
     {
@@ -176,13 +181,13 @@ class AusBySizeTest extends KernelTestCase
             ->findOneBy(array('uuid' => $this->providerId));
         
         $items = array(
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="4000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2010" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="4000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2010" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2010" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
         );
         
-        /** @var AusBySize */
-        $plugin = $this->container->get('lomplugin.aus.size');
+        /** @var AusByYear */
+        $plugin = $this->container->get('lomplugin.aus.year');
         $deposit = new Deposits();
         $deposit->setContentProvider($provider);
         $deposit->setUuid(Uuid::v4());
@@ -192,7 +197,7 @@ class AusBySizeTest extends KernelTestCase
 
         foreach($items as $item) {
             $xml = new SimpleXMLElement($item);        
-            $event = new DepositContentEvent('lomplugin.aus.size', $deposit, $provider, $xml);
+            $event = new DepositContentEvent('lomplugin.aus.year', $deposit, $provider, $xml);
             $plugin->onDepositContent($event);
         }
 
@@ -201,28 +206,29 @@ class AusBySizeTest extends KernelTestCase
     }
 
     /**
-     * Attempt to deposit multiple content items. They don't fit in a single AU.
+     * Attempt to deposit multiple content items. They don't fit in a single AU,
+     * and would go in different years anyway.
      */
     public function testOnDepositMultipleAus()
     {
         $provider = $this->em->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
             ->findOneBy(array('uuid' => $this->providerId));
         
-        // These should go into three AUs, based on size.
+        // These should go into four AUs, based on year AND size (the 2010 year is too large).
         $items = array(
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="4000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="4000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="4000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
-            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2010" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="4000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2011" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2011" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2012" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="4000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2010" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2010" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2010" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="4000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2012" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="1000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
+            '<lom:content xmlns:lom="http://lockssomatic.info/SWORD2" year="2010" plugin="LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize" size="2000" checksumType="md5" checksumValue="bd4a9b642562547754086de2dab26b7d">http://provider.example.com/download/file1.zip</lom:content>',
         );
         
-        /** @var AusBySize */
-        $plugin = $this->container->get('lomplugin.aus.size');
+        /** @var AusByYear */
+        $plugin = $this->container->get('lomplugin.aus.year');
         $deposit = new Deposits();
         $deposit->setContentProvider($provider);
         $deposit->setUuid(Uuid::v4());
@@ -232,12 +238,12 @@ class AusBySizeTest extends KernelTestCase
 
         foreach($items as $item) {
             $xml = new SimpleXMLElement($item);        
-            $event = new DepositContentEvent('lomplugin.aus.size', $deposit, $provider, $xml);
+            $event = new DepositContentEvent('lomplugin.aus.year', $deposit, $provider, $xml);
             $plugin->onDepositContent($event);
         }
 
         $this->em->refresh($provider);
-        $this->assertEquals(3, $provider->getAus()->count());
+        $this->assertEquals(4, $provider->getAus()->count());
     }
 
 }

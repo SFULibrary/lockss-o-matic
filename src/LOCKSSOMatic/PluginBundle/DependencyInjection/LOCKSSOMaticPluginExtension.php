@@ -63,10 +63,10 @@ class LOCKSSOMaticPluginExtension extends Extension
         $svcLoader->load('services.yml');
 
         
-        $pluginLoader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Plugins/'));
+        $pluginLoader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../'));
 
         // find the plugin.yml files and load them.
-        $directoryIterator = new RecursiveDirectoryIterator(__DIR__ . '/../Plugins');
+        $directoryIterator = new RecursiveDirectoryIterator(__DIR__ . '/../../');
         $flattenedIterator = new RecursiveIteratorIterator($directoryIterator);
         $ymlFiles = new RegexIterator($flattenedIterator, '/plugin\.yml$/');
         

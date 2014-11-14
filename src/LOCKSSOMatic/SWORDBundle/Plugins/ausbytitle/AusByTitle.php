@@ -1,6 +1,6 @@
 <?php
 
-namespace LOCKSSOMatic\PluginBundle\Plugins\ausbytitle;
+namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbytitle;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;

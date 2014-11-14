@@ -3,7 +3,7 @@ services:
     # this is the plugin identifier.
     lomplugin.aus.title:
         # The PHP Class to load as the plugin. It contains all the methods called as event listeners.
-        class: LOCKSSOMatic\PluginBundle\Plugins\ausbytitle\AusByTitle
+        class: LOCKSSOMatic\SWORDBundle\Plugins\ausbytitle\AusByTitle
         # These are object methods in the class, and are called automatically by Symfony.
         calls:
             # plugins need to access the symfony container to interact with the database.

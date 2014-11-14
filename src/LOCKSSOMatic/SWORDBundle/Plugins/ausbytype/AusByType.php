@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Plugins\ausbytype;
+namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbytype;
 
 use Bitworking\Mimeparse;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
