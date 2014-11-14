@@ -40,6 +40,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 abstract class AbstractPlugin extends ContainerAware
 {
+
     /**
      * The plugin's serviceId as defined in a plugin.yml file.
      *
@@ -75,9 +76,24 @@ abstract class AbstractPlugin extends ContainerAware
      */
     public function __construct()
     {
-        $classInfo = new ReflectionClass($this);
-        $dir = dirname($classInfo->getFileName());
-        if(file_exists("$dir/settings.yml")) {
+        $this->loadSettings();
+    }
+
+    /**
+     * Allow code to override a plugin's settings. This method is called
+     * automatically, and only exists so that tests can override custom
+     * settings to what they expect.
+     *
+     * @param type $filepath
+     */
+    public function loadSettings($filepath = null)
+    {
+        if ($filepath === null) {
+            $classInfo = new ReflectionClass($this);
+            $dir = dirname($classInfo->getFileName());
+            $filepath = "$dir/settings.yml";
+        }
+        if (file_exists($filepath)) {
             $this->settings = Yaml::parse("$dir/settings.yml");
         }
     }
@@ -99,6 +115,14 @@ abstract class AbstractPlugin extends ContainerAware
             return null;
         }
         return $this->settings[$name];
+    }
+
+    public function hasSettings() {
+        return $this->settings !== null;
+    }
+
+    public function dumpSettings() {
+        return print_r($this->settings, true);
     }
 
     /**
@@ -134,10 +158,10 @@ abstract class AbstractPlugin extends ContainerAware
         $em = $this->container->get('doctrine')->getManager();
         $repo = $em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
         $data = $repo->findOneBy(array(
-            'plugin'   => get_class($this),
-            'domain'   => $domain,
+            'plugin' => get_class($this),
+            'domain' => $domain,
             'objectId' => $objectId,
-            'datakey'  => $key,
+            'datakey' => $key,
         ));
         return $data;
     }
