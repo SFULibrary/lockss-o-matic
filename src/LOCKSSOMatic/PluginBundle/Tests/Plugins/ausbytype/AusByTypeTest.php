@@ -136,8 +136,10 @@ class AusByTypeTest extends KernelTestCase
         $xml = new SimpleXMLElement('<root />');
         $ns->registerNamespaces($xml);
 
-        /** @var AusBySize */
+        /** @var AusByType */
         $plugin = $this->container->get('lomplugin.aus.type');
+        $plugin->loadSettings(__DIR__ . '/settings.yml');
+
         $event = new ServiceDocumentEvent($xml);
         $plugin->onServiceDocument($event);
 

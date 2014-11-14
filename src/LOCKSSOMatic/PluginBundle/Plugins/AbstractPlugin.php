@@ -94,7 +94,9 @@ abstract class AbstractPlugin extends ContainerAware
             $filepath = "$dir/settings.yml";
         }
         if (file_exists($filepath)) {
-            $this->settings = Yaml::parse("$dir/settings.yml");
+            $this->settings = Yaml::parse($filepath);
+        } else {
+            $this->settings = null;
         }
     }
 

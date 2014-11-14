@@ -62,6 +62,15 @@ class AbstractPluginTest extends KernelTestCase
         $this->assertEquals(array('yes', 'again', 'nothankyou'), $pt->getSetting('setting3'));
     }
 
+    public function testSettingsOverride() {
+        $pt = new PluginTester();
+        $pt->loadSettings(__DIR__ . '/overridden.yml');
+
+        $this->assertTrue($pt->getSetting('set'));
+        $this->assertEquals(array('fluffy', 'scruffy', 'poofy'), $pt->getSetting('dogs'));
+        $this->assertEquals(array('friendly' => 'yes', 'pettable' => 'no', 'alergens' => 'quite possibly'), $pt->getSetting('cats'));
+    }
+
     /**
      * Test setting some plugin data.
      */
