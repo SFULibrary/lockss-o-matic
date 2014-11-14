@@ -79,8 +79,17 @@ class AusByType extends AbstractPlugin
         $contentSize = (string) $contentXml->attributes()->size;
         $contentType = (string) $contentXml->attributes()->mimetype;
         
-        $mimeTypes = $this->getSetting('mimetypes');
-        $type = Mimeparse::bestMatch($mimeTypes, $contentType);
+        $groupings = $this->getSetting('groupings');
+        $groupKeys = array_keys($groupings);
+        $group = null;
+
+        for($i = 0; $i < count($groupKeys); $i++) {
+            $group = $groupKeys[$i];
+            $mimetype = Mimeparse::bestMatch($groupings[$group]['types'], $contentType);
+            if($mimetype !== null) {
+                break;
+            }
+        }
         
         // match the type and subtype to the list of mimetypes in settings.yml.
         // hack around a PHP 5.3 bug.
@@ -95,7 +104,7 @@ class AusByType extends AbstractPlugin
             }
             if (array_key_exists('ByType', $data) 
                 && ($data['ByType'] === true) 
-                && ($data['type'] === $type)) {
+                && ($data['group'] === $group)) {
                 return true;
             }
             return false;
@@ -111,12 +120,12 @@ class AusByType extends AbstractPlugin
             $au->setContentProvider($contentProvider);
             $au->setManaged(true);
             $au->setAuid('auid-type- ' . $type);
-            $au->setComment('Created by AusByType for ' . $type);
+            $au->setComment('Created by AusByType for ' . $groupings[$group]['label']);
             $au->setManifestUrl('http://pln.example.com/foo/bar');
             $this->container->get('doctrine')->getManager()->persist($au);
             $this->container->get('doctrine')->getManager()->flush();
             $this->setData('AuParams', $au,
-                array('ByType' => true, 'type' => $type));
+                array('ByType' => true, 'group' => $group));
         }
         $contentBuilder = new ContentBuilder();
         $content = $contentBuilder->fromSimpleXML($contentXml);

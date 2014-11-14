@@ -173,7 +173,7 @@ class AusByTypeTest extends KernelTestCase
         $this->em->refresh($provider);
         $this->assertEquals(1, $provider->getAus()->count());
         $data = $plugin->getData('AuParams', $provider->getAus()->first());
-        $this->assertEquals(array('ByType' => true, 'type' => 'text/html'), $data);
+        $this->assertEquals(array('ByType' => true, 'group' => 'text'), $data);
     }
 
     /**
@@ -199,7 +199,7 @@ class AusByTypeTest extends KernelTestCase
         $this->em->refresh($provider);
         $this->assertEquals(1, $provider->getAus()->count());
         $data = $plugin->getData('AuParams', $provider->getAus()->first());
-        $this->assertEquals(array('ByType' => true, 'type' => 'text/*'), $data);
+        $this->assertEquals(array('ByType' => true, 'group' => 'text'), $data);
     }
 
     /**
@@ -225,7 +225,7 @@ class AusByTypeTest extends KernelTestCase
         $this->em->refresh($provider);
         $this->assertEquals(1, $provider->getAus()->count());
         $data = $plugin->getData('AuParams', $provider->getAus()->first());
-        $this->assertEquals(array('ByType' => true, 'type' => '*/*'), $data);
+        $this->assertEquals(array('ByType' => true, 'group' => 'other'), $data);
     }
 
 }
