@@ -119,7 +119,7 @@ class AusByType extends AbstractPlugin
             $au = new Aus();
             $au->setContentProvider($contentProvider);
             $au->setManaged(true);
-            $au->setAuid('auid-type- ' . $type);
+            $au->setAuid('auid-type- ' . $group);
             $au->setComment('Created by AusByType for ' . $groupings[$group]['label']);
             $au->setManifestUrl('http://pln.example.com/foo/bar');
             $this->container->get('doctrine')->getManager()->persist($au);
