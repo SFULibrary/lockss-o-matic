@@ -94,7 +94,7 @@ class AusByType extends AbstractPlugin
         // match the type and subtype to the list of mimetypes in settings.yml.
         // hack around a PHP 5.3 bug.
         $self = $this;
-        $filter = function(Aus $au) use($self, $maxSize, $type, $contentSize) {
+        $filter = function(Aus $au) use($self, $maxSize, $group, $contentSize) {
             if ($au->getContentSize() + $contentSize >= $maxSize) {
                 return false;
             }
