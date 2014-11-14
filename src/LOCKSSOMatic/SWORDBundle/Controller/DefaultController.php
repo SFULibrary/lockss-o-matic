@@ -29,12 +29,11 @@ namespace LOCKSSOMatic\SWORDBundle\Controller;
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\Content;
-use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
-use LOCKSSOMatic\PluginBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
+use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\DepositUnknownException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\HostMismatchException;
@@ -42,6 +41,7 @@ use LOCKSSOMatic\SWORDBundle\Exceptions\MaxUploadSizeExceededException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\OnBehalfOfMissingException;
 use LOCKSSOMatic\SWORDBundle\Exceptions\TargetOwnerUnknownException;
 use LOCKSSOMatic\SWORDBundle\Listener\SWORDErrorListener;
+use LOCKSSOMatic\SWORDBundle\SWORDEvents;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -217,7 +217,7 @@ class DefaultController extends Controller
         $event = new ServiceDocumentEvent($xml);
         /** @var EventDispatcher */
         $dispatcher = $this->get('event_dispatcher');
-        $dispatcher->dispatch('sword.servicedoc', $event);
+        $dispatcher->dispatch(SWORDEvents::SERVICEDOC, $event);
 
         $response = $this->render(
             'LOCKSSOMaticSWORDBundle:Default:serviceDocument.xml.twig',
@@ -295,7 +295,7 @@ class DefaultController extends Controller
         // Parse lom:content elements.
         foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
             $event = new DepositContentEvent($pluginName, $deposit, $contentProvider, $contentChunk);
-            $dispatcher->dispatch('sword.depositcontent', $event);
+            $dispatcher->dispatch(SWORDEvents::DEPOSITCONTENT, $event);
         }
         $em->flush();
 

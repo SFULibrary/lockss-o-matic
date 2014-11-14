@@ -30,10 +30,9 @@ use Doctrine\ORM\EntityManager;
 use J20\Uuid\Uuid;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
-use LOCKSSOMatic\PluginBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
-use LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize;
-use LOCKSSOMatic\PluginBundle\Plugins\ausbyyear\AusByYear;
+use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
+use LOCKSSOMatic\SWORDBundle\Plugins\ausbyyear\AusByYear;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -135,7 +134,7 @@ class AusByYearTest extends KernelTestCase
         $xml = new SimpleXMLElement('<root />');
         $ns->registerNamespaces($xml);
 
-        /** @var AusBySize */
+        /** @var AusByYear */
         $plugin = $this->container->get('lomplugin.aus.year');
         $event = new ServiceDocumentEvent($xml);
         $plugin->onServiceDocument($event);
@@ -163,7 +162,7 @@ class AusByYearTest extends KernelTestCase
         $this->em->persist($deposit);
         $event = new DepositContentEvent('lomplugin.aus.year', $deposit, $provider, $xml);
 
-        /** @var AusBySize */
+        /** @var AusByYear */
         $plugin = $this->container->get('lomplugin.aus.year');
 
         $plugin->onDepositContent($event);

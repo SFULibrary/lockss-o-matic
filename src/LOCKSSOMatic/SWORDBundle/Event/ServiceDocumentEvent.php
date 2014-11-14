@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Event;
+namespace LOCKSSOMatic\SWORDBundle\Event;
 
 use SimpleXMLElement;
 use Symfony\Component\EventDispatcher\Event;
