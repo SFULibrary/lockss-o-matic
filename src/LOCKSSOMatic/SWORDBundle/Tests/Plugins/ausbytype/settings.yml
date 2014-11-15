@@ -1,15 +1,53 @@
-mimetypes:
-    # mimetypes are matched in the order supplied. wildcards are respected.
-    # the final */* is required, or every unknown mimetype will be in its own au.
-    - "text/html"
-    - "text/rtf"
-    - "text/*"
-    - "application/pdf"
-    - "application/postscript"
-    - "application/zip"
-    - "application/*"
-    - "audio/*"
-    - "image/*"
-    - "video/*"
-    - "*/*"
+groupings: 
     
+    # Each grouping starts with a unique identifier
+    code:
+        # label is meant to be human readable
+        label: Source code
+
+        # a list of types for the 'code' grouping.
+        types: 
+            - text/x-php
+            - text/x-c
+            - text/x-java
+            - text/x-perl
+            - text/javascript
+            - application/javascript
+            # mixing types here is OK.
+            # this list is incomplete - it is only an example
+
+    text:
+        label: Text files
+        types: 
+            - application/xhtml+xml
+            - application/xml
+            - text/*
+
+    compressed:
+        label: Compressed archive files
+        types:
+            - application/zip
+            - application/gzip
+            - application/x-tar
+            - application/x-bzip2
+            - application/x-7z-compressed
+
+    display:
+        label: Files ready for display or print
+        types:
+            - application/postscript
+            - application/eps
+            - application/pdf
+
+    media:
+        label: Audio and video files
+        types:
+            - audio/*
+            - image/*
+            - video/*
+
+    other:
+        label: Other files
+        types:
+            - '*/*' 
+            # */ has a special meaning in yaml, so it must be quoted.
