@@ -28,56 +28,22 @@ namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbyyear;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
-use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
-use LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin;
-use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
-use SimpleXMLElement;
+use LOCKSSOMatic\SWORDBundle\Plugins\DepositPlugin;
 
 /**
  * Organize AUs by year published, while respecting the content provider's maximum
  * AU size.
  */
-class AusByYear extends AbstractPlugin
+class AusByYear extends DepositPlugin
 {
-    /**
-     * Automatically called when a service document is requested.
-     * 
-     * @param ServiceDocumentEvent $event
-     */
-    public function onServiceDocument(ServiceDocumentEvent $event)
-    {
-        /** @var SimpleXMLElement */
-        $xml = $event->getXml();
-        $plugin = $xml->addChild('plugin', null, Namespaces::LOM);
-        $plugin->addAttribute('attributes', 'year');
-        $plugin->addAttribute('pluginId', $this->getPluginId());
+    public function requiredAttributes() {
+        return array_merge(array('year'), parent::requiredAttributes());
     }
 
-    /**
-     * Called automatically when new content is deposited. Finds or creates an
-     * Au based on the year and size of the content.
-     * 
-     * @param DepositContentEvent $event
-     * @return Aus
-     */
-    public function onDepositContent(DepositContentEvent $event)
-    {
-        if($event->getPluginName() !== $this->getPluginId()) {
-            return;
-        }
-        /** @var ContentProviders */
-        $contentProvider = $event->getContentProvider();
-        $deposit = $event->getDeposit();
-        $contentXml = $event->getXml();
-
-        $maxSize = $contentProvider->getMaxAuSize();
-        $contentSize = (string) $contentXml->attributes()->size;
-        $contentYear = (string) $contentXml->attributes()->year;
-
+    public function buildFilter($maxSize, $contentSize, $contentYear) {
         $self = $this;
-        $filter = function(Aus $au) use ($self, $maxSize, $contentSize, $contentYear) {
+        return function(Aus $au) use ($self, $maxSize, $contentSize, $contentYear) {
             if ($au->getContentSize() + $contentSize >= $maxSize) {
                 return false;
             }
@@ -90,30 +56,44 @@ class AusByYear extends AbstractPlugin
             }
             return false;
         };
+    }
+
+    /**
+     * Called automatically when new content is deposited. Finds or creates an
+     * Au based on the year and size of the content.
+     * 
+     * @param DepositContentEvent $event
+     */
+    public function onDepositContent(DepositContentEvent $event)
+    {
+        if(parent::onDepositContent($event) === false) {
+            return;
+        }
+        
+        $contentProvider = $event->getContentProvider();
+        $deposit = $event->getDeposit();
+        $contentXml = $event->getXml();
+
+        $maxSize = $contentProvider->getMaxAuSize();
+        $contentSize = (string) $contentXml->attributes()->size;
+        $contentYear = (string) $contentXml->attributes()->year;
+
+        $filter = $this->buildFilter($maxSize, $contentSize, $contentYear);
 
         $this->container->get('doctrine')->getManager()->refresh($contentProvider);
         $aus = $contentProvider->getAus()->filter($filter);
         if ($aus->count() >= 1) {
             $au = $aus->first();
         } else {
-            $au = new Aus();
-            $au->setContentProvider($contentProvider);
-            $au->setManaged(true);
-            $au->setAuid('auid-year-' . $contentYear);
-            $au->setComment('Created by AusByYear for ' . $contentYear);
-            $au->setManifestUrl('http://pln.example.com/foo/year');
-            $this->container->get('doctrine')->getManager()->persist($au);
-            $this->container->get('doctrine')->getManager()->flush();
+            $au = $this->buildAu(
+                $contentProvider,
+                'auid-year-' . $contentYear,
+                'Created by AusByYear for ' . $contentYear,
+                'http://pln.example.com/foo/year'
+            );
             $this->setData('AuParams', $au, array('ByYear' => true, 'year' => $contentYear));
         }
-        $contentBuilder = new ContentBuilder();
-        $content = $contentBuilder->fromSimpleXML($contentXml);
-        $content->setDeposit($deposit);
-        $content->setAu($au);
-        $this->container->get('doctrine')->getManager()->persist($content);
-        $au->addContent($content);
-        $this->container->get('doctrine')->getManager()->flush();
-        return $au;
+        $this->depositContent($contentXml, $deposit, $au);
     }
 
     /**

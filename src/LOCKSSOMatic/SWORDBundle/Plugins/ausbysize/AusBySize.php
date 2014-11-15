@@ -29,31 +29,31 @@ namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbysize;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
+use LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin;
 use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
 use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
-use LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin;
+use LOCKSSOMatic\SWORDBundle\Plugins\DepositPlugin;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 
 /**
  * Organize AUs by size.
  */
-class AusBySize extends AbstractPlugin
+class AusBySize extends DepositPlugin
 {
 
-    /**
-     * This method is automatically called when a service document
-     * is requested.
-     * 
-     * @param ServiceDocumentEvent $event
-     */
-    public function onServiceDocument(ServiceDocumentEvent $event)
-    {
-        /** @var SimpleXMLElement */
-        $xml = $event->getXml();
-        $plugin = $xml->addChild('plugin', null, Namespaces::LOM);
-        $plugin->addAttribute('attributes', 'size');
-        $plugin->addAttribute('pluginId', $this->getPluginId());
+    public function buildFilter($maxSize, $contentSize) {
+        $self = $this;
+        return function(Aus $au) use($self, $maxSize, $contentSize) {
+            if ($au->getContentSize() + $contentSize >= $maxSize) {
+                return false;
+            }
+            $data = $self->getData('AuParams', $au);
+            if ($data === null) {
+                return false;
+            }
+            return true;
+        };
     }
 
     /**
@@ -64,10 +64,10 @@ class AusBySize extends AbstractPlugin
      */
     public function onDepositContent(DepositContentEvent $event)
     {
-        if($event->getPluginName() !== $this->getPluginId()) {
+        if(parent::onDepositContent($event) === false) {
             return;
         }
-        /** @var ContentProviders */
+
         $contentProvider = $event->getContentProvider();
         $deposit = $event->getDeposit();
         $contentXml = $event->getXml();
@@ -75,41 +75,22 @@ class AusBySize extends AbstractPlugin
         $maxSize = $contentProvider->getMaxAuSize();
         $contentSize = (string)$contentXml->attributes()->size;
 
-        // hack around a PHP 5.3 bug.
-        $self = $this;
-
-        $filter = function(Aus $au) use($self, $maxSize, $contentSize) {
-            if ($au->getContentSize() + $contentSize >= $maxSize) {
-                return false;
-            }
-            $data = $self->getData('AuParams', $au);
-            if ($data === null) {
-                return false;
-            }
-            return true;
-        };
+        $filter = $this->buildFilter($maxSize, $contentSize);
 
         $this->container->get('doctrine')->getManager()->refresh($contentProvider);
         $aus = $contentProvider->getAus()->filter($filter);
         if ($aus->count() >= 1) {
             $au = $aus->first();
         } else {
-            $au = new Aus();
-            $au->setContentProvider($contentProvider);
-            $au->setManaged(true);
-            $au->setAuid('auid-size');
-            $au->setComment('Created by AusBySize');
-            $au->setManifestUrl('http://pln.example.com/foo/bar');
-            $this->container->get('doctrine')->getManager()->persist($au);
-            $this->container->get('doctrine')->getManager()->flush();
-            $this->setData('AuParams', $au, array('ByYear' => true));
+            $au = $this->buildAu(
+                $contentProvider,
+                'auid-size',
+                'Created by AusBySize',
+                'http://pln.example.com/foo/size'
+            );
+            $this->setData('AuParams', $au, array('BySize' => true));
         }
-        $contentBuilder = new ContentBuilder();
-        $content = $contentBuilder->fromSimpleXML($contentXml);
-        $content->setDeposit($deposit);
-        $content->setAu($au);
-        $this->container->get('doctrine')->getManager()->persist($content);
-        $au->addContent($content);
+        $this->depositContent($contentXml, $deposit, $au);
     }
 
     /**
