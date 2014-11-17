@@ -1,0 +1,12 @@
+
+setting1:
+    foo: bar
+    baz: quux
+    
+setting2: true
+
+setting3:
+    - yes
+    - again
+    - nothankyou
+    

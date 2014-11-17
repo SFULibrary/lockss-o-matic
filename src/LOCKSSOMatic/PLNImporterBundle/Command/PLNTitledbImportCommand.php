@@ -173,22 +173,16 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
 
     public function addAu(SimpleXMLElement $xml)
     {
-        $logger = $this->getContainer()->get('logger');
-        $logger->error('importing title for ' . $xml->asXML());
-
         $pluginId = $this->getPropertyValue($xml, 'plugin');
-        $logger->error('plugin id ' . $pluginId);
-
         $plugin = $this->getPlugin($pluginId);
-        $logger->error('plugin db id' . $plugin->getId());
-
         $publisherName = (string) $this->getPropertyValue($xml, 'attributes.publisher');
-        $logger->error('pub name' . $publisherName);
-
         $this->getContentOwner($publisherName, $plugin);
 
         $aus = new Aus();
-        $plugin->addAus($aus);
+        $aus->setAuid('command-imported');
+        $aus->setComment('AU created by import command');
+        $aus->setManifestUrl('http://example.com/manifest/url');
+        $plugin->addAus($aus);        
         $aus->setPlugin($plugin);
         $this->em->persist($aus);
         

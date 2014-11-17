@@ -1,12 +1,12 @@
 
 # define a plugin as a service
 services:
-    lomplugin.aus.year:
-        class: LOCKSSOMatic\PluginBundle\Plugins\ausbyyear\AusByYear
+    lomplugin.aus.size:
+        class: LOCKSSOMatic\SWORDBundle\Plugins\ausbysize\AusBySize
         calls:
           - [ setContainer,[ @service_container ] ]
-          - [ setPluginId,[ "lomplugin.aus.year" ] ]
+          - [ setPluginId,[ "lomplugin.aus.size" ] ]
         tags:
-            - { name: lomplugin.plugin}
+            - { name: lomplugin.plugin }
             - { name: kernel.event_listener, event: sword.servicedoc, method: onServiceDocument }
             - { name: kernel.event_listener, event: sword.depositcontent, method: onDepositContent }

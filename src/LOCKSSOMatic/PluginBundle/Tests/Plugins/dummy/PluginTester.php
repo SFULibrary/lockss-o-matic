@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Tests\Plugins;
+namespace LOCKSSOMatic\PluginBundle\Tests\Plugins\dummy;
 
 use LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin;
 

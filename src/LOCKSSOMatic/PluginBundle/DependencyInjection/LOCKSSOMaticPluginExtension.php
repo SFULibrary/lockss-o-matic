@@ -32,8 +32,10 @@ use RegexIterator;
 use Symfony\Bundle\FrameworkBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\Yaml\Parser;
 
 /**
  * This is the class that loads and manages your bundle configuration. Since 
@@ -61,10 +63,10 @@ class LOCKSSOMaticPluginExtension extends Extension
         $svcLoader->load('services.yml');
 
         
-        $pluginLoader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Plugins/'));
+        $pluginLoader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../'));
 
         // find the plugin.yml files and load them.
-        $directoryIterator = new RecursiveDirectoryIterator(__DIR__ . '/../Plugins');
+        $directoryIterator = new RecursiveDirectoryIterator(__DIR__ . '/../../');
         $flattenedIterator = new RecursiveIteratorIterator($directoryIterator);
         $ymlFiles = new RegexIterator($flattenedIterator, '/plugin\.yml$/');
         
@@ -73,5 +75,5 @@ class LOCKSSOMaticPluginExtension extends Extension
         }
         
     }
-    
+
 }

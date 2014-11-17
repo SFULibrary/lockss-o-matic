@@ -1,0 +1,6 @@
+expressions:
+    - { regex: '/^[A-Ma-m]/', name: 'First half of the alphabet' }
+    - { regex: '/^[N-Zn-z]/', name: 'Second half of the alphabet' }
+    - { regex: '/^[0-9]/',    name: 'Numbers' }
+
+catchall: catchall

@@ -24,89 +24,22 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Tests\Plugins\ausbysize;
+namespace LOCKSSOMatic\SWORDBundle\Tests\Plugins\ausbysize;
 
-use Doctrine\ORM\EntityManager;
 use J20\Uuid\Uuid;
-use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
-use LOCKSSOMatic\PluginBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
-use LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize;
+use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
+use LOCKSSOMatic\SWORDBundle\Plugins\ausbysize\AusBySize;
+use LOCKSSOMatic\SWORDBundle\Tests\Plugins\TestCases\DepositTestCase;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Test the AuBySize plugin.
  */
-class AusBySizeTest extends KernelTestCase
+class AusBySizeTest extends DepositTestCase
 {
-
-    /** @var Container */
-    private $container;
-    
-    private $providerId;
-    
-    /** @var EntityManager */
-    private $em;
-
-    /**
-     * Create a new content provider and persist it to the database. The
-     * provider's uuid is stored in $providerId.
-     */
-    public function setUp()
-    {
-        $provider = new ContentProviders();
-        $provider->setType('test');
-        $provider->setName('Test provider 1');
-        $provider->setIpAddress('127.0.0.1');
-        $provider->setHostname('provider.example.com');
-        $provider->setChecksumType('md5');
-        $provider->setMaxFileSize('8000'); // in kB
-        $provider->setMaxAuSize('10000'); // also in kB
-        $provider->setPermissionUrl('http://provider.example.com/path/to/permissions');
-        $this->em->persist($provider);
-        $this->em->flush();
-        $this->providerId = $provider->getUuid();
-    }
-
-    /**
-     * Remove the content provider and all the entities it refers to.
-     */
-    public function tearDown()
-    {
-        $provider = $this->em->getRepository('LOCKSSOMaticCRUDBundle:ContentProviders')
-            ->findOneBy(array('uuid' => $this->providerId));
-        
-        foreach($provider->getDeposits() as $deposit) {
-            $this->em->refresh($deposit);
-            foreach($deposit->getContent() as $content) {
-                $this->em->refresh($content);
-                $this->em->remove($content);
-            }
-            $this->em->remove($deposit);
-        }
-        foreach($provider->getAus() as $au) {
-            $this->em->remove($au);
-        }
-        $this->em->remove($provider);
-        $this->em->flush();
-    }
-
-    /**
-     * This test requires a kernel, entity manager, and a container so create them.
-     * The container is the important part, as it provides the plugin service.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        static::bootKernel();
-        $this->em = static::$kernel->getContainer()->get('doctrine')->getManager();
-        $this->container = static::$kernel->getContainer();
-    }
-
     /**
      * Test getting the plugin from the service container.
      */
@@ -116,7 +49,7 @@ class AusBySizeTest extends KernelTestCase
         $this->assertNotNull($plugin);
         $this->assertInstanceOf('LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin',
             $plugin);
-        $this->assertInstanceOf('LOCKSSOMatic\PluginBundle\Plugins\ausbysize\AusBySize',
+        $this->assertInstanceOf('LOCKSSOMatic\SWORDBundle\Plugins\ausbysize\AusBySize',
             $plugin);
     }
 

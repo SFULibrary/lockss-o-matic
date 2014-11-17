@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
@@ -24,36 +24,45 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\PluginBundle\Plugins\ausbysize;
+namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbytype;
 
+use Bitworking\Mimeparse;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
-use LOCKSSOMatic\PluginBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\PluginBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin;
+use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
+use LOCKSSOMatic\SWORDBundle\Plugins\DepositPlugin;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 
 /**
- * Organize AUs by size.
+ * Organize AUs by type.
  */
-class AusBySize extends AbstractPlugin
+class AusByType extends DepositPlugin
 {
 
-    /**
-     * This method is automatically called when a service document
-     * is requested.
-     * 
-     * @param ServiceDocumentEvent $event
-     */
-    public function onServiceDocument(ServiceDocumentEvent $event)
-    {
-        /** @var SimpleXMLElement */
-        $xml = $event->getXml();
-        $plugin = $xml->addChild('plugin', null, Namespaces::LOM);
-        $plugin->addAttribute('attributes', 'size');
-        $plugin->addAttribute('pluginId', $this->getPluginId());
+   public function requiredAttributes() {
+        return array_merge(array('mimetype'), parent::requiredAttributes());
+    }
+    public function buildFilter($maxSize, $group, $contentSize) {
+        $self = $this;
+        return function(Aus $au) use($self, $maxSize, $group, $contentSize) {
+            if ($au->getContentSize() + $contentSize >= $maxSize) {
+                return false;
+            }
+            $data = $self->getData('AuParams', $au);
+            if ($data === null) {
+                return false;
+            }
+            if (array_key_exists('ByType', $data)
+                && ($data['ByType'] === true)
+                && ($data['group'] === $group)) {
+                return true;
+            }
+            return false;
+        };
     }
 
     /**
@@ -64,7 +73,7 @@ class AusBySize extends AbstractPlugin
      */
     public function onDepositContent(DepositContentEvent $event)
     {
-        if($event->getPluginName() !== $this->getPluginId()) {
+        if ($event->getPluginName() !== $this->getPluginId()) {
             return;
         }
         /** @var ContentProviders */
@@ -73,42 +82,39 @@ class AusBySize extends AbstractPlugin
         $contentXml = $event->getXml();
 
         $maxSize = $contentProvider->getMaxAuSize();
-        $contentSize = (string)$contentXml->attributes()->size;
+        $contentSize = (string) $contentXml->attributes()->size;
+        $contentType = (string) $contentXml->attributes()->mimetype;
+        
+        $groupings = $this->getSetting('groupings');
+        $groupKeys = array_keys($groupings);
+        $group = null;
 
-        // hack around a PHP 5.3 bug.
-        $self = $this;
-
-        $filter = function(Aus $au) use($self, $maxSize, $contentSize) {
-            if ($au->getContentSize() + $contentSize >= $maxSize) {
-                return false;
+        for($i = 0; $i < count($groupKeys); $i++) {
+            $group = $groupKeys[$i];
+            $mimetype = Mimeparse::bestMatch($groupings[$group]['types'], $contentType);
+            if($mimetype !== null) {
+                break;
             }
-            $data = $self->getData('AuParams', $au);
-            if ($data === null) {
-                return false;
-            }
-            return true;
-        };
+        }
+        
+        $filter = $this->buildFilter($maxSize, $group, $contentSize);
 
         $this->container->get('doctrine')->getManager()->refresh($contentProvider);
         $aus = $contentProvider->getAus()->filter($filter);
         if ($aus->count() >= 1) {
+            // of the aus returned, get the "best" match.
             $au = $aus->first();
         } else {
-            $au = new Aus();
-            $au->setContentProvider($contentProvider);
-            $au->setManaged(true);
-            $au->setAuid('some generated auid - size - odc');
-            $au->setManifestUrl('http://pln.example.com/foo/bar');
-            $this->container->get('doctrine')->getManager()->persist($au);
-            $this->container->get('doctrine')->getManager()->flush();
-            $this->setData('AuParams', $au, array('ByYear' => true));
+            $au = $this->buildAu(
+                $contentProvider,
+                'auid-type- ' . $group,
+                'Created by AusByType for ' . $groupings[$group]['label'],
+                'http://pln.example.com/foo/bar'
+            );
+            $this->setData('AuParams', $au,
+                array('ByType' => true, 'group' => $group));
         }
-        $contentBuilder = new ContentBuilder();
-        $content = $contentBuilder->fromSimpleXML($contentXml);
-        $content->setDeposit($deposit);
-        $content->setAu($au);
-        $this->container->get('doctrine')->getManager()->persist($content);
-        $au->addContent($content);
+        $this->depositContent($contentXml, $deposit, $au);
     }
 
     /**
@@ -116,7 +122,7 @@ class AusBySize extends AbstractPlugin
      */
     public function getDescription()
     {
-        return "Organize archival units by size.";
+        return "Organize archival units by Mimetype.";
     }
 
     /**
@@ -124,7 +130,7 @@ class AusBySize extends AbstractPlugin
      */
     public function getName()
     {
-        return "AUsBySize";
+        return "AUsByType";
     }
 
 }
