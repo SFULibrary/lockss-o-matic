@@ -148,10 +148,16 @@ ENDXML;
         $xml = new SimpleXMLElement($xmlStr);
         $command->addAu($xml);
 
+        $em->flush(); // addAu doesn't flush().
+        $plugin = $em
+            ->getRepository('LOCKSSOMaticCRUDBundle:Plugins')
+            ->findOneBy(array('name' => 'Foo'));
+        
         $em->refresh($plugin);
         $aus = $plugin->getAus();
         $this->assertNotNull($aus);
         $this->assertGreaterThan(0, $aus->count());
+        $this->assertEquals($plugin, $aus[0]->getPlugin());
 
         $em->remove($aus[0]);
         $em->remove($pluginProp);

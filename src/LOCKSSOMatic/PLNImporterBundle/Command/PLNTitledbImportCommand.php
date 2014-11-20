@@ -196,7 +196,6 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             $this->newProperties($aus, $childProp, 'key', $nameData[0]);
             $this->newProperties($aus, $childProp, 'value', $valueData[0]);
         }
-        $this->em->flush();
     }
 
 
