@@ -76,8 +76,8 @@ class AdminUserControllerTest extends WebTestCase
         self::$em->persist($user);
         
         $admin = new User();
-        $admin->setUsername('admin@example.com');
-        $admin->setEmail('admin@example.com');
+        $admin->setUsername('admintest@example.com');
+        $admin->setEmail('admintest@example.com');
         $admin->setFullname('Test User');
         $admin->setInstitution('Test Institution');
         $admin->setEnabled(true);
@@ -96,7 +96,7 @@ class AdminUserControllerTest extends WebTestCase
         ));
         self::$em->remove($user);
         $admin = self::$em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array(
-            'email' => 'admin@example.com'
+            'email' => 'admintest@example.com'
         ));
         self::$em->remove($admin);
         self::$em->flush();
@@ -123,7 +123,7 @@ class AdminUserControllerTest extends WebTestCase
     
     public function testIndexAction() {
         
-        $client = $this->doLogin('admin@example.com', 'supersecret');
+        $client = $this->doLogin('admintest@example.com', 'supersecret');
         
         /** @var Crawler */
         $crawler = $client->request('GET', '/admin/user/');
@@ -136,7 +136,7 @@ class AdminUserControllerTest extends WebTestCase
     
     public function testNewAction() {
         
-        $client = $this->doLogin('admin@example.com', 'supersecret');
+        $client = $this->doLogin('admintest@example.com', 'supersecret');
         
         /** @var Crawler */
         $crawler = $client->request('GET', '/admin/user/new');
@@ -168,7 +168,7 @@ class AdminUserControllerTest extends WebTestCase
     }
     
     public function testShowAction() {
-        $client = $this->doLogin('admin@example.com', 'supersecret');
+        $client = $this->doLogin('admintest@example.com', 'supersecret');
         
         /** @var User */
         $user = self::$em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'optimus@example.com'));
@@ -185,7 +185,7 @@ class AdminUserControllerTest extends WebTestCase
     }
         
     public function testEditAction() {
-        $client = $this->doLogin('admin@example.com', 'supersecret');
+        $client = $this->doLogin('admintest@example.com', 'supersecret');
         
         /** @var User */
         $user = self::$em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'optimus@example.com'));
