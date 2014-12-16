@@ -273,7 +273,9 @@ class DefaultController extends Controller
             }
 
             if ($contentChunk->attributes()->size > $contentProvider->getMaxFileSize()) {
-                throw new MaxUploadSizeExceededException();
+                throw new MaxUploadSizeExceededException('Content size ' . 
+                    $contentChunk->attributes()->size . 
+                    ' is larger than ' . $contentProvider->getMaxFileSize());
             }
         }
 
@@ -305,7 +307,8 @@ class DefaultController extends Controller
             array(
             'contentProviderId' => $contentProviderId,
             'uuid'              => $deposit->getUuid()
-            )
+            ),
+            true
         );
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(201);
@@ -370,7 +373,11 @@ class DefaultController extends Controller
         $deposit = $this->getDeposit($uuid);
         $this->matchDepositToProvider($deposit, $contentProvider);
 
-        $boxes = $contentProvider->getPln()->getBoxes();
+        if($contentProvider->getPln()) {
+            $boxes = $contentProvider->getPln()->getBoxes();
+        } else {
+            $boxes = array();
+        }
         $content = $deposit->getContent();
 
         $status = array();
@@ -469,38 +476,6 @@ class DefaultController extends Controller
         } else {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
-    }
-
-    /**
-     * Determines which AU to put the content in. At the moment, this is only 
-     * determined by AU size and content size.
-     *
-     * @param ContentProviders $contentProvider The content provider for the deposit
-     * @param SimpleXMLElement $contentXml the XML fragment describing the content item.
-     * 
-     * @return Aus $au.
-     */
-    private function getDestinationAu(ContentProviders $contentProvider, SimpleXMLElement $contentXml)
-    {
-        /** @var EntityManager */
-        $em = $this->getDoctrine()->getManager();
-
-        $aus = $contentProvider->getAus();
-        if ($aus->count() >= 1) {
-            $au = $aus->last();
-            if ($au->getContentSize() + $contentXml->attributes()->size < $contentProvider->getMaxAuSize()) {
-                return $au;
-            }
-        }
-
-        $au = new Aus();
-        $em->persist($au);
-        $contentProvider->addAus($au);
-        $au->setContentProvider($contentProvider);
-        $au->setManaged(true);
-        $au->setAuid('generated-au');
-        $au->setManifestUrl('http://provider.example.com');
-        return $au;
     }
 
 }
