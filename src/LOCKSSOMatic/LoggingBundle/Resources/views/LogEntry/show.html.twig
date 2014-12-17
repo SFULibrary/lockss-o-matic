@@ -11,7 +11,7 @@
             </tr>
             <tr>
                 <th>User</th>
-                <td>{{ entity.user.email }}</td>
+                <td>{% if entity.user %}{{ entity.user.username }}{% endif %}</td>
             </tr>
             <tr>
                 <th>Pln</th>
@@ -39,7 +39,7 @@
             </tr>
             <tr>
                 <th>Message</th>
-                <td>{{ entity.message }}</td>
+                <td>{{ entity.message|nl2br }}</td>
             </tr>
             <tr>
                 <th>Created</th>

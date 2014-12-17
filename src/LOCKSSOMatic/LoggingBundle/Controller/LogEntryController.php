@@ -50,34 +50,13 @@ class LogEntryController extends Controller
 
     public function generateAction()
     {
-        $em = $this->getDoctrine()->getManager();
-        $trace = debug_backtrace();
+        $logger = $this->get('activity_log');
+        $logger->log('test the service.');
         
-        foreach($trace as $caller) {
-            $entity = new LogEntry();
-            $entity->setCaller($caller['function']);
-
-            if (array_key_exists('class', $caller)) {
-                $entity->setClass($caller['class']);
-            }
-
-            if (array_key_exists('file', $caller)) {
-                $entity->setFile($caller['file']);
-            }
-
-            if (array_key_exists('line', $caller)) {
-                $entity->setLIne($caller['line']);
-            }
-
-            $entity->setUser($this->getUser());
-            $entity->setLevel('test');
-            $entity->setSummary('Test message');
-            $entity->setMessage('This is a simple test message. In the event of a real log entity something interesting would appear here.');
-
-            $em->persist($entity);
-        }
-        $em->flush();
-
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('LOCKSSOMaticLoggingBundle:LogEntry')
+            ->findOneBy(array(), array('id' => 'DESC'), 1);
+        
         return $this->render('LOCKSSOMaticLoggingBundle:LogEntry:show.html.twig',
                 array(
                 'entity' => $entity,
