@@ -32,27 +32,34 @@ class ExportLogsCommand extends ContainerAwareCommand
         $actLog->log(
             'Export logs to file', 
             'info',
-            'Logs exported to ' . realpath($file) . ($exists ? ' (appended)' : '')
+            'Logs exported to ' . realpath($file) . ($exists ? ' (appended)' : ''),
+            null,
+            'console/' . getenv('USER')
         );
         
         /** @var EntityManager $em */
         $em = $container->get('doctrine')->getManager();
         $results = $em->getRepository('LOCKSSOMaticLoggingBundle:LogEntry')
             ->findBy(array(), array('id' => 'ASC'));
+        
         $handle = fopen($input->getArgument('file'), 'a');
-        fputcsv($handle, LogEntry::toArrayHeader());
+        if( ! $exists) {    
+            fputcsv($handle, LogEntry::toArrayHeader());
+        }
+        
         foreach ($results as $entry) {
             fputcsv($handle, $entry->toArray());
             if ($input->getOption('purge')) {
                 $em->remove($entry);
             }
-            $em->detach($entry);
         }
         if($input->getOption('purge')) {
             $actLog->log(
                 'Log entries purged from the database.',
                 'info',
-                'Logs exported to ' . realpath($file) . ($exists ? ' (appended)' : '')
+                'Logs exported to ' . realpath($file) . ($exists ? ' (appended)' : ''),
+                null,
+            'console/' . getenv('USER')
             );
         }
         $em->flush();

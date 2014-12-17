@@ -17,17 +17,6 @@ class LogEntry
      */
     private $id;
 
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     /**
      * @var string
      */
@@ -68,6 +57,20 @@ class LogEntry
      */
     private $pln;
 
+    /**
+     * @var
+     */
+    private $user;
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set file
@@ -308,29 +311,27 @@ class LogEntry
     {
         return $this->pln;
     }
-    /**
-     * @var \LOCKSSOMatic\UserBundle\Entity\User
-     */
-    private $user;
-
 
     /**
      * Set user
      *
-     * @param \LOCKSSOMatic\UserBundle\Entity\User $user
+     * @param mixed $user
      * @return LogEntry
      */
-    public function setUser(\LOCKSSOMatic\UserBundle\Entity\User $user = null)
+    public function setUser($user = null)
     {
-        $this->user = $user;
-
+        if($user instanceof LOCKSSOMatic\UserBundle\Entity\User) {
+            $this->user = $user->getEmail();
+        } else {
+            $this->user = $user;
+        }
         return $this;
     }
 
     /**
      * Get user
      *
-     * @return \LOCKSSOMatic\UserBundle\Entity\User 
+     * @return mixed 
      */
     public function getUser()
     {

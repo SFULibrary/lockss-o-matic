@@ -18,7 +18,7 @@
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td>{% if entity.user %}{{ entity.user.username }}{% endif %}</td>
+                <td>{{ entity.user }}</td>
                 <td>{% if entity.pln %}{{ entity.pln.name }}{% endif %}</td>
                 <td>{{ entity.bundle }}</td>
                 <td>{{ entity.caller }}</td>
