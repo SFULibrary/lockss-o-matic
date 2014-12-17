@@ -336,4 +336,30 @@ class LogEntry
     {
         return $this->user;
     }
+    
+    public static function toArrayHeader() {
+        return array(
+            'created',
+            'level',
+            'bundle',
+            'class',
+            'function',
+            'pln',
+            'summary',
+            'message',
+        );
+    }
+    
+    public function toArray() {
+        return array(
+            $this->created->format('c'),
+            $this->level,
+            $this->bundle,
+            $this->class,
+            $this->caller,
+            $this->pln,
+            $this->summary,
+            $this->message
+        );
+    }
 }
