@@ -51,13 +51,10 @@ class LogEntryController extends Controller
     public function generateAction()
     {
         $em = $this->getDoctrine()->getManager();
-
-        $entity = new LogEntry();
-
         $trace = debug_backtrace();
-
-        for($i = 0; $i < 4; $i++) {
-            $caller = $trace[$i];
+        
+        foreach($trace as $caller) {
+            $entity = new LogEntry();
             $entity->setCaller($caller['function']);
 
             if (array_key_exists('class', $caller)) {
@@ -74,7 +71,8 @@ class LogEntryController extends Controller
 
             $entity->setUser($this->getUser());
             $entity->setLevel('test');
-            $entity->setMessage('Test message');
+            $entity->setSummary('Test message');
+            $entity->setMessage('This is a simple test message. In the event of a real log entity something interesting would appear here.');
 
             $em->persist($entity);
         }

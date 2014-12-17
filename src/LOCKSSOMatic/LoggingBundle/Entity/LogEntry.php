@@ -27,15 +27,6 @@ class LogEntry
     {
         return $this->id;
     }
-    /**
-     * @var string
-     */
-    private $file;
-
-    /**
-     * @var int
-     */
-    private $line;
 
     /**
      * @var string
@@ -56,6 +47,11 @@ class LogEntry
      * @var string
      */
     private $level;
+
+    /**
+     * @var string
+     */
+    private $summary;
 
     /**
      * @var string
@@ -220,6 +216,29 @@ class LogEntry
     }
 
     /**
+     * Set summary
+     *
+     * @param string $summary
+     * @return LogEntry
+     */
+    public function setSummary($summary)
+    {
+        $this->summary = $summary;
+
+        return $this;
+    }
+
+    /**
+     * Get summary
+     *
+     * @return string 
+     */
+    public function getSummary()
+    {
+        return $this->summary;
+    }
+
+    /**
      * Set message
      *
      * @param string $message
@@ -248,10 +267,12 @@ class LogEntry
      * @param DateTime $created
      * @return LogEntry
      */
-    public function setCreated($created)
+    public function setCreated()
     {
-        $this->created = new \DateTime();
-
+        if($this->created === null) {
+            $this->created = new \DateTime();
+        }
+        
         return $this;
     }
 

@@ -95,6 +95,7 @@ class Plns
         $this->plnProperties = new ArrayCollection();
         $this->externalTitleDbs = new ArrayCollection();
         $this->boxes = new ArrayCollection();
+        $this->logs = new ArrayCollection();
     }
 
     /**

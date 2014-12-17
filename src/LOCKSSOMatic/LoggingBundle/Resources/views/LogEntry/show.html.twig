@@ -3,19 +3,19 @@
 {% block body -%}
     <h1>LogEntry</h1>
 
-    <table class="record_properties">
+    <table class="record_properties table table-striped table-bordered table-hover">
         <tbody>
             <tr>
                 <th>Id</th>
                 <td>{{ entity.id }}</td>
             </tr>
             <tr>
-                <th>File</th>
-                <td>{{ entity.file }}</td>
+                <th>User</th>
+                <td>{{ entity.user.email }}</td>
             </tr>
             <tr>
-                <th>Line</th>
-                <td>{{ entity.line }}</td>
+                <th>Pln</th>
+                <td>{% if entity.pln %}{{ entity.pln.name }}{% endif %}</td>
             </tr>
             <tr>
                 <th>Bundle</th>
@@ -28,10 +28,14 @@
             <tr>
                 <th>Caller</th>
                 <td>{{ entity.caller }}</td>
-            </tr>
+            </tr>            
             <tr>
                 <th>Level</th>
                 <td>{{ entity.level }}</td>
+            </tr>
+            <tr>
+                <th>Summary</th>
+                <td>{{ entity.summary }}</td>
             </tr>
             <tr>
                 <th>Message</th>
