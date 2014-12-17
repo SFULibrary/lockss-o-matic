@@ -30,6 +30,7 @@ class AppKernel extends Kernel
             new LOCKSSOMatic\DefaultBundle\LOCKSSOMaticDefaultBundle(),
             new LOCKSSOMatic\PluginBundle\LOCKSSOMaticPluginBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
+            new LOCKSSOMatic\LoggingBundle\LOCKSSOMaticLoggingBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

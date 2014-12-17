@@ -1,0 +1,11 @@
+log:
+    path:     /
+    defaults: { _controller: "LOCKSSOMaticLoggingBundle:LogEntry:index" }
+
+log_show:
+    path:     /{id}/show
+    defaults: { _controller: "LOCKSSOMaticLoggingBundle:LogEntry:show" }
+
+log_generate:
+    path:     /generate
+    defaults: { _controller: "LOCKSSOMaticLoggingBundle:LogEntry:generate" }

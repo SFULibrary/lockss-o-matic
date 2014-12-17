@@ -1,0 +1,66 @@
+LOCKSSOMatic\LoggingBundle\Entity\LogEntry:
+    type: entity
+    table: null
+    repositoryClass: LOCKSSOMatic\LoggingBundle\Entity\LogEntryRepository
+    readOnly: true
+    manyToOne:
+        pln:
+            targetEntity: LOCKSSOMatic\CRUDBundle\Entity\Plns
+            inversedBy: plnLogs
+            joinColumn:
+                name: pln_id
+                referencedColumnName: id
+        user:
+            targetEntity: LOCKSSOMatic\UserBundle\Entity\User
+            inversedBy: userLogs
+            nullable: true
+            joinColumn:
+                name: user_id
+                referencedColumnName: id
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        file:
+            type: string
+            length: 400
+            nullable: true
+            comment: File where the entry was generated
+        line:
+            type: integer
+            nullable: true
+            comment: Line where the entry was generated
+        bundle:
+            type: string
+            length: 128
+            nullable: true
+            comment: Bundle which generated the entry
+        class:
+            type: string
+            length: 500
+            nullable: true
+            comment: Class which generated the entry
+        caller:
+            type: string
+            length: 128
+            nullable: true
+            comment: Function/method which generated the entry
+        level:
+            type: string
+            length: 24
+            nullable: false
+            comment: Log entry level
+        message:
+            type: text
+            nullable: false
+            comment: The log entry message
+        created:
+            type: datetime
+            nullable: false
+            comment: Timestamp when the entry was generated
+    
+    lifecycleCallbacks: 
+        prePersist: [ setCreated ]

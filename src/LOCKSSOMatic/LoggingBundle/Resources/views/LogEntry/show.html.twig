@@ -1,0 +1,54 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>LogEntry</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>File</th>
+                <td>{{ entity.file }}</td>
+            </tr>
+            <tr>
+                <th>Line</th>
+                <td>{{ entity.line }}</td>
+            </tr>
+            <tr>
+                <th>Bundle</th>
+                <td>{{ entity.bundle }}</td>
+            </tr>
+            <tr>
+                <th>Class</th>
+                <td>{{ entity.class }}</td>
+            </tr>
+            <tr>
+                <th>Caller</th>
+                <td>{{ entity.caller }}</td>
+            </tr>
+            <tr>
+                <th>Level</th>
+                <td>{{ entity.level }}</td>
+            </tr>
+            <tr>
+                <th>Message</th>
+                <td>{{ entity.message }}</td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{{ entity.created|date('Y-m-d H:i:s') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('log') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock %}
