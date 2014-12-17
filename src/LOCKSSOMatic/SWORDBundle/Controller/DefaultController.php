@@ -45,6 +45,7 @@ use LOCKSSOMatic\SWORDBundle\SWORDEvents;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,6 +67,8 @@ class DefaultController extends Controller
      * @var Namespaces
      */
     private $namespaces;
+    
+    private $activityLog;
 
     /**
      * Construct the controller.
@@ -73,6 +76,12 @@ class DefaultController extends Controller
     public function __construct()
     {
         $this->namespaces = new Namespaces();
+    }
+    
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+        $this->activityLog = $this->container->get('activity_log');
     }
 
     /**
