@@ -28,8 +28,6 @@ namespace LOCKSSOMatic\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
-use Doctrine\Common\Collections\Collection;
-use LOCKSSOMatic\LoggingBundle\Entity\LogEntry;
 
 /**
  * User entity. Extends FOSUserBundle to get all the goodness. We want usernames
@@ -70,7 +68,6 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->logs = new Collection();
     }
 
     /**
@@ -127,19 +124,6 @@ class User extends BaseUser
     public function getInstitution()
     {
         return $this->institution;
-    }
-
-    /**
-     * Add logs
-     *
-     * @param LogEntry $logs
-     * @return Plns
-     */
-    public function addLog(LogEntry $logs)
-    {
-        $this->logs[] = $logs;
-
-        return $this;
     }
 
 }

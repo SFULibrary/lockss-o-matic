@@ -2,4 +2,4 @@ services:
     
     activity_log:
         class: LOCKSSOMatic\LoggingBundle\Services\LoggingService
-        arguments: ["@doctrine.orm.entity_manager", "@security.context"]
+        arguments: ["@doctrine.orm.entity_manager", "@security.context", "@request_stack"]

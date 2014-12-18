@@ -63,6 +63,11 @@ class LogEntry
     private $user;
 
     /**
+     * @var string
+     */
+    private $ip;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -338,9 +343,34 @@ class LogEntry
         return $this->user;
     }
     
+    /**
+     * Set ip
+     *
+     * @param string $ip
+     * @return LogEntry
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
+    /**
+     * Get ip
+     *
+     * @return string 
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
     public static function toArrayHeader() {
         return array(
             'created',
+            'ip',
+            'user',
             'level',
             'bundle',
             'class',
@@ -354,6 +384,8 @@ class LogEntry
     public function toArray() {
         return array(
             $this->created->format('c'),
+            $this->ip,
+            $this->user,
             $this->level,
             $this->bundle,
             $this->class,

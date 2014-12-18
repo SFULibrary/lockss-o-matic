@@ -7,6 +7,7 @@
         <thead>
             <tr>
                 <th>User</th>
+                <th>IP</th>
                 <th>Pln</th>
                 <th>Bundle</th>
                 <th>Caller</th>
@@ -19,6 +20,7 @@
         {% for entity in entities %}
             <tr>
                 <td>{{ entity.user }}</td>
+                <td>{{ entity.ip }}</td>
                 <td>{% if entity.pln %}{{ entity.pln.name }}{% endif %}</td>
                 <td>{{ entity.bundle }}</td>
                 <td>{{ entity.caller }}</td>
