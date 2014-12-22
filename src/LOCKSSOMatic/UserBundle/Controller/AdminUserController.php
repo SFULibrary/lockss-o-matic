@@ -79,7 +79,6 @@ class AdminUserController extends Controller
             );
             $em->persist($entity);
             $em->flush();
-            $this->get('activity_log')->log('New user created ' . $entity->getEmail());
             return $this->redirect($this->generateUrl('admin_user_show', array('id' => $entity->getId())));
         }
 
@@ -212,7 +211,6 @@ class AdminUserController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
-            $this->get('activity_log')->log('User edited ' . $entity->getEmail());
             return $this->redirect($this->generateUrl('admin_user_edit', array('id' => $id)));
         }
 
@@ -242,7 +240,6 @@ class AdminUserController extends Controller
             }
 
             $em->remove($entity);
-            $this->get('activity_log')->log('User deleted ' . $entity->getEmail());
             $em->flush();
         }
 
