@@ -26,11 +26,12 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
+use Knp\Component\Pager\Paginator;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentOwners;
 use LOCKSSOMatic\CRUDBundle\Form\ContentOwnersType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * ContentOwners controller.
@@ -46,11 +47,18 @@ class ContentOwnersController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('LOCKSSOMaticCRUDBundle:ContentOwners')->findAll();
+        $dql = 'SELECT a FROM LOCKSSOMaticCRUDBundle:ContentOwners a ORDER BY a.id';
+        $query = $em->createQuery($dql);
+        /** @var PaginatorInterface */
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1),
+            100
+        );
 
         return $this->render('LOCKSSOMaticCRUDBundle:ContentOwners:index.html.twig', array(
-            'entities' => $entities,
+            'pagination' => $pagination
         ));
     }
     /**
@@ -82,7 +90,7 @@ class ContentOwnersController extends Controller
      *
      * @param ContentOwners $entity The entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createCreateForm(ContentOwners $entity)
     {
@@ -162,7 +170,7 @@ class ContentOwnersController extends Controller
     *
     * @param ContentOwners $entity The entity
     *
-    * @return \Symfony\Component\Form\Form The form
+    * @return Form The form
     */
     private function createEditForm(ContentOwners $entity)
     {
@@ -234,7 +242,7 @@ class ContentOwnersController extends Controller
      *
      * @param mixed $id The entity id
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createDeleteForm($id)
     {

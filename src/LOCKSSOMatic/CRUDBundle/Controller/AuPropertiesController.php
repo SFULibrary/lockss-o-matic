@@ -46,11 +46,17 @@ class AuPropertiesController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('LOCKSSOMaticCRUDBundle:AuProperties')->findAll();
+        $dql = 'SELECT p FROM LOCKSSOMaticCRUDBundle:AuProperties p ORDER BY p.id';
+        $query = $em->createQuery($dql);
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1),
+            100
+        );
 
         return $this->render('LOCKSSOMaticCRUDBundle:AuProperties:index.html.twig', array(
-            'entities' => $entities,
+            'pagination' => $pagination,
         ));
     }
     /**
