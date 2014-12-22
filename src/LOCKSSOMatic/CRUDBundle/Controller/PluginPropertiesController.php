@@ -46,11 +46,17 @@ class PluginPropertiesController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('LOCKSSOMaticCRUDBundle:PluginProperties')->findAll();
+        $dql = 'SELECT a FROM LOCKSSOMaticCRUDBundle:PluginProperties a ORDER BY a.id';
+        $query = $em->createQuery($dql);
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1),
+            100
+        );
 
         return $this->render('LOCKSSOMaticCRUDBundle:PluginProperties:index.html.twig', array(
-            'entities' => $entities,
+            'pagination' => $pagination
         ));
     }
     /**
