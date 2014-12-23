@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\SecurityContext;
 
+// http://www.insanevisions.com/articles/view/symfony-2-activity-log-listener
 class LoggingService
 {
 
