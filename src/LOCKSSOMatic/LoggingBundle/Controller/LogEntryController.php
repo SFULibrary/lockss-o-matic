@@ -19,12 +19,17 @@ class LogEntryController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $dql = 'SELECT p FROM LOCKSSOMaticLoggingBundle:LogEntry p ORDER BY p.id DESC';
+        $query = $em->createQuery($dql);
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1),
+            100
+        );
 
-        $entities = $em->getRepository('LOCKSSOMaticLoggingBundle:LogEntry')->findAll();
-
-        return $this->render('LOCKSSOMaticLoggingBundle:LogEntry:index.html.twig',
-                array(
-                'entities' => $entities,
+        return $this->render('LOCKSSOMaticLoggingBundle:LogEntry:index.html.twig', array(
+            'pagination' => $pagination,
         ));
     }
 
@@ -36,6 +41,7 @@ class LogEntryController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var LogEntry */
         $entity = $em->getRepository('LOCKSSOMaticLoggingBundle:LogEntry')->find($id);
 
         if (!$entity) {

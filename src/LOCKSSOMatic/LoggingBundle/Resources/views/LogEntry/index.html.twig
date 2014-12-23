@@ -3,6 +3,7 @@
 {% block body -%}
     <h1>Log entry list</h1>
 
+    <p>Showing {{ pagination|length }} records of {{ pagination.getTotalItemCount }}.</p>
     <table class="records_list table table-striped table-bordered table-hover">
         <thead>
             <tr>
@@ -17,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for entity in entities %}
+        {% for entity in pagination %}
             <tr>
                 <td>{{ entity.user }}</td>
                 <td>{{ entity.ip }}</td>
@@ -32,4 +33,8 @@
         </tbody>
     </table>
 
-    {% endblock %}
+<div class="navigation">
+    {{ knp_pagination_render(pagination) }}
+</div>        
+
+{% endblock %}

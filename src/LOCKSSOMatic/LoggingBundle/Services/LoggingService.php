@@ -11,7 +11,6 @@ use LOCKSSOMatic\LoggingBundle\Entity\LogEntry;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\SecurityContext;
 
 // http://www.insanevisions.com/articles/view/symfony-2-activity-log-listener
@@ -37,10 +36,14 @@ class LoggingService
      * @var ContainerInterface
      */
     private $container;
+    
+    
     private $ignoredClasses = array(
         'LOCKSSOMatic\LoggingBundle\Entity\LogEntry',
         'LOCKSSOMatic\LoggingBundle\Services\LoggingService',
     );
+    
+    private $userOverride;
 
     public function setContainer(ContainerInterface $container)
     {
@@ -103,19 +106,16 @@ class LoggingService
             return $f;
         }
     }
+    
+    public function overrideUser($user) {
+        $this->userOverride = $user;
+    }
 
     public function getUser($details)
     {
-        $request = $this->getRequest();
-        if ($request && $request->headers) {
-            if ($request->headers->has('x-on-behalf-of')) {
-                return $request->headers->has('x-on-behalf-of');
-            }
-            if ($request->headers->has('on-behalf-of')) {
-                return $request->headers->has('on-behalf-of');
-            }
+        if($this->userOverride !== null) {
+            return $this->userOverride;
         }
-
         $context = $this->getContext();
         if ($context->getToken() && $context->getToken()->getUser()) {
             return $context->getToken()->getUser();

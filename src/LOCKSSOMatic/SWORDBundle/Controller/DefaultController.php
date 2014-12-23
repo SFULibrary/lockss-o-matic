@@ -32,6 +32,7 @@ use LOCKSSOMatic\CRUDBundle\Entity\Content;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\LoggingBundle\Services\LoggingService;
 use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
 use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
@@ -68,6 +69,9 @@ class DefaultController extends Controller
      */
     private $namespaces;
     
+    /**
+     * @var LoggingService
+     */
     private $activityLog;
 
     /**
@@ -219,8 +223,9 @@ class DefaultController extends Controller
     public function serviceDocumentAction(Request $request)
     {
         $onBehalfOf = $this->getOnBehalfOfHeader($request);
-
         $contentProvider = $this->getContentProvider($onBehalfOf);
+        $this->activityLog->overrideUser($onBehalfOf);
+        $this->activityLog->log('Requested service document.');
 
         $xml = $this->getSimpleXML('<root/>');
         $event = new ServiceDocumentEvent($xml);
