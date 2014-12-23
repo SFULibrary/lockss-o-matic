@@ -1,5 +1,8 @@
+parameters:
+    activity_log.enabled: true
+
 services:
-    
+
     activity_log:
         class: LOCKSSOMatic\LoggingBundle\Services\LoggingService
         calls:

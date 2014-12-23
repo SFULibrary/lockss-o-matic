@@ -107,6 +107,10 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
+# activity logging.
+locksso_matic_logging:
+    enabled: true
+
 # Monolog Configuration
 monolog:
     channels: ['lomlogger', 'sword']

@@ -37,7 +37,8 @@ class LoggingService
      */
     private $container;
     
-    
+    private $enabled = true;
+        
     private $ignoredClasses = array(
         'LOCKSSOMatic\LoggingBundle\Entity\LogEntry',
         'LOCKSSOMatic\LoggingBundle\Services\LoggingService',
@@ -48,8 +49,20 @@ class LoggingService
     public function setContainer(ContainerInterface $container)
     {
         $this->container = $container;
+        if($container->hasParameter('activity_log.enabled')) {
+            $this->enabled = $container->getParameter('activity_log.enabled');
+        }
     }
 
+    
+    public function enable() {
+        $this->enabled = true;
+    }
+    
+    public function disable() {
+        $this->enabled = false;
+    }
+    
     /**
      * @return Request
      */
@@ -128,6 +141,9 @@ class LoggingService
 
     public function log($summary, array $details = array())
     {
+        if($this->enabled === false) {
+            return;
+        }
         $entry = new LogEntry();
         # set some defaults.
         $details = array_merge(array(
