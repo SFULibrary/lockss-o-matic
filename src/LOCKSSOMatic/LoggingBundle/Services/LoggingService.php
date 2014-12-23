@@ -2,8 +2,11 @@
 
 namespace LOCKSSOMatic\LoggingBundle\Services;
 
+use Doctrine\Common\EventArgs;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
+use Exception;
 use LOCKSSOMatic\LoggingBundle\Entity\LogEntry;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -151,14 +154,23 @@ class LoggingService
         } else {
             $entry->setIp('console');
         }
-//        $em = $this->getEntityManager();
-//        $em->persist($entry);
-//        $em->flush($entry); // only flush the entry.
+        $em = $this->getEntityManager();
+        $em->persist($entry);
+        $em->flush($entry); // only flush the entry.
     }
 
-    private function doctrineLog(LifecycleEventArgs $args, $details = array())
+    private function doctrineLog(EventArgs $args, $details = array())
     {
-        $entity = $args->getEntity();
+        if($args instanceof LifecycleEventArgs) {
+            $entity = $args->getEntity();            
+            $id = $entity->getId();
+        } else if($args instanceof PostFlushEventArgs) {
+            $entity = $details['entity'];
+            $id = $details['id'];
+        } else {
+            throw new Exception('Unknown class ' . get_class($args));
+        }
+        
         $class = get_class($entity);
         if (in_array($class, $this->ignoredClasses)) {
             return;
@@ -168,7 +180,7 @@ class LoggingService
             'User ',
             $details['action'],
             $reflect->getShortName(),
-            $entity->getId()
+            $id,
             )), 
             $details
         );
@@ -190,12 +202,41 @@ class LoggingService
         ));
     }
 
-    public function postRemove(LifecycleEventArgs $args)
+    public function preRemove(LifecycleEventArgs $args)
     {
-        $this->doctrineLog($args, array(
-            'action' => 'deleted',
-            'level' => 'doctrine',
+        $entity = $args->getEntity();
+        $class = get_class($entity);
+        if (in_array($class, $this->ignoredClasses)) {
+            return;
+        }
+        $this->container->get('session')->set('entity_removed', array(
+            'entity' => $entity,
+            'id' => $entity->getId(),
         ));
     }
 
+    public function postFlush(PostFlushEventArgs $args) {
+        $removed = $this->container->get('session')->get('entity_removed');
+        if($removed === null) {
+            return true;
+        }
+        $id = $removed['id'];
+        $entity = $removed['entity'];
+        // The log() function flushes. Flushing will call this event handler.
+        // So make sure the stored entity is nulled.
+        $this->container->get('session')->set('entity_removed', null);
+        $class = get_class($entity);
+        if (in_array($class, $this->ignoredClasses)) {
+            return true;
+        }
+
+        $this->doctrineLog($args, array(
+            'action' => 'deleted',
+            'level' => 'doctrine',
+            'entity' => $entity,
+            'id' => $id,
+        ));
+        return true;
+    }
+    
 }

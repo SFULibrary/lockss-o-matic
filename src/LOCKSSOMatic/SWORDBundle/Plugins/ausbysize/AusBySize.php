@@ -27,14 +27,8 @@
 namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbysize;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
-use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
-use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
-use LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin;
 use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\SWORDBundle\Plugins\DepositPlugin;
-use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
-use SimpleXMLElement;
 
 /**
  * Organize AUs by size.
