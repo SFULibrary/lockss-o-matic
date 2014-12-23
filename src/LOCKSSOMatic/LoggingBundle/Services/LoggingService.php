@@ -103,7 +103,7 @@ class LoggingService
     public function getUser($details)
     {
         $request = $this->getRequest();
-        if ($request->headers) {
+        if ($request && $request->headers) {
             if ($request->headers->has('x-on-behalf-of')) {
                 return $request->headers->has('x-on-behalf-of');
             }
