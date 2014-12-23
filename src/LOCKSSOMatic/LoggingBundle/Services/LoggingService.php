@@ -7,6 +7,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use LOCKSSOMatic\LoggingBundle\Entity\LogEntry;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\SecurityContext;
 
@@ -24,7 +25,7 @@ class LoggingService
     private $context;
 
     /**
-     * @var RequestStack
+     * @var Request
      */
     private $request;
 
@@ -33,7 +34,8 @@ class LoggingService
      */
     private $container;
     private $ignoredClasses = array(
-        'LOCKSSOMatic\LoggingBundle\Entity\LogEntry'
+        'LOCKSSOMatic\LoggingBundle\Entity\LogEntry',
+        'LOCKSSOMatic\LoggingBundle\Services\LoggingService',
     );
 
     public function setContainer(ContainerInterface $container)
@@ -41,13 +43,20 @@ class LoggingService
         $this->container = $container;
     }
 
+    /**
+     * @return Request
+     */
     private function getRequest()
     {
         if ($this->request === null) {
             $this->request = $this->container->get('request_stack')->getCurrentRequest();
         }
+        return $this->request;
     }
 
+    /**
+     * @return SecurityContext
+     */
     private function getContext()
     {
         if ($this->context === null) {
@@ -56,10 +65,13 @@ class LoggingService
         return $this->context;
     }
 
+    /**
+     * @return EntityManager
+     */
     private function getEntityManager()
     {
         if ($this->em === null) {
-            $this->em = $this->container->get('doctrine.orm.entity_manager');
+            $this->em = $this->container->get('doctrine')->getManager();
         }
         return $this->em;
     }
@@ -69,27 +81,38 @@ class LoggingService
         $this->ignoredClasses[] = $class;
     }
 
-    private function findStackFrame() {
+    private function findStackFrame()
+    {
         $trace = debug_backtrace();
-        foreach($trace as $f) {
-            if( ! array_key_exists('class', $f)) {
+        foreach ($trace as $f) {
+            if (!array_key_exists('class', $f)) {
                 continue;
             }
             $class = $f['class'];
-            if(preg_match('/LoggingBundle/', $class) &&
+            if (preg_match('/LoggingBundle/', $class) &&
                 $class != 'LOCKSSOMatic\LoggingBundle\Command\ExportLogsCommand') {
                 continue;
             }
-            if( ! preg_match('/^LOCKSSOMatic/', $class)) {
+            if (!preg_match('/^LOCKSSOMatic/', $class)) {
                 continue;
             }
             return $f;
         }
     }
 
-    public function getUser($details) {
-        $context = $this->getContext();
+    public function getUser($details)
+    {
+        $request = $this->getRequest();
+        if ($request->headers) {
+            if ($request->headers->has('x-on-behalf-of')) {
+                return $request->headers->has('x-on-behalf-of');
+            }
+            if ($request->headers->has('on-behalf-of')) {
+                return $request->headers->has('on-behalf-of');
+            }
+        }
 
+        $context = $this->getContext();
         if ($context->getToken() && $context->getToken()->getUser()) {
             return $context->getToken()->getUser();
         }
@@ -108,7 +131,7 @@ class LoggingService
             'pln' => null,
             'message' => null,
             'backtrace' => 1,
-        ), $details);
+            ), $details);
 
         $frame = $this->findStackFrame();
 
@@ -127,9 +150,9 @@ class LoggingService
         } else {
             $entry->setIp('console');
         }
-        $em = $this->getEntityManager();
-        $em->persist($entry);
-        $em->flush($entry); // only flush the entry.
+//        $em = $this->getEntityManager();
+//        $em->persist($entry);
+//        $em->flush($entry); // only flush the entry.
     }
 
     private function doctrineLog(LifecycleEventArgs $args, $details = array())
@@ -144,16 +167,17 @@ class LoggingService
             'User ',
             $details['action'],
             $reflect->getShortName(),
-            $entity
-            )),
-            $details);
+            $entity->getId()
+            )), 
+            $details
+        );
     }
 
     public function postPersist(LifecycleEventArgs $args)
     {
         $this->doctrineLog($args, array(
             'action' => 'created',
-            'backtrace' => 2,
+            'level' => 'doctrine',
         ));
     }
 
@@ -161,7 +185,6 @@ class LoggingService
     {
         $this->doctrineLog($args, array(
             'action' => 'updated',
-            'backtrace' => 4,
             'level' => 'doctrine',
         ));
     }
@@ -170,7 +193,7 @@ class LoggingService
     {
         $this->doctrineLog($args, array(
             'action' => 'deleted',
-            'backtrace' => 2,
+            'level' => 'doctrine',
         ));
     }
 
