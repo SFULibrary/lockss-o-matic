@@ -241,6 +241,7 @@ class DefaultController extends Controller
             )
         );
         $response->headers->set('Content-type', 'text/xml');
+        $this->activityLog->overrideUser(null);
         return $response;
     }
 
@@ -268,7 +269,7 @@ class DefaultController extends Controller
 
         // Query the ContentProvider entity so we can get its name.
         $contentProvider = $this->getContentProvider($contentProviderId);
-
+        $this->activityLog->overrideUser($contentProviderId);
         $atomEntry = $this->getSimpleXML($request->getContent());
         if (count($atomEntry->xpath('//lom:content')) === 0) {
             throw new BadRequestException(
@@ -460,6 +461,7 @@ class DefaultController extends Controller
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
+        $this->activityLog->overrideUser($contentProviderId);
 
         $contentProvider = $this->getContentProvider($contentProviderId);
         $deposit = $this->getDeposit($uuid);
