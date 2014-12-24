@@ -30,43 +30,23 @@ class ExportLogsCommand extends ContainerAwareCommand
 
         $file = $input->getArgument('file');
         $exists = file_exists($file);
+        $header = false;
 
         if (!$exists) {
             touch($file); # realpath requires the file to exist.
+            $header = true;
+        }
+
+        $fileHandle = fopen($input->getArgument('file'), 'a');
+        $csvHandle = $actLog->export($header, $input->getOption('purge'));
+
+        while($data = fread($csvHandle, 8192)) {
+            fwrite($fileHandle, $data, 8192);
         }
 
         $actLog->log(
-            'Export logs to file',
-            array(
-                'message' => 'Logs exported to ' . realpath($file) . ($exists ? ' (appended)' : ''),
-            )
+            'Logs exported to ' . realpath($file) . ($exists ? ' (appended)' : '')
         );
-
-        /** @var EntityManager $em */
-        $em = $container->get('doctrine')->getManager();
-        $results = $em->getRepository('LOCKSSOMaticLoggingBundle:LogEntry')
-            ->findBy(array(), array('id' => 'ASC'));
-
-        $handle = fopen($input->getArgument('file'), 'a');
-        if (!$exists) {
-            fputcsv($handle, LogEntry::toArrayHeader());
-        }
-
-        foreach ($results as $entry) {
-            fputcsv($handle, $entry->toArray());
-            if ($input->getOption('purge')) {
-                $em->remove($entry);
-            }
-        }
-        if ($input->getOption('purge')) {
-            $actLog->log(
-                'Log entries purged from the database.',
-                array(
-                    'message' => 'Logs exported to ' . realpath($file) . ($exists ? ' (appended)' : ''),
-                )
-            );
-        }
-        $em->flush();
     }
 
 }

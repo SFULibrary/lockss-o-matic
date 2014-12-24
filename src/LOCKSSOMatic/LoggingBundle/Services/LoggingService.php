@@ -254,5 +254,28 @@ class LoggingService
         ));
         return true;
     }
-    
+
+    public function export($header = true, $purge = false) {
+        $em = $this->getEntityManager();
+        $results = $em->getRepository('LOCKSSOMaticLoggingBundle:LogEntry')
+            ->findBy(array(), array('id' => 'ASC'));
+        $resultCount = count($results);
+        $handle = fopen('php://temp', 'rw');
+        if($header) {
+            fputcsv($handle, LogEntry::toArrayHeader());
+        }
+        foreach($results as $entry) {
+            fputcsv($handle, $entry->toArray());
+            if($purge) {
+                $em->remove($entry);
+            }
+        }
+        if($purge) {
+            $em->flush($results);
+            $this->log($resultCount . ' log entries purged from the database.');
+        }
+        rewind($handle);
+        return $handle;
+    }
+
 }
