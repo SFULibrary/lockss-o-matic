@@ -2,8 +2,10 @@
 
 namespace LOCKSSOMatic\LoggingBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use LOCKSSOMatic\LoggingBundle\Entity\LogEntry;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * LogEntry controller.
@@ -67,6 +69,34 @@ class LogEntryController extends Controller
                 array(
                 'entity' => $entity,
         ));
+    }
+
+    public function exportAction(Request $request) {
+        $logger = $this->get('activity_log');
+        $purge = false;
+        if($request->query->get('purge') && $request->query->get('purge') === 'yes') {
+            $purge = true;
+        }
+
+        $logger->log(
+            'Logs exported via HTTP' . ($purge ? ' (purged).' : '.')
+        );
+        $handle = $logger->export(true, $purge);
+        $response = new StreamedResponse();
+        $response->headers->set('Content-Type', "text/csv");
+        $response->headers->set('Content-Disposition', 'attachment; filename=lockssomatic-activity-log.csv');
+        $response->headers->set('Cache-Control', '');
+        $response->headers->set('Pragma', "no-cache");
+        $response->headers->set('Expires', "0");
+        $response->headers->set('Content-Transfer-Encoding', "binary");
+        $response->setCallback(function() use ($handle) {
+            while($data = fread($handle, 8192)) {
+                echo $data;
+                sleep(1);
+                flush();
+            }
+        });
+        return $response;
     }
 
 }

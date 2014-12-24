@@ -3,9 +3,11 @@
 namespace LOCKSSOMatic\LoggingBundle\Services;
 
 use Doctrine\Common\EventArgs;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
 use LOCKSSOMatic\LoggingBundle\Entity\LogEntry;
 use ReflectionClass;
@@ -257,22 +259,32 @@ class LoggingService
 
     public function export($header = true, $purge = false) {
         $em = $this->getEntityManager();
-        $results = $em->getRepository('LOCKSSOMaticLoggingBundle:LogEntry')
-            ->findBy(array(), array('id' => 'ASC'));
-        $resultCount = count($results);
-        $handle = fopen('php://temp', 'rw');
+        $em->getConnection()->getConfiguration()->setSQLLogger(null);
+
+        $dql = 'SELECT p FROM LOCKSSOMaticLoggingBundle:LogEntry p';
+        $query = $em->createQuery($dql);
+        $iterator = $query->iterate();
+
+        $count = 0;
+
+        $mb = 1024 * 1024;
+        $handle = fopen("php://temp/maxmemory:{$mb}", 'rw');
         if($header) {
             fputcsv($handle, LogEntry::toArrayHeader());
         }
-        foreach($results as $entry) {
+        while($row = $iterator->next()) {
+            $entry = $row[0];
             fputcsv($handle, $entry->toArray());
             if($purge) {
                 $em->remove($entry);
+                $em->flush($entry);
             }
+            $em->clear();
+            $count++;
         }
         if($purge) {
-            $em->flush($results);
-            $this->log($resultCount . ' log entries purged from the database.');
+            $em->flush();
+            $this->log($count. ' log entries purged from the database.');
         }
         rewind($handle);
         return $handle;

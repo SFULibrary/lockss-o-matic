@@ -8,7 +8,7 @@ use LOCKSSOMatic\CRUDBundle\Entity\Plns;
 
 /**
  * LogEntry
- * @ORM\Entity(repositoryClass="LogEntryRepository")
+ * @ORM\Entity
  */
 class LogEntry
 {

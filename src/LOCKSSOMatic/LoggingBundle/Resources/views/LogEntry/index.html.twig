@@ -4,6 +4,11 @@
     <h1>Log entry list</h1>
 
     <p>Showing {{ pagination|length }} records of {{ pagination.getTotalItemCount }}.</p>
+    
+    <p class='text-right'>
+    <a class='btn btn-sm btn-primary' href='{{ path('log_export') }}' role='button'>Export</a>
+    <a class='btn btn-sm btn-danger' href='{{ path('log_export', {'purge': 'yes'}) }}' role='button'>Export and purge</a>
+    </p>
     <table class="records_list table table-striped table-bordered table-hover">
         <thead>
             <tr>
