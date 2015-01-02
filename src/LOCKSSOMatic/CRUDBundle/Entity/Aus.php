@@ -28,6 +28,7 @@ namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Util\Debug;
 
 /**
  * Aus
@@ -124,13 +125,68 @@ class Aus
     }
 
     /**
-     * Get auid
+     * Get auid. Will attempt to generate the auid if necessary.
      *
      * @return string
      */
     public function getAuid()
     {
+        if($this->auid === null) {
+            $this->auid = $this->generateAuid();
+        }
         return $this->auid;
+    }
+
+    /**
+     * Get the named AU property, optionally %-encoded.
+     *
+     * @param string $name
+     * @param bool $encoded
+     * @return string
+     */
+    public function getAuProperty($name, $encoded = false) {
+        $value = '';
+        foreach($this->getAuProperties() as $prop) {
+            if($prop->getPropertyKey() !== 'key') {
+                continue;
+            }
+            if($prop->getPropertyValue() !== $name) {
+                continue;
+            }
+            foreach($prop->getParent()->getChildren() as $child) {
+                if($child->getPropertyKey() !== 'value') {
+                    continue;
+                }
+                $value = $child->getPropertyValue();
+            }
+        }
+        if($encoded === false) {
+            return $value;
+        }
+        $callback = function($matches) {
+            $char = ord($matches[0]);
+            return '%' . strtoupper(sprintf("%02x", $char));
+        };
+        return preg_replace_callback('/[^_*a-zA-Z0-9]/', $callback, $value);
+    }
+
+    /**
+     * Generate an AUid.
+     *
+     * @return string
+     */
+    public function generateAuid() {
+        $plugin = $this->getPlugin();
+        $pluginKey = str_replace('.', '|', $plugin->getPluginIdentifier());
+        $auKey = '';
+        $propNames = $plugin->getDefinitionalProperties();
+        sort($propNames);
+
+        foreach($propNames as $name) {
+            $auKey .= '&' . $name . '~' . $this->getAuProperty($name, true);
+        }
+
+        return $pluginKey . $auKey;
     }
 
     /**
@@ -338,7 +394,7 @@ class Aus
         return $this->managed;
     }
     /**
-     * @var \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders
+     * @var ContentProviders
      */
     private $contentProvider;
 
@@ -346,10 +402,10 @@ class Aus
     /**
      * Set contentProvider
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider
+     * @param ContentProviders $contentProvider
      * @return Aus
      */
-    public function setContentProvider(\LOCKSSOMatic\CRUDBundle\Entity\ContentProviders $contentProvider = null)
+    public function setContentProvider(ContentProviders $contentProvider = null)
     {
         $this->contentProvider = $contentProvider;
 
@@ -359,7 +415,7 @@ class Aus
     /**
      * Get contentProvider
      *
-     * @return \LOCKSSOMatic\CRUDBundle\Entity\ContentProviders 
+     * @return ContentProviders
      */
     public function getContentProvider()
     {
