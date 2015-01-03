@@ -38,33 +38,31 @@ class LoggingService
      * @var ContainerInterface
      */
     private $container;
-    
     private $enabled = true;
-        
     private $ignoredClasses = array(
         'LOCKSSOMatic\LoggingBundle\Entity\LogEntry',
         'LOCKSSOMatic\LoggingBundle\Services\LoggingService',
     );
-    
     private $userOverride;
 
     public function setContainer(ContainerInterface $container)
     {
         $this->container = $container;
-        if($container->hasParameter('activity_log.enabled')) {
+        if ($container->hasParameter('activity_log.enabled')) {
             $this->enabled = $container->getParameter('activity_log.enabled');
         }
     }
 
-    
-    public function enable() {
+    public function enable()
+    {
         $this->enabled = true;
     }
-    
-    public function disable() {
+
+    public function disable()
+    {
         $this->enabled = false;
     }
-    
+
     /**
      * @return Request
      */
@@ -121,14 +119,15 @@ class LoggingService
             return $f;
         }
     }
-    
-    public function overrideUser($user) {
+
+    public function overrideUser($user)
+    {
         $this->userOverride = $user;
     }
 
     public function getUser($details)
     {
-        if($this->userOverride !== null) {
+        if ($this->userOverride !== null) {
             return $this->userOverride;
         }
         $context = $this->getContext();
@@ -143,7 +142,7 @@ class LoggingService
 
     public function log($summary, array $details = array())
     {
-        if($this->enabled === false) {
+        if ($this->enabled === false) {
             return;
         }
         $entry = new LogEntry();
@@ -179,16 +178,16 @@ class LoggingService
 
     private function doctrineLog(EventArgs $args, $details = array())
     {
-        if($args instanceof LifecycleEventArgs) {
-            $entity = $args->getEntity();            
+        if ($args instanceof LifecycleEventArgs) {
+            $entity = $args->getEntity();
             $id = $entity->getId();
-        } else if($args instanceof PostFlushEventArgs) {
+        } else if ($args instanceof PostFlushEventArgs) {
             $entity = $details['entity'];
             $id = $details['id'];
         } else {
             throw new Exception('Unknown class ' . get_class($args));
         }
-        
+
         $class = get_class($entity);
         if (in_array($class, $this->ignoredClasses)) {
             return;
@@ -199,8 +198,7 @@ class LoggingService
             $details['action'],
             $reflect->getShortName(),
             $id,
-            )), 
-            $details
+            )), $details
         );
     }
 
@@ -233,9 +231,10 @@ class LoggingService
         ));
     }
 
-    public function postFlush(PostFlushEventArgs $args) {
+    public function postFlush(PostFlushEventArgs $args)
+    {
         $removed = $this->container->get('session')->get('entity_removed');
-        if($removed === null) {
+        if ($removed === null) {
             return true;
         }
         $id = $removed['id'];
@@ -266,7 +265,6 @@ class LoggingService
         $iterator = $query->iterate();
 
         $count = 0;
-
         $mb = 1024 * 1024;
         $handle = fopen("php://temp/maxmemory:{$mb}", 'rw');
         if($header) {
@@ -275,19 +273,59 @@ class LoggingService
         while($row = $iterator->next()) {
             $entry = $row[0];
             fputcsv($handle, $entry->toArray());
-            if($purge) {
+            if ($purge) {
                 $em->remove($entry);
                 $em->flush($entry);
             }
             $em->clear();
             $count++;
         }
-        if($purge) {
+        if ($purge) {
             $em->flush();
-            $this->log($count. ' log entries purged from the database.');
+            $this->log($count . ' log entries purged from the database.');
         }
         rewind($handle);
         return $handle;
     }
 
+    public function exportCallback($header = true, $purge = false) {
+        $em = $this->getEntityManager();
+        $em->getConnection()->getConfiguration()->setSQLLogger(null);
+
+        $dql = 'SELECT p FROM LOCKSSOMaticLoggingBundle:LogEntry p';
+        $query = $em->createQuery($dql);
+        $iterator = $query->iterate();
+        $finished = false;
+
+        $iterator->next();
+        $iterator->rewind();
+
+        $callback = function($n = 100) use($em, $iterator, $finished) {
+            if($finished) {
+                return null;
+            }
+            $handle = fopen('php://temp/memory:' . 1024*1023, 'w+');
+            $i = 0;
+            while($i < $n && $iterator->valid() && $row = $iterator->next()) {
+                $entry = $row[0];
+                fputcsv($handle, $entry->toArray());
+                $i++;
+                $em->detach($entry);
+            }
+            $em->clear();
+            if($i !== $n) {
+                $finished = true;
+            }
+            if($i === 0) {
+                return null;
+            }
+            fflush($handle);
+            rewind($handle);
+            $content = stream_get_contents($handle);
+            fclose($handle);
+            return $content;
+        };
+        
+        return $callback;
+    }
 }

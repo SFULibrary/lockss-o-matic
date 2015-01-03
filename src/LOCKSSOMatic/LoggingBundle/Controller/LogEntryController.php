@@ -81,7 +81,8 @@ class LogEntryController extends Controller
         $logger->log(
             'Logs exported via HTTP' . ($purge ? ' (purged).' : '.')
         );
-        $handle = $logger->export(true, $purge);
+        $callback = $logger->exportCallback(true, $purge);
+        
         $response = new StreamedResponse();
         $response->headers->set('Content-Type', "text/csv");
         $response->headers->set('Content-Disposition', 'attachment; filename=lockssomatic-activity-log.csv');
@@ -89,10 +90,10 @@ class LogEntryController extends Controller
         $response->headers->set('Pragma', "no-cache");
         $response->headers->set('Expires', "0");
         $response->headers->set('Content-Transfer-Encoding', "binary");
-        $response->setCallback(function() use ($handle) {
-            while($data = fread($handle, 8192)) {
+        $devlog = $this->container->get('logger');
+        $response->setCallback(function() use ($callback, $devlog) {
+            while(($data = $callback(100)) !== null) {
                 echo $data;
-                sleep(1);
                 flush();
             }
         });
