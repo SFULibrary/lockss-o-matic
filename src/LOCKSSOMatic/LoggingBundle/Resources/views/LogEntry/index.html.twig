@@ -5,9 +5,12 @@
 
     <p>Showing {{ pagination|length }} records of {{ pagination.getTotalItemCount }}.</p>
     
-    <p class='text-right'>
+    <p>
     <a class='btn btn-sm btn-primary' href='{{ path('log_export') }}' role='button'>Export</a>
-    <a class='btn btn-sm btn-danger' href='{{ path('log_export', {'purge': 'yes'}) }}' role='button'>Export and purge</a>
+    <br />
+    Exporting a large log file (more than 100,000 entries) may take longer than
+    PHP's <tt>max_execution_time</tt> limit. If that is the case, use the command 
+    line interface instead.
     </p>
     <table class="records_list table table-striped table-bordered table-hover">
         <thead>
