@@ -1,13 +1,35 @@
 <?php
 
+/* 
+ * The MIT License
+ *
+ * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\LoggingBundle\Services;
 
 use Doctrine\Common\EventArgs;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
-use Doctrine\ORM\QueryBuilder;
 use Exception;
 use LOCKSSOMatic\LoggingBundle\Entity\LogEntry;
 use ReflectionClass;
@@ -15,7 +37,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
 
-// http://www.insanevisions.com/articles/view/symfony-2-activity-log-listener
+
+/**
+ * Symfony logging service. Automatically logs CRUD operations, and can optionally
+ * log other events as needed.
+ * 
+ * @see http://www.insanevisions.com/articles/view/symfony-2-activity-log-listener
+ */
 class LoggingService
 {
 
@@ -38,13 +66,37 @@ class LoggingService
      * @var ContainerInterface
      */
     private $container;
+    
+    /**
+     * Is the logger enabled?
+     * 
+     * @var boolean
+     */
     private $enabled = true;
+    
+    /**
+     * Array of class names (including namespaces) to ignore in the logger, in
+     * order to prevent infinite recursion.
+     *
+     * @var type 
+     */
     private $ignoredClasses = array(
         'LOCKSSOMatic\LoggingBundle\Entity\LogEntry',
         'LOCKSSOMatic\LoggingBundle\Services\LoggingService',
     );
+    
+    /**
+     * Overriden user name. 
+     *
+     * @var type 
+     */
     private $userOverride;
 
+    /**
+     * Set the Symfony container. Called automatically.
+     * 
+     * @param ContainerInterface $container
+     */
     public function setContainer(ContainerInterface $container)
     {
         $this->container = $container;
@@ -53,17 +105,25 @@ class LoggingService
         }
     }
 
+    /**
+     * Enable the activity log.
+     */
     public function enable()
     {
         $this->enabled = true;
     }
 
+    /**
+     * Disable the activity log.
+     */
     public function disable()
     {
         $this->enabled = false;
     }
 
     /**
+     * Get the HTTP request being processed, if there is one.
+     * 
      * @return Request
      */
     private function getRequest()
@@ -75,6 +135,8 @@ class LoggingService
     }
 
     /**
+     * Get the security context of the curret request, if there is one.
+     * 
      * @return SecurityContext
      */
     private function getContext()
@@ -86,6 +148,8 @@ class LoggingService
     }
 
     /**
+     * Get the doctrine entity manager.
+     * 
      * @return EntityManager
      */
     private function getEntityManager()
@@ -96,11 +160,25 @@ class LoggingService
         return $this->em;
     }
 
+    /**
+     * Add a class name to the list of ignored classes. Include the namespace.
+     * 
+     * @todo Allow objects to be passed here, and get the class name from them.
+     * 
+     * @param string $class
+     */
     public function ignoreClass($class)
     {
         $this->ignoredClasses[] = $class;
     }
 
+    /**
+     * Walk up the stack frame to find an appropriate caller for logging. Symfony
+     * gets in the way quite a bit here, so try to find the first LOCKSSOMatic
+     * class that isn't LoggingBundle.
+     * 
+     * @return type
+     */
     private function findStackFrame()
     {
         $trace = debug_backtrace();
@@ -120,12 +198,34 @@ class LoggingService
         }
     }
 
+    /**
+     * The SWORD bundle doesn't use Symfony users in the normal way. User IDs
+     * are really UUIDs passed as HTTP headers or query parameters. 
+     * overrideUser() lets code specify the user more than just "anon."
+     * 
+     * @param type $user
+     */
     public function overrideUser($user)
     {
         $this->userOverride = $user;
     }
 
-    public function getUser($details)
+    /**
+     * Get the user name. 
+     * 
+     * If #overrideUser() was called, then that name is returned. 
+     * 
+     * If there is a security context, then the user name from the context is 
+     * returned.
+     * 
+     * If the $details array includes a user key, then it is returned.
+     * 
+     * Otherwise, return 'console/' + the shell/command line user name.
+     * 
+     * @param array $details
+     * @return string
+     */
+    public function getUser(array $details = array())
     {
         if ($this->userOverride !== null) {
             return $this->userOverride;
@@ -140,6 +240,17 @@ class LoggingService
         return 'console/' . getenv('USER');
     }
 
+    /**
+     * Create and store one log message
+     * 
+     * The second parameter is an array of message details with keys 
+     *   level, a message level, defaults to info
+     *   pln, the PLN name, defaults to null
+     *   message, the detailed message, defaults to null,
+     * 
+     * @param string $summary a brief message
+     * @param array $details array with message details.
+     */
     public function log($summary, array $details = array())
     {
         if ($this->enabled === false) {
@@ -151,7 +262,6 @@ class LoggingService
             'level'     => 'info',
             'pln'       => null,
             'message'   => null,
-            'backtrace' => 1,
             ), $details);
 
         $frame = $this->findStackFrame();
@@ -176,6 +286,13 @@ class LoggingService
         $em->flush($entry); // only flush the entry.
     }
 
+    /**
+     * Log a doctrine event.
+     * 
+     * @param EventArgs $args
+     * @param array $details
+     * @throws Exception
+     */
     private function doctrineLog(EventArgs $args, $details = array())
     {
         if ($args instanceof LifecycleEventArgs) {
@@ -203,6 +320,11 @@ class LoggingService
         );
     }
 
+    /**
+     * Called automatically after an entity has been persisted.
+     * 
+     * @param LifecycleEventArgs $args
+     */
     public function postPersist(LifecycleEventArgs $args)
     {
         $this->doctrineLog($args,
@@ -212,6 +334,11 @@ class LoggingService
         ));
     }
 
+    /**
+     * Called automatically after an entity has been updated.
+     * 
+     * @param LifecycleEventArgs $args
+     */
     public function postUpdate(LifecycleEventArgs $args)
     {
         $this->doctrineLog($args,
@@ -221,6 +348,16 @@ class LoggingService
         ));
     }
 
+    /**
+     * Called *before* an entity has been scheduled for removal, but before it 
+     * has has been flushed. Doctrine doesn't let preRemove() events update
+     * the database (something about infinite recursion hooey). The log is 
+     * actually created in postFlush(), this makes note of the entity in the
+     * session.
+     * 
+     * @param LifecycleEventArgs $args
+     * @return type
+     */
     public function preRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
@@ -235,6 +372,13 @@ class LoggingService
         ));
     }
 
+    /**
+     * After the entity manager is flushed, this function is called. It checks
+     * for a removed entity, and creates a log of its removal.
+     * 
+     * @param PostFlushEventArgs $args
+     * @return boolean
+     */
     public function postFlush(PostFlushEventArgs $args)
     {
         $removed = $this->container->get('session')->get('entity_removed');
@@ -261,6 +405,15 @@ class LoggingService
         return true;
     }
 
+    /**
+     * Export the logs. Returns a temporary file handle which can be read to
+     * get the logs and save them on disk, return them to a browser, or
+     * whatever.
+     * 
+     * @param boolean $header include the CSV header
+     * @param boolean $purge remove the exported log entries
+     * @return resource
+     */
     public function export($header = true, $purge = false)
     {
         $em = $this->getEntityManager();
@@ -294,6 +447,19 @@ class LoggingService
         return $handle;
     }
 
+    /**
+     * Create a callback function that streams the log entries. Especially
+     * useful if there are many log entries to return.
+     * 
+     * $callback = $activityLog->exportCallback();
+     * while($data = $callback(100)) {
+     *   // do stuff with the log data, contains 100 entries in CSV.
+     * }
+     * 
+     * @param boolean $header include the CSV header
+     * @param boolean $purge remove the exported log entries
+     * @return callback
+     */
     public function exportCallback($header = true, $purge = false)
     {
         $em = $this->getEntityManager();
