@@ -2,6 +2,7 @@
 
 namespace LOCKSSOMatic\CRUDBundle\Tests\Entity;
 
+use LOCKSSOMatic\CRUDBundle\Entity\AuProperties;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\Content;
 use PHPUnit_Framework_TestCase;
@@ -12,40 +13,80 @@ use PHPUnit_Framework_TestCase;
 class AusTest extends PHPUnit_Framework_TestCase
 {
 
-    public function testGetEmptySize() {
+    public function testGetEmptySize()
+    {
         $au = new Aus();
         $this->assertEquals(0, $au->getContentSize());
     }
-    
-    public function testGetSize() {
+
+    public function testGetSize()
+    {
         $au = new Aus();
         $content = new Content();
         $content->setSize(120);
         $au->addContent($content);
         $this->assertEquals(120, $au->getContentSize());
-        
+
         $content = new Content();
         $content->setSize(105);
         $au->addContent($content);
         $this->assertEquals(225, $au->getContentSize());
     }
-    
-    public function testGetSizeWithNulls() {
+
+    public function testGetSizeWithNulls()
+    {
         $au = new Aus();
         $content = new Content();
         $content->setSize(120);
         $au->addContent($content);
         $this->assertEquals(120, $au->getContentSize());
-        
-        $content = new Content(); 
+
+        $content = new Content();
         // no setSize()
         $au->addContent($content);
         $this->assertEquals(120, $au->getContentSize());
-        
+
         $content = new Content();
         $content->setSize(105);
         $au->addContent($content);
         $this->assertEquals(225, $au->getContentSize());
     }
-    
+
+    public function testGetAuProperty()
+    {
+        $au = new Aus();
+
+        $parent = new AuProperties();
+        $au->addAuProperty($parent);
+        $parent->setPropertyKey('parent');
+
+        $key = new AuProperties();
+        $au->addAuProperty($key);
+        $key->setParent($parent);
+        $parent->addChild($key);
+        $key->setPropertyKey('key');
+        $key->setPropertyValue('foo');
+
+        $value = new AuProperties();
+        $au->addAuProperty($value);
+        $value->setParent($value);
+        $parent->addChild($value);
+        $value->setPropertyKey('value');
+        $value->setPropertyValue('bar/baz');
+
+        $this->assertEquals('bar/baz', $au->getAuProperty('foo'));
+        $this->assertEquals('bar%2Fbaz', $au->getAuProperty('foo', true));
+    }
+
+    public function testGenerateAuid()
+    {
+        // generate a plugin and associated plugin properties, some of which
+        // are definitional.
+        
+        // generate an au and associated au properties, all of which are
+        // described by the plugin
+        
+        // generate the auid and check that it matches.
+    }
+
 }

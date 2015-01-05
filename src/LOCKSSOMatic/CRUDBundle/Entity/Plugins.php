@@ -56,7 +56,7 @@ class Plugins
     private $aus;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $contentOwners;
 
@@ -252,10 +252,10 @@ class Plugins
     /**
      * Add contentOwners
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwners
+     * @param ContentOwners $contentOwners
      * @return Plugins
      */
-    public function addContentOwner(\LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwners)
+    public function addContentOwner(ContentOwners $contentOwners)
     {
         $this->contentOwners[] = $contentOwners;
 
@@ -265,9 +265,9 @@ class Plugins
     /**
      * Remove contentOwners
      *
-     * @param \LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwners
+     * @param ContentOwners $contentOwners
      */
-    public function removeContentOwner(\LOCKSSOMatic\CRUDBundle\Entity\ContentOwners $contentOwners)
+    public function removeContentOwner(ContentOwners $contentOwners)
     {
         $this->contentOwners->removeElement($contentOwners);
     }
@@ -275,7 +275,7 @@ class Plugins
     /**
      * Get contentOwners
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection 
      */
     public function getContentOwners()
     {
