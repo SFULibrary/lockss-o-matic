@@ -148,9 +148,9 @@ class LoggingService
         $entry = new LogEntry();
         # set some defaults.
         $details = array_merge(array(
-            'level' => 'info',
-            'pln' => null,
-            'message' => null,
+            'level'     => 'info',
+            'pln'       => null,
+            'message'   => null,
             'backtrace' => 1,
             ), $details);
 
@@ -193,7 +193,8 @@ class LoggingService
             return;
         }
         $reflect = new ReflectionClass($entity);
-        $this->log(implode(' ', array(
+        $this->log(implode(' ',
+                array(
             'User ',
             $details['action'],
             $reflect->getShortName(),
@@ -204,17 +205,19 @@ class LoggingService
 
     public function postPersist(LifecycleEventArgs $args)
     {
-        $this->doctrineLog($args, array(
+        $this->doctrineLog($args,
+            array(
             'action' => 'created',
-            'level' => 'doctrine',
+            'level'  => 'doctrine',
         ));
     }
 
     public function postUpdate(LifecycleEventArgs $args)
     {
-        $this->doctrineLog($args, array(
+        $this->doctrineLog($args,
+            array(
             'action' => 'updated',
-            'level' => 'doctrine',
+            'level'  => 'doctrine',
         ));
     }
 
@@ -225,9 +228,10 @@ class LoggingService
         if (in_array($class, $this->ignoredClasses)) {
             return;
         }
-        $this->container->get('session')->set('entity_removed', array(
+        $this->container->get('session')->set('entity_removed',
+            array(
             'entity' => $entity,
-            'id' => $entity->getId(),
+            'id'     => $entity->getId(),
         ));
     }
 
@@ -247,16 +251,18 @@ class LoggingService
             return true;
         }
 
-        $this->doctrineLog($args, array(
+        $this->doctrineLog($args,
+            array(
             'action' => 'deleted',
-            'level' => 'doctrine',
+            'level'  => 'doctrine',
             'entity' => $entity,
-            'id' => $id,
+            'id'     => $id,
         ));
         return true;
     }
 
-    public function export($header = true, $purge = false) {
+    public function export($header = true, $purge = false)
+    {
         $em = $this->getEntityManager();
         $em->getConnection()->getConfiguration()->setSQLLogger(null);
 
@@ -267,10 +273,10 @@ class LoggingService
         $count = 0;
         $mb = 1024 * 1024;
         $handle = fopen("php://temp/maxmemory:{$mb}", 'rw');
-        if($header) {
+        if ($header) {
             fputcsv($handle, LogEntry::toArrayHeader());
         }
-        while($row = $iterator->next()) {
+        while ($row = $iterator->next()) {
             $entry = $row[0];
             fputcsv($handle, $entry->toArray());
             if ($purge) {
@@ -288,7 +294,8 @@ class LoggingService
         return $handle;
     }
 
-    public function exportCallback($header = true, $purge = false) {
+    public function exportCallback($header = true, $purge = false)
+    {
         $em = $this->getEntityManager();
         $em->getConnection()->getConfiguration()->setSQLLogger(null);
 
@@ -296,27 +303,28 @@ class LoggingService
         $query = $em->createQuery($dql);
         $iterator = $query->iterate();
         $finished = false;
-
-        $iterator->next();
-        $iterator->rewind();
+        
+        $iterator->next(); // get the iterator started.
 
         $callback = function($n = 100) use($em, $iterator, $finished) {
-            if($finished) {
+            if ($finished) {
                 return null;
             }
-            $handle = fopen('php://temp/memory:' . 1024*1023, 'w+');
+            set_time_limit(30);
+            $handle = fopen('php://temp/memory:' . 1024 * 1024, 'w+');
             $i = 0;
-            while($i < $n && $iterator->valid() && $row = $iterator->next()) {
+            while ($i < $n && $iterator->valid() && $row = $iterator->current()) {
                 $entry = $row[0];
                 fputcsv($handle, $entry->toArray());
                 $i++;
                 $em->detach($entry);
+                $iterator->next();
             }
             $em->clear();
-            if($i !== $n) {
+            if (($i !== $n) || ($row === false)) {
                 $finished = true;
             }
-            if($i === 0) {
+            if ($i === 0) {
                 return null;
             }
             fflush($handle);
@@ -325,7 +333,8 @@ class LoggingService
             fclose($handle);
             return $content;
         };
-        
+
         return $callback;
     }
+
 }
