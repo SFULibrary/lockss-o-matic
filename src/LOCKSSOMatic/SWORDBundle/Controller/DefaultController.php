@@ -32,6 +32,7 @@ use LOCKSSOMatic\CRUDBundle\Entity\Content;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\DepositBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\LoggingBundle\Services\LoggingService;
 use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
 use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\SWORDBundle\Exceptions\BadRequestException;
@@ -45,6 +46,7 @@ use LOCKSSOMatic\SWORDBundle\SWORDEvents;
 use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,6 +68,11 @@ class DefaultController extends Controller
      * @var Namespaces
      */
     private $namespaces;
+    
+    /**
+     * @var LoggingService
+     */
+    private $activityLog;
 
     /**
      * Construct the controller.
@@ -73,6 +80,12 @@ class DefaultController extends Controller
     public function __construct()
     {
         $this->namespaces = new Namespaces();
+    }
+    
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+        $this->activityLog = $this->container->get('activity_log');
     }
 
     /**
@@ -210,8 +223,9 @@ class DefaultController extends Controller
     public function serviceDocumentAction(Request $request)
     {
         $onBehalfOf = $this->getOnBehalfOfHeader($request);
-
         $contentProvider = $this->getContentProvider($onBehalfOf);
+        $this->activityLog->overrideUser($onBehalfOf);
+        $this->activityLog->log('Requested service document.');
 
         $xml = $this->getSimpleXML('<root/>');
         $event = new ServiceDocumentEvent($xml);
@@ -227,6 +241,7 @@ class DefaultController extends Controller
             )
         );
         $response->headers->set('Content-type', 'text/xml');
+        $this->activityLog->overrideUser(null);
         return $response;
     }
 
@@ -254,7 +269,7 @@ class DefaultController extends Controller
 
         // Query the ContentProvider entity so we can get its name.
         $contentProvider = $this->getContentProvider($contentProviderId);
-
+        $this->activityLog->overrideUser($contentProviderId);
         $atomEntry = $this->getSimpleXML($request->getContent());
         if (count($atomEntry->xpath('//lom:content')) === 0) {
             throw new BadRequestException(
@@ -446,6 +461,7 @@ class DefaultController extends Controller
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
+        $this->activityLog->overrideUser($contentProviderId);
 
         $contentProvider = $this->getContentProvider($contentProviderId);
         $deposit = $this->getDeposit($uuid);

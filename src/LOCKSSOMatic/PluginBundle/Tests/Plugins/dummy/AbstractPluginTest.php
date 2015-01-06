@@ -41,7 +41,7 @@ class AbstractPluginTest extends KernelTestCase
     private $container;
 
     /** @var EntityManager */
-    private static $em;
+    private $em;
 
     /**
      * This test requires a kernel, entity manager, and a container so create them.
@@ -51,8 +51,8 @@ class AbstractPluginTest extends KernelTestCase
     {
         parent::__construct();
         static::bootKernel();
-        static::$em = static::$kernel->getContainer()->get('doctrine')->getManager();
         $this->container = static::$kernel->getContainer();
+        $this->em = static::$kernel->getContainer()->get('doctrine')->getManager();
     }
     
     public function testSettings() {
@@ -80,7 +80,7 @@ class AbstractPluginTest extends KernelTestCase
         $pt->setContainer($this->container);
         $pt->setData('test.data');
         
-        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
+        $repo = $this->em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
         $pluginData = $repo->findOneBy(array(
             'datakey' => 'test.data'
         ));
@@ -88,8 +88,8 @@ class AbstractPluginTest extends KernelTestCase
         $this->assertNull($pluginData->getDomain());
         $this->assertNull($pluginData->getObjectId());
         $this->assertNotNull($pluginData->getValue()); // serialized null isn't null!
-        static::$em->remove($pluginData);
-        static::$em->flush();
+        $this->em->remove($pluginData);
+        $this->em->flush();
     }
 
     /**
@@ -101,7 +101,7 @@ class AbstractPluginTest extends KernelTestCase
         $pt->setContainer($this->container);
         $pt->setData('test.data.1');
 
-        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
+        $repo = $this->em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
 
         $data = $pt->getData('test.data.1');
         $this->assertNull($data);
@@ -111,9 +111,9 @@ class AbstractPluginTest extends KernelTestCase
         $this->assertEquals(array('foo' => 4), $data);
 
         foreach($repo->findAll() as $p) {
-            static::$em->remove($p);
+            $this->em->remove($p);
         }
-        static::$em->flush();
+        $this->em->flush();
     }
 
     /**
@@ -123,7 +123,7 @@ class AbstractPluginTest extends KernelTestCase
     {
         $pt = new PluginTester();
         $pt->setContainer($this->container);
-        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
+        $repo = $this->em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
         $pt->setData('test.data.3', get_class($this));
 
         $data = $pt->getData('test.data.3', get_class($this));
@@ -134,9 +134,9 @@ class AbstractPluginTest extends KernelTestCase
         $this->assertEquals(array('foo' => 4), $data);
 
         foreach($repo->findAll() as $p) {
-            static::$em->remove($p);
+            $this->em->remove($p);
         }
-        static::$em->flush();
+        $this->em->flush();
     }
 
     /**
@@ -145,12 +145,12 @@ class AbstractPluginTest extends KernelTestCase
     public function testGetObjectData() {
         $lockssPlugin = new Plugins();
         $lockssPlugin->setName('chicanery');
-        self::$em->persist($lockssPlugin);
-        self::$em->flush();
+        $this->em->persist($lockssPlugin);
+        $this->em->flush();
 
         $pt = new PluginTester();
         $pt->setContainer($this->container);
-        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
+        $repo = $this->em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
         $pt->setData('test.data.5', $lockssPlugin);
 
         $data = $pt->getData('test.data.5', $lockssPlugin);
@@ -161,10 +161,10 @@ class AbstractPluginTest extends KernelTestCase
         $this->assertEquals(array('foo' => 4), $data);
 
         foreach($repo->findAll() as $p) {
-            static::$em->remove($p);
+            $this->em->remove($p);
         }
-        static::$em->remove($lockssPlugin);
-        static::$em->flush();
+        $this->em->remove($lockssPlugin);
+        $this->em->flush();
     }
 
     /**
@@ -174,7 +174,7 @@ class AbstractPluginTest extends KernelTestCase
     {
         $pt = new PluginTester();
         $pt->setContainer($this->container);
-        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
+        $repo = $this->em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
 
         $pt->setData('foobarbaz', get_class($this));
         $pluginData = $repo->findOneBy(array(
@@ -186,8 +186,8 @@ class AbstractPluginTest extends KernelTestCase
         $this->assertNull($pluginData->getObjectId());
         $this->assertNotNull($pluginData->getValue()); // serialized null isn't null!
 
-        static::$em->remove($pluginData);
-        static::$em->flush();
+        $this->em->remove($pluginData);
+        $this->em->flush();
     }
 
     /**
@@ -198,12 +198,12 @@ class AbstractPluginTest extends KernelTestCase
         // build a phony Plugins object for testing.
         $lockssPlugin = new Plugins();
         $lockssPlugin->setName('chicanery');
-        self::$em->persist($lockssPlugin);
-        self::$em->flush();
+        $this->em->persist($lockssPlugin);
+        $this->em->flush();
         
         $pt = new PluginTester();
         $pt->setContainer($this->container);
-        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
+        $repo = $this->em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
 
         $pt->setData('frobinicate', $lockssPlugin);
         $pluginData = $repo->findOneBy(array(
@@ -215,9 +215,9 @@ class AbstractPluginTest extends KernelTestCase
         $this->assertNotNull($pluginData->getObjectId());
         $this->assertNotNull($pluginData->getValue()); // serialized null isn't null!
 
-        static::$em->remove($pluginData);
-        static::$em->remove($lockssPlugin);
-        static::$em->flush();
+        $this->em->remove($pluginData);
+        $this->em->remove($lockssPlugin);
+        $this->em->flush();
     }
 
     /**
@@ -228,12 +228,12 @@ class AbstractPluginTest extends KernelTestCase
         // build a phony Plugins object for testing.
         $lockssPlugin = new Plugins();
         $lockssPlugin->setName('sundries-etc');
-        self::$em->persist($lockssPlugin);
-        self::$em->flush();
+        $this->em->persist($lockssPlugin);
+        $this->em->flush();
 
         $pt = new PluginTester();
         $pt->setContainer($this->container);
-        $repo = static::$em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
+        $repo = $this->em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
 
         $pt->setData('frobinicate', $lockssPlugin, array('foo' => 'bar', 'yes' => 'no'));
         $pluginData = $repo->findOneBy(array(
@@ -245,8 +245,8 @@ class AbstractPluginTest extends KernelTestCase
         $this->assertNotNull($pluginData->getObjectId());
         $this->assertEquals(array('foo' => 'bar', 'yes' => 'no'), unserialize($pluginData->getValue())); // serialized null isn't null!
 
-        static::$em->remove($pluginData);
-        static::$em->remove($lockssPlugin);
-        static::$em->flush();
+        $this->em->remove($pluginData);
+        $this->em->remove($lockssPlugin);
+        $this->em->flush();
     }
 }

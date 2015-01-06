@@ -16,6 +16,9 @@ LOCKSSOMatic\CRUDBundle\Entity\Plns:
         boxes:
             targetEntity: Boxes
             mappedBy: pln
+        logs:
+            targetEntity: LOCKSSOMatic\LoggingBundle\Entity\LogEntry
+            mappedBy: pln
     table: plns
     id:
         id:

@@ -1,0 +1,44 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Log entry list</h1>
+
+    <p>Showing {{ pagination|length }} records of {{ pagination.getTotalItemCount }}.</p>
+    
+    <p>
+    <a class='btn btn-sm btn-primary' href='{{ path('log_export') }}' role='button'>Export</a>
+    </p>
+    <table class="records_list table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>IP</th>
+                <th>Pln</th>
+                <th>Bundle</th>
+                <th>Caller</th>
+                <th>Level</th>
+                <th>Summary</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in pagination %}
+            <tr>
+                <td>{{ entity.user }}</td>
+                <td>{{ entity.ip }}</td>
+                <td>{% if entity.pln %}{{ entity.pln.name }}{% endif %}</td>
+                <td>{{ entity.bundle }}</td>
+                <td>{{ entity.caller }}</td>
+                <td>{{ entity.level }}</td>
+                <td><a href="{{ path('log_show', { 'id': entity.id }) }}">{{ entity.summary }}</a></td>
+                <td>{% if entity.created %}{{ entity.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+<div class="navigation">
+    {{ knp_pagination_render(pagination) }}
+</div>        
+
+{% endblock %}

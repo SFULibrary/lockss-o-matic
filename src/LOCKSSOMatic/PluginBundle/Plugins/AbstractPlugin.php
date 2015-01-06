@@ -207,10 +207,10 @@ abstract class AbstractPlugin extends ContainerAware
      */
     public function setData($key, $object = null, $value = null)
     {
+        $em = $this->container->get('doctrine')->getManager();
         $data = $this->getDataObject($object, $key);
         if ($data === null) {
             $data = new LomPluginData();
-            $this->container->get('doctrine')->getManager()->persist($data);
             $data->setPlugin(get_class($this));
             $data->setDataKey($key);
             if ($object !== null && is_object($object)) {
@@ -219,9 +219,10 @@ abstract class AbstractPlugin extends ContainerAware
             } else if ($object !== null && is_string($object)) {
                 $data->setDomain($object);
             }
+            $em->persist($data);
         }
         $data->setValue(serialize($value));
-        $this->container->get('doctrine')->getManager()->flush();
+        $em->flush($data);
     }
 
     /**

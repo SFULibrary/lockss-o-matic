@@ -51,25 +51,27 @@ abstract class DepositPlugin extends AbstractPlugin
 
     public function buildAu(ContentProviders $provider, $auid, $comment, $manifest)
     {
+        $em = $this->container->get('doctrine')->getManager();
         $au = new Aus();
         $au->setContentProvider($provider);
         $au->setManaged(true);
         $au->setAuid($auid);
         $au->setComment($comment);
         $au->setManifestUrl($manifest);
-        $this->container->get('doctrine')->getManager()->persist($au);
-        $this->container->get('doctrine')->getManager()->flush();
+        $em->persist($au);
+        $em->flush($au);
         return $au;
     }
 
     public function depositContent(SimpleXMLElement $contentXml, Deposits $deposit, Aus $au) {
+        $em = $this->container->get('doctrine')->getManager();
         $contentBuilder = new ContentBuilder();
         $content = $contentBuilder->fromSimpleXML($contentXml);
         $content->setDeposit($deposit);
         $content->setAu($au);
-        $this->container->get('doctrine')->getManager()->persist($content);
         $au->addContent($content);
-        $this->container->get('doctrine')->getManager()->flush();
+        $em->persist($content);
+        $em->flush($content);
     }
 
 }

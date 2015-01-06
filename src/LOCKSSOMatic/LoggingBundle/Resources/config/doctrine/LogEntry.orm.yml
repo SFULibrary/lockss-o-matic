@@ -1,0 +1,64 @@
+LOCKSSOMatic\LoggingBundle\Entity\LogEntry:
+    type: entity
+    table: log_entries
+    repositoryClass: LOCKSSOMatic\LoggingBundle\Entity\LogEntryRepository
+    readOnly: true
+    manyToOne:
+        pln:
+            targetEntity: LOCKSSOMatic\CRUDBundle\Entity\Plns
+            inversedBy: logs
+            joinColumn:
+                name: plns_id
+                referencedColumnName: id
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        user:
+            type: string
+            length: 128
+            nullable: true
+            comment: The active user when the log was generated.
+        ip:
+            type: string
+            length: 36
+            nullable: false
+            comment: The IP address of the active request or console.
+        bundle:
+            type: string
+            length: 128
+            nullable: true
+            comment: Bundle which generated the entry.
+        class:
+            type: string
+            length: 500
+            nullable: true
+            comment: Class which generated the entry.
+        caller:
+            type: string
+            length: 128
+            nullable: true
+            comment: Function/method which generated the entry.
+        level:
+            type: string
+            length: 24
+            nullable: false
+            comment: Log entry level.
+        summary:
+            type: text
+            nullable: false
+            comment: A brief summary of the log.
+        message:
+            type: text
+            nullable: true
+            comment: The log entry message.
+        created:
+            type: datetime
+            nullable: false
+            comment: Timestamp when the entry was generated.
+    
+    lifecycleCallbacks: 
+        prePersist: [ setCreated ]

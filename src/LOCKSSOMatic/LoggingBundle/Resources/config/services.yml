@@ -1,0 +1,15 @@
+parameters:
+    activity_log.enabled: true
+
+services:
+
+    activity_log:
+        class: LOCKSSOMatic\LoggingBundle\Services\LoggingService
+        calls:
+            - [ setContainer, ["@service_container"]]
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: preRemove }
+            - { name: doctrine.event_listener, event: postFlush }
+        

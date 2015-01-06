@@ -79,7 +79,6 @@ class AdminUserController extends Controller
             );
             $em->persist($entity);
             $em->flush();
-            
             return $this->redirect($this->generateUrl('admin_user_show', array('id' => $entity->getId())));
         }
 
@@ -212,7 +211,6 @@ class AdminUserController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
-                        
             return $this->redirect($this->generateUrl('admin_user_edit', array('id' => $id)));
         }
 

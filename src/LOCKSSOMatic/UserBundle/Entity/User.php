@@ -64,7 +64,7 @@ class User extends BaseUser
      * @ORM\Column(name="institution", type="string", length=128)
      */
     private $institution;
-
+    
     public function __construct()
     {
         parent::__construct();
@@ -125,4 +125,5 @@ class User extends BaseUser
     {
         return $this->institution;
     }
+
 }

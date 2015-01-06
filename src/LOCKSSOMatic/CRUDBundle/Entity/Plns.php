@@ -28,6 +28,7 @@ namespace LOCKSSOMatic\CRUDBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use LOCKSSOMatic\LoggingBundle\Entity\LogEntry;
 
 /**
  * Plns
@@ -80,6 +81,11 @@ class Plns
     private $propServer;
 
     /**
+     * @var Collection
+     */
+    private $logs;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -89,6 +95,7 @@ class Plns
         $this->plnProperties = new ArrayCollection();
         $this->externalTitleDbs = new ArrayCollection();
         $this->boxes = new ArrayCollection();
+        $this->logs = new ArrayCollection();
     }
 
     /**
@@ -343,5 +350,38 @@ class Plns
     public function getPropServer()
     {
         return $this->propServer;
+    }
+
+    /**
+     * Add logs
+     *
+     * @param LogEntry $logs
+     * @return Plns
+     */
+    public function addLog(LogEntry $logs)
+    {
+        $this->logs[] = $logs;
+
+        return $this;
+    }
+
+    /**
+     * Remove logs
+     *
+     * @param LogEntry $logs
+     */
+    public function removeLog(LogEntry $logs)
+    {
+        $this->logs->removeElement($logs);
+    }
+
+    /**
+     * Get logs
+     *
+     * @return Collection 
+     */
+    public function getLogs()
+    {
+        return $this->logs;
     }
 }

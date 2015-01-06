@@ -1,3 +1,7 @@
+locksso_matic_logging:
+    resource: "@LOCKSSOMaticLoggingBundle/Resources/config/routing.yml"
+    prefix:   /
+
 locksso_matic_plugin:
     resource: "@LOCKSSOMaticPluginBundle/Resources/config/routing.yml"
     prefix:   /

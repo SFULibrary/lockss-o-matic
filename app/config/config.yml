@@ -33,7 +33,7 @@ framework:
         #assets_version: SomeVersionScheme
     default_locale:  "%locale%"
     trusted_hosts:   ~
-    trusted_proxies: ~
+    trusted_proxies: [192.0.0.1, 10.0.0.0/8, 127.0.0.1]
     session:
         # handler_id set to null will use default session handler from php.ini
         handler_id:  ~
@@ -106,6 +106,10 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+# activity logging.
+locksso_matic_logging:
+    enabled: true
 
 # Monolog Configuration
 monolog:
