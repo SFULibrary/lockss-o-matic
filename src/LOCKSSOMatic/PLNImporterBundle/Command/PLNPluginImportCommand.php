@@ -201,7 +201,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
         $property = new PluginProperties();
         $property->setPlugin($plugin);
         $property->setPropertyKey($name);
-        $property->setPropertyValue($value);
+        $property->setPropertyValue((string)$value);
         $this->em->persist($property);
         return $property;
     }
