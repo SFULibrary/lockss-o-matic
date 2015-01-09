@@ -185,8 +185,8 @@ class Aus
         foreach($propNames as $name) {
             $auKey .= '&' . $name . '~' . $this->getAuProperty($name, true);
         }
-
-        return $pluginKey . $auKey;
+        $this->auid = $pluginKey . $auKey;
+        return $this->auid;
     }
 
     /**

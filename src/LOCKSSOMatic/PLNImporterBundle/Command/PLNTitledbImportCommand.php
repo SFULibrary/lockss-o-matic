@@ -1,7 +1,5 @@
 <?php
 
-// src/LOCKSSOMatic/PLNImporterBundle/Command/PLNTitledbImportCommand.php
-
 namespace LOCKSSOMatic\PLNImporterBundle\Command;
 
 use Doctrine\Common\Util\Debug;
@@ -179,7 +177,6 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $this->getContentOwner($publisherName, $plugin);
 
         $aus = new Aus();
-        $aus->setAuid('command-imported');
         $aus->setComment('AU created by import command');
         $aus->setManifestUrl('http://example.com/manifest/url');
         $plugin->addAus($aus);        
