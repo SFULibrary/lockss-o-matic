@@ -177,6 +177,10 @@ class Aus
      */
     public function generateAuid() {
         $plugin = $this->getPlugin();
+        if($plugin === null) {
+            $this->auid = null;
+            return null;
+        }
         $pluginKey = str_replace('.', '|', $plugin->getPluginIdentifier());
         $auKey = '';
         $propNames = $plugin->getDefinitionalProperties();
