@@ -167,7 +167,7 @@ class Aus
             $char = ord($matches[0]);
             return '%' . strtoupper(sprintf("%02x", $char));
         };
-        return preg_replace_callback('/[^_*a-zA-Z0-9]/', $callback, $value);
+        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
     }
 
     /**
