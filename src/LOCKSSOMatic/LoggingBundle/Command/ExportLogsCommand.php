@@ -45,7 +45,7 @@ class ExportLogsCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this->setName('lom:export:logs')
+        $this->setName('lockssomatic:export:logs')
             ->setDescription('Export logs from the database for archiving.')
             ->addArgument('file', InputArgument::REQUIRED,
                 'File to write the logs to.')
