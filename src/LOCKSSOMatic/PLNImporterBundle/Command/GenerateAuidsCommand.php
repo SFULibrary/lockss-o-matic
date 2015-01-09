@@ -5,6 +5,7 @@ namespace LOCKSSOMatic\PLNImporterBundle\Command;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,7 +31,9 @@ class GenerateAuidsCommand extends ContainerAwareCommand
     public function configure()
     {
         $this->setName('lockssomatic:auids')
-            ->setDescription('Import PLN titledb file.');
+            ->setDescription('Generate AUids for AUs which do not have one.')
+            ->addOption('all', null, InputOption::VALUE_NONE,
+                'Generate AUids for all AUs');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -38,7 +41,11 @@ class GenerateAuidsCommand extends ContainerAwareCommand
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->getContainer()->get('activity_log')->disable();
         $repo = $this->em->getRepository('LOCKSSOMaticCRUDBundle:Aus');
-        $dql = 'SELECT a FROM LOCKSSOMaticCRUDBundle:Aus a WHERE a.auid IS NULL';
+        if($input->getOption('all')) {
+            $dql = 'SELECT a FROM LOCKSSOMaticCRUDBundle:Aus a';
+        } else {
+            $dql = 'SELECT a FROM LOCKSSOMaticCRUDBundle:Aus a WHERE a.auid IS NULL';
+        }
         $query = $this->em->createQuery($dql);
         $iterator = $query->iterate();
         $n = 0;
@@ -52,7 +59,7 @@ class GenerateAuidsCommand extends ContainerAwareCommand
             $au = $repo->find($row[0]->getId());
             $au->generateAuid();
             $n++;
-            if($n % 100 === 0) {
+            if ($n % 100 === 0) {
                 $this->progressReport($output, $n);
             }
         }
