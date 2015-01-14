@@ -167,7 +167,7 @@ class Aus
             $char = ord($matches[0]);
             return '%' . strtoupper(sprintf("%02x", $char));
         };
-        return preg_replace_callback('/[^_*a-zA-Z0-9]/', $callback, $value);
+        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
     }
 
     /**
@@ -177,6 +177,10 @@ class Aus
      */
     public function generateAuid() {
         $plugin = $this->getPlugin();
+        if($plugin === null) {
+            $this->auid = null;
+            return null;
+        }
         $pluginKey = str_replace('.', '|', $plugin->getPluginIdentifier());
         $auKey = '';
         $propNames = $plugin->getDefinitionalProperties();
@@ -185,8 +189,8 @@ class Aus
         foreach($propNames as $name) {
             $auKey .= '&' . $name . '~' . $this->getAuProperty($name, true);
         }
-
-        return $pluginKey . $auKey;
+        $this->auid = $pluginKey . $auKey;
+        return $this->auid;
     }
 
     /**

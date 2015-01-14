@@ -54,7 +54,7 @@ LOCKSSOMatic\CRUDBundle\Entity\Aus:
             comment: 'Should LOCKSSOMatic manage this PLN.'
         auid:            
             type: string
-            length: 255
+            length: 2048
             nullable: true
             comment: 'The LOCKSS auId. @todo: Explain where this is generated.'
         manifestUrl:

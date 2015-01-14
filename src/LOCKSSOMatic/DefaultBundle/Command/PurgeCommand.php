@@ -44,7 +44,7 @@ class PurgeCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this->setName('lom:purge')
+        $this->setName('lockssomatic:purge')
                 ->setDescription('Purge *ALL* data from the database.');
     }
 
