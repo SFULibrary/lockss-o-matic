@@ -476,6 +476,9 @@ class LoggingService
             if ($finished) {
                 return null;
             }
+            // reset the execution time limit - this can take a long while,
+            // and even though it is constantly returning data to the browser
+            // Apache will kill it.
             set_time_limit(30);
             $handle = fopen('php://temp/memory:' . 1024 * 1024, 'w+');
             $i = 0;
