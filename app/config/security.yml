@@ -35,7 +35,14 @@ security:
                 path:   fos_user_security_logout
             anonymous:    false
             switch_user:  { role: ROLE_ADMIN }
-            
+            remember_me:
+                key: "%secret%"
+                # one year, in seconds.
+                lifetime: 31536000 
+                path: /
+                # defaults to current domain from $_SERVER
+                domain: ~
+        
     access_control:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
