@@ -46,6 +46,10 @@
                     <li role="presentation" class="divider"></li>
                     <li><a href="{{ path('plugins') }}">Plugins</a></li>
                     <li><a href="{{ path('pluginproperties') }}">Plugin Properties</a></li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <li role='presentation' class='divider'></li>
+                    <li><a href="{{ path('admin_user') }}">Users</a></li>
+                    {% endif %}
                 </ul>
             </li>
             
