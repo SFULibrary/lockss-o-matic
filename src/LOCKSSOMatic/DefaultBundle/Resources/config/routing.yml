@@ -1,3 +1,0 @@
-lom_default_homepage:
-    path:     /
-    defaults: { _controller: LOCKSSOMaticDefaultBundle:Default:index }

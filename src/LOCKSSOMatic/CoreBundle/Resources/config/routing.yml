@@ -1,3 +1,7 @@
+lom_default_homepage:
+    path:     /
+    defaults: { _controller: LOCKSSOMaticCoreBundle:Default:index }
+
 locksso_matic_core_homepage:
     pattern:  /core/upload/deposit
     defaults: { _controller: LOCKSSOMaticCoreBundle:Default:uploadDeposit}
