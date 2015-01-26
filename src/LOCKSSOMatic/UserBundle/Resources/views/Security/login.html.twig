@@ -7,6 +7,7 @@
 <div class="alert alert-danger alert-dismissable">
     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
     {{ error.message|trans }}
+    <p>You can <a href="{{ path('fos_user_resetting_request') }}">reset your password</a>.</p>
 </div>
 {% endif %}
 
@@ -40,7 +41,7 @@
 
     <div class="form-group">
         <div class="col-sm-10 col-sm-offset-2">
-            <input type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" />
+            <button type="submit" class='btn btn-primary' id="_submit" name="_submit">{{ 'security.login.submit'|trans }}</button>
         </div>
     </div>
 </form>
