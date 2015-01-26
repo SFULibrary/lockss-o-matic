@@ -33,7 +33,3 @@ locksso_matic_user:
     resource: "@LOCKSSOMaticUserBundle/Resources/config/routing.yml"
     prefix: /
     
-locksso_matic_default:
-    resource: "@LOCKSSOMaticDefaultBundle/Resources/config/routing.yml"
-    prefix: /
-    

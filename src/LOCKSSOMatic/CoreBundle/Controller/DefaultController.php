@@ -8,10 +8,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class DefaultController extends Controller
 {
-    // @todo Remove if not used.
-    public function indexAction($name)
+    /**
+     * Render a static index page.
+     *
+     * @return Response the response
+     */
+    public function indexAction()
     {
-        return $this->render('LOCKSSOMaticCoreBundle:Default:index.html.twig', array('name' => $name));
+        return $this->render('LOCKSSOMaticCoreBundle:Default:index.html.twig');
     }
     
     /**
