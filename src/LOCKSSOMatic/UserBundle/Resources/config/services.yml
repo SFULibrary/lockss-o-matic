@@ -1,0 +1,11 @@
+services:
+    app.form.profile:
+        class: LOCKSSOMatic\UserBundle\Form\ProfileType
+        tags:
+            - { name: form.type, alias: lom_user_profile }
+
+    app.registration.listener:
+        class: LOCKSSOMatic\UserBundle\EventListener\RegistrationListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ["@router"]

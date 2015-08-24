@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use LOCKSSOMatic\UserBundle\Entity\User;
-use LOCKSSOMatic\UserBundle\Form\UserType;
+use LOCKSSOMatic\UserBundle\Form\AdminUserType;
 
 /**
  * User controller.
@@ -40,7 +40,7 @@ class AdminUserController extends Controller
      *
      * @Route("/", name="admin_user_create")
      * @Method("POST")
-     * @Template("LOCKSSOMaticUserBundle:User:new.html.twig")
+     * @Template("LOCKSSOMaticUserBundle:AdminUser:new.html.twig")
      */
     public function createAction(Request $request)
     {
@@ -71,7 +71,7 @@ class AdminUserController extends Controller
      */
     private function createCreateForm(User $entity)
     {
-        $form = $this->createForm(new UserType(), $entity, array(
+        $form = $this->createForm(new AdminUserType(), $entity, array(
             'action' => $this->generateUrl('admin_user_create'),
             'method' => 'POST',
         ));
@@ -160,7 +160,7 @@ class AdminUserController extends Controller
     */
     private function createEditForm(User $entity)
     {
-        $form = $this->createForm(new UserType(), $entity, array(
+        $form = $this->createForm(new AdminUserType(), $entity, array(
             'action' => $this->generateUrl('admin_user_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
@@ -174,7 +174,7 @@ class AdminUserController extends Controller
      *
      * @Route("/{id}", name="admin_user_update")
      * @Method("PUT")
-     * @Template("LOCKSSOMaticUserBundle:User:edit.html.twig")
+     * @Template("LOCKSSOMaticUserBundle:AdminUser:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {

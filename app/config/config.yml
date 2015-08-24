@@ -111,3 +111,9 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: LOCKSSOMatic\UserBundle\Entity\User
+    profile:
+        form:
+            type:
+                lom_user_profile
+    registration: ~
+        
