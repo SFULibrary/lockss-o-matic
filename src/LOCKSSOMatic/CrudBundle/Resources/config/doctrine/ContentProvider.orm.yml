@@ -1,0 +1,97 @@
+LOCKSSOMatic\CrudBundle\Entity\ContentProvider:
+    type: entity
+    table: content_providers
+    indexes:
+        IDX_D2C29C14138983FF:
+            columns:
+                - content_owner_id
+        IDX_D2C29C14C8BA1A08:
+            columns:
+                - pln_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        type:
+            type: string
+            nullable: false
+            length: 24
+            fixed: false
+            comment: ''
+        uuid:
+            type: string
+            nullable: false
+            length: 36
+            fixed: false
+            comment: ''
+        permissionurl:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+            column: permissionUrl
+        name:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+        ipAddress:
+            type: string
+            nullable: false
+            length: 16
+            fixed: false
+            comment: ''
+            column: ip_address
+        hostname:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+        checksumType:
+            type: string
+            nullable: false
+            length: 24
+            fixed: false
+            comment: ''
+            column: checksum_type
+        maxFileSize:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: max_file_size
+        maxAuSize:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: max_au_size
+    manyToOne:
+        contentOwner:
+            targetEntity: ContentOwner
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                content_owner_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        pln:
+            targetEntity: Pln
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                pln_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

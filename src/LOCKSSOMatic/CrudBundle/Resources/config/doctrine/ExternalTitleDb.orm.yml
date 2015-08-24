@@ -1,0 +1,34 @@
+LOCKSSOMatic\CrudBundle\Entity\ExternalTitleDb:
+    type: entity
+    table: external_title_dbs
+    indexes:
+        IDX_D40D047CC8BA1A08:
+            columns:
+                - pln_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        path:
+            type: text
+            nullable: false
+            length: null
+            fixed: false
+            comment: ''
+    manyToOne:
+        pln:
+            targetEntity: Pln
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                pln_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,54 @@
+LOCKSSOMatic\CrudBundle\Entity\PlnProperty:
+    type: entity
+    table: pln_properties
+    indexes:
+        IDX_E1F16662C8BA1A08:
+            columns:
+                - pln_id
+        IDX_E1F16662727ACA70:
+            columns:
+                - parent_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        propertyKey:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+            column: property_key
+        propertyValue:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: property_value
+    manyToOne:
+        parent:
+            targetEntity: PlnProperty
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                parent_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        pln:
+            targetEntity: Pln
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                pln_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

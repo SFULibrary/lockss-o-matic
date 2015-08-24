@@ -1,0 +1,42 @@
+LOCKSSOMatic\CrudBundle\Entity\ExternalAu:
+    type: entity
+    table: external_aus
+    indexes:
+        IDX_8D3A7BF8C8BA1A08:
+            columns:
+                - pln_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        plnId:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: pln_id
+        title:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        auid:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        path:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+    lifecycleCallbacks: {  }

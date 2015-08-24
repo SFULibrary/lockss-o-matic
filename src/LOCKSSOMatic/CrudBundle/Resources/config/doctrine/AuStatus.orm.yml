@@ -1,0 +1,54 @@
+LOCKSSOMatic\CrudBundle\Entity\AuStatus:
+    type: entity
+    table: au_status
+    indexes:
+        IDX_56FE435CA3D201B3:
+            columns:
+                - au_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        boxHostname:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+            column: box_hostname
+        queryDate:
+            type: datetime
+            nullable: false
+            comment: ''
+            column: query_date
+        propertyKey:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+            column: property_key
+        propertyValue:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: property_value
+    manyToOne:
+        au:
+            targetEntity: Au
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                au_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

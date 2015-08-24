@@ -1,0 +1,54 @@
+LOCKSSOMatic\CrudBundle\Entity\PluginProperty:
+    type: entity
+    table: plugin_properties
+    indexes:
+        IDX_28F93FBCEC46F62F:
+            columns:
+                - plugin_id
+        IDX_28F93FBC727ACA70:
+            columns:
+                - parent_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        propertyKey:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+            column: property_key
+        propertyValue:
+            type: text
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+            column: property_value
+    manyToOne:
+        parent:
+            targetEntity: PluginProperty
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                parent_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        plugin:
+            targetEntity: Plugin
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                plugin_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

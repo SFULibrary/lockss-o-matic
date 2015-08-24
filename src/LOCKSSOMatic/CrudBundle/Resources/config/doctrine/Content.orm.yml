@@ -1,0 +1,85 @@
+LOCKSSOMatic\CrudBundle\Entity\Content:
+    type: entity
+    table: content
+    indexes:
+        IDX_FEC530A95B8F2BDB:
+            columns:
+                - deposit_id
+        IDX_FEC530A9A3D201B3:
+            columns:
+                - au_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        url:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+        title:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+            comment: ''
+        size:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        dateDeposited:
+            type: datetime
+            nullable: false
+            comment: ''
+            column: date_deposited
+        checksumType:
+            type: string
+            nullable: true
+            length: 24
+            fixed: false
+            comment: ''
+            column: checksum_type
+        checksumValue:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+            column: checksum_value
+        recrawl:
+            type: boolean
+            nullable: false
+            comment: ''
+        verifiedSize:
+            type: boolean
+            nullable: false
+            comment: ''
+            column: verified_size
+    manyToOne:
+        deposit:
+            targetEntity: Deposit
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                deposit_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        au:
+            targetEntity: Au
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                au_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
