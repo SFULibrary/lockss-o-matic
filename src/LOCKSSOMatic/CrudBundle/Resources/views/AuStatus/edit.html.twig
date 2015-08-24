@@ -1,0 +1,21 @@
+{% extends '::base.html.twig' %}
+
+    
+{% block pageheader %}
+    <h1>AuStatus Edit</h1>
+{% endblock %}
+    
+{% block body -%}
+
+    {{ form(edit_form) }}
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('austatus') }}">
+            Back to the list
+        </a>
+    </li>
+
+
+</ul>
+{% endblock %}

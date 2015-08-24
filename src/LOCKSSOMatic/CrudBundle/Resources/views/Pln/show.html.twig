@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+
+    
+{% block pageheader %}
+    <h1>Pln</h1>
+{% endblock %}
+    
+{% block body -%}
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('pln') }}">
+            Back to the list
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ path('pln_edit', { 'id': entity.id }) }}">
+            <span class='glyphicon glyphicon-edit'></span>
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ path('pln_delete', { 'id': entity.id }) }}" class="js-confirm" data-confirm="Are you sure you want to delete this Pln?">
+            <span class='glyphicon glyphicon-remove'></span>
+        </a>
+    </li>
+</ul>
+
+    <table class="record_properties table table-striped table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ entity.name }}</td>
+            </tr>
+            <tr>
+                <th>Propserver</th>
+                <td>{{ entity.propserver }}</td>
+            </tr>
+            <tr>
+                <th>Propspath</th>
+                <td>{{ entity.propsPath }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

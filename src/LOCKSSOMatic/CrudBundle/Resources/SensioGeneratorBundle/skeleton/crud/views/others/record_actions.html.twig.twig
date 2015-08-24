@@ -1,0 +1,23 @@
+<ul class="record_actions">
+    <li>
+        <a href="{{ "{{ path('" ~ route_name_prefix ~ "') }}" }}">
+            Back to the list
+        </a>
+    </li>
+
+{% if ('edit' in actions) and (not hide_edit) %}
+    <li>
+        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_edit', { 'id': entity."~ identifier ~" }) }}" }}">
+            <span class='glyphicon glyphicon-edit'></span>
+        </a>
+    </li>
+{% endif %}
+
+{% if ('delete' in actions) and (not hide_delete) %}
+    <li>
+        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_delete', { 'id': entity."~ identifier ~" }) }}" }}" class="js-confirm" data-confirm="Are you sure you want to delete this {{ entity }}?">
+            <span class='glyphicon glyphicon-remove'></span>
+        </a>
+    </li>
+{% endif %}
+</ul>

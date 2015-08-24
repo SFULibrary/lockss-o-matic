@@ -1,0 +1,53 @@
+{% extends '::base.html.twig' %}
+
+    
+{% block pageheader %}
+    <h1>ExternalAu</h1>
+{% endblock %}
+    
+{% block body -%}
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('externalau') }}">
+            Back to the list
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ path('externalau_edit', { 'id': entity.id }) }}">
+            <span class='glyphicon glyphicon-edit'></span>
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ path('externalau_delete', { 'id': entity.id }) }}" class="js-confirm" data-confirm="Are you sure you want to delete this ExternalAu?">
+            <span class='glyphicon glyphicon-remove'></span>
+        </a>
+    </li>
+</ul>
+
+    <table class="record_properties table table-striped table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Plnid</th>
+                <td>{{ entity.plnId }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ entity.title }}</td>
+            </tr>
+            <tr>
+                <th>Auid</th>
+                <td>{{ entity.auid }}</td>
+            </tr>
+            <tr>
+                <th>Path</th>
+                <td>{{ entity.path }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

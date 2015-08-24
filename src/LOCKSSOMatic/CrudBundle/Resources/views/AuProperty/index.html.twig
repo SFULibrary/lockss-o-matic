@@ -1,0 +1,55 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>AuProperty List</h1>
+{% endblock %}
+
+{% block body -%}
+
+    <div class="navigation">
+        {{ knp_pagination_render(entities) }}
+    </div>
+
+    <table class="records_list table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Propertykey</th>
+                <th>Propertyvalue</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('auproperty_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.propertyKey }}</td>
+                <td>{{ entity.propertyValue }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('auproperty_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('auproperty_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(entities) }}
+    </div>
+
+        <ul>
+        <li>
+            <a href="{{ path('auproperty_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

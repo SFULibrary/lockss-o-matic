@@ -9,3 +9,10 @@ services:
         tags:
             - { name: kernel.event_subscriber }
         arguments: ["@router"]
+        
+    lom.twig.lom_userextension:
+        class: LOCKSSOMatic\UserBundle\Twig\UsersExtension
+        arguments: [@doctrine]
+        tags:
+            - { name: twig.extension }
+
