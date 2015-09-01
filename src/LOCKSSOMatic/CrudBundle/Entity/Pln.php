@@ -122,4 +122,8 @@ class Pln
     {
         return $this->propsPath;
     }
+
+    public function __toString() {
+        return $this->name;
+    }
 }
