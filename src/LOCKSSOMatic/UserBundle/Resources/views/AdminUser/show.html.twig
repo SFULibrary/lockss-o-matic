@@ -3,7 +3,7 @@
 {% block body -%}
     <h1>User</h1>
 
-    <table class="record_properties">
+    <table class="record_properties table table-striped table-condensed table-hover">
         <tbody>
             <tr>
                 <th>Id</th>
@@ -16,6 +16,14 @@
             <tr>
                 <th>Institution</th>
                 <td>{{ entity.institution }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>
+                    {% for role in entity.roles %}
+                        {{ role }}<br />
+                    {% endfor %}
+                </td>
             </tr>
         </tbody>
     </table>

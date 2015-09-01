@@ -36,7 +36,10 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form:
-        resources: ['bootstrap_3_layout.html.twig']
+        resources: ['bootstrap_3_horizontal_layout.html.twig']
+    globals:
+        lom_access: "@lom.access"
+        lom_sitename: "%site_name%"
 
 # Assetic Configuration
 assetic:

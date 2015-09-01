@@ -2,13 +2,15 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LOCKSSOMatic\CrudBundle\Entity\Pln;
+use LOCKSSOMatic\CrudBundle\Form\PlnType;
+use LOCKSSOMatic\UserBundle\Security\Acl\Permission\PlnAccessLevels;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use LOCKSSOMatic\CrudBundle\Entity\Pln;
-use LOCKSSOMatic\CrudBundle\Form\PlnType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Pln controller.
@@ -73,7 +75,7 @@ class PlnController extends Controller
      *
      * @param Pln $entity The entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createCreateForm(Pln $entity)
     {
@@ -162,7 +164,7 @@ class PlnController extends Controller
     *
     * @param Pln $entity The entity
     *
-    * @return \Symfony\Component\Form\Form The form
+    * @return Form The form
     */
     private function createEditForm(Pln $entity)
     {
@@ -233,7 +235,7 @@ class PlnController extends Controller
      *
      * @param mixed $id The entity id
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createDeleteForm($id)
     {
@@ -243,5 +245,109 @@ class PlnController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+
+    /**
+     * @Route("/{id}/access", name="pln_access")
+     * @Template("LOCKSSOMaticCrudBundle:Pln:access.html.twig")
+     * @param type $id
+     */
+    public function showAccessAction($id) {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository("LOCKSSOMaticCrudBundle:Pln")->find($id);
+        $this->get('lom.access')->checkAccess("PLNADMIN", $entity);
+        $users = $em->getRepository("LOCKSSOMaticUserBundle:User")->findAll();
+        return array(
+            'users' => $users,
+            'pln' => $entity,
+            'levels' => PlnAccessLevels::levels()
+        );
+    }
+
+    private function createEditAccessForm(Pln $pln) {
+        $em = $this->getDoctrine()->getManager();
+        $users = $em->getRepository("LOCKSSOMaticUserBundle:User")->findAll();
+        $accessManager = $this->get('lom.access');
+        $defaultData = array('message' => 'Edit user access');
+        $levels = PlnAccessLevels::levels();
+        $options = array(
+            'method' => 'POST',
+            'action' => $this->generateUrl(
+                'pln_access_update',
+                array('id' => $pln->getId())
+            )
+        );
+        $builder = $this->createFormBuilder($defaultData, $options);
+        foreach($users as $user) {
+            if($user->hasRole('ROLE_ADMIN')) {
+                continue; // skip admins - they can do anything.
+            }
+            $builder->add('user_' . $user->getId(), 'choice', array(
+                'label' => $user->getFullname(),
+                'choices' => $levels,
+                'empty_value' => 'No access',
+                'data' => $accessManager->findAccessLevel($user, $pln),
+                'multiple' => false,
+                'expanded' => false,
+                'mapped' => false,
+                'required' => false,
+            ));
+        }
+        $builder->add('submit', 'submit', array('label' => 'Update'));
+        return $builder->getForm();
+    }
+
+    /**
+     * @Route("/{id}/access/edit", name="pln_access_edit")
+     * @Method("GET")
+     * @Template("LOCKSSOMaticCrudBundle:Pln:accessEdit.html.twig")
+     * @param type $id
+     */
+    public function editAccessAction($id) {
+        $accessManager = $this->get('lom.access');
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
+        $this->get('lom.access')->checkAccess("PLNADMIN", $pln);
+        $form = $this->createEditAccessForm($pln);
+        return array(
+            'access_edit_form' => $form->createView(),
+            'pln' => $pln
+        );
+    }
+
+    private function updateAccess(Request $request, Pln $pln) {
+        $em = $this->getDoctrine()->getManager();
+        $users = $em->getRepository("LOCKSSOMaticUserBundle:User")->findAll();
+        $accessManager = $this->get('lom.access');
+        $formData = $request->request->all();
+        $data = $formData['form'];
+        foreach($users as $user) {
+            $key = 'user_' . $user->getId();
+            if( !array_key_exists($key, $data)) {
+                continue;
+            }
+            $accessManager->setAccess($data[$key], $pln, $user);
+        }
+    }
+
+    /**
+     * @Route("/{id}/access/edit", name="pln_access_update")
+     * @Method("POST")
+     * @param type $id
+     */
+    public function updateAccessAction(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
+        $this->get('lom.access')->checkAccess("PLNADMIN", $pln);
+        $form = $this->createEditAccessForm($pln);
+        $form->handleRequest($request);
+        if($form->isValid()) {
+            $this->updateAccess($request, $pln);
+            $this->addFlash('success', "The form was saved.");
+            return $this->redirect($this->generateUrl('pln_access', array('id' => $id)));
+        } else {
+            $this->addFlash('error', "The form was not saved.");
+            return $this->redirect($this->generateUrl('pln_access_edit', array('id' => $id)));
+        }
     }
 }

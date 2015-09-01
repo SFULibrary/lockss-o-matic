@@ -25,7 +25,8 @@
         "ircmaxell/password-compat": "~1.0.3",
         "twitter/bootstrap": "3.*",
         "components/jquery": "1.11.1",
-        "knplabs/knp-paginator-bundle": "^2.4"
+        "knplabs/knp-paginator-bundle": "^2.4",
+        "problematic/acl-manager-bundle": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

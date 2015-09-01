@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "482771d70a29cabdac96e7e1b6537485",
+    "hash": "409d342b910f7b2788f2d31c8422bb20",
     "packages": [
         {
             "name": "components/jquery",
@@ -1351,6 +1351,54 @@
             "time": "2015-08-09 17:44:44"
         },
         {
+            "name": "problematic/acl-manager-bundle",
+            "version": "dev-master",
+            "target-dir": "Problematic/AclManagerBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Problematic/ProblematicAclManagerBundle.git",
+                "reference": "81097aba4c01ebc38e6e08808cc025b94569288f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Problematic/ProblematicAclManagerBundle/zipball/81097aba4c01ebc38e6e08808cc025b94569288f",
+                "reference": "81097aba4c01ebc38e6e08808cc025b94569288f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2",
+                "symfony/framework-bundle": "2.*",
+                "symfony/security-bundle": "2.*"
+            },
+            "suggest": {
+                "doctrine/couchdb-odm-bundle": "*",
+                "symfony/doctrine-bundle": "*",
+                "symfony/mongodb-odm-bundle": "*"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-0": {
+                    "Problematic\\AclManagerBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Derek Stobbe",
+                    "email": "djstobbe@gmail.com"
+                }
+            ],
+            "description": "ACL Manager for Symfony2",
+            "homepage": "https://github.com/Problematic/ProblematicAclManagerBundle",
+            "keywords": [
+                "ACL management"
+            ],
+            "time": "2014-09-24 17:56:44"
+        },
+        {
             "name": "psr/log",
             "version": "1.0.0",
             "source": {
@@ -2117,7 +2165,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "friendsofsymfony/user-bundle": 20
+        "friendsofsymfony/user-bundle": 20,
+        "problematic/acl-manager-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -1,0 +1,55 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>Pln Access</h1>
+{% endblock %}
+
+{% block body -%}
+
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('pln') }}">
+                Back to the list
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('pln_access_edit', { 'id': pln.id }) }}">
+                Edit access for this PLN
+            </a>
+        </li>
+    </ul>
+
+    <table class="record_properties table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Username</th>
+                    {% for name, level in levels %}
+                    <th> {{ level }} </th>
+                    {% endfor %}
+            </tr>
+        </thead>
+        {% for user in users %}
+            <tr>
+                <th>{{ user.username }}</th>
+                    {% for name, level in levels %}
+                    <td> {% if lom_access.hasAccess(name, pln, user) %} <b>Yes</b> {% else %} No {% endif %} </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('pln') }}">
+                Back to the list
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('pln_access_edit', { 'id': pln.id }) }}">
+                Edit access for this PLN
+            </a>
+        </li>
+    </ul>
+
+{% endblock %}

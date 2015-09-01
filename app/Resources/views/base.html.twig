@@ -57,44 +57,48 @@
                                     <li role="presentation" class="divider"></li>
                                     <li><a href="{{ path('plugin') }}">Plugins</a></li>
                                     <li><a href="{{ path('pluginproperty') }}">Plugin Properties</a></li>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                    <li role='presentation' class='divider'></li>
+                                    <li><a href='{{ path('admin_user') }}'>Users</a></li>
+                                    {% endif %}
                                 </ul>
                             </li>
                         {% endif %}
 
                     </ul>
-
-                    <ul class="nav navbar-nav navbar-right">              
-                        {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
-                            <li>
-                                <a href="{{ path(app.request.attributes.get('_route'), 
+                <ul class="nav navbar-nav navbar-right">
+                    {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                        <li>
+                            <a href="{{ path(app.request.attributes.get('_route'),
                                     app.request.attributes.get('_route_params')|merge({'_switch_user': '_exit' })) }}">
-                                    Exit {{ app.user.username }}
-                                </a>
-                            </li>
-                        {% elseif is_granted('ROLE_ADMIN') %}
-                            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Switch user <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    {% for user in userList() %}
-                                        <li>
-                                            <a href="{{ path(app.request.attributes.get('_route'), 
+                                Exit {{ app.user.username }}
+                            </a>
+                        </li>
+                    {% elseif is_granted('ROLE_ADMIN') %}
+                        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Switch user <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                {% for user in userList() %}
+                                    <li>
+                                        <a href="{{ path(app.request.attributes.get('_route'),
                                          app.request.attributes.get('_route_params')|merge({'_switch_user': user.username })) }}">
-                                                {{ user.username }}
-                                            </a>
-                                        </li>
-                                    {% endfor %}                           
-                                </ul>
-                            </li>
-                        {% endif %}
+                                            {{ user.username }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endif %}
 
-                        {% if app.user %}
-                            <li><a href="{{ path('fos_user_profile_show') }}">{{ app.user.username }}</a></li>
-                                {% if not is_granted('ROLE_PREVIOUS_ADMIN') %}
-                                <li><a href="{{ path('fos_user_security_logout') }}">Logout</a></li>
-                                {% endif %}
-                            {% else %}
-                            <li><a href="{{ path('fos_user_security_login') }}">Login</a></li>
+                    {% if app.user %}
+                        <li><a href="{{ path('fos_user_profile_show') }}">{{ app.user.username }}</a></li>
+                            {% if not is_granted('ROLE_PREVIOUS_ADMIN') %}
+                            <li><a href="{{ path('fos_user_security_logout') }}">Logout</a></li>
                             {% endif %}
-                    </ul>
+                        {% else %}
+                        <li><a href="{{ path('fos_user_security_login') }}">Login</a></li>
+                        {% endif %}
+                </ul>
+
                 </div><!--/.nav-collapse -->
             </div>
         </nav>        
