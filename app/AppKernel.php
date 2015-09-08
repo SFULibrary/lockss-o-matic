@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new LOCKSSOMatic\CrudBundle\LOCKSSOMaticCrudBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new Problematic\AclManagerBundle\ProblematicAclManagerBundle(),
+            new LOCKSSOMatic\LogBundle\LOCKSSOMaticLogBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

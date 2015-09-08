@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>LogEntry List</h1>
+{% endblock %}
+
+{% block body -%}
+
+    <div class="navigation">
+        {{ knp_pagination_render(entities) }}
+    </div>
+
+    <table class="records_list table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Summary</th>
+                <th>Created</th>
+                <th>Ip</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.user }}</td>
+                <td><a href="{{ path('log_show', { 'id': entity.id }) }}"> {{ entity.summary }}</a></td>
+                <td>{% if entity.created %}{{ entity.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ entity.ip }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(entities) }}
+    </div>
+
+    {% endblock %}

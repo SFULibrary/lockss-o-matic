@@ -20,3 +20,6 @@ parameters:
 
     # Name of the site
     site_name: LOCKSSOMatic
+
+    # Activity log
+    activity_log.enabled: true
