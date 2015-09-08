@@ -304,7 +304,6 @@ class PlnController extends Controller
      * @param type $id
      */
     public function editAccessAction($id) {
-        $accessManager = $this->get('lom.access');
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
         $this->get('lom.access')->checkAccess("PLNADMIN", $pln);

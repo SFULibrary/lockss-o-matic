@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+<h1>User edit access</h1>
+
+<p>This table shows how the user can access the PLNs.</p>
+
+  {{ form(form) }}
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('pln') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock %}
