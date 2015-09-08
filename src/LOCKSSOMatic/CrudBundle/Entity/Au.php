@@ -2,6 +2,8 @@
 
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -52,7 +54,7 @@ class Au
     /**
      * @var Pln
      *
-     * @ORM\ManyToOne(targetEntity="Pln")
+     * @ORM\ManyToOne(targetEntity="Pln", inversedBy="aus")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id")
      * })
@@ -62,7 +64,7 @@ class Au
     /**
      * @var ContentProvider
      *
-     * @ORM\ManyToOne(targetEntity="ContentProvider")
+     * @ORM\ManyToOne(targetEntity="ContentProvider", inversedBy="aus")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="contentprovider_id", referencedColumnName="id")
      * })
@@ -72,14 +74,38 @@ class Au
     /**
      * @var Plugin
      *
-     * @ORM\ManyToOne(targetEntity="Plugin")
+     * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="aus")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
      * })
      */
     private $plugin;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AuProperty", mappedBy="au")
+     * @var ArrayCollection
+     */
+    private $auProperties;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AuStatus", mappedBy="au")
+     * @var ArrayCollection
+     */
+    private $auStatus;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Content", mappedBy="au")
+     * @var ArrayCollection
+     */
+    private $content;
+
+
+    public function __construct() {
+        $this->managed = false;
+        $this->auProperties = new ArrayCollection();
+        $this->auStatus = new ArrayCollection();
+        $this->content = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -199,7 +225,7 @@ class Au
     /**
      * Get pln
      *
-     * @return Pln 
+     * @return Pln
      */
     public function getPln()
     {
@@ -222,7 +248,7 @@ class Au
     /**
      * Get contentprovider
      *
-     * @return ContentProvider 
+     * @return ContentProvider
      */
     public function getContentprovider()
     {
@@ -245,10 +271,109 @@ class Au
     /**
      * Get plugin
      *
-     * @return Plugin 
+     * @return Plugin
      */
     public function getPlugin()
     {
         return $this->plugin;
+    }
+
+    /**
+     * Add auProperties
+     *
+     * @param AuProperty $auProperties
+     * @return Au
+     */
+    public function addAuProperty(AuProperty $auProperties)
+    {
+        $this->auProperties[] = $auProperties;
+
+        return $this;
+    }
+
+    /**
+     * Remove auProperties
+     *
+     * @param AuProperty $auProperties
+     */
+    public function removeAuProperty(AuProperty $auProperties)
+    {
+        $this->auProperties->removeElement($auProperties);
+    }
+
+    /**
+     * Get auProperties
+     *
+     * @return Collection
+     */
+    public function getAuProperties()
+    {
+        return $this->auProperties;
+    }
+
+    /**
+     * Add auStatus
+     *
+     * @param AuStatus $auStatus
+     * @return Au
+     */
+    public function addAuStatus(AuStatus $auStatus)
+    {
+        $this->auStatus[] = $auStatus;
+
+        return $this;
+    }
+
+    /**
+     * Remove auStatus
+     *
+     * @param AuStatus $auStatus
+     */
+    public function removeAuStatus(AuStatus $auStatus)
+    {
+        $this->auStatus->removeElement($auStatus);
+    }
+
+    /**
+     * Get auStatus
+     *
+     * @return Collection
+     */
+    public function getAuStatus()
+    {
+        return $this->auStatus;
+    }
+
+    /**
+     * Add content
+     *
+     * @param Content $content
+     * @return Au
+     */
+    public function addContent(Content $content)
+    {
+        $this->content[] = $content;
+
+        return $this;
+    }
+
+    /**
+     * Remove content
+     *
+     * @param Content $content
+     */
+    public function removeContent(Content $content)
+    {
+        $this->content->removeElement($content);
+    }
+
+    /**
+     * Get content
+     *
+     * @return Collection
+     */
+    public function getContent()
+    {
+        return $this->content;
     }
 }

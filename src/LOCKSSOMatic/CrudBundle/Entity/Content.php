@@ -81,7 +81,7 @@ class Content
     /**
      * @var Deposit
      *
-     * @ORM\ManyToOne(targetEntity="Deposit")
+     * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="content")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="deposit_id", referencedColumnName="id")
      * })
@@ -91,14 +91,12 @@ class Content
     /**
      * @var Au
      *
-     * @ORM\ManyToOne(targetEntity="Au")
+     * @ORM\ManyToOne(targetEntity="Au", inversedBy="content")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="au_id", referencedColumnName="id")
      * })
      */
     private $au;
-
-
 
     /**
      * Get id
@@ -310,7 +308,7 @@ class Content
     /**
      * Get deposit
      *
-     * @return Deposit 
+     * @return Deposit
      */
     public function getDeposit()
     {
@@ -333,7 +331,7 @@ class Content
     /**
      * Get au
      *
-     * @return Au 
+     * @return Au
      */
     public function getAu()
     {

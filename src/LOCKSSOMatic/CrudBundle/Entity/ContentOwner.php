@@ -38,14 +38,12 @@ class ContentOwner
     /**
      * @var Plugin
      *
-     * @ORM\ManyToOne(targetEntity="Plugin")
+     * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentOwners")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
      * })
      */
     private $plugin;
-
-
 
     /**
      * Get id
@@ -119,7 +117,7 @@ class ContentOwner
     /**
      * Get plugin
      *
-     * @return Plugin 
+     * @return Plugin
      */
     public function getPlugin()
     {

@@ -31,14 +31,12 @@ class ExternalTitleDb
     /**
      * @var Pln
      *
-     * @ORM\ManyToOne(targetEntity="Pln")
+     * @ORM\ManyToOne(targetEntity="Pln", inversedBy="externalTitleDbs")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id")
      * })
      */
     private $pln;
-
-
 
     /**
      * Get id
@@ -89,7 +87,7 @@ class ExternalTitleDb
     /**
      * Get pln
      *
-     * @return Pln 
+     * @return Pln
      */
     public function getPln()
     {

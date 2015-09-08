@@ -16,6 +16,7 @@ class PluginType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('path')
         ;
     }
     

@@ -46,7 +46,7 @@ class BoxStatus
     /**
      * @var Box
      *
-     * @ORM\ManyToOne(targetEntity="Box")
+     * @ORM\ManyToOne(targetEntity="Box", inversedBy="status")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="box_id", referencedColumnName="id")
      * })
@@ -150,7 +150,7 @@ class BoxStatus
     /**
      * Get box
      *
-     * @return Box 
+     * @return Box
      */
     public function getBox()
     {

@@ -2,6 +2,8 @@
 
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,7 +40,7 @@ class PlnProperty
     /**
      * @var PlnProperty
      *
-     * @ORM\ManyToOne(targetEntity="PlnProperty")
+     * @ORM\ManyToOne(targetEntity="PlnProperty", inversedBy="children")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      * })
@@ -48,14 +50,22 @@ class PlnProperty
     /**
      * @var Pln
      *
-     * @ORM\ManyToOne(targetEntity="Pln")
+     * @ORM\ManyToOne(targetEntity="Pln", inversedBy="plnProperties")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id")
      * })
      */
     private $pln;
 
+    /**
+     * @ORM\OneToMany(targetEntity="PlnProperty", mappedBy="parent")
+     * @var ArrayCollection
+     */
+    private $children;
 
+    public function __construct() {
+        $this->children = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -129,7 +139,7 @@ class PlnProperty
     /**
      * Get parent
      *
-     * @return PlnProperty 
+     * @return PlnProperty
      */
     public function getParent()
     {
@@ -152,10 +162,43 @@ class PlnProperty
     /**
      * Get pln
      *
-     * @return Pln 
+     * @return Pln
      */
     public function getPln()
     {
         return $this->pln;
+    }
+
+    /**
+     * Add children
+     *
+     * @param PlnProperty $children
+     * @return PlnProperty
+     */
+    public function addChild(PlnProperty $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @param PlnProperty $children
+     */
+    public function removeChild(PlnProperty $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return Collection
+     */
+    public function getChildren()
+    {
+        return $this->children;
     }
 }

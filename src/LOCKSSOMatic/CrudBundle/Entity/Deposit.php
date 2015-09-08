@@ -3,6 +3,8 @@
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -53,13 +55,22 @@ class Deposit
     /**
      * @var ContentProvider
      *
-     * @ORM\ManyToOne(targetEntity="ContentProvider")
+     * @ORM\ManyToOne(targetEntity="ContentProvider", inversedBy="deposits")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="content_provider_id", referencedColumnName="id")
      * })
      */
     private $contentProvider;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Content", mappedBy="deposit")
+     */
+    private $deposits;
+
+    public function __construct() {
+        $this->deposits = new ArrayCollection();
+    }
 
 
     /**
@@ -180,10 +191,43 @@ class Deposit
     /**
      * Get contentProvider
      *
-     * @return ContentProvider 
+     * @return ContentProvider
      */
     public function getContentProvider()
     {
         return $this->contentProvider;
+    }
+
+    /**
+     * Add deposits
+     *
+     * @param Content $deposits
+     * @return Deposit
+     */
+    public function addDeposit(Content $deposits)
+    {
+        $this->deposits[] = $deposits;
+
+        return $this;
+    }
+
+    /**
+     * Remove deposits
+     *
+     * @param Content $deposits
+     */
+    public function removeDeposit(Content $deposits)
+    {
+        $this->deposits->removeElement($deposits);
+    }
+
+    /**
+     * Get deposits
+     *
+     * @return Collection
+     */
+    public function getDeposits()
+    {
+        return $this->deposits;
     }
 }

@@ -23,6 +23,7 @@ class AuStatus
     private $id;
 
     /**
+     * TODO - why isn't this a reference to the Box class?
      * @var string
      *
      * @ORM\Column(name="box_hostname", type="string", length=255, nullable=false)
@@ -53,7 +54,7 @@ class AuStatus
     /**
      * @var Au
      *
-     * @ORM\ManyToOne(targetEntity="Au")
+     * @ORM\ManyToOne(targetEntity="Au", inversedBy="auStatus")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="au_id", referencedColumnName="id")
      * })
@@ -180,7 +181,7 @@ class AuStatus
     /**
      * Get au
      *
-     * @return Au 
+     * @return Au
      */
     public function getAu()
     {

@@ -2,6 +2,8 @@
 
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -52,14 +54,22 @@ class Box
     /**
      * @var Pln
      *
-     * @ORM\ManyToOne(targetEntity="Pln")
+     * @ORM\ManyToOne(targetEntity="Pln", inversedBy="boxes")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id")
      * })
      */
     private $pln;
 
-
+    /**
+     * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="box")
+     * @var ArrayCollection
+     */
+    private $status;
+    
+    public function __construct() {
+        $this->status = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -179,10 +189,43 @@ class Box
     /**
      * Get pln
      *
-     * @return Pln 
+     * @return Pln
      */
     public function getPln()
     {
         return $this->pln;
+    }
+
+    /**
+     * Add status
+     *
+     * @param BoxStatus $status
+     * @return Box
+     */
+    public function addStatus(BoxStatus $status)
+    {
+        $this->status[] = $status;
+
+        return $this;
+    }
+
+    /**
+     * Remove status
+     *
+     * @param BoxStatus $status
+     */
+    public function removeStatus(BoxStatus $status)
+    {
+        $this->status->removeElement($status);
+    }
+
+    /**
+     * Get status
+     *
+     * @return Collection
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }

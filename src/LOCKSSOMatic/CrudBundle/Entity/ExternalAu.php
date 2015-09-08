@@ -22,6 +22,7 @@ class ExternalAu
     private $id;
 
     /**
+     * TODO - why isn't this is a reference to Pln?
      * @var integer
      *
      * @ORM\Column(name="pln_id", type="integer", nullable=true)

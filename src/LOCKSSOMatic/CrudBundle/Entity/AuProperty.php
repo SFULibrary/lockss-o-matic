@@ -2,6 +2,8 @@
 
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,7 +40,7 @@ class AuProperty
     /**
      * @var AuProperty
      *
-     * @ORM\ManyToOne(targetEntity="AuProperty")
+     * @ORM\ManyToOne(targetEntity="AuProperty", inversedBy="children")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      * })
@@ -48,14 +50,22 @@ class AuProperty
     /**
      * @var Au
      *
-     * @ORM\ManyToOne(targetEntity="Au")
+     * @ORM\ManyToOne(targetEntity="Au", inversedBy="auProperties")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="au_id", referencedColumnName="id")
      * })
      */
     private $au;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AuProperty", mappedBy="parent")
+     * @var ArrayCollection
+     */
+    private $children;
 
+    public function __construct() {
+        $this->children = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -129,7 +139,7 @@ class AuProperty
     /**
      * Get parent
      *
-     * @return AuProperty 
+     * @return AuProperty
      */
     public function getParent()
     {
@@ -152,10 +162,43 @@ class AuProperty
     /**
      * Get au
      *
-     * @return Au 
+     * @return Au
      */
     public function getAu()
     {
         return $this->au;
+    }
+
+    /**
+     * Add children
+     *
+     * @param AuProperty $children
+     * @return AuProperty
+     */
+    public function addChild(AuProperty $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @param AuProperty $children
+     */
+    public function removeChild(AuProperty $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return Collection
+     */
+    public function getChildren()
+    {
+        return $this->children;
     }
 }

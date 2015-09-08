@@ -2,6 +2,8 @@
 
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -87,7 +89,7 @@ class ContentProvider
     /**
      * @var ContentOwner
      *
-     * @ORM\ManyToOne(targetEntity="ContentOwner")
+     * @ORM\ManyToOne(targetEntity="ContentOwner", inversedBy="contentProviders")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="content_owner_id", referencedColumnName="id")
      * })
@@ -97,14 +99,30 @@ class ContentProvider
     /**
      * @var Pln
      *
-     * @ORM\ManyToOne(targetEntity="Pln")
+     * @ORM\ManyToOne(targetEntity="Pln", inversedBy="contentProviders")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id")
      * })
      */
     private $pln;
 
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
+     * @var ArrayCollection
+     */
+    private $aus;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Deposit", mappedBy="contentProvider")
+     * @var ArrayCollection
+     */
+    private $deposits;
 
+     public function __construct() {
+        $this->aus = new ArrayCollection();
+        $this->deposits = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -339,7 +357,7 @@ class ContentProvider
     /**
      * Get contentOwner
      *
-     * @return ContentOwner 
+     * @return ContentOwner
      */
     public function getContentOwner()
     {
@@ -362,10 +380,76 @@ class ContentProvider
     /**
      * Get pln
      *
-     * @return Pln 
+     * @return Pln
      */
     public function getPln()
     {
         return $this->pln;
+    }
+
+    /**
+     * Add aus
+     *
+     * @param Au $aus
+     * @return ContentProvider
+     */
+    public function addAus(Au $aus)
+    {
+        $this->aus[] = $aus;
+
+        return $this;
+    }
+
+    /**
+     * Remove aus
+     *
+     * @param Au $aus
+     */
+    public function removeAus(Au $aus)
+    {
+        $this->aus->removeElement($aus);
+    }
+
+    /**
+     * Get aus
+     *
+     * @return Collection
+     */
+    public function getAus()
+    {
+        return $this->aus;
+    }
+
+    /**
+     * Add deposits
+     *
+     * @param Deposit $deposits
+     * @return ContentProvider
+     */
+    public function addDeposit(Deposit $deposits)
+    {
+        $this->deposits[] = $deposits;
+
+        return $this;
+    }
+
+    /**
+     * Remove deposits
+     *
+     * @param Deposit $deposits
+     */
+    public function removeDeposit(Deposit $deposits)
+    {
+        $this->deposits->removeElement($deposits);
+    }
+
+    /**
+     * Get deposits
+     *
+     * @return Collection
+     */
+    public function getDeposits()
+    {
+        return $this->deposits;
     }
 }

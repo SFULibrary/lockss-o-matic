@@ -2,6 +2,8 @@
 
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,7 +40,7 @@ class PluginProperty
     /**
      * @var PluginProperty
      *
-     * @ORM\ManyToOne(targetEntity="PluginProperty")
+     * @ORM\ManyToOne(targetEntity="PluginProperty", inversedBy="pluginProperties")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      * })
@@ -48,13 +50,22 @@ class PluginProperty
     /**
      * @var Plugin
      *
-     * @ORM\ManyToOne(targetEntity="Plugin")
+     * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="children")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
      * })
      */
     private $plugin;
 
+    /**
+     * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="parent");
+     * @var ArrayCollection
+     */
+    private $children;
+
+    public function __construct() {
+        $this->children = new ArrayCollection();
+    }
 
 
     /**
@@ -129,7 +140,7 @@ class PluginProperty
     /**
      * Get parent
      *
-     * @return PluginProperty 
+     * @return PluginProperty
      */
     public function getParent()
     {
@@ -152,10 +163,43 @@ class PluginProperty
     /**
      * Get plugin
      *
-     * @return Plugin 
+     * @return Plugin
      */
     public function getPlugin()
     {
         return $this->plugin;
+    }
+
+    /**
+     * Add children
+     *
+     * @param PluginProperty $children
+     * @return PluginProperty
+     */
+    public function addChild(PluginProperty $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @param PluginProperty $children
+     */
+    public function removeChild(PluginProperty $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return Collection
+     */
+    public function getChildren()
+    {
+        return $this->children;
     }
 }
