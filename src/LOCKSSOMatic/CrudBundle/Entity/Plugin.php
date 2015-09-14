@@ -214,4 +214,79 @@ class Plugin
     {
         return $this->pluginProperties;
     }
+
+    /**
+     * Convenience method. Get the identifier from the plugin properties
+     * if it is available, or the empty string.
+     *
+     * @return string
+     */
+    public function getPluginIdentifier()
+    {
+        foreach ($this->getPluginProperties() as $prop) {
+            /** @var PluginProperties $prop */
+            if ($prop->getPropertyKey() === 'plugin_identifier') {
+                return $prop->getPropertyValue();
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Get a list of the configparamdescr plugin properties.
+     *
+     * @return PluginProperties[]
+     */
+    public function getPluginConfigParams()
+    {
+        $properties = array();
+        foreach ($this->getPluginProperties() as $prop) {
+            /** @var PluginProperties $prop */
+            if ($prop->getPropertyKey() !== 'plugin_config_props') {
+                continue;
+            }
+            foreach ($prop->getChildren() as $child) {
+                if ($child->getPropertyKey() !== 'configparamdescr') {
+                    continue;
+                }
+                $properties[] = $child;
+            }
+        }
+        return $properties;
+    }
+
+    /**
+     * Convenience method. Get the definitional plugin parameter names
+     *
+     * @return array
+     */
+    public function getDefinitionalProperties()
+    {
+        $properties = array();
+
+        foreach ($this->getPluginConfigParams() as $prop) {
+            $key = '';
+            $definitional = false;
+            foreach($prop->getChildren() as $child) {
+                if($child->getPropertyKey() === 'key') {
+                    $key = $child->getPropertyValue();
+                }
+                if($child->getPropertyKey() !== 'definitional') {
+                    continue;
+                }
+                if($child->getPropertyValue() === 'true') {
+                    $definitional = true;
+                }
+            }
+            if($key !== '' && $definitional === true) {
+                $properties[] = $key;
+            }
+        }
+
+        return $properties;
+    }
+
+    public function __toString() {
+        return $this->getName();
+    }
 }

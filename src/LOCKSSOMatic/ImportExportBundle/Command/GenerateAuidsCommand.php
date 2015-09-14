@@ -40,11 +40,11 @@ class GenerateAuidsCommand extends ContainerAwareCommand
     {
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->getContainer()->get('activity_log')->disable();
-        $repo = $this->em->getRepository('LOCKSSOMaticCRUDBundle:Aus');
+        $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Au');
         if($input->getOption('all')) {
-            $dql = 'SELECT a FROM LOCKSSOMaticCRUDBundle:Aus a';
+            $dql = 'SELECT a FROM LOCKSSOMaticCrudBundle:Au a';
         } else {
-            $dql = 'SELECT a FROM LOCKSSOMaticCRUDBundle:Aus a WHERE a.auid IS NULL';
+            $dql = 'SELECT a FROM LOCKSSOMaticCrudBundle:Au a WHERE a.auid IS NULL';
         }
         $query = $this->em->createQuery($dql);
         $iterator = $query->iterate();

@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Problematic\AclManagerBundle\ProblematicAclManagerBundle(),
             new LOCKSSOMatic\LogBundle\LOCKSSOMaticLogBundle(),
             new LOCKSSOMatic\ImportExportBundle\LOCKSSOMaticImportExportBundle(),
+            new LOCKSSOMatic\SwordBundle\LOCKSSOMaticSwordBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -154,14 +154,74 @@ class Au
     }
 
     /**
-     * Get auid
+     * Get auid. Will attempt to generate the auid if necessary.
      *
-     * @return string 
+     * @return string
      */
     public function getAuid()
     {
+        if($this->auid === null) {
+            $this->auid = $this->generateAuid();
+        }
         return $this->auid;
     }
+
+    /**
+     * Get the named AU property, optionally %-encoded.
+     *
+     * @param string $name
+     * @param bool $encoded
+     * @return string
+     */
+    public function getAuProperty($name, $encoded = false) {
+        $value = '';
+        foreach($this->getAuProperties() as $prop) {
+            if($prop->getPropertyKey() !== 'key') {
+                continue;
+            }
+            if($prop->getPropertyValue() !== $name) {
+                continue;
+            }
+            foreach($prop->getParent()->getChildren() as $child) {
+                if($child->getPropertyKey() !== 'value') {
+                    continue;
+                }
+                $value = $child->getPropertyValue();
+            }
+        }
+        if($encoded === false) {
+            return $value;
+        }
+        $callback = function($matches) {
+            $char = ord($matches[0]);
+            return '%' . strtoupper(sprintf("%02x", $char));
+        };
+        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
+    }
+
+    /**
+     * Generate an AUid.
+     *
+     * @return string
+     */
+    public function generateAuid() {
+        $plugin = $this->getPlugin();
+        if($plugin === null) {
+            $this->auid = null;
+            return null;
+        }
+        $pluginKey = str_replace('.', '|', $plugin->getPluginIdentifier());
+        $auKey = '';
+        $propNames = $plugin->getDefinitionalProperties();
+        sort($propNames);
+
+        foreach($propNames as $name) {
+            $auKey .= '&' . $name . '~' . $this->getAuProperty($name, true);
+        }
+        $this->auid = $pluginKey . $auKey;
+        return $this->auid;
+    }
+
 
     /**
      * Set manifestUrl

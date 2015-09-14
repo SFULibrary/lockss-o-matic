@@ -28,10 +28,11 @@ class ExternalTitleDbController extends Controller
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-
+        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:ExternalTitleDb e';
+        $query = $em->createQuery($dql);
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
-            $em->getRepository('LOCKSSOMaticCrudBundle:ExternalTitleDb')->findAll(),
+            $query,
             $request->query->getInt('page', 1),
             25
         );

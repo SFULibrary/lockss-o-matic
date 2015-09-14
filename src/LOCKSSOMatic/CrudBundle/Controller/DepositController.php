@@ -28,10 +28,11 @@ class DepositController extends Controller
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-
+        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Deposit e';
+        $query = $em->createQuery($dql);
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
-            $em->getRepository('LOCKSSOMaticCrudBundle:Deposit')->findAll(),
+            $query,
             $request->query->getInt('page', 1),
             25
         );

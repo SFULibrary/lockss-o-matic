@@ -39,6 +39,11 @@
             Edit
         </a>
     </li>
+    <li>
+        <a href="{{ path('admin_user_access', { 'id': entity.id }) }}">
+            Access
+        </a>
+    </li>
     <li>{{ form(delete_form) }}</li>
 </ul>
 {% endblock %}

@@ -60,6 +60,7 @@
                                     {% if is_granted('ROLE_ADMIN') %}
                                     <li role='presentation' class='divider'></li>
                                     <li><a href='{{ path('admin_user') }}'>Users</a></li>
+                                    <li><a href='{{ path('log') }}'>Access logs</a></li>
                                     {% endif %}
                                 </ul>
                             </li>

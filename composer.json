@@ -26,7 +26,8 @@
         "twitter/bootstrap": "3.*",
         "components/jquery": "1.11.1",
         "knplabs/knp-paginator-bundle": "^2.4",
-        "problematic/acl-manager-bundle": "dev-master"
+        "problematic/acl-manager-bundle": "dev-master",
+        "jasny/twig-extensions": "~1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

@@ -28,10 +28,11 @@ class PluginController extends Controller
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-
+        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Plugin e';
+        $query = $em->createQuery($dql);
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
-            $em->getRepository('LOCKSSOMaticCrudBundle:Plugin')->findAll(),
+            $query,
             $request->query->getInt('page', 1),
             25
         );
