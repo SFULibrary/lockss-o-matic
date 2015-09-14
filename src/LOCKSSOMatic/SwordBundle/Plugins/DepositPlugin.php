@@ -1,15 +1,15 @@
 <?php
 
-namespace LOCKSSOMatic\SWORDBundle\Plugins;
+namespace LOCKSSOMatic\SwordBundle\Plugins;
 
-use LOCKSSOMatic\CRUDBundle\Entity\Aus;
-use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
-use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
-use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
+use LOCKSSOMatic\CrudBundle\Entity\Au;
+use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
+use LOCKSSOMatic\CrudBundle\Entity\Deposit;
+use LOCKSSOMatic\CrudBundle\Utility\ContentBuilder;
 use LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin;
-use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
-use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
+use LOCKSSOMatic\SwordBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\SwordBundle\Event\ServiceDocumentEvent;
+use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 
 /*
@@ -49,13 +49,14 @@ abstract class DepositPlugin extends AbstractPlugin
         return true;
     }
 
-    public function buildAu(ContentProviders $provider, $auid, $comment, $manifest)
+    public function buildAu(ContentProvider $provider, $comment, $manifest)
     {
         $em = $this->container->get('doctrine')->getManager();
-        $au = new Aus();
+        $au = new Au();
         $au->setContentProvider($provider);
         $au->setManaged(true);
-        $au->setAuid($auid);
+        $au->setPln($provider->getPln());
+        $au->setPlugin($provider->getContentOwner()->getPlugin());
         $au->setComment($comment);
         $au->setManifestUrl($manifest);
         $em->persist($au);
@@ -63,7 +64,7 @@ abstract class DepositPlugin extends AbstractPlugin
         return $au;
     }
 
-    public function depositContent(SimpleXMLElement $contentXml, Deposits $deposit, Aus $au) {
+    public function depositContent(SimpleXMLElement $contentXml, Deposit $deposit, Au $au) {
         $em = $this->container->get('doctrine')->getManager();
         $contentBuilder = new ContentBuilder();
         $content = $contentBuilder->fromSimpleXML($contentXml);

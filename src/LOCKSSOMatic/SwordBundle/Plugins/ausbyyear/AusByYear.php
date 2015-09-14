@@ -24,12 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbyyear;
+namespace LOCKSSOMatic\SwordBundle\Plugins\ausbyyear;
 
-use LOCKSSOMatic\CRUDBundle\Entity\Aus;
-use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
-use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\SWORDBundle\Plugins\DepositPlugin;
+use Doctrine\Common\Util\Debug;
+use LOCKSSOMatic\CrudBundle\Entity\Au;
+use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
+use LOCKSSOMatic\SwordBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\SwordBundle\Plugins\DepositPlugin;
 
 /**
  * Organize AUs by year published, while respecting the content provider's maximum
@@ -43,7 +44,7 @@ class AusByYear extends DepositPlugin
 
     public function buildFilter($maxSize, $contentSize, $contentYear) {
         $self = $this;
-        return function(Aus $au) use ($self, $maxSize, $contentSize, $contentYear) {
+        return function(Au $au) use ($self, $maxSize, $contentSize, $contentYear) {
             if ($au->getContentSize() + $contentSize >= $maxSize) {
                 return false;
             }
@@ -69,7 +70,7 @@ class AusByYear extends DepositPlugin
         if(parent::onDepositContent($event) === false) {
             return;
         }
-        
+
         $contentProvider = $event->getContentProvider();
         $deposit = $event->getDeposit();
         $contentXml = $event->getXml();
@@ -87,7 +88,6 @@ class AusByYear extends DepositPlugin
         } else {
             $au = $this->buildAu(
                 $contentProvider,
-                'auid-year-' . $contentYear,
                 'Created by AusByYear for ' . $contentYear,
                 'http://pln.example.com/foo/year'
             );

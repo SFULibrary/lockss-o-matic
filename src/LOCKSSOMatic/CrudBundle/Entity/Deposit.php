@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="deposits", indexes={@ORM\Index(name="IDX_449E9C9ED5F0A8C4", columns={"content_provider_id"}), @ORM\Index(name="uuid", columns={"uuid"})})
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  */
 class Deposit
 {
@@ -66,10 +67,10 @@ class Deposit
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="Content", mappedBy="deposit")
      */
-    private $deposits;
+    private $content;
 
     public function __construct() {
-        $this->deposits = new ArrayCollection();
+        $this->content = new ArrayCollection();
     }
 
 
@@ -204,9 +205,9 @@ class Deposit
      * @param Content $deposits
      * @return Deposit
      */
-    public function addDeposit(Content $deposits)
+    public function addContent(Content $deposits)
     {
-        $this->deposits[] = $deposits;
+        $this->content[] = $deposits;
 
         return $this;
     }
@@ -216,9 +217,9 @@ class Deposit
      *
      * @param Content $deposits
      */
-    public function removeDeposit(Content $deposits)
+    public function removeContent(Content $deposits)
     {
-        $this->deposits->removeElement($deposits);
+        $this->content->removeElement($deposits);
     }
 
     /**
@@ -226,8 +227,17 @@ class Deposit
      *
      * @return Collection
      */
-    public function getDeposits()
+    public function getContent()
     {
-        return $this->deposits;
+        return $this->content;
+    }
+
+    /**
+     * @ORM\prePersist
+     */
+    public function setDepositDate() {
+        if($this->dateDeposited === null) {
+            $this->dateDeposited = new DateTime();
+        }
     }
 }

@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="content_providers", indexes={@ORM\Index(name="IDX_D2C29C14138983FF", columns={"content_owner_id"}), @ORM\Index(name="IDX_D2C29C14C8BA1A08", columns={"pln_id"})})
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  */
 class ContentProvider
 {
@@ -108,7 +109,7 @@ class ContentProvider
 
     
     /**
-     * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
+     * @ORM\OneToMany(targetEntity="Au", mappedBy="contentProvider")
      * @var ArrayCollection
      */
     private $aus;
@@ -165,7 +166,7 @@ class ContentProvider
      */
     public function setUuid($uuid)
     {
-        $this->uuid = $uuid;
+        $this->uuid = strtoupper($uuid);
 
         return $this;
     }
@@ -177,7 +178,7 @@ class ContentProvider
      */
     public function getUuid()
     {
-        return $this->uuid;
+        return strtoupper($this->uuid);
     }
 
     /**
@@ -201,6 +202,10 @@ class ContentProvider
     public function getPermissionurl()
     {
         return $this->permissionurl;
+    }
+
+    public function getPermissionHost() {
+        return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
     }
 
     /**
@@ -451,5 +456,18 @@ class ContentProvider
     public function getDeposits()
     {
         return $this->deposits;
+    }
+
+    public function __toString() {
+        return $this->name;
+    }
+
+    /**
+     * @ORM\prePersist
+     */
+    public function generateUuid() {
+        if($this->uuid === null) {
+            $this->uuid = \J20\Uuid\Uuid::v4();
+        }
     }
 }

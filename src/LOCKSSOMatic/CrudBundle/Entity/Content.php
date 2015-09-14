@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="content", indexes={@ORM\Index(name="IDX_FEC530A95B8F2BDB", columns={"deposit_id"}), @ORM\Index(name="IDX_FEC530A9A3D201B3", columns={"au_id"})})
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  */
 class Content
 {
@@ -97,6 +98,11 @@ class Content
      * })
      */
     private $au;
+
+    public function __construct()
+    {
+        $this->verifiedSize = false;
+    }
 
     /**
      * Get id
@@ -336,5 +342,13 @@ class Content
     public function getAu()
     {
         return $this->au;
+    }
+    /**
+     * @ORM\prePersist
+     */
+    public function setDepositDate() {
+        if($this->dateDeposited === null) {
+            $this->dateDeposited = new DateTime();
+        }
     }
 }

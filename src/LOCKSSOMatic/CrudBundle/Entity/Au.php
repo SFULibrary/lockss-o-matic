@@ -69,7 +69,7 @@ class Au
      *   @ORM\JoinColumn(name="contentprovider_id", referencedColumnName="id")
      * })
      */
-    private $contentprovider;
+    private $contentProvider;
 
     /**
      * @var Plugin
@@ -160,7 +160,7 @@ class Au
      */
     public function getAuid()
     {
-        if($this->auid === null) {
+        if($this->auid === null || $this->auid === '') {
             $this->auid = $this->generateAuid();
         }
         return $this->auid;
@@ -300,7 +300,7 @@ class Au
      */
     public function setContentprovider(ContentProvider $contentprovider = null)
     {
-        $this->contentprovider = $contentprovider;
+        $this->contentProvider = $contentprovider;
 
         return $this;
     }
@@ -312,7 +312,7 @@ class Au
      */
     public function getContentprovider()
     {
-        return $this->contentprovider;
+        return $this->contentProvider;
     }
 
     /**
@@ -436,4 +436,19 @@ class Au
     {
         return $this->content;
     }
+
+    /**
+     * Get the total size of the AU by adding the size of the
+     * content items. Returns size in kB (1,000 bytes).
+     *
+     * @return int
+     */
+    public function getContentSize() {
+        $size = 0;
+        foreach($this->getContent() as $content) {
+            $size += $content->getSize();
+        }
+        return $size;
+    }
+
 }

@@ -57,7 +57,7 @@ class Plugin
     public function __construct() {
         $this->aus = new ArrayCollection();
         $this->contentOwners = new ArrayCollection();
-        $this->$pluginProperties = new ArrayCollection();
+        $this->pluginProperties = new ArrayCollection();
     }
 
     /**

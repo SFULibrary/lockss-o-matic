@@ -160,7 +160,7 @@ abstract class AbstractPlugin extends ContainerAware
         $em = $this->container->get('doctrine')->getManager();
         $repo = $em->getRepository('LOCKSSOMaticPluginBundle:LomPluginData');
         $data = $repo->findOneBy(array(
-            'plugin' => get_class($this),
+            'name' => get_class($this),
             'domain' => $domain,
             'objectId' => $objectId,
             'datakey' => $key,
@@ -211,7 +211,7 @@ abstract class AbstractPlugin extends ContainerAware
         $data = $this->getDataObject($object, $key);
         if ($data === null) {
             $data = new LomPluginData();
-            $data->setPlugin(get_class($this));
+            $data->setName(get_class($this));
             $data->setDataKey($key);
             if ($object !== null && is_object($object)) {
                 $data->setDomain(get_class($object));

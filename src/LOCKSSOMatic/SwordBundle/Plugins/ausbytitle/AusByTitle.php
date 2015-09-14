@@ -1,13 +1,13 @@
 <?php
 
-namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbytitle;
+namespace LOCKSSOMatic\SwordBundle\Plugins\ausbytitle;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\CRUDBundle\Entity\Deposits;
-use LOCKSSOMatic\SWORDBundle\Plugins\DepositPlugin;
-use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\SwordBundle\Plugins\DepositPlugin;
+use LOCKSSOMatic\SwordBundle\Event\DepositContentEvent;
 use SimpleXMLElement;
 
 class AusByTitle extends DepositPlugin
@@ -109,7 +109,6 @@ class AusByTitle extends DepositPlugin
             // There was no AU for this content item. So create one.
             $au = $this->buildAu(
                 $contentProvider,
-                'auid-title-' . $expr,
                 'Created by AusByTitle for ' . $expr,
                 'http://pln.example.com/foo/bar'
                 );

@@ -27,7 +27,8 @@
         "components/jquery": "1.11.1",
         "knplabs/knp-paginator-bundle": "^2.4",
         "problematic/acl-manager-bundle": "dev-master",
-        "jasny/twig-extensions": "~1.0"
+        "jasny/twig-extensions": "~1.0",
+        "j20/php-uuid": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

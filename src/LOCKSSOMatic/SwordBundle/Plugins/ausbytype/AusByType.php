@@ -24,17 +24,17 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbytype;
+namespace LOCKSSOMatic\SwordBundle\Plugins\ausbytype;
 
 use Bitworking\Mimeparse;
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentBuilder;
 use LOCKSSOMatic\CRUDBundle\Entity\ContentProviders;
 use LOCKSSOMatic\PluginBundle\Plugins\AbstractPlugin;
-use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\SWORDBundle\Event\ServiceDocumentEvent;
-use LOCKSSOMatic\SWORDBundle\Plugins\DepositPlugin;
-use LOCKSSOMatic\SWORDBundle\Utilities\Namespaces;
+use LOCKSSOMatic\SwordBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\SwordBundle\Event\ServiceDocumentEvent;
+use LOCKSSOMatic\SwordBundle\Plugins\DepositPlugin;
+use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 
 /**
@@ -107,7 +107,6 @@ class AusByType extends DepositPlugin
         } else {
             $au = $this->buildAu(
                 $contentProvider,
-                'auid-type- ' . $group,
                 'Created by AusByType for ' . $groupings[$group]['label'],
                 'http://pln.example.com/foo/bar'
             );

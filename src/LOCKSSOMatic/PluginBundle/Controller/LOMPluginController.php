@@ -2,9 +2,10 @@
 
 namespace LOCKSSOMatic\PluginBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LOCKSSOMatic\PluginBundle\Plugins\PluginsManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * @Route("/plugin_manager")
@@ -12,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class LOMPluginController extends Controller
 {
     /**
-     * @Route("/")
+     * @Route("/", name="lom_plugin")
      * @Template()
      */
     public function indexAction()

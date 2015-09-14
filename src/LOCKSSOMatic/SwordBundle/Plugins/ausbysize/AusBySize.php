@@ -24,11 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\SWORDBundle\Plugins\ausbysize;
+namespace LOCKSSOMatic\SwordBundle\Plugins\ausbysize;
 
 use LOCKSSOMatic\CRUDBundle\Entity\Aus;
-use LOCKSSOMatic\SWORDBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\SWORDBundle\Plugins\DepositPlugin;
+use LOCKSSOMatic\SwordBundle\Event\DepositContentEvent;
+use LOCKSSOMatic\SwordBundle\Plugins\DepositPlugin;
 
 /**
  * Organize AUs by size.
@@ -78,7 +78,6 @@ class AusBySize extends DepositPlugin
         } else {
             $au = $this->buildAu(
                 $contentProvider,
-                'auid-size',
                 'Created by AusBySize',
                 'http://pln.example.com/foo/size'
             );

@@ -16,7 +16,11 @@ class ContentProviderType extends AbstractType
     {
         $builder
             ->add('type')
-            ->add('uuid')
+            ->add('uuid', 'text', array(
+                'required' => false,
+                'attr' => array(
+                'help' => 'Leave UUID blank to have one generated.'
+            )))
             ->add('permissionurl')
             ->add('name')
             ->add('ipAddress')
