@@ -1,30 +1,44 @@
 {% extends '::base.html.twig' %}
 
-    
 {% block pageheader %}
     <h1>Plugin</h1>
 {% endblock %}
-    
+
+{% macro plugin_props(props) %}
+    {% import _self as macros %}
+    <ul>
+        {% for prop in props %}
+            <li>{{ prop.propertyKey }}:
+                {% if prop.hasChildren() %}
+                    {{ macros.plugin_props(prop.children) }}
+                {% else %}
+                    {{ prop.propertyValue }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
 {% block body -%}
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('plugin') }}">
-            Back to the list
-        </a>
-    </li>
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('plugin') }}">
+                Back to the list
+            </a>
+        </li>
 
-    <li>
-        <a href="{{ path('plugin_edit', { 'id': entity.id }) }}">
-            <span class='glyphicon glyphicon-edit'></span>
-        </a>
-    </li>
+        <li>
+            <a href="{{ path('plugin_edit', { 'id': entity.id }) }}">
+                <span class='glyphicon glyphicon-edit'></span>
+            </a>
+        </li>
 
-    <li>
-        <a href="{{ path('plugin_delete', { 'id': entity.id }) }}" class="js-confirm" data-confirm="Are you sure you want to delete this Plugin?">
-            <span class='glyphicon glyphicon-remove'></span>
-        </a>
-    </li>
-</ul>
+        <li>
+            <a href="{{ path('plugin_delete', { 'id': entity.id }) }}" class="js-confirm" data-confirm="Are you sure you want to delete this Plugin?">
+                <span class='glyphicon glyphicon-remove'></span>
+            </a>
+        </li>
+    </ul>
 
     <table class="record_properties table table-striped table-bordered table-hover">
         <tbody>
@@ -42,4 +56,20 @@
             </tr>
         </tbody>
     </table>
+
+    <h2>Identifier</h2>
+    {{ entity.getPluginIdentifier() }}
+
+    <h2>Definitional Properties</h2>
+    <ul>
+        {% for prop in entity.getDefinitionalProperties() %}
+            <li>{{ prop }}</li>
+            {% endfor %}
+    </ul>
+
+    <h2>All Plugin Properties</h2>
+    {% import _self as macros %}
+    {{ macros.plugin_props(entity.getRootPluginProperties()) }}
+
+
 {% endblock %}

@@ -1,30 +1,30 @@
 {% extends '::base.html.twig' %}
 
-    
+
 {% block pageheader %}
     <h1>Deposit</h1>
 {% endblock %}
-    
+
 {% block body -%}
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('deposit') }}">
-            Back to the list
-        </a>
-    </li>
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('deposit') }}">
+                Back to the list
+            </a>
+        </li>
 
-    <li>
-        <a href="{{ path('deposit_edit', { 'id': entity.id }) }}">
-            <span class='glyphicon glyphicon-edit'></span>
-        </a>
-    </li>
+        <li>
+            <a href="{{ path('deposit_edit', { 'id': entity.id }) }}">
+                <span class='glyphicon glyphicon-edit'></span>
+            </a>
+        </li>
 
-    <li>
-        <a href="{{ path('deposit_delete', { 'id': entity.id }) }}" class="js-confirm" data-confirm="Are you sure you want to delete this Deposit?">
-            <span class='glyphicon glyphicon-remove'></span>
-        </a>
-    </li>
-</ul>
+        <li>
+            <a href="{{ path('deposit_delete', { 'id': entity.id }) }}" class="js-confirm" data-confirm="Are you sure you want to delete this Deposit?">
+                <span class='glyphicon glyphicon-remove'></span>
+            </a>
+        </li>
+    </ul>
 
     <table class="record_properties table table-striped table-bordered table-hover">
         <tbody>
@@ -50,4 +50,30 @@
             </tr>
         </tbody>
     </table>
+
+    <h2>Deposit content</h2>
+
+    <table class="records_list table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Url</th>
+                <th>Title</th>
+                <th>Size</th>
+                <th>Datedeposited</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for content in entity.content %}
+                <tr>
+                    <td><a href="{{ path('content_show', { 'id': content.id }) }}">{{ content.id }}</a></td>
+                    <td>{{ content.url }}</td>
+                    <td>{{ content.title }}</td>
+                    <td>{{ content.size }}</td>
+                    <td>{% if content.dateDeposited %}{{ content.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}

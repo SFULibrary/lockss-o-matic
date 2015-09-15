@@ -49,4 +49,27 @@
             </tr>
         </tbody>
     </table>
+
+    <h2>Boxes</h2>
+    <table class="records_list table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Ipaddress</th>
+                <th>Username</th>
+                <th>Password</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for box in entity.boxes %}
+                <tr>
+                    <td><a href="{{ path('box_show', { 'id': box.id }) }}">{{ box.hostname }}</a></td>
+                    <td>{{ box.ipAddress }}</td>
+                    <td>{{ box.username }}</td>
+                    <td>{{ box.password }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}

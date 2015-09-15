@@ -215,6 +215,17 @@ class Plugin
         return $this->pluginProperties;
     }
 
+    public function getRootPluginProperties() {
+        $properties = array();
+        foreach($this->pluginProperties as $p) {
+            if($p->hasParent()) {
+                continue;
+            }
+            $properties[] = $p;
+        }
+        return $properties;
+    }
+
     /**
      * Convenience method. Get the identifier from the plugin properties
      * if it is available, or the empty string.
