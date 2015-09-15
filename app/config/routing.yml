@@ -1,3 +1,8 @@
+locksso_matic_core:
+    resource: "@LOCKSSOMaticCoreBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 locksso_matic_plugin:
     resource: "@LOCKSSOMaticPluginBundle/Controller/"
     type:     annotation
@@ -47,8 +52,4 @@ lockssomatic_user:
     resource: "@LOCKSSOMaticUserBundle/Controller/"
     type:     annotation
     prefix:   /
-
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
     

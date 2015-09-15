@@ -16,7 +16,6 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new AppBundle\AppBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new LOCKSSOMatic\UserBundle\LOCKSSOMaticUserBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
@@ -27,6 +26,7 @@ class AppKernel extends Kernel
             new LOCKSSOMatic\ImportExportBundle\LOCKSSOMaticImportExportBundle(),
             new LOCKSSOMatic\SwordBundle\LOCKSSOMaticSwordBundle(),
             new LOCKSSOMatic\PluginBundle\LOCKSSOMaticPluginBundle(),
+            new LOCKSSOMatic\CoreBundle\LOCKSSOMaticCoreBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
