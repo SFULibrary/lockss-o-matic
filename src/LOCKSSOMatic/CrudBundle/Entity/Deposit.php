@@ -202,12 +202,12 @@ class Deposit
     /**
      * Add deposits
      *
-     * @param Content $deposits
+     * @param Content $content
      * @return Deposit
      */
-    public function addContent(Content $deposits)
+    public function addContent(Content $content)
     {
-        $this->content[] = $deposits;
+        $this->content[] = $content;
 
         return $this;
     }
@@ -215,11 +215,11 @@ class Deposit
     /**
      * Remove deposits
      *
-     * @param Content $deposits
+     * @param Content $content
      */
-    public function removeContent(Content $deposits)
+    public function removeContent(Content $content)
     {
-        $this->content->removeElement($deposits);
+        $this->content->removeElement($content);
     }
 
     /**

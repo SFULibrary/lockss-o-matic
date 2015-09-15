@@ -147,6 +147,8 @@ class SwordController extends Controller
     }
 
     /**
+     * SWORD service document, aka sd-iri
+     * 
      * @Route("/sd-iri", name="sword_service")
      * @param Request $request
      */
@@ -221,7 +223,7 @@ class SwordController extends Controller
     }
 
     /**
-     * Create a deposit by posting XML to this URL.
+     * Create a deposit by posting XML to this URL, aka col-iri
      *
      * @Route("/col-iri/{providerUuid}", name="sword_collection", requirements={
      *      "providerUuid": ".{36}"
@@ -268,7 +270,8 @@ class SwordController extends Controller
     }
 
     /**
-     * Get a deposit statement, showing the status of the deposit in LOCKSS, from this URL.
+     * Get a deposit statement, showing the status of the deposit in LOCKSS,
+     * from this URL. Also known as state-iri
      * 
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/state", name="sword_statement", requirements={
      *      "providerUuid": ".{36}",
@@ -277,13 +280,38 @@ class SwordController extends Controller
 
      * @Method({"GET"})
      */
-    public function statementAction(Request $request, $providerUuid, $depositUuid)
+    public function statementAction($providerUuid, $depositUuid)
     {
-        
+        $provider = $this->getContentProvider($providerUuid);
+        $deposit = $this->getDeposit($depositUuid);
+        $this->matchDepositToProvider($deposit, $provider);
+        $boxes = array();
+        if($provider->getPln()) {
+            $boxes = $provider->getPln()->getBoxes();
+        }
+        $content = $deposit->getContent();
+
+        $status = array();
+        foreach($content as $item) {
+            foreach($boxes as $box) {
+                $status[$item->getId()][$box->getId()] = 'unknown';
+                // TODO get the items status from the box via http request
+                // OR get it from the database if we do that.
+            }
+        }
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+        return $this->render('LOCKSSOMaticSwordBundle:Sword:statement.xml.twig', array(
+            'contentProvider' => $provider,
+            'boxes' => $boxes,
+            'deposit' => $deposit,
+            'content' => $content,
+            'status' => $status,
+        ), $response);
     }
 
     /**
-     * Get a deposit receipt from this URL.
+     * Get a deposit receipt from this URL, also known as the edit-iri
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_reciept", requirements={
      *      "providerUuid": ".{36}",
@@ -291,27 +319,17 @@ class SwordController extends Controller
      * })
      * @Method({"GET"})
      */
-    public function receiptAction(Request $request, $providerUuid, $depositUuid)
+    public function receiptAction($providerUuid, $depositUuid)
     {
-
+        $provider = $this->getContentProvider($providerUuid);
+        $deposit = $this->getDeposit($depositUuid);
+        $this->matchDepositToProvider($deposit, $provider);
+        return $this->renderDepositReceipt($provider, $deposit);
     }
 
     /**
-     * Fetch a representation of the deposit.
-     *
-     * @Route("/cont-iri/{providerUuid}/{depositUuid}", name="sword_view", requirements={
-     *      "providerUuid": ".{36}",
-     *      "depositUuid": ".{36}"
-     * })
-     * @Method({"GET"})
-     */
-    public function viewDepositAction(Request $request, $providerUuid, $depositUuid)
-    {
-
-    }
-
-    /**
-     * HTTP PUT to this URL to edit a deposit.
+     * HTTP PUT to this URL to edit a deposit. This URL is the same as the
+     * recieptAction URL (aka edit-iri) but requires an HTTP PUT.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_edit", requirements={
      *      "providerUuid": ".{36}",
@@ -321,7 +339,60 @@ class SwordController extends Controller
      */
     public function editDepositAction(Request $request, $providerUuid, $depositUuid)
     {
-        
+        $this->activityLog->overrideUser($providerUuid);
+
+        $provider = $this->getContentProvider($providerUuid);
+        $deposit = $this->getDeposit($depositUuid);
+        $this->matchDepositToProvider($deposit, $provider);
+
+        $atomEntry = $this->getSimpleXML($request->getContent());
+        $this->precheckDeposit($atomEntry, $provider);
+        $updated = 0;
+        foreach($atomEntry->xpath('//lom:content') as $contentChunk) {
+            try {
+                $content = $this->getContent($deposit, (string)$contentChunk);
+            } catch (Exception $ex) {
+                continue;
+                // Sigh. SWORD says this isn't an error.
+            }
+            $recrawl = $contentChunk[0]->attributes()->recrawl;
+            $content->setRecrawl($recrawl === 'true');
+            $updated++;
+        }
+
+        $this->activityLog->overrideUser(null);
+        $response = $this->renderDepositReceipt($provider, $deposit);
+        $editIri = $this->get('router')->generate(
+            'sword_reciept', array(
+                'providerUuid' => $provider->getUuid(),
+                'depositUuid' => $deposit->getUuid()
+            ), true
+        );
+        $response->headers->set('Location', $editIri);
+        $response->setStatusCode(Response::HTTP_OK);
+        return $response;
+    }
+
+    /**
+     * Fetch a representation of the deposit from this URL, aka cont-iri
+     *
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}", name="sword_view", requirements={
+     *      "providerUuid": ".{36}",
+     *      "depositUuid": ".{36}"
+     * })
+     * @Method({"GET"})
+     */
+    public function viewDepositAction(Request $request, $providerUuid, $depositUuid)
+    {
+        $provider = $this->getContentProvider($providerUuid);
+        $deposit = $this->getDeposit($depositUuid);
+        $this->matchDepositToProvider($deposit, $provider);
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+        return $this->render('LOCKSSOMaticSwordBundle:Sword:depositView.xml.twig', array(
+            'contentProvider' => $provider,
+            'deposit' => $deposit,
+        ), $response);
     }
 
 }

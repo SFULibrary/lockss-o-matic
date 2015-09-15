@@ -24,6 +24,21 @@
                 <span class='glyphicon glyphicon-remove'></span>
             </a>
         </li>
+        <li>
+            <a href="{{ path('sword_statement', { 'providerUuid': entity.contentProvider.uuid, 'depositUuid': entity.uuid}) }}">
+                Statement (XML)
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('sword_reciept', { 'providerUuid': entity.contentProvider.uuid, 'depositUuid': entity.uuid}) }}">
+                Deposit Reciept (XML)
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('sword_view', { 'providerUuid': entity.contentProvider.uuid, 'depositUuid': entity.uuid}) }}">
+                Original Deposit (XML)
+            </a>
+        </li>
     </ul>
 
     <table class="record_properties table table-striped table-bordered table-hover">
