@@ -5,6 +5,7 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ContentProvider
@@ -35,6 +36,10 @@ class ContentProvider
      * @var string
      *
      * @ORM\Column(name="uuid", type="string", length=36, nullable=false)
+     * @Assert\Uuid(
+     *  strict = true,
+     *  versions = {"Uuid:V4_RANDOM"}
+     * )
      */
     private $uuid;
 

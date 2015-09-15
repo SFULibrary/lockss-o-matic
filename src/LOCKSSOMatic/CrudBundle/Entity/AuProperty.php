@@ -52,7 +52,7 @@ class AuProperty
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auProperties")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $au;
@@ -146,6 +146,10 @@ class AuProperty
         return $this->parent;
     }
 
+    public function hasParent() {
+        return $this->parent !== null;
+    }
+
     /**
      * Set au
      *
@@ -200,5 +204,9 @@ class AuProperty
     public function getChildren()
     {
         return $this->children;
+    }
+
+    public function hasChildren() {
+        return count($this->children) > 0;
     }
 }

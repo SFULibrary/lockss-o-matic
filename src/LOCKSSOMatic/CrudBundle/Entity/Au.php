@@ -166,6 +166,24 @@ class Au
         return $this->auid;
     }
 
+    public function getRootPluginProperties() {
+        $properties = array();
+        foreach($this->auProperties as $p) {
+            if($p->hasParent()) {
+                continue;
+            }
+            $properties[] = $p;
+        }
+        return $properties;
+    }
+
+    /**
+     * @return AuProperty[]
+     */
+    public function getDefinitionalProperties() {
+        return $this->getPlugin()->getDefinitionalProperties();
+    }
+
     /**
      * Get the named AU property, optionally %-encoded.
      *

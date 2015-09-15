@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ContentOwner
@@ -32,6 +33,9 @@ class ContentOwner
      * @var string
      *
      * @ORM\Column(name="email_address", type="text", nullable=false)
+     * @Assert\Email(
+     *  strict = true
+     * )
      */
     private $emailAddress;
 

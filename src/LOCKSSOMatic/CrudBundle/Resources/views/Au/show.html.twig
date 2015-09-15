@@ -5,6 +5,21 @@
     <h1>Au</h1>
 {% endblock %}
 
+{% macro plugin_props(props) %}
+    {% import _self as macros %}
+    <ul>
+        {% for prop in props %}
+            <li>{{ prop.propertyKey }}:
+                {% if prop.hasChildren() %}
+                    {{ macros.plugin_props(prop.children) }}
+                {% else %}
+                    {{ prop.propertyValue }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
 {% block body -%}
     <ul class="record_actions">
         <li>
@@ -84,5 +99,8 @@
         </tbody>
     </table>
 
+    <h2>All Properties</h2>
+    {% import _self as macros %}
+    {{ macros.plugin_props(entity.getRootPluginProperties()) }}
 
 {% endblock %}

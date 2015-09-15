@@ -28,10 +28,12 @@
         "knplabs/knp-paginator-bundle": "^2.4",
         "problematic/acl-manager-bundle": "dev-master",
         "jasny/twig-extensions": "~1.0",
-        "j20/php-uuid": "dev-master"
+        "j20/php-uuid": "dev-master",
+        "phpunit/phpunit": "4.8.*"
     },
     "require-dev": {
-        "sensio/generator-bundle": "~2.3"
+        "sensio/generator-bundle": "~2.3",
+        "liip/functional-test-bundle": "^1.2"
     },
     "scripts": {
         "post-root-package-install": [

@@ -289,4 +289,31 @@ class Pln
     {
         return $this->plnProperties;
     }
+
+    public function getProperty($name, $encoded) {
+        $value = '';
+        foreach($this->getPlnProperties() as $prop) {
+            if($prop->getPropertyKey() !== 'key') {
+                continue;
+            }
+            if($prop->getPropertyValue() !== $name) {
+                continue;
+            }
+            foreach($prop->getParent()->getChildren() as $child) {
+                if($child->getPropertyKey() !== 'value') {
+                    continue;
+                }
+                $value = $child->getPropertyValue();
+                break;
+            }
+        }
+        if($encoded === false) {
+            return $value;
+        }
+        $callback = function($matches) {
+            $char = ord($matches[0]);
+            return '%' . strtoupper(sprintf("%02x", $char));
+        };
+        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
+    }
 }

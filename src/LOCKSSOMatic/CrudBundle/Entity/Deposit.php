@@ -92,7 +92,7 @@ class Deposit
      */
     public function setUuid($uuid)
     {
-        $this->uuid = $uuid;
+        $this->uuid = strtoupper($uuid);
 
         return $this;
     }
@@ -104,7 +104,7 @@ class Deposit
      */
     public function getUuid()
     {
-        return $this->uuid;
+        return strtoupper($this->uuid);
     }
 
     /**

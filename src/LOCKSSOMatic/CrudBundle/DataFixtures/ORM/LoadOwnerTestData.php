@@ -26,26 +26,25 @@
 
 namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use LOCKSSOMatic\CrudBundle\Entity\Pln;
-use LOCKSSOMatic\CrudBundle\Entity\Plugin;
+use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
+use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
 
 /**
  * Load some test data into the database.
  */
-class LoadPluginData extends AbstractFixture implements OrderedFixtureInterface
+class LoadOwnerTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
 
     /**
-     * PLNs must be loaded before Boxes. This sets the order.
+     * Must load after Plugin.
      *
      * @return int the order
      */
     public function getOrder()
     {
-        return 1;
+        return 2;
     }
 
     /**
@@ -53,14 +52,20 @@ class LoadPluginData extends AbstractFixture implements OrderedFixtureInterface
      *
      * @param ObjectManager $manager
      */
-    public function load(ObjectManager $manager)
+    public function doload(ObjectManager $manager)
     {
-        $plugin = new Plugin();
-        $plugin->setName("Test Plugin");
-        $plugin->setPath("/path/to/plugin");
-        $manager->persist($plugin);
+        $owner = new ContentOwner();
+        $owner->setPlugin($this->getReference('plugin'));
+        $owner->setName('Test Owner');
+        $owner->setEmailAddress('owner@example.com');
+        $this->setReference('owner', $owner);
+        $manager->persist($owner);
         $manager->flush();
-
-        $this->setReference("plugin", $plugin);
     }
+
+    protected function getEnvironments()
+    {
+        return array('test');
+    }
+
 }
