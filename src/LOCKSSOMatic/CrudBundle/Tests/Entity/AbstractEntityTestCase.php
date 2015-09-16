@@ -2,12 +2,20 @@
 
 namespace LOCKSSOMatic\CrudBundle\Tests\Entity;
 
+use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\Common\Persistence\ObjectManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase as BaseTestCase;
 
 class AbstractEntityTestCase extends BaseTestCase {
 
+    /**
+     * @var ObjectManager
+     */
     protected $em;
 
+    /**
+     * @var ReferenceRepository
+     */
     protected $references;
 
     protected function setUp() {
