@@ -51,13 +51,13 @@ class LomPluginData
     private $name;
 
     /**
-     * @ORM\Column(name="domain", type="string", length=255, nullable=false)
+     * @ORM\Column(name="domain", type="string", length=255, nullable=true)
      * @var string
      */
     private $domain;
 
     /**
-     * @ORM\Column(name="objectId", type="integer", nullable=false)
+     * @ORM\Column(name="objectId", type="integer", nullable=true)
      * @var integer
      */
     private $objectId;
@@ -70,7 +70,7 @@ class LomPluginData
 
     /**
      * @var \stdClass
-     * @ORM\Column(name="value", type="object", length=255, nullable=false)
+     * @ORM\Column(name="value", type="object", length=255, nullable=true)
      */
     private $value;
 
