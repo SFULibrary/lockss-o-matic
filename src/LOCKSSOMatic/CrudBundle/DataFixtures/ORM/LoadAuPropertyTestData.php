@@ -57,10 +57,11 @@ class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtu
         $root = new AuProperty();
         $root->setPropertyKey('TestStuffGoesHere');
         $root->setAu($au);
+        $this->setReference('auprop-root', $root);
         $em->persist($root);
 
         $this->buildAuProperty($em, 'param.1', 'base_url', 'http://example.com', $root, $au);
-        $this->buildAuProperty($em, 'param.2', 'pub_id', 'kittens', $root, $au);
+        $this->setReference('auprop-child', $this->buildAuProperty($em, 'param.2', 'pub_id', 'kittens', $root, $au));
         $this->buildAuProperty($em, 'param.3', 'foot_id', 'left', $root, $au);
         $em->flush();
 
@@ -79,6 +80,7 @@ class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtu
         $keyProp->setPropertyKey('key');
         $keyProp->setPropertyValue($key);
         $em->persist($keyProp);
+        $this->setReference('auprop-leaf', $keyProp);
 
         $valProp = new AuProperty();
         $valProp->setAu($au);
@@ -86,6 +88,8 @@ class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtu
         $valProp->setPropertyKey('value');
         $valProp->setPropertyValue($value);
         $em->persist($valProp);
+        
+        return $parent;
     }
 
     protected function getEnvironments()
