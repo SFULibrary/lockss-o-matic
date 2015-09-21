@@ -2,14 +2,25 @@
 
 namespace LOCKSSOMatic\CrudBundle\Tests\Entity;
 
+use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\Common\Persistence\ObjectManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase as BaseTestCase;
 
 class AbstractEntityTestCase extends BaseTestCase {
 
+    /**
+     * @var ObjectManager
+     */
     protected $em;
 
+    /**
+     * @var ReferenceRepository
+     */
     protected $references;
 
+    /**
+     * {@inheritDocs}
+     */
     protected function setUp() {
         $fixtures = array(
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadPlnTestData',
@@ -24,5 +35,4 @@ class AbstractEntityTestCase extends BaseTestCase {
         $this->references = $this->loadFixtures($fixtures)->getReferenceRepository();
         $this->em = $this->getContainer()->get('doctrine')->getManager();
     }
-
 }
