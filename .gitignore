@@ -9,5 +9,5 @@
 /composer.phar
 /vendor/
 /web/bundles/
-components
-app/data
+/components
+/app/data
