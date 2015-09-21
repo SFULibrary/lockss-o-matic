@@ -1,22 +1,18 @@
 <?php
 
-// src/LOCKSSOMatic/PLNImporterBundle/Command/PLNPluginImportCommand.php
-
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
 use DirectoryIterator;
+use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\ORM\EntityManager;
-use Exception;
-use LOCKSSOMatic\CRUDBundle\Entity\PluginProperty;
-use LOCKSSOMatic\CRUDBundle\Entity\Plugin;
-use SimpleXMLElement;
 use SplFileInfo;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use ZipArchive;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 /**
  * Private Lockss network plugin import command-line
@@ -42,6 +38,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
     {
         $this->setName('lom:import:plnplugin')
             ->setDescription('Import PLN plugins.')
+            ->addOption('nocopy', null, InputOption::VALUE_NONE, 'Do not copy the plugin .jar file.')
             ->addArgument('plugin_folder_path', InputArgument::REQUIRED, 'Local path to the folder containing the PLN plugin JAR files?');
     }
 
@@ -58,12 +55,17 @@ class PLNPluginImportCommand extends ContainerAwareCommand
         $pathToPlugins = $input->getArgument('plugin_folder_path');
         $jarFiles = $this->getJarFiles($pathToPlugins);
 
+        $nocopy = false;
+        if($input->getOption('nocopy')) {
+            $nocopy = true;
+        }
+
         $output->writeln("There are " . count($jarFiles) . " JAR files in the directory.");
         $importer = $this->getContainer()->get('pln_plugin_importer');
         foreach ($jarFiles as $fileInfo) {
             $output->writeln($fileInfo->getFilename());
             try {
-                $importer->importJarFile($fileInfo);
+                $importer->importJarFile($fileInfo, $nocopy);
             } catch(Exception $e) {
                 $output->writeln(" ** " . $e->getMessage());
                 if(($p = $e->getPrevious()) !== null) {
@@ -84,7 +86,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      *
      * @return SplFileInfo[]
      */
-    protected function getJarFiles($dirPath)
+    public function getJarFiles($dirPath)
     {
         $files = array();
         $iterator = new DirectoryIterator($dirPath);

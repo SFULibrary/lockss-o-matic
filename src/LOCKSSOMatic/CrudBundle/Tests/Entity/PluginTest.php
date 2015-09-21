@@ -2,10 +2,11 @@
 
 namespace LOCKSSOMatic\CrudBundle\Tests\Entity;
 
+use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 use LOCKSSOMatic\CrudBundle\Entity\PluginProperty;
 
-class PluginTest extends AbstractEntityTestCase
+class PluginTest extends AbstractTestCase
 {
 
     /**

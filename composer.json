@@ -33,7 +33,8 @@
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
-        "liip/functional-test-bundle": "^1.2"
+        "liip/functional-test-bundle": "^1.2",
+        "phpunit/phpunit-skeleton-generator": "^2.0"
     },
     "scripts": {
         "post-root-package-install": [

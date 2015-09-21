@@ -1,12 +1,12 @@
 <?php
 
-namespace LOCKSSOMatic\CrudBundle\Tests\Entity;
+namespace LOCKSSOMatic\CoreBundle\Utilities;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase as BaseTestCase;
 
-class AbstractEntityTestCase extends BaseTestCase {
+class AbstractTestCase extends BaseTestCase {
 
     /**
      * @var ObjectManager

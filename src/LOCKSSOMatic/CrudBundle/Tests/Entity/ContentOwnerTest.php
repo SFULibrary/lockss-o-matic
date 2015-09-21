@@ -2,9 +2,10 @@
 
 namespace LOCKSSOMatic\CrudBundle\Tests\Entity;
 
+use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
 
-class ContentOwnerTest extends AbstractEntityTestCase {
+class ContentOwnerTest extends AbstractTestCase {
 
     /**
      * @var ContentOwner

@@ -2,9 +2,10 @@
 
 namespace LOCKSSOMatic\CrudBundle\Tests\Entity;
 
+use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 
-class DepositTest extends AbstractEntityTestCase {
+class DepositTest extends AbstractTestCase {
 
     /**
      * @var Deposit

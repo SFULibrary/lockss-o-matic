@@ -2,9 +2,10 @@
 
 namespace LOCKSSOMatic\CrudBundle\Tests\Entity;
 
+use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 
-class ContentProviderTest extends AbstractEntityTestCase {
+class ContentProviderTest extends AbstractTestCase {
 
     /**
      * @var ContentProvider

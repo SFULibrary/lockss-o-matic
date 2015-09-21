@@ -182,8 +182,6 @@ class PLNPluginImportService {
         $jarPath = $this->jarDir . '/' . $filename;
         if ($copy) {
             copy($jarInfo->getPathname(), $jarPath);
-        } else {
-            rename($jarInfo->getPathname(), $jarPath);
         }
         $plugin->setPath($jarPath);
 
