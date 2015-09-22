@@ -26,18 +26,15 @@
 
 namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
+use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
-use LOCKSSOMatic\CrudBundle\Entity\Pln;
-use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 
 /**
  * Load some test data into the database.
  */
-class LoadProviderData extends AbstractFixture implements OrderedFixtureInterface
+class LoadProviderData extends AbstractDataFixture implements OrderedFixtureInterface
 {
 
     /**
@@ -55,7 +52,7 @@ class LoadProviderData extends AbstractFixture implements OrderedFixtureInterfac
      *
      * @param ObjectManager $manager
      */
-    public function load(ObjectManager $manager)
+    public function doLoad(ObjectManager $manager)
     {
         $provider = new ContentProvider();
         $provider->setType("test");
@@ -72,5 +69,10 @@ class LoadProviderData extends AbstractFixture implements OrderedFixtureInterfac
         
         $manager->persist($provider);
         $manager->flush();
+    }
+    
+    protected function getEnvironments()
+    {
+        return array('dev');
     }
 }

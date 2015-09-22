@@ -11,8 +11,7 @@ use LOCKSSOMatic\LogBundle\Entity\LogEntry;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContext;
-
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 /**
  * Symfony logging service. Automatically logs CRUD operations, and can optionally
@@ -29,9 +28,9 @@ class LoggingService
     private $em;
 
     /**
-     * @var SecurityContext
+     * @var TokenStorage
      */
-    private $context;
+    private $tokenStorage;
 
     /**
      * @var Request
@@ -111,16 +110,16 @@ class LoggingService
     }
 
     /**
-     * Get the security context of the curret request, if there is one.
+     * Get the token storage of the curret request, if there is one.
      *
-     * @return SecurityContext
+     * @return TokenStorage
      */
-    private function getContext()
+    private function getTokenStorage()
     {
-        if ($this->context === null) {
-            $this->context = $this->container->get('security.context');
+        if ($this->tokenStorage === null) {
+            $this->tokenStorage = $this->container->get('security.token_storage');
         }
-        return $this->context;
+        return $this->tokenStorage;
     }
 
     /**
@@ -206,7 +205,7 @@ class LoggingService
         if ($this->userOverride !== null) {
             return $this->userOverride;
         }
-        $context = $this->getContext();
+        $context = $this->getTokenStorage();
         if ($context->getToken() && $context->getToken()->getUser()) {
             return $context->getToken()->getUser();
         }

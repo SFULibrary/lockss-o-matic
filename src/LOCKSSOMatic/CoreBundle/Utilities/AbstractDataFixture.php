@@ -16,12 +16,14 @@ abstract class AbstractDataFixture extends AbstractFixture implements ContainerA
     /**
      * {@inheritDocs}
      */
-    public function load(ObjectManager $em)
+    public final function load(ObjectManager $em)
     {
         /** @var KernelInterface $kernel */
         $kernel = $this->container->get('kernel');
         if (in_array($kernel->getEnvironment(), $this->getEnvironments())) {
             $this->doLoad($em);
+        } else {
+            $this->container->get('logger')->notice('skipped.');
         }
     }
 

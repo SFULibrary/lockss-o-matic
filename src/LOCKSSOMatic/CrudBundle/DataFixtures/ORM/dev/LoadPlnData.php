@@ -26,15 +26,15 @@
 
 namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 
 /**
  * Load some test data into the database.
  */
-class LoadPlnData extends AbstractFixture implements OrderedFixtureInterface
+class LoadPlnData extends AbstractDataFixture implements OrderedFixtureInterface
 {
 
     /**
@@ -52,7 +52,7 @@ class LoadPlnData extends AbstractFixture implements OrderedFixtureInterface
      *
      * @param ObjectManager $manager
      */
-    public function load(ObjectManager $manager)
+    public function doLoad(ObjectManager $manager)
     {
         $franklin = $this->buildPln('franklin', $manager);
         $this->setReference('pln-franklin', $franklin);
@@ -89,4 +89,10 @@ class LoadPlnData extends AbstractFixture implements OrderedFixtureInterface
         $manager->persist($pln);
         return $pln;
     }
+
+    protected function getEnvironments()
+    {
+        return array('dev');
+    }
+
 }

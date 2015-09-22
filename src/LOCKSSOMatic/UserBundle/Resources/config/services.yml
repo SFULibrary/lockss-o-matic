@@ -18,6 +18,6 @@ services:
 
     lom.access:
         class: LOCKSSOMatic\UserBundle\Security\Services\Access
-        arguments: [@security.context, @problematic.acl_manager, @security.acl.provider]
+        arguments: [@security.authorization_checker, @problematic.acl_manager, @security.acl.provider]
         tags:
             - { name: acl.check }

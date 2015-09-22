@@ -2,9 +2,8 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
-use DirectoryIterator;
-use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\ORM\EntityManager;
+use Exception;
 use SplFileInfo;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,7 +11,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Yaml\Exception\RuntimeException;
 
 /**
  * Private Lockss network plugin import command-line
@@ -39,7 +37,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
         $this->setName('lom:import:plnplugin')
             ->setDescription('Import PLN plugins.')
             ->addOption('nocopy', null, InputOption::VALUE_NONE, 'Do not copy the plugin .jar file.')
-            ->addArgument('plugin_folder_path', InputArgument::REQUIRED, 'Local path to the folder containing the PLN plugin JAR files?');
+            ->addArgument('plugin_files', InputArgument::IS_ARRAY, 'Local path to the folder containing the PLN plugin JAR files?');
     }
 
     /**
@@ -52,15 +50,15 @@ class PLNPluginImportCommand extends ContainerAwareCommand
     {
         $activityLog = $this->getContainer()->get('activity_log');
         $activityLog->disable();
-        $pathToPlugins = $input->getArgument('plugin_folder_path');
-        $jarFiles = $this->getJarFiles($pathToPlugins);
+        $jarFiles = array();
+        foreacH($input->getArgument('plugin_files') as $path) {
+            $jarFiles[] = new SplFileInfo($path);
+        }
 
         $nocopy = false;
         if($input->getOption('nocopy')) {
             $nocopy = true;
         }
-
-        $output->writeln("There are " . count($jarFiles) . " JAR files in the directory.");
         $importer = $this->getContainer()->get('pln_plugin_importer');
         foreach ($jarFiles as $fileInfo) {
             $output->writeln($fileInfo->getFilename());
@@ -74,31 +72,5 @@ class PLNPluginImportCommand extends ContainerAwareCommand
             }
         }
         $this->em->flush();
-    }
-    
-    /**
-     * Get the JAR files in a directory.
-     *
-     * @param type $dirPath
-     *
-     * @throws UnexpectedValueException if the path cannot be opened.
-     * @throws RuntimeException if the path is an empty string.
-     *
-     * @return SplFileInfo[]
-     */
-    public function getJarFiles($dirPath)
-    {
-        $files = array();
-        $iterator = new DirectoryIterator($dirPath);
-        foreach ($iterator as $fileInfo) {
-            if (!$fileInfo->isFile()) {
-                continue;
-            }
-            if ($fileInfo->getExtension() === 'jar') {
-                $files[] = $fileInfo->getFileInfo();
-            }
-        }
-        return $files;
-    }
-
+    }    
 }

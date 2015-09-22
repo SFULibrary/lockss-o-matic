@@ -2,12 +2,12 @@
 
 namespace LOCKSSOMatic\UserBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\UserBundle\Entity\User;
 
-class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
+class LoadUserData extends AbstractDataFixture implements OrderedFixtureInterface {
     
     /**
      * Users to create.
@@ -32,7 +32,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
      *
      * @param ObjectManager $manager
      */
-    public function load(ObjectManager $manager)
+    public function doLoad(ObjectManager $manager)
     {
         $admin = $this->buildUser($manager, 'admin@example.com', 'Site admin', 'ROLE_ADMIN');
         $this->setReference('admin-user', $admin);
@@ -83,5 +83,10 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
     {
         return 3;
     }
-    
+
+    protected function getEnvironments()
+    {
+        return array('dev');
+    }
+
 }

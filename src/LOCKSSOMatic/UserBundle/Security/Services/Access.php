@@ -9,8 +9,8 @@ use Problematic\AclManagerBundle\Domain\AclManager;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * Wrapper around ProblematicAclBundle and around some of Symfony's ACL and role
@@ -27,7 +27,6 @@ use Symfony\Component\Security\Core\SecurityContext;
  */
 class Access
 {
-
     private $securityContext;
     private $aclManager;
     private $aclProvider;
@@ -35,11 +34,11 @@ class Access
     /**
      * Build the access wrapper. The parameters are configured in services.yml
      *
-     * @param SecurityContext $securityContext
+     * @param AuthorizationChecker $securityContext
      * @param AclManager $aclManager
      * @param MutableAclProvider $aclProvider
      */
-    public function __construct(SecurityContext $securityContext, AclManager $aclManager, MutableAclProvider $aclProvider)
+    public function __construct(AuthorizationChecker $securityContext, AclManager $aclManager, MutableAclProvider $aclProvider)
     {
         $this->securityContext = $securityContext;
         $this->aclManager = $aclManager;

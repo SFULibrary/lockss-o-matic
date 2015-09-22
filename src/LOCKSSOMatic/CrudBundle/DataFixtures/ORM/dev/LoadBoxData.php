@@ -26,16 +26,16 @@
 
 namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 
 /**
  * Load some test data.
  */
-class LoadBoxData extends AbstractFixture implements OrderedFixtureInterface
+class LoadBoxData extends AbstractDataFixture implements OrderedFixtureInterface
 {
 
     /**
@@ -53,7 +53,7 @@ class LoadBoxData extends AbstractFixture implements OrderedFixtureInterface
      *
      * @param ObjectManager $manager
      */
-    public function load(ObjectManager $manager)
+    public function doLoad(ObjectManager $manager)
     {
         $this->buildBox('aaron', 'pln-borges', $manager);
         $this->buildBox('adrian', 'pln-dewey', $manager);
@@ -106,5 +106,10 @@ class LoadBoxData extends AbstractFixture implements OrderedFixtureInterface
         $box->setPln($this->getReference($network));
         $manager->persist($box);
         return $box;
+    }
+    
+    protected function getEnvironments()
+    {
+        return array('dev');
     }
 }
