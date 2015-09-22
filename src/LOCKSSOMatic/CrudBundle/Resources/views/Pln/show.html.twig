@@ -1,9 +1,31 @@
 {% extends '::base.html.twig' %}
 
-
 {% block pageheader %}
     <h1>Pln</h1>
 {% endblock %}
+
+{% macro pln_props(props) %}
+    {% import _self as macros %}
+    <ul>
+        {% for prop in props %}
+            <li>{{ prop.propertyKey }}:
+                {% if prop.hasChildren() %}
+                    {{ macros.pln_props(prop.children) }}
+                {% else %}
+                    {% if prop.propertyValue is iterable %}
+                        <ul>
+                        {% for v in prop.propertyValue %}
+                            <li>{{ v }} </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        {{ prop.propertyValue }}
+                    {% endif %}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
 
 {% block body -%}
     <ul class="record_actions">
@@ -72,4 +94,8 @@
         </tbody>
     </table>
 
+    <h2>All Properties</h2>
+    {% import _self as macros %}
+    {{ macros.pln_props(entity.getRootPluginProperties()) }}
+    
 {% endblock %}

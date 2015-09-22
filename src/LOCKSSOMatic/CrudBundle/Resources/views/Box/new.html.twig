@@ -15,7 +15,26 @@
             Back to the list
         </a>
     </li>
-
-
 </ul>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        var resolver = '{{ url('resolve_host') }}';
+        var $input = $('.ipAddress');
+        var $host = $('.hostname');
+
+        $btn = $("<button class='btn btn-default' type='button' class='lookup-button'>Lookup</button>");
+        $input.after($btn);
+        $btn.click(function(){
+            console.log($host.val());
+            $.get(resolver, {hostname: $host.val()}, function(data){
+                if(data.hostname !== data.address) {
+                    $input.val(data.address);
+                } else {
+                    alert('Cannot find IP address for ' + data.hostname);
+                }
+            });
+        });
+    </script>
 {% endblock %}

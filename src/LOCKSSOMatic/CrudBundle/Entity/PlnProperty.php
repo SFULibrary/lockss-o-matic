@@ -38,11 +38,18 @@ class PlnProperty
     private $propertyValue;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_list", type="boolean", nullable=false)
+     */
+    private $isList;
+
+    /**
      * @var PlnProperty
      *
      * @ORM\ManyToOne(targetEntity="PlnProperty", inversedBy="children")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $parent;
@@ -65,6 +72,7 @@ class PlnProperty
 
     public function __construct() {
         $this->children = new ArrayCollection();
+        $this->isList = false;
     }
 
     /**
@@ -103,12 +111,17 @@ class PlnProperty
     /**
      * Set propertyValue
      *
-     * @param string $propertyValue
+     * @param mixed $propertyValue
      * @return PlnProperty
      */
     public function setPropertyValue($propertyValue)
     {
-        $this->propertyValue = $propertyValue;
+        if(is_array($propertyValue)) {
+            $this->isList = true;
+            $this->propertyValue = serialize($propertyValue);
+        } else {
+            $this->propertyValue = $propertyValue;
+        }
 
         return $this;
     }
@@ -116,10 +129,13 @@ class PlnProperty
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return mixed
      */
     public function getPropertyValue()
     {
+        if($this->isList) {
+            return unserialize($this->propertyValue);
+        }
         return $this->propertyValue;
     }
 
@@ -144,6 +160,10 @@ class PlnProperty
     public function getParent()
     {
         return $this->parent;
+    }
+
+    public function hasParent() {
+        return $this->parent !== null;
     }
 
     /**
@@ -200,5 +220,9 @@ class PlnProperty
     public function getChildren()
     {
         return $this->children;
+    }
+
+    public function hasChildren() {
+        return $this->children->count() > 0;
     }
 }

@@ -15,8 +15,15 @@ class BoxType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('hostname')
-            ->add('ipAddress')
+            ->add('hostname', 'text', array('attr' => array('class' => 'hostname')))
+            ->add('protocol')
+            ->add('ipAddress', 'text', array(
+                'required' => false,
+                'attr' => array(
+                    'class' => 'ipAddress '
+                )
+            ))
+            ->add('port')
             ->add('username')
             ->add('password')
             ->add('pln')

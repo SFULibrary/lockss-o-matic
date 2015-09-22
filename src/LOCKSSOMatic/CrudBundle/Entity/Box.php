@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="boxes", indexes={@ORM\Index(name="IDX_CDF1B2E9C8BA1A08", columns={"pln_id"})})
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  */
 class Box
 {
@@ -29,6 +30,18 @@ class Box
      * @ORM\Column(name="hostname", type="string", length=255, nullable=false)
      */
     private $hostname;
+
+    /**
+     * @var string
+     * @ORM\Column(name="protocol", type="string", length=16, nullable=false)
+     */
+    private $protocol;
+
+    /**
+     * @var integer
+     * @ORM\Column(name="port", type="integer", nullable=false)
+     */
+    private $port;
 
     /**
      * @var string
@@ -69,6 +82,8 @@ class Box
     
     public function __construct() {
         $this->status = new ArrayCollection();
+        $this->protocol = 'TCP';
+        $this->port = 9729;
     }
 
     /**
@@ -227,5 +242,64 @@ class Box
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set protocol
+     *
+     * @param string $protocol
+     * @return Box
+     */
+    public function setProtocol($protocol)
+    {
+        $this->protocol = $protocol;
+
+        return $this;
+    }
+
+    /**
+     * Get protocol
+     *
+     * @return string 
+     */
+    public function getProtocol()
+    {
+        return $this->protocol;
+    }
+
+    /**
+     * Set port
+     *
+     * @param integer $port
+     * @return Box
+     */
+    public function setPort($port)
+    {
+        $this->port = $port;
+
+        return $this;
+    }
+
+    /**
+     * Get port
+     *
+     * @return integer 
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function resolveHostname() {
+        if($this->ipAddress === null || $this->ipAddress === '') {
+            $ip = gethostbyname($this->hostname);
+            if($ip !== $this->hostname) {
+                $this->ipAddress = $ip;
+            }
+        }
     }
 }
