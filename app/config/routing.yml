@@ -3,11 +3,6 @@ locksso_matic_core:
     type:     annotation
     prefix:   /
 
-locksso_matic_plugin:
-    resource: "@LOCKSSOMaticPluginBundle/Controller/"
-    type:     annotation
-    prefix:   /
-
 locksso_matic_sword:
     resource: "@LOCKSSOMaticSwordBundle/Controller/"
     type:     annotation

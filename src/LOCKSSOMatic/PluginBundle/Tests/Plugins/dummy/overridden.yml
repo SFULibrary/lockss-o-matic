@@ -1,9 +1,0 @@
-
-set: true
-
-dogs: [ fluffy, scruffy, poofy ]
-
-cats:
-    friendly: yes
-    pettable: no
-    alergens: quite possibly
