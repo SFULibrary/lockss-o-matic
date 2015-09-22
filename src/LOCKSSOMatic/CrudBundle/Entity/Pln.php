@@ -286,7 +286,7 @@ class Pln
     /**
      * Get plnProperties
      *
-     * @return Collection
+     * @return PlnProperty[]
      */
     public function getPlnProperties()
     {
@@ -305,11 +305,14 @@ class Pln
     }
 
     public function getProperty($name) {
+        $props = $this->getPlnProperties();
+
         foreach($this->getPlnProperties() as $prop) {
             if($prop->getPropertyKey() === $name) {
                 return $prop;
             }
         }
+        die("cannot find {$name} in " . count($props));
         return null;
     }
 }

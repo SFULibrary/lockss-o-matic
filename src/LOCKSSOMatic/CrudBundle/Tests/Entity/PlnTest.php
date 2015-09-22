@@ -30,4 +30,34 @@ class PlnTest extends AbstractTestCase
         $this->assertEquals('franklin', $this->pln->getName());
     }
 
+    public function testGetProperties() {
+        $props = $this->pln->getPlnProperties();
+        $this->assertEquals(5, count($props));
+    }
+
+    public function testGetProperty1() {
+        $prop = $this->pln->getProperty('leaf');
+        $this->assertNotNull($prop);
+        $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\PlnProperty', $prop);
+    }
+
+    public function testGetProperty2() {
+        $prop = $this->pln->getProperty('autumn');
+        $this->assertNotNull($prop);
+        $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\PlnProperty', $prop);
+        $this->assertEquals('lots of leaves', $prop->getPropertyValue());
+    }
+
+    public function testGetRootPluginProperties() {
+        $props = $this->pln->getRootPluginProperties();
+        $this->assertEquals(2, count($props));
+    }
+
+    public function testAlterProperty() {
+        $prop = $this->pln->getProperty('winter');
+        $prop->setPropertyValue('very snowy.');
+        $this->em->flush();
+        $altered = $this->pln->getProperty('winter');
+        $this->assertEquals('very snowy.', $altered->getPropertyValue());
+    }
 }

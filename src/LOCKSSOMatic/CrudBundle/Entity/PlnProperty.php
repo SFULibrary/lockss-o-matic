@@ -120,6 +120,7 @@ class PlnProperty
             $this->isList = true;
             $this->propertyValue = serialize($propertyValue);
         } else {
+            $this->isList = false;
             $this->propertyValue = $propertyValue;
         }
 
@@ -137,6 +138,10 @@ class PlnProperty
             return unserialize($this->propertyValue);
         }
         return $this->propertyValue;
+    }
+
+    public function isList() {
+        return $this->isList;
     }
 
     /**

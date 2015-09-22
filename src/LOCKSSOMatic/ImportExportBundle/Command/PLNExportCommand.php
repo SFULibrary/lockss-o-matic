@@ -2,10 +2,10 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
+use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -49,8 +49,14 @@ class PLNExportCommand extends ContainerAwareCommand
         /** @var Pln $pln */
         $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($input->getArgument('id'));
         $boxes = $pln->getBoxes();
+        $boxList = array();
+        foreach($boxes as $box) {
+            $boxList[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
+        }
         $boxProp = $pln->getProperty('id.initialV3PeerList');
-        
+        $boxProp->setPropertyValue($boxList);
+        $this->em->flush();
+
         if( $pln === null) {
             $output->writeln('Cannot find pln.');
             exit;

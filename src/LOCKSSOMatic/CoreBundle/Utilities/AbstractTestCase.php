@@ -24,6 +24,7 @@ class AbstractTestCase extends BaseTestCase {
     protected function setUp() {
         $fixtures = array(
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadPlnTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadPlnPropertyTestData',
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadPluginTestData',
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadPluginPropertyTestData',
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadOwnerTestData',

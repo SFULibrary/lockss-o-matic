@@ -57,7 +57,11 @@ class LoadPlnPropertyTestData extends AbstractDataFixture implements OrderedFixt
     {
         /** @var Pln $pln */
         $pln = $this->getReference('pln-franklin');
-        $prop = $this->buildLeafProperty($em, $pln, 'leaf', 'crunchyleaves');
+        $prop = $this->buildProperty($em, $pln, 'leaf', 'crunchyleaves');
+        $season = $this->buildProperty($em, $pln, 'season', null);
+        $this->buildProperty($em, $pln, 'autumn', 'lots of leaves', $season);
+        $this->buildProperty($em, $pln, 'winter', 'not many leaves', $season);
+        $this->buildProperty($em, $pln, 'list', array('foo', 'bar', 'baz'), $season);
         $em->flush();
     }
 
@@ -68,12 +72,13 @@ class LoadPlnPropertyTestData extends AbstractDataFixture implements OrderedFixt
      * @param PlnProperty $parent
      * @return PlnProperty
      */
-    private function buildLeafProperty(ObjectManager $em, Pln $pln, $key, $value, PlnProperty $parent = null) {
+    private function buildProperty(ObjectManager $em, Pln $pln, $key, $value, PlnProperty $parent = null) {
         $prop = new PlnProperty();
         $prop->setPln($pln);
         $prop->setPropertyKey($key);
         $prop->setPropertyValue($value);
         $prop->setParent($parent);
+        $this->setReference("plnprop-{$key}", $prop);
         $em->persist($prop);
         return $prop;
     }

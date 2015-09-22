@@ -63,6 +63,8 @@ class PLNImportCommand extends ContainerAwareCommand
         $this->importProperties($pln, $root[0]);
         
         $this->em->flush();
+        $this->em->clear();
+        $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($input->getArgument('id'));
 
         $boxDefs = $pln->getProperty('id.initialV3PeerList');
         foreach($boxDefs->getPropertyValue() as $def) {
