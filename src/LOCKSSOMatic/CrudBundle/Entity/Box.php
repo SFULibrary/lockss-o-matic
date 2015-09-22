@@ -53,14 +53,14 @@ class Box
     /**
      * @var string
      *
-     * @ORM\Column(name="username", type="string", length=64, nullable=false)
+     * @ORM\Column(name="username", type="string", length=64, nullable=true)
      */
     private $username;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="password", type="string", length=64, nullable=false)
+     * @ORM\Column(name="password", type="string", length=64, nullable=true)
      */
     private $password;
 

@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
 use Doctrine\ORM\EntityManager;
+use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Entity\PlnProperty;
 use SimpleXMLElement;
@@ -60,6 +61,22 @@ class PLNImportCommand extends ContainerAwareCommand
         $xml = simplexml_load_file($input->getArgument('file'));
         $root = $xml->xpath('/lockss-config/property');
         $this->importProperties($pln, $root[0]);
+        
+        $this->em->flush();
+
+        $boxDefs = $pln->getProperty('id.initialV3PeerList');
+        foreach($boxDefs->getPropertyValue() as $def) {
+            $matches = array();
+            preg_match('/^(\w+):\[(\d+\.\d+\.\d+\.\d+)\]:(\d+)$/', $def, $matches);
+            $box = new Box();
+            $box->setProtocol($matches[1]);
+            $box->setIpAddress($matches[2]);
+            $box->setPort($matches[3]);
+            $box->setPln($pln);
+            $box->setHostname(gethostbyaddr($box->getIpAddress()));
+            $this->em->persist($box);
+        }
+
         $this->em->flush();
         $activityLog->enable();
     }
