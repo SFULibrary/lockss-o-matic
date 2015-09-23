@@ -54,6 +54,16 @@
                 <th>Path</th>
                 <td>{{ entity.path }}</td>
             </tr>
+            <tr>
+                <th>Content Owners</th>
+                <td>
+                    <ul>
+                    {% for owner in entity.contentOwners %}
+                        <li>{{ owner }}</li>
+                    {% endfor %}
+                    </ul>
+                </td>
+            </tr>
         </tbody>
     </table>
 
