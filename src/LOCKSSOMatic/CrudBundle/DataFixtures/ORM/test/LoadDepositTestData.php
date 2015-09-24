@@ -32,7 +32,7 @@ use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 
 /**
- * Load some test data into the database.
+ * Load some test deposits into the database.
  */
 class LoadDepositTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -64,6 +64,9 @@ class LoadDepositTestData extends AbstractDataFixture implements OrderedFixtureI
         $manager->flush();
     }
 
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('test');

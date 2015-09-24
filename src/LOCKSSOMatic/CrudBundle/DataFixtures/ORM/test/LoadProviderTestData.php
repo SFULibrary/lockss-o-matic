@@ -32,7 +32,7 @@ use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 
 /**
- * Load some test data into the database.
+ * Load some content provider test data into the database.
  */
 class LoadProviderTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -71,6 +71,9 @@ class LoadProviderTestData extends AbstractDataFixture implements OrderedFixture
         $manager->flush();
     }
 
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('test');

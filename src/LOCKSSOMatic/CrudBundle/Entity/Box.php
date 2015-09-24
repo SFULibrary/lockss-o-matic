@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Box
+ * A box in a network.
  *
  * @ORM\Table(name="boxes", indexes={@ORM\Index(name="IDX_CDF1B2E9C8BA1A08", columns={"pln_id"})})
  * @ORM\Entity
@@ -25,6 +25,8 @@ class Box
     private $id;
 
     /**
+     * The DNS name.
+     *
      * @var string
      *
      * @ORM\Column(name="hostname", type="string", length=255, nullable=false)
@@ -32,18 +34,25 @@ class Box
     private $hostname;
 
     /**
+     * The protocol to use in the lockss.xml file. Defaults to TCP.
+     *
      * @var string
      * @ORM\Column(name="protocol", type="string", length=16, nullable=false)
      */
     private $protocol;
 
     /**
+     * The port used for the lockss.xml file.
+     *
      * @var integer
      * @ORM\Column(name="port", type="integer", nullable=false)
      */
     private $port;
 
     /**
+     * The box's IP address. The class will resolve it automatically from the
+     * domain name if the ipAddress is null or blank.
+     *
      * @var string
      *
      * @ORM\Column(name="ip_address", type="string", length=16, nullable=false)
@@ -51,6 +60,9 @@ class Box
     private $ipAddress;
 
     /**
+     * The username for LOCKSSOMatic to communicate with the box. Not in the
+     * lockss.xml file.
+     *
      * @var string
      *
      * @ORM\Column(name="username", type="string", length=64, nullable=true)
@@ -58,6 +70,8 @@ class Box
     private $username;
 
     /**
+     * The password for LOCKSSOMatic to communicate with the box.
+     *
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=64, nullable=true)
@@ -65,6 +79,8 @@ class Box
     private $password;
 
     /**
+     * The PLN this box is a part of.
+     *
      * @var Pln
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="boxes")
@@ -75,8 +91,10 @@ class Box
     private $pln;
 
     /**
+     * Timestamped list of box status query results.
+     *
      * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="box")
-     * @var ArrayCollection
+     * @var BoxStatus[]
      */
     private $status;
     
@@ -291,11 +309,16 @@ class Box
     }
 
     /**
+     * Resolve the hostname into an ipAddress and save it. Called automatically
+     * when saving the box via doctrine.
+     *
+     * @param boolean $force force the update, even if the ip is already known.
+     *
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
-    public function resolveHostname() {
-        if($this->ipAddress === null || $this->ipAddress === '') {
+    public function resolveHostname($force = false) {
+        if($force === true || $this->ipAddress === null || $this->ipAddress === '') {
             $ip = gethostbyname($this->hostname);
             if($ip !== $this->hostname) {
                 $this->ipAddress = $ip;

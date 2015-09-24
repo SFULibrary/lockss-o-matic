@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * ContentProvider
+ * Content Providers make deposits to LOCKSS via LOCKSSOMatic.
  *
  * @ORM\Table(name="content_providers", indexes={@ORM\Index(name="IDX_D2C29C14138983FF", columns={"content_owner_id"}), @ORM\Index(name="IDX_D2C29C14C8BA1A08", columns={"pln_id"})})
  * @ORM\Entity
@@ -26,6 +26,8 @@ class ContentProvider
     private $id;
 
     /**
+     * The type of the provider - application, user, tester, maybe others.
+     *
      * @var string
      *
      * @ORM\Column(name="type", type="string", length=24, nullable=false)
@@ -33,6 +35,9 @@ class ContentProvider
     private $type;
 
     /**
+     * The UUID for the provider. SWORD requests must include this UUID in the
+     * On-Behalf-Of header or in the URL.
+     *
      * @var string
      *
      * @ORM\Column(name="uuid", type="string", length=36, nullable=false)
@@ -44,6 +49,9 @@ class ContentProvider
     private $uuid;
 
     /**
+     * LOCKSS permission URL for the provider. Must be on the same host
+     * as the content.
+     *
      * @var string
      *
      * @ORM\Column(name="permissionUrl", type="string", length=255, nullable=false)
@@ -51,6 +59,8 @@ class ContentProvider
     private $permissionurl;
 
     /**
+     * Name of the provider.
+     *
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
@@ -58,6 +68,10 @@ class ContentProvider
     private $name;
 
     /**
+     * ipAddress for the provider.
+     * 
+     * TODO does this make sense?
+     *
      * @var string
      *
      * @ORM\Column(name="ip_address", type="string", length=16, nullable=false)
@@ -65,6 +79,9 @@ class ContentProvider
     private $ipAddress;
 
     /**
+     * Host name for the provider. Must match the permissionUrl and all content
+     * URLs must match it as well.
+     *
      * @var string
      *
      * @ORM\Column(name="hostname", type="string", length=255, nullable=false)
@@ -72,6 +89,8 @@ class ContentProvider
     private $hostname;
 
     /**
+     * Preferred checksum type for the provider.
+     *
      * @var string
      *
      * @ORM\Column(name="checksum_type", type="string", length=24, nullable=false)
@@ -79,6 +98,8 @@ class ContentProvider
     private $checksumType;
 
     /**
+     * The maximum file size for the provider. 
+     *
      * @var integer
      *
      * @ORM\Column(name="max_file_size", type="integer", nullable=true)
@@ -86,6 +107,8 @@ class ContentProvider
     private $maxFileSize;
 
     /**
+     * The maximum AU size for the provider.
+     *
      * @var integer
      *
      * @ORM\Column(name="max_au_size", type="integer", nullable=true)
@@ -93,6 +116,8 @@ class ContentProvider
     private $maxAuSize;
 
     /**
+     * The owner for the provider. Providers make deposit on behalf of owners.
+     *
      * @var ContentOwner
      *
      * @ORM\ManyToOne(targetEntity="ContentOwner", inversedBy="contentProviders")
@@ -103,6 +128,8 @@ class ContentProvider
     private $contentOwner;
 
     /**
+     * PLN for the provider. 
+     *
      * @var Pln
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="contentProviders")
@@ -114,14 +141,18 @@ class ContentProvider
 
     
     /**
+     * List of AUs for the provider.
+     *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="contentProvider")
-     * @var ArrayCollection
+     * @var Au[]
      */
     private $aus;
     
     /**
+     * Deposits made by the provider.
+     *
      * @ORM\OneToMany(targetEntity="Deposit", mappedBy="contentProvider")
-     * @var ArrayCollection
+     * @var Deposit[]
      */
     private $deposits;
 
@@ -456,18 +487,26 @@ class ContentProvider
     /**
      * Get deposits
      *
-     * @return Collection
+     * @return Deposit[]
      */
     public function getDeposits()
     {
         return $this->deposits;
     }
 
+    /**
+     * Give a string representation of the provider.
+     *
+     * @return string
+     */
     public function __toString() {
         return $this->name;
     }
 
     /**
+     * Generate a UUID for the provider, if it needs one. Called automatically
+     * by doctrine.
+     *
      * @ORM\prePersist
      */
     public function generateUuid() {

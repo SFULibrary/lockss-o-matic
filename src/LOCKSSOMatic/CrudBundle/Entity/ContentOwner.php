@@ -6,7 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * ContentOwner
+ * Content owner. Deposits are made by a content provider on behalf of a content
+ * owner. 
  *
  * @ORM\Table(name="content_owners", indexes={@ORM\Index(name="IDX_2A44E256EC46F62F", columns={"plugin_id"})})
  * @ORM\Entity
@@ -23,6 +24,8 @@ class ContentOwner
     private $id;
 
     /**
+     * Name of the content owner.
+     *
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
@@ -30,6 +33,8 @@ class ContentOwner
     private $name;
 
     /**
+     * Email address for the content owner.
+     *
      * @var string
      *
      * @ORM\Column(name="email_address", type="text", nullable=false)
@@ -40,6 +45,10 @@ class ContentOwner
     private $emailAddress;
 
     /**
+     * The LOCKSS Plugin for the content owner.
+     *
+     * TODO should the plugin be on the content provider? 
+     *
      * @var Plugin
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentOwners")
@@ -128,6 +137,11 @@ class ContentOwner
         return $this->plugin;
     }
 
+    /**
+     * Return a string representation of the owner.
+     *
+     * @return string
+     */
     public function __toString() {
         return $this->name;
     }

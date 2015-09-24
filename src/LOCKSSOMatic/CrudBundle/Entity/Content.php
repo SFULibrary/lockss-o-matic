@@ -6,7 +6,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Content
+ * Content that has been deposited to LOCKSSOMatic.
  *
  * @ORM\Table(name="content", indexes={@ORM\Index(name="IDX_FEC530A95B8F2BDB", columns={"deposit_id"}), @ORM\Index(name="IDX_FEC530A9A3D201B3", columns={"au_id"})})
  * @ORM\Entity
@@ -24,6 +24,8 @@ class Content
     private $id;
 
     /**
+     * The URL for the content.
+     * 
      * @var string
      *
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
@@ -31,6 +33,8 @@ class Content
     private $url;
 
     /**
+     * The title of the content as deposited to LOCKSSOMatic.
+     * 
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
@@ -38,6 +42,8 @@ class Content
     private $title;
 
     /**
+     * The size of the content in 1000-byte units.
+     *
      * @var integer
      *
      * @ORM\Column(name="size", type="integer", nullable=true)
@@ -45,6 +51,9 @@ class Content
     private $size;
 
     /**
+     * The date the deposit was recieved. Set automatically when the content
+     * deposit is saved.
+     *
      * @var DateTime
      *
      * @ORM\Column(name="date_deposited", type="datetime", nullable=false)
@@ -52,6 +61,7 @@ class Content
     private $dateDeposited;
 
     /**
+     * The checksum type for verifying the deposit. One of SHA1 or MD5.
      * @var string
      *
      * @ORM\Column(name="checksum_type", type="string", length=24, nullable=true)
@@ -59,6 +69,10 @@ class Content
     private $checksumType;
 
     /**
+     * The value of the checksum.
+     *
+     * TODO should this be uppercase?
+     *
      * @var string
      *
      * @ORM\Column(name="checksum_value", type="string", length=255, nullable=true)
@@ -66,6 +80,8 @@ class Content
     private $checksumValue;
 
     /**
+     * True if the content should be recrawled.
+     *
      * @var boolean
      *
      * @ORM\Column(name="recrawl", type="boolean", nullable=false)
@@ -73,6 +89,9 @@ class Content
     private $recrawl;
 
     /**
+     * LOCKSSOMatic may verify the content size with HTTP head requests. Well,
+     * that's not a secure check, but it works well enough.
+     *
      * @var boolean
      *
      * @ORM\Column(name="verified_size", type="boolean", nullable=false)
@@ -80,6 +99,8 @@ class Content
     private $verifiedSize;
 
     /**
+     * The deposit that registered this content in the database.
+     *
      * @var Deposit
      *
      * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="content")
@@ -90,6 +111,8 @@ class Content
     private $deposit;
 
     /**
+     * The AU this content is a part of.
+     *
      * @var Au
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="content")

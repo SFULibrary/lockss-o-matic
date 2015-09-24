@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Plugin
+ * LOCKSS Plugin
  *
  * @ORM\Table(name="plugins")
  * @ORM\Entity
@@ -24,6 +24,8 @@ class Plugin
     private $id;
 
     /**
+     * Name of the plugin.
+     *
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=128, nullable=false)
@@ -31,26 +33,34 @@ class Plugin
     private $name;
 
     /**
+     * Path, in the local file system, to the plugin.
+     * 
      * @var string
      * @ORM\Column(name="path", type="string", length=255, nullable=false)
      */
     private $path;
 
     /**
+     * AUs created for this plugin.
+     *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="plugin")
-     * @var ArrayCollection
+     * @var Au[]
      */
     private $aus;
 
     /**
+     * Content owners which use the plugin.
+     * 
      * @ORM\OneToMany(targetEntity="ContentOwner", mappedBy="plugin")
-     * @var ArrayCollection
+     * @var ContentOwner[]
      */
     private $contentOwners;
 
     /**
+     * Properties for the plugin.
+     *
      * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="plugin")
-     * @var ArrayCollection
+     * @var PluginProperty[]
      */
     private $pluginProperties;
 
@@ -215,6 +225,11 @@ class Plugin
         return $this->pluginProperties;
     }
 
+    /**
+     * Get the top-most properties for the plugin.
+     *
+     * @return PluginProperty[]
+     */
     public function getRootPluginProperties() {
         $properties = array();
         foreach($this->pluginProperties as $p) {
@@ -297,6 +312,11 @@ class Plugin
         return $properties;
     }
 
+    /**
+     * Get a string representation of the plugin.
+     *
+     * @return string
+     */
     public function __toString() {
         return $this->getName();
     }

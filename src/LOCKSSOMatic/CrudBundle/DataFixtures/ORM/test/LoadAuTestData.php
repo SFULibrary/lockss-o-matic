@@ -32,7 +32,7 @@ use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
 
 /**
- * Load some test data into the database.
+ * Load some test AU data into the database for testing.
  */
 class LoadAuTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -63,6 +63,9 @@ class LoadAuTestData extends AbstractDataFixture implements OrderedFixtureInterf
         $manager->flush();
     }
 
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('test');

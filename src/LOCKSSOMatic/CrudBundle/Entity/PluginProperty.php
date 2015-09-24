@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * PluginProperty
+ * Hierarchial plugin property as defined by a plugin XML file.
  *
  * @ORM\Table(name="plugin_properties", indexes={@ORM\Index(name="IDX_28F93FBCEC46F62F", columns={"plugin_id"}), @ORM\Index(name="IDX_28F93FBC727ACA70", columns={"parent_id"})})
  * @ORM\Entity
@@ -24,6 +24,8 @@ class PluginProperty
     private $id;
 
     /**
+     * Name of the property, as defined by the name attribute.
+     *
      * @var string
      *
      * @ORM\Column(name="property_key", type="string", length=255, nullable=false)
@@ -31,6 +33,9 @@ class PluginProperty
     private $propertyKey;
 
     /**
+     * The value of the property, if it has one. Properties that have children 
+     * do not have values of their own.
+     *
      * @var string
      *
      * @ORM\Column(name="property_value", type="text", nullable=true)
@@ -38,6 +43,8 @@ class PluginProperty
     private $propertyValue;
 
     /**
+     * The parent of the property
+     *
      * @var PluginProperty
      *
      * @ORM\ManyToOne(targetEntity="PluginProperty", inversedBy="pluginProperties")
@@ -48,6 +55,8 @@ class PluginProperty
     private $parent;
 
     /**
+     * The plugin this property describes.
+     *
      * @var Plugin
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="children")
@@ -58,8 +67,10 @@ class PluginProperty
     private $plugin;
 
     /**
+     * The child properties of this property.
+     *
      * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="parent");
-     * @var ArrayCollection
+     * @var PluginProperty[]
      */
     private $children;
 
@@ -147,6 +158,11 @@ class PluginProperty
         return $this->parent;
     }
 
+    /**
+     * Return true if the property has a parent.
+     *
+     * @return boolean
+     */
     public function hasParent() {
         return $this->parent !== null;
     }
@@ -207,6 +223,11 @@ class PluginProperty
         return $this->children;
     }
 
+    /**
+     * Return true if the property has child properties.
+     *
+     * @return boolean
+     */
     public function hasChildren() {
         return count($this->children) > 0;
     }

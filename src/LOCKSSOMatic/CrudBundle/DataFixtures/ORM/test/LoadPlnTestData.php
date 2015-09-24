@@ -32,7 +32,7 @@ use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 
 /**
- * Load some test data into the database.
+ * Load some pln test data into the database.
  */
 class LoadPlnTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -74,6 +74,9 @@ class LoadPlnTestData extends AbstractDataFixture implements OrderedFixtureInter
         $manager->persist($pln);
     }
 
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('test');

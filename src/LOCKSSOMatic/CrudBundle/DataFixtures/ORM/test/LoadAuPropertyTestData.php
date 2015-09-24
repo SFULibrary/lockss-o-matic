@@ -33,7 +33,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 
 /**
- * Load some test data into the database.
+ * Load some test AU property data into the database for testing.
  */
 class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -92,6 +92,9 @@ class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtu
         return $parent;
     }
 
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('test');

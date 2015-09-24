@@ -32,7 +32,7 @@ use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
 
 /**
- * Load some test data into the database.
+ * Load some test content owner data to the database for development.
  */
 class LoadOwnerData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -64,7 +64,10 @@ class LoadOwnerData extends AbstractDataFixture implements OrderedFixtureInterfa
 
         $this->setReference("owner", $owner);
     }
-    
+
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('dev');

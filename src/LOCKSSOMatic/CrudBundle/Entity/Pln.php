@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Pln
+ * Private LOCKSS Network.
  *
  * @ORM\Table(name="plns")
  * @ORM\Entity
@@ -27,6 +27,8 @@ class Pln
     private $id;
 
     /**
+     * Name of the PLN.
+     * 
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
@@ -34,13 +36,17 @@ class Pln
     private $name;
 
     /**
+     * Property server for the PLN. This is the host of the lockss.xml file.
+     *
      * @var string
      *
      * @ORM\Column(name="propServer", type="string", length=255, nullable=false)
      */
-    private $propserver;
+    private $propServer;
 
     /**
+     * Path to the lockss.xml file in the propServer.
+     *
      * @var string
      *
      * @ORM\Column(name="props_path", type="text", nullable=true)
@@ -48,26 +54,34 @@ class Pln
     private $propsPath;
 
     /**
+     * A list of all AUs in the PLN. Probably very large.
+     * 
      * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
-     * @var ArrayCollection
+     * @var Au[]
      */
     private $aus;
 
     /**
+     * List of boxes in the PLN.
+     *
      * @ORM\OneToMany(targetEntity="Box", mappedBy="pln");
-     * @var ArrayCollection
+     * @var Box[]
      */
     private $boxes;
 
     /**
+     * External titles databases.
+     *
      * @ORM\OneToMany(targetEntity="ExternalTitleDb", mappedBy="pln")
      * @var ArrayCollection
      */
     private $externalTitleDbs;
 
     /**
+     * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
+     *
      * @ORM\OneToMany(targetEntity="PlnProperty", mappedBy="pln");
-     * @var ArrayCollection
+     * @var PlnProperty[]
      */
     private $plnProperties;
 
@@ -119,7 +133,7 @@ class Pln
      */
     public function setPropserver($propserver)
     {
-        $this->propserver = $propserver;
+        $this->propServer = $propserver;
 
         return $this;
     }
@@ -131,7 +145,7 @@ class Pln
      */
     public function getPropserver()
     {
-        return $this->propserver;
+        return $this->propServer;
     }
 
     /**
@@ -293,6 +307,11 @@ class Pln
         return $this->plnProperties;
     }
 
+    /**
+     * PLN Properties are hierarchial, so get just the top-most properties.
+     *
+     * @return PlnProperty[]
+     */
     public function getRootPluginProperties() {
         $properties = array();
         foreach($this->plnProperties as $p) {
@@ -304,6 +323,13 @@ class Pln
         return $properties;
     }
 
+    /**
+     * Find the property with the given name. If there are multiple properties
+     * with the same name, only the first is returned.
+     *
+     * @param type $name
+     * @return PlnProperty
+     */
     public function getProperty($name) {
         foreach($this->getPlnProperties() as $prop) {
             if($prop->getPropertyKey() === $name) {

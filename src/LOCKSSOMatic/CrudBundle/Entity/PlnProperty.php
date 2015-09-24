@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * PlnProperty
+ * Pln Properties are hierarchial.
  *
  * @ORM\Table(name="pln_properties", indexes={@ORM\Index(name="IDX_E1F16662C8BA1A08", columns={"pln_id"}), @ORM\Index(name="IDX_E1F16662727ACA70", columns={"parent_id"})})
  * @ORM\Entity
@@ -24,6 +24,8 @@ class PlnProperty
     private $id;
 
     /**
+     * The name of the property.
+     *
      * @var string
      *
      * @ORM\Column(name="property_key", type="string", length=255, nullable=false)
@@ -31,13 +33,17 @@ class PlnProperty
     private $propertyKey;
 
     /**
-     * @var string
+     * The value of the property. Parent properties don't have values. The value
+     * may be an array.
+     *
+     * @var string|array
      *
      * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
 
     /**
+     * True if the property value is a list/array.
      * @var boolean
      *
      * @ORM\Column(name="is_list", type="boolean", nullable=false)
@@ -45,6 +51,8 @@ class PlnProperty
     private $isList;
 
     /**
+     * The parent of this property.
+     * 
      * @var PlnProperty
      *
      * @ORM\ManyToOne(targetEntity="PlnProperty", inversedBy="children")
@@ -55,6 +63,8 @@ class PlnProperty
     private $parent;
 
     /**
+     * The PLN for the property
+     * 
      * @var Pln
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="plnProperties")
@@ -65,6 +75,8 @@ class PlnProperty
     private $pln;
 
     /**
+     * The children of the property.
+     * 
      * @ORM\OneToMany(targetEntity="PlnProperty", mappedBy="parent")
      * @var ArrayCollection
      */
@@ -111,7 +123,7 @@ class PlnProperty
     /**
      * Set propertyValue
      *
-     * @param mixed $propertyValue
+     * @param string|array $propertyValue
      * @return PlnProperty
      */
     public function setPropertyValue($propertyValue)
@@ -140,6 +152,11 @@ class PlnProperty
         return $this->propertyValue;
     }
 
+    /**
+     * Return true if the value of the property is a list.
+     *
+     * @return boolean
+     */
     public function isList() {
         return $this->isList;
     }
@@ -167,6 +184,11 @@ class PlnProperty
         return $this->parent;
     }
 
+    /**
+     * Return true if the property has a parent.
+     *
+     * @return boolean
+     */
     public function hasParent() {
         return $this->parent !== null;
     }
@@ -227,6 +249,11 @@ class PlnProperty
         return $this->children;
     }
 
+    /**
+     * Return true if the property has children.
+     *
+     * @return boolean
+     */
     public function hasChildren() {
         return $this->children->count() > 0;
     }

@@ -33,7 +33,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Entity\PlnProperty;
 
 /**
- * Load some test data into the database.
+ * Load some test pln property data into the database.
  */
 class LoadPlnPropertyTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -83,6 +83,9 @@ class LoadPlnPropertyTestData extends AbstractDataFixture implements OrderedFixt
         return $prop;
     }
 
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('test');

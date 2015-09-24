@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Deposit
+ * Deposit made to LOCKSSOMatic.
  *
  * @ORM\Table(name="deposits", indexes={@ORM\Index(name="IDX_449E9C9ED5F0A8C4", columns={"content_provider_id"}), @ORM\Index(name="uuid", columns={"uuid"})})
  * @ORM\Entity
@@ -26,6 +26,8 @@ class Deposit
     private $id;
 
     /**
+     * The UUID for the deposit.
+     *
      * @var string
      *
      * @ORM\Column(name="uuid", type="string", length=36, nullable=false)
@@ -33,6 +35,8 @@ class Deposit
     private $uuid;
 
     /**
+     * The title of the deposit.
+     *
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
@@ -40,6 +44,8 @@ class Deposit
     private $title;
 
     /**
+     * A summary/description of the deposit.
+     *
      * @var string
      *
      * @ORM\Column(name="summary", type="string", length=255, nullable=true)
@@ -47,6 +53,8 @@ class Deposit
     private $summary;
 
     /**
+     * The date LOCKSSOMatic recieved the deposit.
+     *
      * @var DateTime
      *
      * @ORM\Column(name="date_deposited", type="datetime", nullable=false)
@@ -54,6 +62,8 @@ class Deposit
     private $dateDeposited;
 
     /**
+     * The content provider that created the deposit.s
+     *
      * @var ContentProvider
      *
      * @ORM\ManyToOne(targetEntity="ContentProvider", inversedBy="deposits")
@@ -64,7 +74,9 @@ class Deposit
     private $contentProvider;
 
     /**
-     * @var ArrayCollection
+     * The content for the deposit.
+     *
+     * @var Content[]
      * @ORM\OneToMany(targetEntity="Content", mappedBy="deposit")
      */
     private $content;
@@ -233,6 +245,9 @@ class Deposit
     }
 
     /**
+     * Set the date of the deposit. Called automatically, and set to the current
+     * timestamp.
+     * 
      * @ORM\prePersist
      */
     public function setDepositDate() {

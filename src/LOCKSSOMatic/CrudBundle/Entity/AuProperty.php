@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * AuProperty
+ * AUs have hierarchial properties.
  *
  * @ORM\Table(name="au_properties", indexes={@ORM\Index(name="IDX_EFF7C3EEA3D201B3", columns={"au_id"}), @ORM\Index(name="IDX_EFF7C3EE727ACA70", columns={"parent_id"})})
  * @ORM\Entity
@@ -24,20 +24,25 @@ class AuProperty
     private $id;
 
     /**
-     * @var string
+     * The name of the property, corresponding to the name attribute in XML.
      *
+     * @var string
      * @ORM\Column(name="property_key", type="string", length=255, nullable=false)
      */
     private $propertyKey;
 
     /**
-     * @var string
+     * The value of the property, if the property has a value. Properties with
+     * child properties don't have values.
      *
+     * @var string|array
      * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
 
     /**
+     * The parent of the property, if it has one. 
+     *
      * @var AuProperty
      *
      * @ORM\ManyToOne(targetEntity="AuProperty", inversedBy="children")
@@ -48,6 +53,8 @@ class AuProperty
     private $parent;
 
     /**
+     * The AU for the property.
+     *
      * @var Au
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auProperties")
@@ -58,6 +65,8 @@ class AuProperty
     private $au;
 
     /**
+     * The children of the property.
+     *
      * @ORM\OneToMany(targetEntity="AuProperty", mappedBy="parent")
      * @var ArrayCollection
      */
@@ -146,6 +155,11 @@ class AuProperty
         return $this->parent;
     }
 
+    /**
+     * Returns true if the property has a parent.
+     *
+     * @return boolean
+     */
     public function hasParent() {
         return $this->parent !== null;
     }
@@ -206,6 +220,11 @@ class AuProperty
         return $this->children;
     }
 
+    /**
+     * Return true if the property has children.
+     *
+     * @return boolean
+     */
     public function hasChildren() {
         return count($this->children) > 0;
     }

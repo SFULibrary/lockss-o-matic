@@ -1,5 +1,29 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -32,9 +56,7 @@ class PluginPropertyController extends Controller
         $query = $em->createQuery($dql);
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            25
+            $query, $request->query->getInt('page', 1), 25
         );
 
 
@@ -42,6 +64,7 @@ class PluginPropertyController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new PluginProperty entity.
      *
@@ -60,7 +83,8 @@ class PluginPropertyController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('pluginproperty_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('pluginproperty_show',
+                        array('id' => $entity->getId())));
         }
 
         return array(
@@ -78,7 +102,8 @@ class PluginPropertyController extends Controller
      */
     private function createCreateForm(PluginProperty $entity)
     {
-        $form = $this->createForm(new PluginPropertyType(), $entity, array(
+        $form = $this->createForm(new PluginPropertyType(), $entity,
+            array(
             'action' => $this->generateUrl('pluginproperty_create'),
             'method' => 'POST',
         ));
@@ -98,7 +123,7 @@ class PluginPropertyController extends Controller
     public function newAction()
     {
         $entity = new PluginProperty();
-        $form   = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity);
 
         return array(
             'entity' => $entity,
@@ -159,16 +184,18 @@ class PluginPropertyController extends Controller
     }
 
     /**
-    * Creates a form to edit a PluginProperty entity.
-    *
-    * @param PluginProperty $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to edit a PluginProperty entity.
+     *
+     * @param PluginProperty $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createEditForm(PluginProperty $entity)
     {
-        $form = $this->createForm(new PluginPropertyType(), $entity, array(
-            'action' => $this->generateUrl('pluginproperty_update', array('id' => $entity->getId())),
+        $form = $this->createForm(new PluginPropertyType(), $entity,
+            array(
+            'action' => $this->generateUrl('pluginproperty_update',
+                array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -176,6 +203,7 @@ class PluginPropertyController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing PluginProperty entity.
      *
@@ -200,7 +228,8 @@ class PluginPropertyController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('pluginproperty_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('pluginproperty_edit',
+                        array('id' => $id)));
         }
 
         return array(
@@ -209,6 +238,7 @@ class PluginPropertyController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a PluginProperty entity.
      *
@@ -216,15 +246,15 @@ class PluginPropertyController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('LOCKSSOMaticCrudBundle:PluginProperty')->find($id);
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('LOCKSSOMaticCrudBundle:PluginProperty')->find($id);
 
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find PluginProperty entity.');
-            }
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find PluginProperty entity.');
+        }
 
-            $em->remove($entity);
-            $em->flush();
+        $em->remove($entity);
+        $em->flush();
 
         return $this->redirect($this->generateUrl('pluginproperty'));
     }
@@ -239,10 +269,12 @@ class PluginPropertyController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('pluginproperty_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
+                ->setAction($this->generateUrl('pluginproperty_delete',
+                        array('id' => $id)))
+                ->setMethod('DELETE')
+                ->add('submit', 'submit', array('label' => 'Delete'))
+                ->getForm()
         ;
     }
+
 }

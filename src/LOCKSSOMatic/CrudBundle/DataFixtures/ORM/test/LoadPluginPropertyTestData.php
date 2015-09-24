@@ -33,7 +33,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 use LOCKSSOMatic\CrudBundle\Entity\PluginProperty;
 
 /**
- * Load some test data into the database.
+ * Load some  plugin property test data into the database.
  */
 class LoadPluginPropertyTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -73,6 +73,9 @@ class LoadPluginPropertyTestData extends AbstractDataFixture implements OrderedF
         return $p;
     }
 
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('test');

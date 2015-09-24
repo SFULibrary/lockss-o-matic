@@ -32,7 +32,7 @@ use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 
 /**
- * Load some test data into the database.
+ * Load some plugin test data into the database.
  */
 class LoadPluginTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -48,6 +48,9 @@ class LoadPluginTestData extends AbstractDataFixture implements OrderedFixtureIn
         $this->setReference("plugin", $plugin);
     }
 
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('test');

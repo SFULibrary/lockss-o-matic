@@ -33,7 +33,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 
 /**
- * Load some test data.
+ * Load some test boxes for development. Boxes must be loaded after PLNs.
  */
 class LoadBoxData extends AbstractDataFixture implements OrderedFixtureInterface
 {
@@ -107,7 +107,10 @@ class LoadBoxData extends AbstractDataFixture implements OrderedFixtureInterface
         $manager->persist($box);
         return $box;
     }
-    
+
+    /**
+     * {@inheritDocs}
+     */
     protected function getEnvironments()
     {
         return array('dev');
