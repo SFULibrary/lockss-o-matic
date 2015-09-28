@@ -34,7 +34,7 @@ class PLNPluginImportCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this->setName('lom:import:plnplugin')
+        $this->setName('lom:import:plugin')
             ->setDescription('Import PLN plugins.')
             ->addOption('nocopy', null, InputOption::VALUE_NONE, 'Do not copy the plugin .jar file.')
             ->addArgument('plugin_files', InputArgument::IS_ARRAY, 'Local path to the folder containing the PLN plugin JAR files?');

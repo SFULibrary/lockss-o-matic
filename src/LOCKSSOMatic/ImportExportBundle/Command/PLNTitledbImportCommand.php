@@ -158,14 +158,17 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $cache[$name] = $owner;
         return $cache[$name];
     }
-    public function newProperties(Au $au, $parent, $key, $value) {
-        $prop = new AuProperty();
-        $prop->setAu($au);
-        $prop->setParent($parent);
-        $prop->setPropertyKey($key);
-        $prop->setPropertyValue($value);
-        $this->em->persist($prop);
-        return $prop;
+
+    public function findChildProperties(SimpleXMLElement $xml, AuProperty $parent = null) {
+        foreach($xml->xpath('property') as $x) {
+            $child = new AuProperty();
+            $child->setPropertyKey($x->attributes()->name);
+            $child->setPropertyValue($x->attributes()->value);
+            $child->setParent($parent);
+            $child->setAu($parent->getAu());
+            $this->em->persist($child);
+            $this->findChildProperties($x, $child);
+        }
     }
 
     public function addAu(SimpleXMLElement $xml)
@@ -177,21 +180,15 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
 
         $au = new Au();
         $au->setComment('AU created by import command');
-        $au->setManifestUrl('http://example.com/manifest/url');
         $plugin->addAus($au);
         $au->setPlugin($plugin);
         $this->em->persist($au);
-        
-        $propRoot = $this->newProperties($au, null, (string) $xml->attributes()->name, null);
 
-        foreach ($xml->xpath('property[starts-with(@name, "param.")]') as $node) {
-            $nameData = $node->xpath('property[@name="key"]/@value');
-            $valueData = $node->xpath('property[@name="value"]/@value');
-
-            $childProp = $this->newProperties($au, $propRoot, $node->attributes()->name, null);
-            $this->newProperties($au, $childProp, 'key', $nameData[0]);
-            $this->newProperties($au, $childProp, 'value', $valueData[0]);
-        }
+        $prop = new AuProperty();
+        $prop->setPropertyKey((string)$xml->attributes()->name);
+        $prop->setAu($au);
+        $this->em->persist($prop);
+        $this->findChildProperties($xml, $prop);
     }
 
 
