@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM;
+namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test;
 
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;

@@ -347,6 +347,19 @@ class ContentProvider
     }
 
     /**
+     * Set plugin
+     *
+     * @param Plugin $plugin
+     * @return ContentOwner
+     */
+    public function setPlugin(Plugin $plugin = null)
+    {
+        $this->plugin = $plugin;
+
+        return $this;
+    }
+
+    /**
      * Get plugin
      *
      * @return Plugin

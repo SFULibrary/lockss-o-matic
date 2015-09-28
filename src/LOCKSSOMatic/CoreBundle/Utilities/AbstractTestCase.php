@@ -54,15 +54,15 @@ class AbstractTestCase extends BaseTestCase {
      */
     protected function setUp() {
         $fixtures = array(
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadPlnTestData',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadPlnPropertyTestData',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadPluginTestData',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadPluginPropertyTestData',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadOwnerTestData',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadProviderTestData',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadDepositTestData',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadAuTestData',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\LoadAuPropertyTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPlnTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPlnPropertyTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPluginTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPluginPropertyTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadOwnerTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadProviderTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadDepositTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAuTestData',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAuPropertyTestData',
         );
         $this->references = $this->loadFixtures($fixtures)->getReferenceRepository();
         $this->em = $this->getContainer()->get('doctrine')->getManager();

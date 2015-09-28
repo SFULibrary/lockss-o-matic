@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM;
+namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test;
 
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -52,20 +52,18 @@ class LoadProviderTestData extends AbstractDataFixture implements OrderedFixture
      *
      * @param ObjectManager $manager
      */
-    public function doload(ObjectManager $manager)
+    protected function doload(ObjectManager $manager)
     {
         $provider = new ContentProvider();
         $provider->setType("test");
         $provider->setUuid('473a1b0d-425f-417b-94cf-28c3fc04b0e2');
         $provider->setPermissionurl("http://example.com/path/to/permissions");
         $provider->setName("Test provider");
-        $provider->setIpAddress("192.168.0.0");
-        $provider->setHostname("example.com");
-        $provider->setChecksumType("SHA1");
         $provider->setMaxFileSize("10000");
         $provider->setMaxAuSize("1000000");
         $provider->setContentOwner($this->getReference("owner"));
         $provider->setPln($this->getReference("pln-franklin"));
+        $provider->setPlugin($this->getReference('plugin'));
         $this->setReference('provider', $provider);
         $manager->persist($provider);
         $manager->flush();
@@ -78,5 +76,4 @@ class LoadProviderTestData extends AbstractDataFixture implements OrderedFixture
     {
         return array('test');
     }
-
 }

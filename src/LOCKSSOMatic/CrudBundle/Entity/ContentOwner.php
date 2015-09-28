@@ -100,19 +100,6 @@ class ContentOwner
         return $this->emailAddress;
     }
 
-    /**
-     * Set plugin
-     *
-     * @param Plugin $plugin
-     * @return ContentOwner
-     */
-    public function setPlugin(Plugin $plugin = null)
-    {
-        $this->plugin = $plugin;
-
-        return $this;
-    }
-
     public function __toString() {
         return $this->name;
     }
