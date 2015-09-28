@@ -159,18 +159,10 @@ class SwordController extends Controller
         $this->activityLog->overrideUser($obh);
         $this->activityLog->log('Requested service document.');
         $this->activityLog->overrideUser(null);
-
-        $xml = $this->getSimpleXML('<root/>');
-        $event = new ServiceDocumentEvent($xml);
-        /** @var EventDispatcher */
-        $dispatcher = $this->get('event_dispatcher');
-        $dispatcher->dispatch(SwordEvents::SERVICEDOC, $event);
-
         $response = $this->render(
             'LOCKSSOMaticSwordBundle:Sword:serviceDocument.xml.twig',
             array(
             'contentProvider' => $provider,
-            'xml'             => $xml
             )
         );
         $response->headers->set('Content-Type', 'text/xml');
@@ -195,16 +187,6 @@ class SwordController extends Controller
                 throw new MaxUploadSizeExceededException("Content size {$size} exceeds provider's maximum: {$max}");
             }
         }
-    }
-
-    private function getLomPlugin(SimpleXMLElement $atomEntry)
-    {
-        $pluginName = 'lomplugin.aus.size';
-        $pluginAttr = $atomEntry->xpath('lom:plugin/@name');
-        if (count($pluginAttr)) {
-            $pluginName = (string) $pluginAttr[0];
-        }
-        return $pluginName;
     }
 
     private function renderDepositReceipt($contentProvider, $deposit)
@@ -239,21 +221,13 @@ class SwordController extends Controller
         $this->activityLog->overrideUser($providerUuid);
         $atomEntry = $this->getSimpleXML($request->getContent());
         $this->precheckDeposit($atomEntry, $provider);
-        $lomPlugin = $this->getLomPlugin($atomEntry);
-
-        $this->get('logger')->warn("LOM Plugin: {$lomPlugin}");
 
         $depositBuilder = new DepositBuilder();
         $deposit = $depositBuilder->fromSimpleXML($atomEntry);
         $deposit->setContentProvider($provider);
         $em->persist($deposit);
+        // TODO figure out the new logic for adding content to AUs.
 
-        /** @var EventDispatcher */
-        $dispatcher = $this->get('event_dispatcher');
-        foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
-            $event = new DepositContentEvent($lomPlugin, $deposit, $provider, $contentChunk);
-            $dispatcher->dispatch(SwordEvents::DEPOSITCONTENT, $event);
-        }
         $em->flush();
         $this->activityLog->overrideUser(null);
 

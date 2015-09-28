@@ -68,6 +68,10 @@
                 <th>Maxausize</th>
                 <td>{{ entity.maxAuSize }}</td>
             </tr>
+            <tr>
+                <th>Service document</th>
+                <td><a href="{{ url('sword_service') }}?On-Behalf-Of={{ entity.uuid }}">XML</a></td>
+            </tr>
         </tbody>
     </table>
 
