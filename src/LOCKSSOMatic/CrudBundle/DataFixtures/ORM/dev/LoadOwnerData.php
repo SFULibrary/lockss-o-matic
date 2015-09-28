@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM;
+namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\dev;
 
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -57,7 +57,6 @@ class LoadOwnerData extends AbstractDataFixture implements OrderedFixtureInterfa
         $owner = new ContentOwner();
         $owner->setName("Test Owner");
         $owner->setEmailAddress("test@example.com");
-        $owner->setPlugin($this->getReference("plugin"));
 
         $manager->persist($owner);
         $manager->flush();

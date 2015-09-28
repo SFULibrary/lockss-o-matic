@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM;
+namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\dev;
 
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -55,18 +55,14 @@ class LoadProviderData extends AbstractDataFixture implements OrderedFixtureInte
     public function doLoad(ObjectManager $manager)
     {
         $provider = new ContentProvider();
-        $provider->setType("test");
         $provider->setUuid('473a1b0d-425f-417b-94cf-28c3fc04b0e2');
         $provider->setPermissionurl("http://example.com/path/to/permissions");
         $provider->setName("Test provider");
-        $provider->setIpAddress("192.168.0.0");
-        $provider->setHostname("example.com");
-        $provider->setChecksumType("SHA1");
         $provider->setMaxFileSize("10000");
         $provider->setMaxAuSize("1000000");
         $provider->setContentOwner($this->getReference("owner"));
         $provider->setPln($this->getReference("pln-franklin"));
-        
+        $provider->setPlugin($this->getReference('plugin'));
         $manager->persist($provider);
         $manager->flush();
     }

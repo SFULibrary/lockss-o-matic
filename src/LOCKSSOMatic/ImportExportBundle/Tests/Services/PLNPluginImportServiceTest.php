@@ -23,7 +23,7 @@ class PLNPluginImportServiceTest extends AbstractTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->object = $this->getContainer->get('pln_plugin_importer');
+        $this->object = $this->getContainer()->get('pln_plugin_importer');
     }
 
     /**

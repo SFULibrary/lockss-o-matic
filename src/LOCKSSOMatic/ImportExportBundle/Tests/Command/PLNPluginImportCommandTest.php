@@ -28,7 +28,7 @@ class PLNPluginImportCommandTest extends AbstractTestCase
     }
 
     public function testExecute() {
-        $dir = __DIR__ . '/../data';
+        $file = __DIR__ . '/../data/SFUCartoonsPlugin.jar';
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
 
         $plugins = $repo->findAll();
@@ -41,9 +41,8 @@ class PLNPluginImportCommandTest extends AbstractTestCase
 
         $this->runCommand('lom:import:plnplugin', array(
             '--nocopy' => true,
-            'plugin_folder_path' => $dir,
+            'plugin_files' => array($file),
         ));
-        $this->assertEquals($count + 1, count($repo->findAll()));
 
         $plugin = $repo->findOneBy(array(
             'name' => 'Simon Fraser University Library Editorial Cartoons Collection Plugin'
@@ -56,12 +55,4 @@ class PLNPluginImportCommandTest extends AbstractTestCase
         );
     }
 
-    public function testGetJarFiles() {
-        $dir = __DIR__ . '/../data';
-        
-        /** @var SplFileInfo[] $files */
-        $files = $this->command->getJarFiles($dir);
-        $this->assertEquals(1, count($files));
-        $this->assertEquals('SFUCartoonsPlugin.jar', $files[0]->getBasename());
-    }
 }

@@ -153,7 +153,6 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             $owner = new ContentOwner();
             $owner->setName($name);
             $owner->setEmailAddress('unknown');
-            $owner->setPlugin($plugin);
             $this->em->persist($owner);
         }
         $cache[$name] = $owner;
