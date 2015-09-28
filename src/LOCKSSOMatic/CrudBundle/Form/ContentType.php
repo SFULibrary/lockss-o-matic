@@ -22,7 +22,6 @@ class ContentType extends AbstractType
             ->add('checksumType')
             ->add('checksumValue')
             ->add('recrawl')
-            ->add('verifiedSize')
             ->add('deposit')
             ->add('au')
         ;

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ExternalTitleDb
  *
- * @ORM\Table(name="external_title_dbs", indexes={@ORM\Index(name="IDX_D40D047CC8BA1A08", columns={"pln_id"})})
+ * @ORM\Table(name="external_title_dbs")
  * @ORM\Entity
  */
 class ExternalTitleDb

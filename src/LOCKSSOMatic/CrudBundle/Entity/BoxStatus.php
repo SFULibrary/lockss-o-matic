@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * BoxStatus
  *
- * @ORM\Table(name="box_status", indexes={@ORM\Index(name="IDX_D5A8258ADC3B2062", columns={"box_id"})})
+ * @ORM\Table(name="box_status")
  * @ORM\Entity
  */
 class BoxStatus

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Hierarchial plugin property as defined by a plugin XML file.
  *
- * @ORM\Table(name="plugin_properties", indexes={@ORM\Index(name="IDX_28F93FBCEC46F62F", columns={"plugin_id"}), @ORM\Index(name="IDX_28F93FBC727ACA70", columns={"parent_id"})})
+ * @ORM\Table(name="plugin_properties")
  * @ORM\Entity
  */
 class PluginProperty

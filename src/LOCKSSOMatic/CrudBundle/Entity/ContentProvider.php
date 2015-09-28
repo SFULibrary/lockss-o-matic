@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Content Providers make deposits to LOCKSS via LOCKSSOMatic.
  *
- * @ORM\Table(name="content_providers", indexes={@ORM\Index(name="IDX_D2C29C14138983FF", columns={"content_owner_id"}), @ORM\Index(name="IDX_D2C29C14C8BA1A08", columns={"pln_id"})})
+ * @ORM\Table(name="content_providers")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
@@ -24,15 +24,6 @@ class ContentProvider
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
-
-    /**
-     * The type of the provider - application, user, tester, maybe others.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="type", type="string", length=24, nullable=false)
-     */
-    private $type;
 
     /**
      * The UUID for the provider. SWORD requests must include this UUID in the
@@ -66,36 +57,6 @@ class ContentProvider
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
      */
     private $name;
-
-    /**
-     * ipAddress for the provider.
-     * 
-     * TODO does this make sense?
-     *
-     * @var string
-     *
-     * @ORM\Column(name="ip_address", type="string", length=16, nullable=false)
-     */
-    private $ipAddress;
-
-    /**
-     * Host name for the provider. Must match the permissionUrl and all content
-     * URLs must match it as well.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="hostname", type="string", length=255, nullable=false)
-     */
-    private $hostname;
-
-    /**
-     * Preferred checksum type for the provider.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="checksum_type", type="string", length=24, nullable=false)
-     */
-    private $checksumType;
 
     /**
      * The maximum file size for the provider. 
@@ -138,8 +99,21 @@ class ContentProvider
      * })
      */
     private $pln;
-
     
+    /**
+     * The LOCKSS Plugin for the content owner.
+     *
+     * TODO should the plugin be on the content provider?
+     *
+     * @var Plugin
+     *
+     * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentOwners")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
+     * })
+     */
+    private $plugin;
+
     /**
      * List of AUs for the provider.
      *
@@ -268,75 +242,6 @@ class ContentProvider
     }
 
     /**
-     * Set ipAddress
-     *
-     * @param string $ipAddress
-     * @return ContentProvider
-     */
-    public function setIpAddress($ipAddress)
-    {
-        $this->ipAddress = $ipAddress;
-
-        return $this;
-    }
-
-    /**
-     * Get ipAddress
-     *
-     * @return string 
-     */
-    public function getIpAddress()
-    {
-        return $this->ipAddress;
-    }
-
-    /**
-     * Set hostname
-     *
-     * @param string $hostname
-     * @return ContentProvider
-     */
-    public function setHostname($hostname)
-    {
-        $this->hostname = $hostname;
-
-        return $this;
-    }
-
-    /**
-     * Get hostname
-     *
-     * @return string 
-     */
-    public function getHostname()
-    {
-        return $this->hostname;
-    }
-
-    /**
-     * Set checksumType
-     *
-     * @param string $checksumType
-     * @return ContentProvider
-     */
-    public function setChecksumType($checksumType)
-    {
-        $this->checksumType = $checksumType;
-
-        return $this;
-    }
-
-    /**
-     * Get checksumType
-     *
-     * @return string 
-     */
-    public function getChecksumType()
-    {
-        return $this->checksumType;
-    }
-
-    /**
      * Set maxFileSize
      *
      * @param integer $maxFileSize
@@ -439,6 +344,16 @@ class ContentProvider
         $this->aus[] = $aus;
 
         return $this;
+    }
+
+    /**
+     * Get plugin
+     *
+     * @return Plugin
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
     }
 
     /**

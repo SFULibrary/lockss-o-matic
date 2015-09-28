@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Content owner. Deposits are made by a content provider on behalf of a content
  * owner. 
  *
- * @ORM\Table(name="content_owners", indexes={@ORM\Index(name="IDX_2A44E256EC46F62F", columns={"plugin_id"})})
+ * @ORM\Table(name="content_owners")
  * @ORM\Entity
  */
 class ContentOwner
@@ -43,20 +43,6 @@ class ContentOwner
      * )
      */
     private $emailAddress;
-
-    /**
-     * The LOCKSS Plugin for the content owner.
-     *
-     * TODO should the plugin be on the content provider? 
-     *
-     * @var Plugin
-     *
-     * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentOwners")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
-     * })
-     */
-    private $plugin;
 
     /**
      * Get id
@@ -127,21 +113,6 @@ class ContentOwner
         return $this;
     }
 
-    /**
-     * Get plugin
-     *
-     * @return Plugin
-     */
-    public function getPlugin()
-    {
-        return $this->plugin;
-    }
-
-    /**
-     * Return a string representation of the owner.
-     *
-     * @return string
-     */
     public function __toString() {
         return $this->name;
     }

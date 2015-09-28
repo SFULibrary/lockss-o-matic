@@ -15,7 +15,6 @@ class ContentProviderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('type')
             ->add('uuid', 'text', array(
                 'required' => false,
                 'attr' => array(
@@ -23,12 +22,10 @@ class ContentProviderType extends AbstractType
             )))
             ->add('permissionurl')
             ->add('name')
-            ->add('ipAddress')
-            ->add('hostname')
-            ->add('checksumType')
             ->add('maxFileSize')
             ->add('maxAuSize')
             ->add('contentOwner')
+            ->add('plugin')
             ->add('pln')
         ;
     }

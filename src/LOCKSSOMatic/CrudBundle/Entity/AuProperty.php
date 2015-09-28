@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * AUs have hierarchial properties.
  *
- * @ORM\Table(name="au_properties", indexes={@ORM\Index(name="IDX_EFF7C3EEA3D201B3", columns={"au_id"}), @ORM\Index(name="IDX_EFF7C3EE727ACA70", columns={"parent_id"})})
+ * @ORM\Table(name="au_properties")
  * @ORM\Entity
  */
 class AuProperty

@@ -15,13 +15,9 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Type</th>
                 <th>Uuid</th>
                 <th>Permissionurl</th>
                 <th>Name</th>
-                <th>Ipaddress</th>
-                <th>Hostname</th>
-                <th>Checksumtype</th>
                 <th>Maxfilesize</th>
                 <th>Maxausize</th>
                 <th>Actions</th>
@@ -31,13 +27,9 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('contentprovider_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.type }}</td>
                 <td>{{ entity.uuid }}</td>
                 <td>{{ entity.permissionurl }}</td>
                 <td>{{ entity.name }}</td>
-                <td>{{ entity.ipAddress }}</td>
-                <td>{{ entity.hostname }}</td>
-                <td>{{ entity.checksumType }}</td>
                 <td>{{ entity.maxFileSize }}</td>
                 <td>{{ entity.maxAuSize }}</td>
                 <td>

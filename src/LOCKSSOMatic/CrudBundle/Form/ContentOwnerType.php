@@ -17,7 +17,6 @@ class ContentOwnerType extends AbstractType
         $builder
             ->add('name')
             ->add('emailAddress')
-            ->add('plugin')
         ;
     }
     

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Pln Properties are hierarchial.
  *
- * @ORM\Table(name="pln_properties", indexes={@ORM\Index(name="IDX_E1F16662C8BA1A08", columns={"pln_id"}), @ORM\Index(name="IDX_E1F16662727ACA70", columns={"parent_id"})})
+ * @ORM\Table(name="pln_properties")
  * @ORM\Entity
  */
 class PlnProperty

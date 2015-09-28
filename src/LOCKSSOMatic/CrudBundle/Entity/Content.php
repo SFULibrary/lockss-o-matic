@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Content that has been deposited to LOCKSSOMatic.
  *
- * @ORM\Table(name="content", indexes={@ORM\Index(name="IDX_FEC530A95B8F2BDB", columns={"deposit_id"}), @ORM\Index(name="IDX_FEC530A9A3D201B3", columns={"au_id"})})
+ * @ORM\Table(name="content")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
@@ -89,16 +89,6 @@ class Content
     private $recrawl;
 
     /**
-     * LOCKSSOMatic may verify the content size with HTTP head requests. Well,
-     * that's not a secure check, but it works well enough.
-     *
-     * @var boolean
-     *
-     * @ORM\Column(name="verified_size", type="boolean", nullable=false)
-     */
-    private $verifiedSize;
-
-    /**
      * The deposit that registered this content in the database.
      *
      * @var Deposit
@@ -121,11 +111,6 @@ class Content
      * })
      */
     private $au;
-
-    public function __construct()
-    {
-        $this->verifiedSize = false;
-    }
 
     /**
      * Get id
@@ -296,29 +281,6 @@ class Content
     public function getRecrawl()
     {
         return $this->recrawl;
-    }
-
-    /**
-     * Set verifiedSize
-     *
-     * @param boolean $verifiedSize
-     * @return Content
-     */
-    public function setVerifiedSize($verifiedSize)
-    {
-        $this->verifiedSize = $verifiedSize;
-
-        return $this;
-    }
-
-    /**
-     * Get verifiedSize
-     *
-     * @return boolean 
-     */
-    public function getVerifiedSize()
-    {
-        return $this->verifiedSize;
     }
 
     /**

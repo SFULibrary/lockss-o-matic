@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * LOCKSS archival unit.
  *
- * @ORM\Table(name="aus", indexes={@ORM\Index(name="IDX_2D10D530C8BA1A08", columns={"pln_id"}), @ORM\Index(name="IDX_2D10D530EC46F62F", columns={"plugin_id"}), @ORM\Index(name="IDX_2D10D530DCEFBC03", columns={"contentprovider_id"})})
+ * @ORM\Table(name="aus")
  * @ORM\Entity
  */
 class Au

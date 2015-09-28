@@ -51,10 +51,10 @@ class Plugin
     /**
      * Content owners which use the plugin.
      * 
-     * @ORM\OneToMany(targetEntity="ContentOwner", mappedBy="plugin")
+     * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="plugin")
      * @var ContentOwner[]
      */
-    private $contentOwners;
+    private $contentProviders;
 
     /**
      * Properties for the plugin.
@@ -66,7 +66,7 @@ class Plugin
 
     public function __construct() {
         $this->aus = new ArrayCollection();
-        $this->contentOwners = new ArrayCollection();
+        $this->contentProviders = new ArrayCollection();
         $this->pluginProperties = new ArrayCollection();
     }
 
@@ -160,36 +160,36 @@ class Plugin
     }
 
     /**
-     * Add contentOwners
+     * Add contentProviders
      *
-     * @param ContentOwner $contentOwners
+     * @param ContentProvider $contentProvider
      * @return Plugin
      */
-    public function addContentOwner(ContentOwner $contentOwners)
+    public function addContentProvider(ContentProvider $contentProvider)
     {
-        $this->contentOwners[] = $contentOwners;
+        $this->contentProviders[] = $contentProvider;
 
         return $this;
     }
 
     /**
-     * Remove contentOwners
+     * Remove contentProviders
      *
-     * @param ContentOwner $contentOwners
+     * @param ContentProvider $contentProvider
      */
-    public function removeContentOwner(ContentOwner $contentOwners)
+    public function removeContentProvider(ContentProvider $contentProvider)
     {
-        $this->contentOwners->removeElement($contentOwners);
+        $this->contentProviders->removeElement($contentProvider);
     }
 
     /**
-     * Get contentOwners
+     * Get contentProviders
      *
      * @return Collection
      */
-    public function getContentOwners()
+    public function getContentProviders()
     {
-        return $this->contentOwners;
+        return $this->contentProviders;
     }
 
     /**

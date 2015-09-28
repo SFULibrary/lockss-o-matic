@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * A box in a network.
  *
- * @ORM\Table(name="boxes", indexes={@ORM\Index(name="IDX_CDF1B2E9C8BA1A08", columns={"pln_id"})})
+ * @ORM\Table(name="boxes")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ExternalAu
  *
- * @ORM\Table(name="external_aus", indexes={@ORM\Index(name="IDX_8D3A7BF8C8BA1A08", columns={"pln_id"})})
+ * @ORM\Table(name="external_aus")
  * @ORM\Entity
  */
 class ExternalAu

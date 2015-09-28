@@ -6,11 +6,12 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use LOCKSSOMatic\UserBundle\Entity\User;
 
 /**
  * Deposit made to LOCKSSOMatic.
  *
- * @ORM\Table(name="deposits", indexes={@ORM\Index(name="IDX_449E9C9ED5F0A8C4", columns={"content_provider_id"}), @ORM\Index(name="uuid", columns={"uuid"})})
+ * @ORM\Table(name="deposits")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
@@ -72,6 +73,17 @@ class Deposit
      * })
      */
     private $contentProvider;
+
+    /**
+     * The (optional) user making the deposit, perhaps via the gui.
+     *
+     * @ORM\ManyToOne(targetEntity="LOCKSSOMatic\UserBundle\Entity\User", inversedBy="deposits")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
+     * })
+     * @var User
+     */
+    private $user;
 
     /**
      * The content for the deposit.
@@ -255,4 +267,26 @@ class Deposit
             $this->dateDeposited = new DateTime();
         }
     }
-}
+
+    /**
+     * Set user
+     *
+     * @param mixed $user
+     * @return User
+     */
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return User|null
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+    }
