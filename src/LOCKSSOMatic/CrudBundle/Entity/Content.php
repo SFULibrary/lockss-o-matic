@@ -3,6 +3,8 @@
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -113,6 +115,17 @@ class Content
     private $au;
 
     /**
+     * @ORM\OneToMany(targetEntity="ContentProperty", mappedBy="content")
+     * @var ContentProperty[]
+     */
+    private $contentProperties;
+
+    public function __construct()
+    {
+        $this->contentProperties = new ArrayCollection();
+    }
+
+    /**
      * Get id
      *
      * @return integer 
@@ -207,7 +220,7 @@ class Content
     /**
      * Get dateDeposited
      *
-     * @return DateTime 
+     * @return DateTime
      */
     public function getDateDeposited()
     {
@@ -336,4 +349,78 @@ class Content
             $this->dateDeposited = new DateTime();
         }
     }
+
+    /**
+     * Add contentProperties
+     *
+     * @param ContentProperty $contentProperties
+     * @return Content
+     */
+    public function addContentProperty(ContentProperty $contentProperties)
+    {
+        $this->contentProperties[] = $contentProperties;
+
+        return $this;
+    }
+
+    /**
+     * Remove contentProperties
+     *
+     * @param ContentProperty $contentProperties
+     */
+    public function removeContentProperty(ContentProperty $contentProperties)
+    {
+        $this->contentProperties->removeElement($contentProperties);
+    }
+
+    /**
+     * Get contentProperties
+     *
+     * @return Collection
+     */
+    public function getContentProperties()
+    {
+        return $this->contentProperties;
+    }
+
+    public function getContentPropertyValue($key, $encoded = false) {
+        $value = null;
+        foreach($this->getContentProperties() as $prop) {
+            if($prop->getPropertyKey() === $key) {
+                $value = $prop->getPropertyValue();
+                break;
+            }
+        }
+        if($encoded === false || $value === null) {
+            return $value;
+        }
+        $callback = function($matches) {
+            $char = ord($matches[0]);
+            return '%' . strtoupper(sprintf("%02x", $char));
+        };
+        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
+    }
+
+    /**
+     * Generate the AUid that this piece of content belongs in.
+     *
+     * @return string
+     */
+    public function generateAuid() {
+        $plugin = $this->getDeposit()->getContentProvider()->getPlugin();
+        if($plugin === null) {
+            return null;
+        }
+        $pluginKey = str_replace('.', '|', $plugin->getPluginIdentifier());
+        $auKey = '';
+        $propNames = $plugin->getDefinitionalProperties();
+        sort($propNames);
+
+        foreach($propNames as $name) {
+            $auKey .= '&' . $name . '~' . $this->getContentPropertyValue($name, true);
+        }
+        $this->auid = $pluginKey . $auKey;
+        return $this->auid;
+    }
+
 }

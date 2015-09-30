@@ -212,7 +212,8 @@ class ContentProviderController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
-
+        $this->container->get('logger')->error("UUID IS " . $request->request->get('lockssomatic_crudbundle_contentprovider[uuid]'));
+        
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find ContentProvider entity.');
         }

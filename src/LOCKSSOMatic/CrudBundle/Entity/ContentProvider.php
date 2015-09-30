@@ -33,8 +33,8 @@ class ContentProvider
      *
      * @ORM\Column(name="uuid", type="string", length=36, nullable=false)
      * @Assert\Uuid(
-     *  strict = true,
-     *  versions = {"Uuid:V4_RANDOM"}
+     *  versions = {"Uuid:V4_RANDOM"},
+     *  strict = false
      * )
      */
     private $uuid;

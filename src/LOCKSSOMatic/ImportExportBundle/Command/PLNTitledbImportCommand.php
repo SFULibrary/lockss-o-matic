@@ -165,7 +165,9 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
             $child->setPropertyKey($x->attributes()->name);
             $child->setPropertyValue($x->attributes()->value);
             $child->setParent($parent);
+            $parent->addChild($child);
             $child->setAu($parent->getAu());
+            $parent->getAu()->addAuProperty($child);
             $this->em->persist($child);
             $this->findChildProperties($x, $child);
         }
@@ -182,13 +184,14 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $au->setComment('AU created by import command');
         $plugin->addAus($au);
         $au->setPlugin($plugin);
-        $this->em->persist($au);
 
         $prop = new AuProperty();
         $prop->setPropertyKey((string)$xml->attributes()->name);
         $prop->setAu($au);
-        $this->em->persist($prop);
+        $au->addAuProperty($prop);
         $this->findChildProperties($xml, $prop);
+        $this->em->persist($prop);
+        $this->em->persist($au);
     }
 
 

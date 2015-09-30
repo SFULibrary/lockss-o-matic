@@ -2,6 +2,7 @@
 
 namespace LOCKSSOMatic\CrudBundle\Utility;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
 use SimpleXMLElement;
@@ -14,7 +15,7 @@ class DepositBuilder
      * @param SimpleXMLElement $xml
      * @return Deposit
      */
-    public function fromSimpleXML(SimpleXMLElement $xml)
+    public function fromSimpleXML(SimpleXMLElement $xml, ObjectManager $em = null)
     {
         $deposit = new Deposit();
         $ns = new Namespaces();
@@ -23,6 +24,10 @@ class DepositBuilder
 
         $deposit->setTitle((string) $title);
         $deposit->setUuid($id);
+
+        if($em !== null) {
+            $em->persist($deposit);
+        }
 
         return $deposit;
     }

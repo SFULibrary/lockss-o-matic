@@ -1,30 +1,30 @@
 {% extends '::base.html.twig' %}
 
-    
+
 {% block pageheader %}
     <h1>Content</h1>
 {% endblock %}
-    
+
 {% block body -%}
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('content') }}">
-            Back to the list
-        </a>
-    </li>
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('content') }}">
+                Back to the list
+            </a>
+        </li>
 
-    <li>
-        <a href="{{ path('content_edit', { 'id': entity.id }) }}">
-            <span class='glyphicon glyphicon-edit'></span>
-        </a>
-    </li>
+        <li>
+            <a href="{{ path('content_edit', { 'id': entity.id }) }}">
+                <span class='glyphicon glyphicon-edit'></span>
+            </a>
+        </li>
 
-    <li>
-        <a href="{{ path('content_delete', { 'id': entity.id }) }}" class="js-confirm" data-confirm="Are you sure you want to delete this Content?">
-            <span class='glyphicon glyphicon-remove'></span>
-        </a>
-    </li>
-</ul>
+        <li>
+            <a href="{{ path('content_delete', { 'id': entity.id }) }}" class="js-confirm" data-confirm="Are you sure you want to delete this Content?">
+                <span class='glyphicon glyphicon-remove'></span>
+            </a>
+        </li>
+    </ul>
 
     <table class="record_properties table table-striped table-bordered table-hover">
         <tbody>
@@ -61,9 +61,37 @@
                 <td>{{ entity.recrawl }}</td>
             </tr>
             <tr>
-                <th>Verifiedsize</th>
-                <td>{{ entity.verifiedSize }}</td>
+                <th>Au</th>
+                <td>
+                    {% if entity.au %}
+                        <a href="{{path('au_show', {'id': entity.au.id}) }}">{{ entity.au }}</a>
+                    {% else %}
+                        (none)
+                    {% endif %}
+                </td>
             </tr>
+
         </tbody>
     </table>
+
+    <h2>Content Properties</h2>
+
+    <table class="records_list table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Propertykey</th>
+                <th>Propertyvalue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entity in entity.contentProperties %}
+                <tr>
+                    <td>{{ entity.propertyKey }}</td>
+                    <td>{{ entity.propertyValue }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
 {% endblock %}

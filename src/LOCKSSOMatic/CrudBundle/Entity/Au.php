@@ -10,7 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * LOCKSS archival unit.
  *
  * @ORM\Table(name="aus")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AuRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Au
 {
@@ -241,8 +242,10 @@ class Au
     }
 
     /**
-     * Generate an AUid.
-     *
+     * Generate a LOCKSS AUid. Called automatically before the AU is persisted
+     * to the database.
+     * 
+     * @ORM\prePersist
      * @return string
      */
     public function generateAuid() {
@@ -405,7 +408,7 @@ class Au
     /**
      * Get auProperties
      *
-     * @return Collection
+     * @return AuProperty[]
      */
     public function getAuProperties()
     {
@@ -490,6 +493,11 @@ class Au
             $size += $content->getSize();
         }
         return $size;
+    }
+
+    public function __toString()
+    {
+        return "AU #" . $this->id;
     }
 
 }

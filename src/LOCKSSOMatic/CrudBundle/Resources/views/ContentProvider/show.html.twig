@@ -45,10 +45,6 @@
                 <td>{{ entity.name }}</td>
             </tr>
             <tr>
-                <th>Checksumtype</th>
-                <td>{{ entity.checksumType }}</td>
-            </tr>
-            <tr>
                 <th>Maxfilesize</th>
                 <td>{{ entity.maxFileSize }}</td>
             </tr>
@@ -56,6 +52,9 @@
                 <th>Maxausize</th>
                 <td>{{ entity.maxAuSize }}</td>
             </tr>
+            <tr>
+                <th>Plugin</th>
+                <td><a href="{{path('plugin_show', {"id": entity.plugin.id}) }}">{{entity.plugin.name}}</a></td>
             <tr>
                 <th>Service document</th>
                 <td><a href="{{ url('sword_service') }}?On-Behalf-Of={{ entity.uuid }}">XML</a></td>

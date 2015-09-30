@@ -26,7 +26,9 @@
 
 namespace LOCKSSOMatic\CrudBundle\Utility;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
+use LOCKSSOMatic\CrudBundle\Entity\ContentProperty;
 use SimpleXMLElement;
 
 class ContentBuilder {
@@ -36,15 +38,29 @@ class ContentBuilder {
      * @param SimpleXMLElement $xml
      * @return Content
      */
-    public function fromSimpleXML(SimpleXMLElement $xml) {
+    public function fromSimpleXML(SimpleXMLElement $xml, ObjectManager $em = null) {
         $content = new Content();
         $content->setSize($xml->attributes()->size);
         $content->setChecksumType($xml->attributes()->checksumType);
         $content->setChecksumValue($xml->attributes()->checksumValue);
-        $content->setUrl((string)$xml);
+        $content->setUrl($xml->attributes()->url);
         $content->setRecrawl(true);
         $content->setTitle('Some generated title');
-        
+        if($em !== null) {
+            $em->persist($content);
+        }
+
+        foreach($xml->xpath('lom:property') as $node) {
+            $contentProperty = new ContentProperty();
+            $contentProperty->setContent($content);
+            $contentProperty->setPropertyKey((string)$node->attributes()->name);
+            $contentProperty->setPropertyValue((string)$node->attributes()->value);
+            $content->addContentProperty($contentProperty);
+            if($em !== null) {
+                $em->persist($contentProperty);
+            }
+        }
+
         return $content;
     }
     

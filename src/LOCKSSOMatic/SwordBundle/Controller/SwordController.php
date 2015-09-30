@@ -2,27 +2,26 @@
 
 namespace LOCKSSOMatic\SwordBundle\Controller;
 
+use Doctrine\Common\Util\Debug;
+use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
+use LOCKSSOMatic\CrudBundle\Entity\Plugin;
+use LOCKSSOMatic\CrudBundle\Utility\ContentBuilder;
 use LOCKSSOMatic\CrudBundle\Utility\DepositBuilder;
 use LOCKSSOMatic\LogBundle\Services\LoggingService;
-use LOCKSSOMatic\SwordBundle\Event\DepositContentEvent;
-use LOCKSSOMatic\SwordBundle\Event\ServiceDocumentEvent;
 use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SwordBundle\Exceptions\DepositUnknownException;
 use LOCKSSOMatic\SwordBundle\Exceptions\HostMismatchException;
 use LOCKSSOMatic\SwordBundle\Exceptions\MaxUploadSizeExceededException;
 use LOCKSSOMatic\SwordBundle\Exceptions\TargetOwnerUnknownException;
-use LOCKSSOMatic\SwordBundle\SwordEvents;
 use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,7 +60,8 @@ class SwordController extends Controller
         if ($request->headers->has("X-" . $name)) {
             return $request->headers->has("X-" . $name);
         }
-        if ($request->query->has($name)) {
+        // only accept headers in query parameters for development purposes.
+        if ($this->container->get( 'kernel' )->getEnvironment() === 'dev' && $request->query->has($name)) {
             return $request->query->get($name);
         }
         if ($required === true) {
@@ -156,33 +156,59 @@ class SwordController extends Controller
     {
         $obh = $this->fetchHeader($request, 'On-Behalf-Of', true);
         $provider = $this->getContentProvider($obh);
+        $plugin = $provider->getPlugin();
+        $checksumMethods = $this->container->getParameter('lockss_checksums');
+
         $this->activityLog->overrideUser($obh);
         $this->activityLog->log('Requested service document.');
         $this->activityLog->overrideUser(null);
         $response = $this->render(
             'LOCKSSOMaticSwordBundle:Sword:serviceDocument.xml.twig',
             array(
-            'contentProvider' => $provider,
+                'plugin' => $plugin,
+                'contentProvider' => $provider,
+                'checksumMethods' => $checksumMethods,
             )
         );
         $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
 
-    private function precheckDeposit(SimpleXMLElement $atomEntry, $provider)
+    private function precheckContentProperties(\SimpleXMLElement $content, Plugin $plugin) {
+        foreach($plugin->getDefinitionalProperties() as $property) {
+            $nodes = $content->xpath("lom:property[@name='$property']");
+            if( count($nodes) === 0) {
+                throw new BadRequestException("{$property} is a required property.");
+            }
+            if(count($nodes) > 1) {
+                throw new BadRequestException("{$property} must be unique.");
+            }
+            $property = $nodes[0];
+            if( ! $property->attributes()->value) {
+                throw new BadRequestException("{$property} must have a value.");
+            }
+        }
+    }
+
+    private function precheckDeposit(SimpleXMLElement $atomEntry, ContentProvider $provider)
     {
         if (count($atomEntry->xpath('//lom:content')) === 0) {
             throw new BadRequestException("Empty deposits are not allowed.");
         }
+        $plugin = $provider->getPlugin();
+        
         $permissionHost = $provider->getPermissionHost();
-        foreach ($atomEntry->xpath('//lom:content') as $contentChunk) {
-            $chunk = preg_replace('/\s*/', '', (string) $contentChunk);
-            $host = parse_url((string) $chunk, PHP_URL_HOST);
+        foreach ($atomEntry->xpath('//lom:content') as $content) {
+            // check required properties.
+            $this->precheckContentProperties($content, $plugin);
+            $url = $content->attributes()->url;
+            $host = parse_url((string) $url, PHP_URL_HOST);
             if ($permissionHost !== $host) {
                 throw new HostMismatchException();
             }
-            if ($contentChunk->attributes()->size > $provider->getMaxFileSize()) {
-                $size = $contentChunk->attributes()->size;
+
+            if ($content->attributes()->size > $provider->getMaxFileSize()) {
+                $size = $content->attributes()->size;
                 $max = $provider->getMaxFileSize();
                 throw new MaxUploadSizeExceededException("Content size {$size} exceeds provider's maximum: {$max}");
             }
@@ -218,14 +244,30 @@ class SwordController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $provider = $this->getContentProvider($providerUuid);
+
         $this->activityLog->overrideUser($providerUuid);
         $atomEntry = $this->getSimpleXML($request->getContent());
         $this->precheckDeposit($atomEntry, $provider);
 
         $depositBuilder = new DepositBuilder();
-        $deposit = $depositBuilder->fromSimpleXML($atomEntry);
+        $contentBuilder = new ContentBuilder();
+        $deposit = $depositBuilder->fromSimpleXML($atomEntry, $em);
         $deposit->setContentProvider($provider);
-        $em->persist($deposit);
+        foreach($atomEntry->xpath('lom:content') as $node) {
+            /** @var Content $content */
+            $content = $contentBuilder->fromSimpleXML($node, $em);
+            $content->setDeposit($deposit);            
+            $auid = $content->generateAuId();
+            $this->container->get('logger')->error($auid);
+            $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
+                'auid' => $auid
+            ));
+            if($au !== null) {
+                $content->setAu($au);
+            } else {
+                // cry.
+            }
+        }
         // TODO figure out the new logic for adding content to AUs.
 
         $em->flush();

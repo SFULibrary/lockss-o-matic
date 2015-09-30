@@ -64,6 +64,10 @@
                 <td>{{ entity.manifestUrl }}</td>
             </tr>
             <tr>
+                <th>Plugin</th>
+                <td><a href="{{ path('plugin_show', {'id': entity.plugin.id}) }}">{{ entity.plugin }}</a></td>
+            </tr>
+            <tr>
                 <th>Comment</th>
                 <td>{{ entity.comment }}</td>
             </tr>
@@ -82,7 +86,6 @@
                 <th>Size</th>
                 <th>Datedeposited</th>
                 <th>Recrawl</th>
-                <th>Verifiedsize</th>
             </tr>
         </thead>
         <tbody>
@@ -93,7 +96,6 @@
                     <td>{{ c.size }}</td>
                     <td>{% if c.dateDeposited %}{{ c.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
                     <td>{{ c.recrawl }}</td>
-                    <td>{{ c.verifiedSize }}</td>
                 </tr>
             {% endfor %}
         </tbody>
