@@ -4,6 +4,7 @@ namespace LOCKSSOMatic\ImportExportBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use Exception;
+use Monolog\Logger;
 use SplFileInfo;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -36,8 +37,18 @@ class PLNPluginImportCommand extends ContainerAwareCommand
     {
         $this->setName('lom:import:plugin')
             ->setDescription('Import PLN plugins.')
-            ->addOption('nocopy', null, InputOption::VALUE_NONE, 'Do not copy the plugin .jar file.')
-            ->addArgument('plugin_files', InputArgument::IS_ARRAY, 'Local path to the folder containing the PLN plugin JAR files?');
+            ->addOption('nocopy', null, InputOption::VALUE_NONE,
+                'Do not copy the plugin .jar file.')
+            ->addArgument('plugin_files', InputArgument::IS_ARRAY,
+                'Local path to the folder containing the PLN plugin JAR files?');
+    }
+
+    /**
+     * @return Logger
+     */
+    protected function getLogger()
+    {
+        return $this->getContainer()->get('logger');
     }
 
     /**
@@ -50,27 +61,32 @@ class PLNPluginImportCommand extends ContainerAwareCommand
     {
         $activityLog = $this->getContainer()->get('activity_log');
         $activityLog->disable();
+
+        /** @var Logger $logger */
+        $logger = $this->getLogger();
+
         $jarFiles = array();
-        foreacH($input->getArgument('plugin_files') as $path) {
+        foreach ($input->getArgument('plugin_files') as $path) {
             $jarFiles[] = new SplFileInfo($path);
         }
 
         $nocopy = false;
-        if($input->getOption('nocopy')) {
+        if ($input->getOption('nocopy')) {
             $nocopy = true;
         }
+
         $importer = $this->getContainer()->get('pln_plugin_importer');
         foreach ($jarFiles as $fileInfo) {
-            $output->writeln($fileInfo->getFilename());
+            $logger->notice("Importing {$fileInfo->getFilename()}");
             try {
                 $importer->importJarFile($fileInfo, $nocopy);
-            } catch(Exception $e) {
-                $output->writeln(" ** " . $e->getMessage());
+            } catch (Exception $e) {
+                $logger->error("Import error: {$e->getMessage()}");
                 if(($p = $e->getPrevious()) !== null) {
-                    $output->writeln('  * ' . $p->getMessage());
+                    $logger->error($p->getMessage());
                 }
             }
+            $this->em->flush();
         }
-        $this->em->flush();
-    }    
+    }
 }

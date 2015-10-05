@@ -260,7 +260,8 @@ class Au
         sort($propNames);
 
         foreach($propNames as $name) {
-            $auKey .= '&' . $name . '~' . $this->getAuProperty($name, true);
+            $propertyValue = $this->getAuProperty($name, true);
+            $auKey .= "&{$name}~{$propertyValue}";
         }
         $this->auid = $pluginKey . $auKey;
         return $this->auid;

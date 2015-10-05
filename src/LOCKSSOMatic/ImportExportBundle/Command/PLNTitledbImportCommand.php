@@ -2,12 +2,13 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
+use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
-use LOCKSSOMatic\CrudBundle\Entity\Plugin;
+use Monolog\Logger;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -36,113 +37,141 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
     {
         $this->setName('lom:import:titledb')
             ->setDescription('Import PLN titledb file.')
-            ->addArgument('path_to_titledb', InputArgument::REQUIRED,
+            ->addArgument('titledbs', InputArgument::IS_ARRAY,
                 'Local path to the titledb xml file.');
+    }
+
+    /**
+     * @return Logger
+     */
+    protected function getLogger() {
+        return $this->getContainer()->get('logger');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $activityLog = $this->getContainer()->get('activity_log');
         $activityLog->disable();
-        $pathToTitledb = $input->getArgument('path_to_titledb');
-        if (!file_exists($pathToTitledb)) {
-            $output->writeln("Cannot find {$pathToTitledb}");
-            return;
-        }
+        $titleFiles= $input->getArgument('titledbs');
+        $logger = $this->getLogger();
 
-        $xml = simplexml_load_file($pathToTitledb);
-        $titlesXml = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
-        $total = count($titlesXml);
-        $output->writeln("Found {$total} title elements.");
-        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
-
-        $errors = array();
-        $i = 0;
-        foreach ($titlesXml as $titleXml) {
-            $result = $this->processTitle($titleXml);
-            if($result !== null) {
-                $errors[$result] = (array_key_exists($result, $errors) ? $errors[$result] + 1 : 1);
+        foreach($titleFiles as $file) {
+            $logger->notice("Importing titles from {$file}");
+            if( ! file_exists($file)) {
+                $logger->critical("Cannot find {$file}");
+                continue;
             }
-            $i++;
-            if ($i % 200 === 0) {
-                $this->progressReport($output, $total, $i);
-            }
-        }
-        $this->progressReport($output, $total, $total);
-        if (count($errors) > 0) {
-            foreach ($errors as $k => $v) {
-                $output->writeln("Error ($v) $k");
-            }
+            $this->processFile($file);
         }
     }
 
-    public function progressReport(OutputInterface $output, $total, $i) {
+    protected function processFile($file) {
+        $logger = $this->getLogger();
+        $xml = simplexml_load_file($file);
+        $titles = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
+        $count = count($titles);
+        $logger->notice("Found $count AU stanzas.");
+
+        $i = 0;
+        foreach($titles as $title) {
+            try {
+                $this->processTitle($title);
+                $i++;
+                if($i % 200 === 0) {
+                    $this->reportProgress($i, $count);
+                }
+            } catch (Exception $e) {
+                $logger->error("Import error: {$e->getMessage()}");
+                if(($p = $e->getPrevious()) !== null) {
+                    $logger->error($p->getMessage());
+                }
+            }
+        }
+        $this->reportProgress($i, $count);
+
+    }
+
+    protected function reportProgress($processed, $total) {
         $this->em->flush();
         $this->em->clear();
         gc_collect_cycles();
-        $output->writeln(" $i / $total - " . sprintf('%dM', memory_get_usage() / (1024 * 1024)) . '/' . ini_get('memory_limit'));
-    }
-    
-    public function processTitle(SimpleXMLElement $titleXml)
-    {
-        try {
-            $this->addAu($titleXml);
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-        return null;
+        $this->getLogger()->notice("{$processed} of {$total}");
     }
 
-    public function getPropertyValue(SimpleXMLElement $xml, $name)
-    {
-        $dataNodes = $xml->xpath("property[@name='{$name}']/@value");
-        if (count($dataNodes) === 0) {
+    protected function processTitle(SimpleXMLElement $title) {
+        $au = $this->buildAu($title);
+        foreach($au->getAuProperties() as $property) {
+            Debug::dump($property);
+            $this->em->persist($property);
+        }
+        $this->em->persist($au);
+        $this->em->flush();
+        Debug::dump($au);
+    }
+
+    protected function buildAu(SimpleXMLElement $title) {
+        $au = new Au();
+        $au->setComment('AU created by import command a.');
+        $au->setPlugin($this->getPlugin($title));
+
+        $root = new AuProperty();
+        $root->setPropertyKey((string)$title->attributes()->name);
+        $root->setAu($au);
+        $this->findChildProperties($title, $root);
+        print $au->generateAuid();
+        return $au;
+    }
+
+    public function findChildProperties(SimpleXMLElement $xml, AuProperty $parent = null) {
+        foreach($xml->xpath('property') as $x) {
+            $child = new AuProperty();
+            $child->setPropertyKey((string)$x->attributes()->name);
+            $child->setPropertyValue((string)$x->attributes()->value);
+            $child->setParent($parent);
+            $child->setAu($parent->getAu());
+            $this->findChildProperties($x, $child);
+        }
+    }
+
+    protected function getPropertyValue(SimpleXMLElement $xml, $name) {
+        $nodes = $xml->xpath("property[@name='{$name}']/@value");
+        if(count($nodes) === 0) {
             return null;
         }
-        if (count($dataNodes) === 1) {
-            return (string) $dataNodes[0];
+        if(count($nodes) === 1) {
+            return (string) $nodes[0];
         }
-        throw new Exception('Too many elements for property name ' . $name);
+        throw new Exception("Too many elements for property {$name}");
     }
 
-    /**
-     * Get a plugin based on its identifier property.
-     *
-     * @todo some caching here would be very good.
-     *
-     * @param string $pluginId
-     *
-     * @return Plugin
-     */
-    public function getPlugin($pluginId)
-    {
-        static $cache = array();
-        // $this->em->clear() may disconnect entities in this cache
-        // for some reason.
-        if (array_key_exists($pluginId, $cache) && $this->em->contains($cache[$pluginId])) {
-            return $cache[$pluginId];
-        }
+    protected function getPlugin(SimpleXMLElement $xml) {
+        // cache the plugins for speed.
+        static $pluginCache = array();
 
+        $pluginId = $this->getPropertyValue($xml, 'plugin');
+        if($pluginId === null) {
+            throw new Exception("AU stanza does not have a plugin property.");
+        }
+        if(array_key_exists($pluginId, $pluginCache) && $this->em->contains($pluginCache[$pluginId])) {
+            return $pluginCache[$pluginId];
+        }
         $property = $this->em->getRepository('LOCKSSOMaticCrudBundle:PluginProperty')
             ->findOneBy(array(
-            'propertyKey'   => 'plugin_identifier',
-            'propertyValue' => $pluginId
-        ));
-
-        if ($property === null) {
-            throw new Exception("Unknown pluginId property: {$pluginId}");
+                'propertyKey' => 'plugin_identifier',
+                'propertyValue' => $pluginId
+            ));
+        if($property === null) {
+            throw new Exception("Unknown pluginId: {$pluginId}");
         }
-
-        $cache[$pluginId] = $property->getPlugin();
-        return $property->getPlugin();
+        $pluginCache[$pluginId] = $property->getPlugin();
+        return $pluginCache[$pluginId];
     }
 
-    public function getContentOwner($name, Plugin $plugin)
-    {
-        static $cache = array();
+    public function getContentOwner($name) {
+        static $ownerCache = array();
 
-        if (array_key_exists($name, $cache)) {
-            return $cache[$name];
+        if (array_key_exists($name, $ownerCache) && $this->em->contains($ownerCache[$name])) {
+            return $ownerCache[$name];
         }
 
         $owner = $this->em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')
@@ -152,47 +181,10 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         if ($owner === null) {
             $owner = new ContentOwner();
             $owner->setName($name);
-            $owner->setEmailAddress('unknown');
             $this->em->persist($owner);
         }
-        $cache[$name] = $owner;
-        return $cache[$name];
+        $ownerCache[$name] = $owner;
+        return $ownerCache[$name];
     }
-
-    public function findChildProperties(SimpleXMLElement $xml, AuProperty $parent = null) {
-        foreach($xml->xpath('property') as $x) {
-            $child = new AuProperty();
-            $child->setPropertyKey($x->attributes()->name);
-            $child->setPropertyValue($x->attributes()->value);
-            $child->setParent($parent);
-            $parent->addChild($child);
-            $child->setAu($parent->getAu());
-            $parent->getAu()->addAuProperty($child);
-            $this->em->persist($child);
-            $this->findChildProperties($x, $child);
-        }
-    }
-
-    public function addAu(SimpleXMLElement $xml)
-    {
-        $pluginId = $this->getPropertyValue($xml, 'plugin');
-        $plugin = $this->getPlugin($pluginId);
-        $publisherName = (string) $this->getPropertyValue($xml, 'attributes.publisher');
-        $this->getContentOwner($publisherName, $plugin);
-
-        $au = new Au();
-        $au->setComment('AU created by import command');
-        $plugin->addAus($au);
-        $au->setPlugin($plugin);
-
-        $prop = new AuProperty();
-        $prop->setPropertyKey((string)$xml->attributes()->name);
-        $prop->setAu($au);
-        $au->addAuProperty($prop);
-        $this->findChildProperties($xml, $prop);
-        $this->em->persist($prop);
-        $this->em->persist($au);
-    }
-
 
 }
