@@ -70,14 +70,6 @@ class Pln
     private $boxes;
 
     /**
-     * External titles databases.
-     *
-     * @ORM\OneToMany(targetEntity="ExternalTitleDb", mappedBy="pln")
-     * @var ArrayCollection
-     */
-    private $externalTitleDbs;
-
-    /**
      * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
      *
      * @ORM\OneToMany(targetEntity="PlnProperty", mappedBy="pln");
@@ -95,7 +87,6 @@ class Pln
     public function __construct() {
         $this->aus = new ArrayCollection();
         $this->boxes = new ArrayCollection();
-        $this->externalTitleDbs = new ArrayCollection();
         $this->plnProperties = new ArrayCollection();
         $this->contentProviders = new ArrayCollection();
     }
@@ -247,39 +238,6 @@ class Pln
     public function getBoxes()
     {
         return $this->boxes;
-    }
-
-    /**
-     * Add externalTitleDbs
-     *
-     * @param ExternalTitleDb $externalTitleDbs
-     * @return Pln
-     */
-    public function addExternalTitleDb(ExternalTitleDb $externalTitleDbs)
-    {
-        $this->externalTitleDbs[] = $externalTitleDbs;
-
-        return $this;
-    }
-
-    /**
-     * Remove externalTitleDbs
-     *
-     * @param ExternalTitleDb $externalTitleDbs
-     */
-    public function removeExternalTitleDb(ExternalTitleDb $externalTitleDbs)
-    {
-        $this->externalTitleDbs->removeElement($externalTitleDbs);
-    }
-
-    /**
-     * Get externalTitleDbs
-     *
-     * @return Collection
-     */
-    public function getExternalTitleDbs()
-    {
-        return $this->externalTitleDbs;
     }
 
     /**

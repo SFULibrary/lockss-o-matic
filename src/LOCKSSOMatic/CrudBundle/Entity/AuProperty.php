@@ -141,7 +141,8 @@ class AuProperty
     public function setParent(AuProperty $parent = null)
     {
         $this->parent = $parent;
-
+        $parent->addChild($this);
+        
         return $this;
     }
 
@@ -173,6 +174,7 @@ class AuProperty
     public function setAu(Au $au = null)
     {
         $this->au = $au;
+        $au->addAuProperty($this);
         
         return $this;
     }

@@ -296,6 +296,7 @@ class ContentProvider
     public function setContentOwner(ContentOwner $contentOwner = null)
     {
         $this->contentOwner = $contentOwner;
+        $contentOwner->addContentProvider($this);
 
         return $this;
     }
@@ -319,6 +320,7 @@ class ContentProvider
     public function setPln(Pln $pln = null)
     {
         $this->pln = $pln;
+        $pln->addContentProvider($this);
 
         return $this;
     }
@@ -355,6 +357,7 @@ class ContentProvider
     public function setPlugin(Plugin $plugin = null)
     {
         $this->plugin = $plugin;
+        $plugin->addContentProvider($this);
 
         return $this;
     }

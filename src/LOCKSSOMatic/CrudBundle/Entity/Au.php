@@ -323,6 +323,7 @@ class Au
     public function setPln(Pln $pln = null)
     {
         $this->pln = $pln;
+        $pln->addAus($this);
 
         return $this;
     }
@@ -346,6 +347,7 @@ class Au
     public function setContentprovider(ContentProvider $contentprovider = null)
     {
         $this->contentProvider = $contentprovider;
+        $contentprovider->addAus($this);
 
         return $this;
     }
@@ -369,6 +371,7 @@ class Au
     public function setPlugin(Plugin $plugin = null)
     {
         $this->plugin = $plugin;
+        $plugin->addAus($this);
 
         return $this;
     }

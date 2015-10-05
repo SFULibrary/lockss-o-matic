@@ -174,6 +174,7 @@ class AuStatus
     public function setAu(Au $au = null)
     {
         $this->au = $au;
+        $au->addAuStatus($this);
 
         return $this;
     }

@@ -209,7 +209,8 @@ class Deposit
     public function setContentProvider(ContentProvider $contentProvider = null)
     {
         $this->contentProvider = $contentProvider;
-
+        $contentProvider->addDeposit($this);
+        
         return $this;
     }
 
@@ -277,6 +278,8 @@ class Deposit
     public function setUser(User $user)
     {
         $this->user = $user;
+        $user->addDeposit($this);
+
         return $this;
     }
 

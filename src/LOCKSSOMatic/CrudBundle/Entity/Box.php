@@ -215,7 +215,8 @@ class Box
     public function setPln(Pln $pln = null)
     {
         $this->pln = $pln;
-
+        $pln->addBox($this);
+        
         return $this;
     }
 

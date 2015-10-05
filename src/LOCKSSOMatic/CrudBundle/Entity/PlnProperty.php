@@ -170,6 +170,7 @@ class PlnProperty
     public function setParent(PlnProperty $parent = null)
     {
         $this->parent = $parent;
+        $parent->addChild($this);
 
         return $this;
     }
@@ -202,6 +203,7 @@ class PlnProperty
     public function setPln(Pln $pln = null)
     {
         $this->pln = $pln;
+        $pln->addPlnProperty($this);
 
         return $this;
     }

@@ -305,7 +305,8 @@ class Content
     public function setDeposit(Deposit $deposit = null)
     {
         $this->deposit = $deposit;
-
+        $deposit->addContent($this);
+        
         return $this;
     }
 
@@ -328,6 +329,7 @@ class Content
     public function setAu(Au $au = null)
     {
         $this->au = $au;
+        $au->addContent($this);
 
         return $this;
     }

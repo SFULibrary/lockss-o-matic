@@ -143,6 +143,7 @@ class BoxStatus
     public function setBox(Box $box = null)
     {
         $this->box = $box;
+        $box->addStatus($this);
 
         return $this;
     }

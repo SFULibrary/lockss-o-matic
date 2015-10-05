@@ -138,30 +138,6 @@ class ContentProperty
         return $this->isList;
     }
 
-
-    /**
-     * Set isList
-     *
-     * @param boolean $isList
-     * @return ContentProperty
-     */
-    public function setIsList($isList)
-    {
-        $this->isList = $isList;
-
-        return $this;
-    }
-
-    /**
-     * Get isList
-     *
-     * @return boolean 
-     */
-    public function getIsList()
-    {
-        return $this->isList;
-    }
-
     /**
      * Set content
      *
@@ -171,7 +147,8 @@ class ContentProperty
     public function setContent(\LOCKSSOMatic\CrudBundle\Entity\Content $content = null)
     {
         $this->content = $content;
-
+        $content->addContentProperty($this);
+        
         return $this;
     }
 
