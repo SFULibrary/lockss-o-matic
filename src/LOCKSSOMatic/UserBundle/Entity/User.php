@@ -2,14 +2,16 @@
 
 namespace LOCKSSOMatic\UserBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
+use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 
 /**
  * User
  *
  * @ORM\Table(name="lom_user")
- * @ORM\Entity(repositoryClass="LOCKSSOMatic\UserBundle\Entity\UserRepository")
+ * @ORM\Entity(repositoryClass="UserRepository")
  */
 class User extends BaseUser
 {
@@ -34,8 +36,14 @@ class User extends BaseUser
      */
     private $institution;
 
+    /**
+     * @ORM\OneToMany(targetEntity="LOCKSSOMatic\CrudBundle\Entity\Deposit", mappedBy="user")
+     */
+    private $deposits;
+
     public function __construct() {
         parent::__construct();
+        $this->deposits = new ArrayCollection();
     }
     
     public function setEmail($email) {
@@ -97,5 +105,38 @@ class User extends BaseUser
     public function getInstitution()
     {
         return $this->institution;
+    }
+
+    /**
+     * Add deposits
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\Deposit $deposits
+     * @return User
+     */
+    public function addDeposit(\LOCKSSOMatic\CrudBundle\Entity\Deposit $deposits)
+    {
+        $this->deposits[] = $deposits;
+
+        return $this;
+    }
+
+    /**
+     * Remove deposits
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\Deposit $deposits
+     */
+    public function removeDeposit(\LOCKSSOMatic\CrudBundle\Entity\Deposit $deposits)
+    {
+        $this->deposits->removeElement($deposits);
+    }
+
+    /**
+     * Get deposits
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDeposits()
+    {
+        return $this->deposits;
     }
 }

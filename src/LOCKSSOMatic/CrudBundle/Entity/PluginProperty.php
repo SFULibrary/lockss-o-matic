@@ -47,7 +47,7 @@ class PluginProperty
      *
      * @var PluginProperty
      *
-     * @ORM\ManyToOne(targetEntity="PluginProperty", inversedBy="pluginProperties")
+     * @ORM\ManyToOne(targetEntity="PluginProperty", inversedBy="children")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      * })
@@ -59,7 +59,7 @@ class PluginProperty
      *
      * @var Plugin
      *
-     * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="children")
+     * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="pluginProperties")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
      * })

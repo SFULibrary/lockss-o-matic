@@ -107,7 +107,7 @@ class ContentProvider
      *
      * @var Plugin
      *
-     * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentOwners")
+     * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentProviders")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
      * })

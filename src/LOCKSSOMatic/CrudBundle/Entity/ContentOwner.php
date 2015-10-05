@@ -2,6 +2,7 @@
 
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ContentOwner
 {
+
     /**
      * @var integer
      *
@@ -37,12 +39,22 @@ class ContentOwner
      *
      * @var string
      *
-     * @ORM\Column(name="email_address", type="text", nullable=false)
+     * @ORM\Column(name="email_address", type="text", nullable=true)
      * @Assert\Email(
      *  strict = true
      * )
      */
     private $emailAddress;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="contentOwner")
+     * @var ArrayCollection
+     */
+    private $contentProviders;
+
+    public function __construct() {
+        $this->contentProviders = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -100,7 +112,42 @@ class ContentOwner
         return $this->emailAddress;
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->name;
+    }
+
+
+    /**
+     * Add contentProviders
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
+     * @return ContentOwner
+     */
+    public function addContentProvider(\LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders)
+    {
+        $this->contentProviders[] = $contentProviders;
+
+        return $this;
+    }
+
+    /**
+     * Remove contentProviders
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
+     */
+    public function removeContentProvider(\LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders)
+    {
+        $this->contentProviders->removeElement($contentProviders);
+    }
+
+    /**
+     * Get contentProviders
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getContentProviders()
+    {
+        return $this->contentProviders;
     }
 }

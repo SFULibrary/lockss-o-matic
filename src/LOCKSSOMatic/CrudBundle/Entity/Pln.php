@@ -85,11 +85,19 @@ class Pln
      */
     private $plnProperties;
 
+
+    /**
+     * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
+     * @var Pln[]
+     */
+    private $contentProviders;
+
     public function __construct() {
         $this->aus = new ArrayCollection();
         $this->boxes = new ArrayCollection();
         $this->externalTitleDbs = new ArrayCollection();
         $this->plnProperties = new ArrayCollection();
+        $this->contentProviders = new ArrayCollection();
     }
 
     /**
@@ -337,5 +345,38 @@ class Pln
             }
         }
         return null;
+    }
+
+    /**
+     * Add contentProviders
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
+     * @return Pln
+     */
+    public function addContentProvider(\LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders)
+    {
+        $this->contentProviders[] = $contentProviders;
+
+        return $this;
+    }
+
+    /**
+     * Remove contentProviders
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
+     */
+    public function removeContentProvider(\LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders)
+    {
+        $this->contentProviders->removeElement($contentProviders);
+    }
+
+    /**
+     * Get contentProviders
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getContentProviders()
+    {
+        return $this->contentProviders;
     }
 }

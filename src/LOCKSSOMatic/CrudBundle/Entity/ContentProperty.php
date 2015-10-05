@@ -53,7 +53,7 @@ class ContentProperty
      * 
      * @var Content
      *
-     * @ORM\ManyToOne(targetEntity="Content", inversedBy="properties")
+     * @ORM\ManyToOne(targetEntity="Content", inversedBy="contentProperties")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="content_id", referencedColumnName="id")
      * })
