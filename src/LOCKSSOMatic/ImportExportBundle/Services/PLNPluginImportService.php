@@ -200,6 +200,7 @@ class PLNPluginImportService {
         $this->newPluginProperty($plugin, 'plugin_name', $plugin->getName());
         $this->newPluginProperty($plugin, 'plugin_version', $this->findXmlPropString($xml, 'plugin_version'));
         $this->newPluginProperty($plugin, 'plugin_identifier', $this->findXmlPropString($xml, 'plugin_identifier'));
+        $this->newPluginProperty($plugin, 'au_start_url', $this->findXmlPropString($xml, 'au_start_url'));
         $this->newPluginProperty($plugin, 'au_name', $this->findXmlPropString($xml, 'au_name'));
 
         $configProps = $this->findXmlPropElement($xml, 'plugin_config_props');

@@ -282,6 +282,21 @@ class Plugin
     }
 
     /**
+     * Get the value of one property for the plugin.
+     * 
+     * @param string $propertyKey
+     * @return string|null
+     */
+    public function getProperty($propertyKey) {
+        foreach($this->getPluginProperties() as $property) {
+            if($property->getPropertyKey() === $propertyKey) {
+                return $property->getPropertyValue();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Convenience method. Get the definitional plugin parameter names
      *
      * @return array

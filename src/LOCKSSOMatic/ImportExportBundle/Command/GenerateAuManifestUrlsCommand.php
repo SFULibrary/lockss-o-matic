@@ -2,6 +2,7 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
+use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author Michael Joyce <michael@negativespace.net>
  */
-class GenerateAuidsCommand extends ContainerAwareCommand
+class GenerateAuManifestUrlsCommand extends ContainerAwareCommand
 {
 
     /**
@@ -30,33 +31,32 @@ class GenerateAuidsCommand extends ContainerAwareCommand
 
     public function configure()
     {
-        $this->setName('lom:generate:auids')
-            ->setDescription('Generate AUids for AUs which do not have one.')
-            ->addOption('all', null, InputOption::VALUE_NONE,
-                'Generate AUids for all AUs');
+        $this->setName('lom:generate:manifest-urls')
+            ->setDescription('Generate AUids for AUs which do not have one.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->getContainer()->get('activity_log')->disable();
+
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Au');
-        $qb = $repo->createQueryBuilder('a');
-        if( ! $input->getOption('all')) {
-            $qb->where('a.auid is NULL');
-        }
-        $iterator = $qb->getQuery()->iterate();
+        $q = $repo->createQueryBuilder('a')
+            ->where('a.manifestUrl is NULL')
+            ->getQuery();
+        $iterator = $q->iterate();
+        
         $n = 0;
-        while ($row = $iterator->next()) {
+
+        while (($row = $iterator->next())) {
             $au = $row[0];
-            $au->generateAuid();
+            $output->writeln($au->generateManifestUrl());
             $n++;
             if ($n % 100 === 0) {
                 $this->progressReport($output, $n);
             }
         }
-        $this->em->flush();
-        $output->writeln("processed {$n} aus");
+        $this->progressReport($output, $n);
         $this->getContainer()->get('activity_log')->enable();
     }
 

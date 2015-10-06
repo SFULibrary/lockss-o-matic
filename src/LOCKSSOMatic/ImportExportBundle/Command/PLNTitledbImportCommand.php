@@ -44,7 +44,8 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
     /**
      * @return Logger
      */
-    protected function getLogger() {
+    protected function getLogger()
+    {
         return $this->getContainer()->get('logger');
     }
 
@@ -52,122 +53,129 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
     {
         $activityLog = $this->getContainer()->get('activity_log');
         $activityLog->disable();
-        $titleFiles= $input->getArgument('titledbs');
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
+
+        $titleFiles = $input->getArgument('titledbs');
         $logger = $this->getLogger();
 
-        foreach($titleFiles as $file) {
+        foreach ($titleFiles as $file) {
             $logger->notice("Importing titles from {$file}");
-            if( ! file_exists($file)) {
+            if (!file_exists($file)) {
                 $logger->critical("Cannot find {$file}");
                 continue;
             }
-            $this->processFile($file);
+            $this->processFile($file, $output);
         }
     }
 
-    protected function processFile($file) {
-        $logger = $this->getLogger();
+    protected function processFile($file, OutputInterface $output)
+    {
         $xml = simplexml_load_file($file);
         $titles = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
         $count = count($titles);
-        $logger->notice("Found $count AU stanzas.");
+        $output->writeln("Found $count AU stanzas.");
 
         $i = 0;
-        foreach($titles as $title) {
+        foreach ($titles as $title) {
             try {
                 $this->processTitle($title);
-                $i++;
-                if($i % 200 === 0) {
-                    $this->reportProgress($i, $count);
-                }
             } catch (Exception $e) {
-                $logger->error("Import error: {$e->getMessage()}");
-                if(($p = $e->getPrevious()) !== null) {
-                    $logger->error($p->getMessage());
+                $output->writeln("Import error: {$e->getMessage()}");
+                if (($p = $e->getPrevious()) !== null) {
+                    $output->writeln($p->getMessage());
                 }
             }
+            $i++;
+            if ($i % 200 === 0) {
+                $this->reportProgress($i, $count, $output);
+            }
         }
-        $this->reportProgress($i, $count);
-
+        $this->reportProgress($i, $count, $output);
     }
 
-    protected function reportProgress($processed, $total) {
+    protected function reportProgress($processed, $total, $output)
+    {
         $this->em->flush();
         $this->em->clear();
         gc_collect_cycles();
-        $this->getLogger()->notice("{$processed} of {$total}");
+        $memory = sprintf('%dM', memory_get_usage() / (1024 * 1024));
+        $available = ini_get('memory_limit');
+
+        $output->writeln(" {$processed} / {$total} - {$memory} of {$available}");
     }
 
-    protected function processTitle(SimpleXMLElement $title) {
+    protected function processTitle(SimpleXMLElement $title)
+    {
         $au = $this->buildAu($title);
-        foreach($au->getAuProperties() as $property) {
-            Debug::dump($property);
+        foreach ($au->getAuProperties() as $property) {
             $this->em->persist($property);
         }
         $this->em->persist($au);
-        $this->em->flush();
-        Debug::dump($au);
     }
 
-    protected function buildAu(SimpleXMLElement $title) {
+    protected function buildAu(SimpleXMLElement $title)
+    {
         $au = new Au();
         $au->setComment('AU created by import command a.');
         $au->setPlugin($this->getPlugin($title));
 
         $root = new AuProperty();
-        $root->setPropertyKey((string)$title->attributes()->name);
+        $root->setPropertyKey((string) $title->attributes()->name);
         $root->setAu($au);
-        $this->findChildProperties($title, $root);
-        print $au->generateAuid();
+        $this->buildChildProperties($title, $root);
         return $au;
     }
 
-    public function findChildProperties(SimpleXMLElement $xml, AuProperty $parent = null) {
-        foreach($xml->xpath('property') as $x) {
+    public function buildChildProperties(SimpleXMLElement $xml, AuProperty $parent = null)
+    {
+        foreach ($xml->xpath('property') as $x) {
             $child = new AuProperty();
-            $child->setPropertyKey((string)$x->attributes()->name);
-            $child->setPropertyValue((string)$x->attributes()->value);
+            $child->setPropertyKey((string) $x->attributes()->name);
+            $child->setPropertyValue((string) $x->attributes()->value);
             $child->setParent($parent);
             $child->setAu($parent->getAu());
-            $this->findChildProperties($x, $child);
+            $this->buildChildProperties($x, $child);
         }
     }
 
-    protected function getPropertyValue(SimpleXMLElement $xml, $name) {
+    protected function getPropertyValue(SimpleXMLElement $xml, $name)
+    {
         $nodes = $xml->xpath("property[@name='{$name}']/@value");
-        if(count($nodes) === 0) {
+        if (count($nodes) === 0) {
             return null;
         }
-        if(count($nodes) === 1) {
+        if (count($nodes) === 1) {
             return (string) $nodes[0];
         }
         throw new Exception("Too many elements for property {$name}");
     }
 
-    protected function getPlugin(SimpleXMLElement $xml) {
+    protected function getPlugin(SimpleXMLElement $xml)
+    {
         // cache the plugins for speed.
         static $pluginCache = array();
 
         $pluginId = $this->getPropertyValue($xml, 'plugin');
-        if($pluginId === null) {
+        if ($pluginId === null) {
             throw new Exception("AU stanza does not have a plugin property.");
         }
-        if(array_key_exists($pluginId, $pluginCache) && $this->em->contains($pluginCache[$pluginId])) {
+        if (array_key_exists($pluginId, $pluginCache) && $this->em->contains($pluginCache[$pluginId])) {
             return $pluginCache[$pluginId];
         }
         $property = $this->em->getRepository('LOCKSSOMaticCrudBundle:PluginProperty')
             ->findOneBy(array(
-                'propertyKey' => 'plugin_identifier',
-                'propertyValue' => $pluginId
-            ));
-        if($property === null) {
+            'propertyKey'   => 'plugin_identifier',
+            'propertyValue' => $pluginId
+        ));
+        if ($property === null) {
             throw new Exception("Unknown pluginId: {$pluginId}");
         }
         $pluginCache[$pluginId] = $property->getPlugin();
         return $pluginCache[$pluginId];
     }
 
-    public function getContentOwner($name) {
+    public function getContentOwner($name)
+    {
         static $ownerCache = array();
 
         if (array_key_exists($name, $ownerCache) && $this->em->contains($ownerCache[$name])) {

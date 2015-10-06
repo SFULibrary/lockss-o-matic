@@ -267,7 +267,6 @@ class Au
         return $this->auid;
     }
 
-
     /**
      * Set manifestUrl
      *
@@ -288,6 +287,41 @@ class Au
      */
     public function getManifestUrl()
     {
+        if($this->manifestUrl === null || $this->manifestUrl === '') {
+            $this->generateManifestUrl();
+        }
+        return $this->manifestUrl;
+    }
+
+    /**
+     * @ORM\prePersist
+     * @return string
+     */
+    public function generateManifestUrl() {
+        $plugin = $this->getPlugin();
+        // auStart looks like "%slockss/%s/%s/index.html", base_url, journal_id, volume_name
+        $auStart = $plugin->getProperty('au_start_url');
+        if($auStart === null || $auStart === '') {
+            return '';
+        }
+        $formatStr = null;
+        $matches = array();
+        if( ! preg_match('/^"([^"]*)"/', $auStart, $matches)) {
+            return 'no formatstr match';
+        } else {
+            $formatStr = $matches[1];
+        }
+        
+        $parts = preg_split('/, */', $auStart);
+
+        if($parts[0] !== '"' . $formatStr . '"') {
+            return "split failed: {$parts[0]} !== \"{$formatStr}\"";
+        }
+        $values = array();
+        foreach(array_slice($parts, 1) as $parameterName) {
+            $values[] = $this->getAuProperty($parameterName, false);
+        }
+        $this->manifestUrl = vsprintf($formatStr, $values);
         return $this->manifestUrl;
     }
 
