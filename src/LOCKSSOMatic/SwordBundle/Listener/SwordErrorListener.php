@@ -28,7 +28,6 @@ namespace LOCKSSOMatic\SwordBundle\Listener;
 
 use LOCKSSOMatic\SwordBundle\Controller\SwordController;
 use LOCKSSOMatic\SwordBundle\Exceptions\ApiException;
-use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\Response;
@@ -86,11 +85,12 @@ class SwordErrorListener
             $response->headers->add($exception->getHeaders());
             $response->headers->set('Content-Type', 'text/xml');
             $response->setStatusCode($exception->getStatusCode());
+            $statusCode = $exception->getStatusCode();
             $response->setContent($this->templating->render(
                 'LOCKSSOMaticSwordBundle:Sword:exceptionDocument.xml.twig',
                 array(
-                    'errorUri' => '',
-                    'statusCode' => $exception->getCode(),
+                    'errorUri' => $exception->getErrorUri(),
+                    'statusCode' => $exception->getStatusCode(),
                     'message' => $exception->getMessage(),
                     'trace' => $exception->getTraceAsString(),
                 )

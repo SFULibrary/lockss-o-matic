@@ -23,3 +23,11 @@ parameters:
 
     # Activity log
     activity_log.enabled: true
+
+    # Path to the LOCKSS plugins
+    lockss_jar_directory: data/lockss/plugins
+
+    # Acceptable deposit checksum methods
+    lockss_checksums:
+        - SHA-1
+        - MD5

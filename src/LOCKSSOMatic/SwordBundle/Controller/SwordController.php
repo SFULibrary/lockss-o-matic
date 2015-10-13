@@ -2,7 +2,6 @@
 
 namespace LOCKSSOMatic\SwordBundle\Controller;
 
-use Doctrine\Common\Util\Debug;
 use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
@@ -174,7 +173,7 @@ class SwordController extends Controller
         return $response;
     }
 
-    private function precheckContentProperties(\SimpleXMLElement $content, Plugin $plugin) {
+    private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin) {
         foreach($plugin->getDefinitionalProperties() as $property) {
             $nodes = $content->xpath("lom:property[@name='$property']");
             if( count($nodes) === 0) {
@@ -199,12 +198,14 @@ class SwordController extends Controller
         
         $permissionHost = $provider->getPermissionHost();
         foreach ($atomEntry->xpath('//lom:content') as $content) {
+            $this->get('logger')->error((string)($content));
             // check required properties.
             $this->precheckContentProperties($content, $plugin);
-            $url = $content->attributes()->url;
-            $host = parse_url((string) $url, PHP_URL_HOST);
+            $url = trim((string)$content);
+            $host = parse_url($url, PHP_URL_HOST);
             if ($permissionHost !== $host) {
-                throw new HostMismatchException();
+                $msg = "Content host:{$host} Permission host: {$permissionHost}";
+                throw new HostMismatchException($msg);
             }
 
             if ($content->attributes()->size > $provider->getMaxFileSize()) {
@@ -262,11 +263,12 @@ class SwordController extends Controller
             $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
                 'auid' => $auid
             ));
-            if($au !== null) {
-                $content->setAu($au);
+            if($au === null) {
+                $au = new Au();
+                $em->persist($au);
             } else {
-                // cry.
             }
+            $content->setAu($au);
         }
         // TODO figure out the new logic for adding content to AUs.
 

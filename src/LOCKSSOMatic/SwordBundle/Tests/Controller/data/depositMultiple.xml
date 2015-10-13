@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+             xmlns:dcterms="http://purl.org/dc/terms/"
+             xmlns:sword="http://purl.org/net/sword/terms/"
+             xmlns:atom="http://www.w3.org/2005/Atom"
+             xmlns:lom="http://lockssomatic.info/SWORD2"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+             xmlns:app="http://www.w3.org/2007/app">
+    <title>Image samples from the internet</title>
+    <id>urn:uuid:066d5e90-03f7-469e-a231-c67fb8d6109f</id>
+    <updated>2014-10-07T12:07:43-07:00</updated>
+    <author>
+        <name>various</name>
+    </author>
+    <summary type="text">Image samples from the internet</summary>
+
+    <!-- @size is the file size in kB (1,000 bytes) -->
+    <lom:content size="8922" checksumType="md5" checksumValue="ed5697c06b97f95e1221f857a3c08661">
+        http://example.com/3691/11186563486_8796f4f843_o_d.jpg
+        <lom:property name="base_url" value="http://example.com/foo"/>
+        <lom:property name="journal_issn" value="1234-3214"/>
+        <lom:property name="volume_name" value="slug"/>
+    </lom:content>
+
+    <lom:content size="1798" checksumType="md5" checksumValue="ff9a208611f892d147ef0f213150323e">
+        http://example.com/wm/paint/auth/gauguin/gauguin.alyscamps.jpg
+        <lom:property name="base_url" value="http://example.com/foo"/>
+        <lom:property name="journal_issn" value="1234-3214"/>
+        <lom:property name="volume_name" value="slug"/>
+    </lom:content>
+
+    <lom:content size="1923" checksumType="md5" checksumValue="5619bbabea01c0841cd99c6cf4ad3b33">
+        http://example.com/wm/paint/auth/monet/parliament/parliament.jpg
+        <lom:property name="base_url" value="http://example.com/bar"/>
+        <lom:property name="journal_issn" value="1234-1234"/>
+        <lom:property name="volume_name" value="prefix"/>
+    </lom:content>
+</entry>

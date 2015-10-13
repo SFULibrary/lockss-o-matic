@@ -9,7 +9,10 @@
     
     <!-- sword:maxUploadSize is the maximum file size in content element, measured in kB (1,000 bytes). -->
     <sword:maxUploadSize>{{ contentProvider.maxFileSize }}</sword:maxUploadSize>
-    <lom:uploadChecksumType>{% for m in checksumMethods %}{{ m }} {% endfor %}</lom:uploadChecksumType>
+    <lom:uploadChecksumType>
+        {%- for m in checksumMethods %}{{ m }}{% if not loop.last %} {% endif -%}
+        {% endfor -%}
+    </lom:uploadChecksumType>
     <workspace>
         <atom:title>{{ lom_sitename }}</atom:title>     
         <!-- Each LOCKSS-O-Matic content provider will have its own SWORD collection,

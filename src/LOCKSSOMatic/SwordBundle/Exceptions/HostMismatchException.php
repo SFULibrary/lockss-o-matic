@@ -52,7 +52,7 @@ class HostMismatchException extends BadRequestException
         $str =  'Content URL does not match a corresponding LOCKSS permission '
                 . 'URL. One or more content URLs is either unparseable or '
                 . 'points to a host which is different from the content '
-                . 'provider\'s permission statement host.';
+                . 'provider\'s permission statement host. ';
         parent::__construct($str . $message, $previous, $headers, $code);
     }
 }
