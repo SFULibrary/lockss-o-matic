@@ -144,7 +144,9 @@ class PluginProperty
     public function setParent(PluginProperty $parent = null)
     {
         $this->parent = $parent;
-        $parent->addChild($this);
+        if($parent !== null) {
+            $parent->addChild($this);
+        }
         
         return $this;
     }

@@ -138,7 +138,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         }
     }
 
-    protected function getPropertyValue(SimpleXMLElement $xml, $name)
+    public function getPropertyValue(SimpleXMLElement $xml, $name)
     {
         $nodes = $xml->xpath("property[@name='{$name}']/@value");
         if (count($nodes) === 0) {
@@ -150,7 +150,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         throw new Exception("Too many elements for property {$name}");
     }
 
-    protected function getPlugin(SimpleXMLElement $xml)
+    public function getPlugin(SimpleXMLElement $xml)
     {
         // cache the plugins for speed.
         static $pluginCache = array();

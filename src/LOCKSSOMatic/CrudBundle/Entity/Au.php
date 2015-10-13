@@ -44,6 +44,14 @@ class Au
      * The URL for the manifest of this AU. Manifests are optional.
      * @var string
      *
+     * @ORM\Column(name="au_start_url", type="string", length=512, nullable=true)
+     */
+    private $auStartUrl;
+
+    /**
+     * The URL for the manifest of this AU. Manifests are optional.
+     * @var string
+     *
      * @ORM\Column(name="manifest_url", type="string", length=512, nullable=true)
      */
     private $manifestUrl;
@@ -283,21 +291,42 @@ class Au
     /**
      * Get manifestUrl
      *
-     * @return string 
+     * @return string
      */
     public function getManifestUrl()
     {
-        if($this->manifestUrl === null || $this->manifestUrl === '') {
-            $this->generateManifestUrl();
-        }
         return $this->manifestUrl;
+    }
+
+
+    /**
+     * Set auStartUrl
+     *
+     * @param string $auStartUrl
+     * @return Au
+     */
+    public function setAuStartUrl($auStartUrl)
+    {
+        $this->auStartUrl = $auStartUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get auStartUrl
+     *
+     * @return string
+     */
+    public function getAuStartUrl()
+    {
+        return $this->auStartUrl;
     }
 
     /**
      * @ORM\prePersist
      * @return string
      */
-    public function generateManifestUrl() {
+    public function generateAuStartUrl() {
         $plugin = $this->getPlugin();
         // auStart looks like "%slockss/%s/%s/index.html", base_url, journal_id, volume_name
         $auStart = $plugin->getProperty('au_start_url');
@@ -321,8 +350,8 @@ class Au
         foreach(array_slice($parts, 1) as $parameterName) {
             $values[] = $this->getAuProperty($parameterName, false);
         }
-        $this->manifestUrl = vsprintf($formatStr, $values);
-        return $this->manifestUrl;
+        $this->auStartUrl = vsprintf($formatStr, $values);
+        return $this->auStartUrl;
     }
 
     /**

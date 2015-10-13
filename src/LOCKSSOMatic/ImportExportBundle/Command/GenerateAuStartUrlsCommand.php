@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author Michael Joyce <michael@negativespace.net>
  */
-class GenerateAuManifestUrlsCommand extends ContainerAwareCommand
+class GenerateAuStartUrlsCommand extends ContainerAwareCommand
 {
 
     /**
@@ -32,7 +32,7 @@ class GenerateAuManifestUrlsCommand extends ContainerAwareCommand
     public function configure()
     {
         $this->setName('lom:generate:manifest-urls')
-            ->setDescription('Generate AUids for AUs which do not have one.');
+            ->setDescription('Generate AU start URLs for those which do not have one.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -50,7 +50,7 @@ class GenerateAuManifestUrlsCommand extends ContainerAwareCommand
 
         while (($row = $iterator->next())) {
             $au = $row[0];
-            $output->writeln($au->generateManifestUrl());
+            $output->writeln($au->generateAuStartUrl());
             $n++;
             if ($n % 100 === 0) {
                 $this->progressReport($output, $n);

@@ -28,7 +28,7 @@
                 <td><a href="{{ path('au_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
                 <td>{% if entity.managed %} Yes {% else %} No {% endif %}</td>
                 <td>{{ entity.auid|preg_replace('/([|~&])/', '&#8203;$1')|raw }}</td>
-                <td>{{ entity.manifestUrl|preg_replace('/\\//', '&#8203;/')|raw }}</td>
+                <td><a href="{{ entity.manifestUrl }}">{{ entity.manifestUrl|preg_replace('/\\//', '&#8203;/')|raw }}</a></td>
                 <td>{{ entity.comment }}</td>
                 <td>
                 <ul>
