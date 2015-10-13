@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="content_properties")
  * @ORM\Entity
  */
-class ContentProperty
+class ContentProperty implements GetPlnInterface
 {
     /**
      * @var integer
@@ -161,4 +161,14 @@ class ContentProperty
     {
         return $this->content;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPln()
+    {
+        return $this->getContent()->getPln();
+    }
+
+
 }

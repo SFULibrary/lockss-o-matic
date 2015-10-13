@@ -270,4 +270,42 @@ class ContentProviderController extends Controller
             ->getForm()
         ;
     }
+
+    private function createImportForm() {
+        $formBuilder = $this->createFormBuilder();
+        $formBuilder->add('uuid', 'text', array(
+            'label' => 'Deposit UUID',
+            'required' => false
+            ));
+        $formBuilder->add('title', 'text');
+        $formBuilder->add('summary', 'textarea');
+        $formBuilder->add('file', 'file', array('label' => 'CSV File'));
+        $formBuilder->add('submit', 'submit', array('label' => 'Import'));
+        return $formBuilder->getForm();
+    }
+
+    /**
+     * Import a CSV file.
+     *
+     * @param Request $request
+     * @Route("/{id}/csv")
+     * @Method({"GET", "POST"})
+     * @Template()
+     */
+    public function csvAction(Request $request) {
+        $form = $this->createImportForm();
+        $form->handleRequest($request);
+
+        if($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $builder = new DepositBuilder();
+            $deposit = $builder->fromForm($form, $em);
+            return $this->redirect($this->generateUrl('deposit_show', array('id' => $deposit->getId())));
+        }
+        return array(
+            'form' => $form->createView(),
+        );
+
+    }
+    
 }

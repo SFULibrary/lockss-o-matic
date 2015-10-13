@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="pln_properties")
  * @ORM\Entity
  */
-class PlnProperty
+class PlnProperty implements GetPlnInterface
 {
     /**
      * @var integer

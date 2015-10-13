@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="AuRepository")
  * @ORM\HasLifecycleCallbacks()
  */
-class Au
+class Au implements GetPlnInterface
 {
     /**
      * @var integer

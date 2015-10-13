@@ -9,6 +9,7 @@ use Problematic\AclManagerBundle\Domain\AclManager;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -28,6 +29,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class Access
 {
     private $securityContext;
+    private $tokenStorage;
     private $aclManager;
     private $aclProvider;
 
@@ -38,9 +40,10 @@ class Access
      * @param AclManager $aclManager
      * @param MutableAclProvider $aclProvider
      */
-    public function __construct(AuthorizationChecker $securityContext, AclManager $aclManager, MutableAclProvider $aclProvider)
+    public function __construct(AuthorizationChecker $securityContext, TokenStorage $tokenStorage, AclManager $aclManager, MutableAclProvider $aclProvider)
     {
         $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
         $this->aclManager = $aclManager;
         $this->aclProvider = $aclProvider;
     }
@@ -83,7 +86,7 @@ class Access
     public function hasAccess($permission, $entity = null, $user = null)
     {
         if ($user === null) {
-            $user = $this->securityContext->getToken()->getUser();
+            $user = $this->tokenStorage->getToken()->getUser();
         }
         
         if ($user->hasRole('ROLE_ADMIN')) {

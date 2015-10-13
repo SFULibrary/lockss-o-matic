@@ -15,7 +15,7 @@ use LOCKSSOMatic\UserBundle\Entity\User;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
-class Deposit
+class Deposit implements GetPlnInterface
 {
     /**
      * @var integer
@@ -292,4 +292,14 @@ class Deposit
     {
         return $this->user;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPln()
+    {
+        return $this->getContentProvider()->getPln();
     }
+
+
+}

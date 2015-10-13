@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="box_status")
  * @ORM\Entity
  */
-class BoxStatus
+class BoxStatus implements GetPlnInterface
 {
     /**
      * @var integer
@@ -157,4 +157,14 @@ class BoxStatus
     {
         return $this->box;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPln()
+    {
+        return $this->getBox()->getPln();
+    }
+
+
 }

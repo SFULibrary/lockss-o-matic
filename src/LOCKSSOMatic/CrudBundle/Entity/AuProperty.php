@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="au_properties")
  * @ORM\Entity
  */
-class AuProperty
+class AuProperty implements GetPlnInterface
 {
     /**
      * @var integer
@@ -230,4 +230,13 @@ class AuProperty
     public function hasChildren() {
         return count($this->children) > 0;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPln()
+    {
+        return $this->getAu()->getPln();
+    }
+
 }

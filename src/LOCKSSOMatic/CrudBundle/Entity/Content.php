@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
-class Content
+class Content implements GetPlnInterface
 {
     /**
      * @var integer
@@ -424,5 +424,14 @@ class Content
         $this->auid = $pluginKey . $auKey;
         return $this->auid;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPln()
+    {
+        return $this->getDeposit()->getContentProvider()->getPln();
+    }
+
 
 }

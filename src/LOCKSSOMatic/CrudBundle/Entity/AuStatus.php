@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="au_status")
  * @ORM\Entity
  */
-class AuStatus
+class AuStatus implements GetPlnInterface
 {
     /**
      * @var integer
@@ -188,4 +188,13 @@ class AuStatus
     {
         return $this->au;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPln()
+    {
+        return $this->getAu()->getPln();
+    }
+    
 }
