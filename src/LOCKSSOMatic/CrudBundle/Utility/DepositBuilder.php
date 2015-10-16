@@ -3,6 +3,8 @@
 namespace LOCKSSOMatic\CrudBundle\Utility;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use J20\Uuid\Uuid;
+use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
 use SimpleXMLElement;
@@ -33,18 +35,24 @@ class DepositBuilder
         return $deposit;
     }
 
-    public function fromForm(Form $form, ObjectManager $em = null) {
+    public function fromForm(Form $form, ContentProvider $provider, ObjectManager $em = null) {
         $data = $form->getData();
         $deposit = new Deposit();
         $deposit->setTitle($data['title']);
         $deposit->setSummary($data['summary']);
-        $deposit->setContentProvider($data['provider']);
+        $deposit->setContentProvider($provider);
 
         if($data['uuid'] !== null && $data['uuid'] !== '') {
             $deposit->setUuid($data['uuid']);
         } else {
-            $deposit->setUuid(\J20\Uuid\Uuid::v4());
+            $deposit->setUuid(Uuid::v4());
         }
+
+        $dataFile = $data['file'];
+        $fh = $dataFile->openFile();
+        $headers = $fh->fgetcsv();
+        // map required and other parameters to indexes in $headers.
+        // use those indexes to build out the content.
 
         if($em !== null) {
             $em->persist($deposit);

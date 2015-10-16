@@ -6,6 +6,28 @@
 
 {% block body -%}
 
+    <div class="row">
+        <div class="col-sm-6">
+            <p>The CSV file must include the following columns, in any order: </p>
+            <ul>
+                <li>URL</li>
+                <li>Title</li>
+                    {% for param in required %}
+                    <li>{{ param }}</li>
+                    {% endfor %}
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <p>The CSV file should include the following columns:</p>
+            <ul>
+                <li>Size</li>
+                <li>Checksum Type</li>
+                <li>Checksum Value</li>
+            </ul>
+            <p>Size is in 1000-byte units.</p>
+        </div>
+    </div>
+
     {{ form(form) }}
 
 {% endblock %}

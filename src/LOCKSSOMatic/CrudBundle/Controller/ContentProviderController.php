@@ -26,13 +26,16 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
+use LOCKSSOMatic\CrudBundle\Form\ContentProviderType;
+use LOCKSSOMatic\CrudBundle\Utility\DepositBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
-use LOCKSSOMatic\CrudBundle\Form\ContentProviderType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * ContentProvider controller.
@@ -98,7 +101,7 @@ class ContentProviderController extends Controller
      *
      * @param ContentProvider $entity The entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createCreateForm(ContentProvider $entity)
     {
@@ -187,7 +190,7 @@ class ContentProviderController extends Controller
     *
     * @param ContentProvider $entity The entity
     *
-    * @return \Symfony\Component\Form\Form The form
+    * @return Form The form
     */
     private function createEditForm(ContentProvider $entity)
     {
@@ -259,7 +262,7 @@ class ContentProviderController extends Controller
      *
      * @param mixed $id The entity id
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createDeleteForm($id)
     {
@@ -271,7 +274,29 @@ class ContentProviderController extends Controller
         ;
     }
 
-    private function createImportForm() {
+    /**
+     * Import a CSV file.
+     *
+     * @param Request $request
+     * @Route("/{id}/csv-sample", name="contentprovider_csv_sample")
+     * @Method({"GET"})
+     */
+    public function csvSampleAction(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $provider = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
+        $params = array_merge(
+            array('URL', 'Title', 'Size', 'Checksum Type', 'Checksum Value'),
+            $provider->getPlugin()->getDefinitionalProperties()
+        );
+        $fh = fopen("php://temp", 'r+');
+        fputcsv($fh, $params);
+        rewind($fh);
+        return new Response(stream_get_contents($fh), Response::HTTP_OK, array(
+            'Content-Type' => 'text/csv',
+        ));
+    }
+
+    private function createImportForm($id) {
         $formBuilder = $this->createFormBuilder();
         $formBuilder->add('uuid', 'text', array(
             'label' => 'Deposit UUID',
@@ -281,6 +306,8 @@ class ContentProviderController extends Controller
         $formBuilder->add('summary', 'textarea');
         $formBuilder->add('file', 'file', array('label' => 'CSV File'));
         $formBuilder->add('submit', 'submit', array('label' => 'Import'));
+        $formBuilder->setAction($this->generateUrl('contentprovider_csv_import', array('id' => $id)));
+        $formBuilder->setMethod('POST');
         return $formBuilder->getForm();
     }
 
@@ -288,21 +315,25 @@ class ContentProviderController extends Controller
      * Import a CSV file.
      *
      * @param Request $request
-     * @Route("/{id}/csv")
+     * @Route("/{id}/csv", name="contentprovider_csv_import")
      * @Method({"GET", "POST"})
      * @Template()
      */
-    public function csvAction(Request $request) {
-        $form = $this->createImportForm();
+    public function csvAction(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $provider = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
+        $requiredParams = $provider->getPlugin()->getDefinitionalProperties();
+
+        $form = $this->createImportForm($id);
         $form->handleRequest($request);
 
         if($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
             $builder = new DepositBuilder();
-            $deposit = $builder->fromForm($form, $em);
+            $deposit = $builder->fromForm($form, $provider, $em);
             return $this->redirect($this->generateUrl('deposit_show', array('id' => $deposit->getId())));
         }
         return array(
+            'required' => $requiredParams,
             'form' => $form->createView(),
         );
 
