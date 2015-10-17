@@ -18,6 +18,7 @@ class ProfileType extends AbstractType {
             'mapped' => false,
             'constraints' => new UserPassword(),
         ));
+		$builder->add('submit', 'submit');
     }
     
     public function getName() {

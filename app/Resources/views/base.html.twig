@@ -57,78 +57,83 @@
                                     <li role="presentation" class="divider"></li>
                                     <li><a href="{{ path('plugin') }}">Plugins</a></li>
                                     <li><a href="{{ path('pluginproperty') }}">Plugin Properties</a></li>
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                    <li role='presentation' class='divider'></li>
-                                    <li><a href='{{ path('admin_user') }}'>Users</a></li>
-                                    <li><a href='{{ path('log') }}'>Access logs</a></li>
-                                    {% endif %}
+										{% if is_granted('ROLE_ADMIN') %}
+										<li role='presentation' class='divider'></li>
+										<li><a href='{{ path('admin_user') }}'>Users</a></li>
+										<li><a href='{{ path('log') }}'>Access logs</a></li>
+										{% endif %}
                                 </ul>
                             </li>
                         {% endif %}
 
                     </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
-                        <li>
-                            <a href="{{ path(app.request.attributes.get('_route'),
-                                    app.request.attributes.get('_route_params')|merge({'_switch_user': '_exit' })) }}">
-                                Exit {{ app.user.username }}
-                            </a>
-                        </li>
-                    {% elseif is_granted('ROLE_ADMIN') %}
-                        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Switch user <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                {% for user in userList() %}
-                                    <li>
-                                        <a href="{{ path(app.request.attributes.get('_route'),
-                                         app.request.attributes.get('_route_params')|merge({'_switch_user': user.username })) }}">
-                                            {{ user.username }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    {% endif %}
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                            <li>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    {{ app.user.username }} <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+									{% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+										<li>
+											<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_switch_user': '_exit' })) }}">
+												Exit {{ app.user.username }}
+											</a>
+										</li>
+									{% endif %}
 
-                    {% if app.user %}
-                        <li><a href="{{ path('fos_user_profile_show') }}">{{ app.user.username }}</a></li>
-                            {% if not is_granted('ROLE_PREVIOUS_ADMIN') %}
-                            <li><a href="{{ path('fos_user_security_logout') }}">Logout</a></li>
-                            {% endif %}
-                        {% else %}
-                        <li><a href="{{ path('fos_user_security_login') }}">Login</a></li>
-                        {% endif %}
-                </ul>
+									<li>
+										<a href="{{ path('fos_user_profile_show') }}">
+											Profile
+										</a>
+									</li>
+									<li>
+										<a href="{{ path('fos_user_change_password') }}">
+											Change Password
+										</a>
+									</li>
+									{% if is_granted('ROLE_ADMIN') %}
+										<li class="disabled"><a href="#">Switch user</a></li>
+											{% for user in userList() %}
+											<li>
+												<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_switch_user': user.username })) }}">
+													{{ user.username }}
+												</a>
+											</li>
+										{% endfor %}
+									{% endif %}
+								</ul>
+							</li>
+						{% endif %}
+						</div><!--/.nav-collapse -->
+					</div>
+				</nav>        
 
-                </div><!--/.nav-collapse -->
-            </div>
-        </nav>        
+				<div class="container">
+					{% set _pageheader = block("pageheader") %}
+					{% if _pageheader is not empty %}
+						<div class="page-header">
+							{{ _pageheader|raw }}
+						</div>
+					{% endif %}
 
-        <div class="container">
-            {% set _pageheader = block("pageheader") %}
-            {% if _pageheader is not empty %}
-                <div class="page-header">
-                    {{ _pageheader|raw }}
-                </div>
-            {% endif %}
+					{% for type, messages in app.session.flashbag.all() %}
+						{% for message in messages %}
+							<div class="alert alert-{{ type }}">
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								{{ message }}
+							</div>
+						{% endfor %}
+					{% endfor %}
 
-            {% for type, messages in app.session.flashbag.all() %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ type }}">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endfor %}
+					{% block body %}
+					{% endblock %}
+				</div>
 
-            {% block body %}
-            {% endblock %}
-        </div>
-
-        {% javascripts '@jquery' '@bootstrap_js' 'bundles/app/js/*' %}
-        <script type="text/javascript" src="{{ asset_url }}"></script>
-        {% endjavascripts %}        
-        {% block javascripts %}
-        {% endblock %}
-    </body>
-</html>
+				{% javascripts '@jquery' '@bootstrap_js' 'bundles/app/js/*' %}
+				<script type="text/javascript" src="{{ asset_url }}"></script>
+				{% endjavascripts %}        
+				{% block javascripts %}
+				{% endblock %}
+			</body>
+		</html>
