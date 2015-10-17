@@ -24,14 +24,34 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CrudBundle\Utility;
+namespace LOCKSSOMatic\CrudBundle\Service;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProperty;
+use Monolog\Logger;
 use SimpleXMLElement;
 
 class ContentBuilder {
+    
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
+     * @var ObjectManager 
+     */
+    private $em;
+    
+    public function setLogger(Logger $logger) {
+        $this->logger = $logger;
+    }
+    
+    public function setRegistry(Registry $registry) {
+        $this->em = $registry->getManager();
+    }
     
     /**
      * 

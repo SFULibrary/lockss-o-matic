@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\SwordBundle\Controller;
 
 use Exception;
+use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
@@ -250,8 +251,8 @@ class SwordController extends Controller
         $atomEntry = $this->getSimpleXML($request->getContent());
         $this->precheckDeposit($atomEntry, $provider);
 
-        $depositBuilder = new DepositBuilder();
-        $contentBuilder = new ContentBuilder();
+        $depositBuilder = $this->container->get('crud.builder.deposit');
+        $contentBuilder = $this->container->get('crud.builder.content');
         $deposit = $depositBuilder->fromSimpleXML($atomEntry, $em);
         $deposit->setContentProvider($provider);
         foreach($atomEntry->xpath('lom:content') as $node) {
@@ -266,8 +267,8 @@ class SwordController extends Controller
             if($au === null) {
                 $au = new Au();
                 $em->persist($au);
-            } else {
-            }
+                // set au props here.
+            } 
             $content->setAu($au);
         }
         // TODO figure out the new logic for adding content to AUs.

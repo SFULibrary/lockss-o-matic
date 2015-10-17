@@ -328,7 +328,7 @@ class ContentProviderController extends Controller
         $form->handleRequest($request);
 
         if($form->isValid()) {
-            $builder = new DepositBuilder();
+            $builder = $this->container->get('crud.builder.deposit');
             $deposit = $builder->fromForm($form, $provider, $em);
             return $this->redirect($this->generateUrl('deposit_show', array('id' => $deposit->getId())));
         }
