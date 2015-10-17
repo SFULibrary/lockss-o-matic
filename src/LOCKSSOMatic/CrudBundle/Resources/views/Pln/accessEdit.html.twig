@@ -1,17 +1,17 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-<h1>Pln edit access</h1>
+	<h1>Pln edit access</h1>
 
-<p>This table shows who has access to PLN {{ pln.name }}</p>
+	<p>This table shows who has access to PLN {{ pln.name }}</p>
 
-  {{ form(access_edit_form) }}
+	{{ form(access_edit_form) }}
 
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('pln') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
+	<ul class="record_actions">
+		<li>
+			<a href="{{ path('pln') }}">
+				Back to the list
+			</a>
+		</li>
+	</ul>
 {% endblock %}

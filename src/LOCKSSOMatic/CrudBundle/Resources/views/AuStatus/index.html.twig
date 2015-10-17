@@ -7,11 +7,12 @@
 
 {% block body -%}
 
-    <div class="navigation">
-        {{ knp_pagination_render(entities) }}
+	<div class="btn-toolbar pull-right">
+        <div class="btn-group">
+            <a href="{{ path('austatus_new') }}" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> New</a>
+        </div>
     </div>
-
-    <table class="records_list table table-striped table-bordered table-hover">
+	<table class="table table-striped table-condensed table-bordered table-hover">
         <thead>
             <tr>
                 <th>Id</th>
@@ -19,29 +20,18 @@
                 <th>Querydate</th>
                 <th>Propertykey</th>
                 <th>Propertyvalue</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('austatus_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.boxHostname }}</td>
-                <td>{% if entity.queryDate %}{{ entity.queryDate|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{{ entity.propertyKey }}</td>
-                <td>{{ entity.propertyValue }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('austatus_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('austatus_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
+			{% for entity in entities %}
+				<tr>
+					<td><a href="{{ path('austatus_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+					<td>{{ entity.boxHostname }}</td>
+					<td>{% if entity.queryDate %}{{ entity.queryDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+					<td>{{ entity.propertyKey }}</td>
+					<td>{{ entity.propertyValue }}</td>
+				</tr>
+			{% endfor %}
         </tbody>
     </table>
 
@@ -49,11 +39,4 @@
         {{ knp_pagination_render(entities) }}
     </div>
 
-        <ul>
-        <li>
-            <a href="{{ path('austatus_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
-    {% endblock %}
+{% endblock %}

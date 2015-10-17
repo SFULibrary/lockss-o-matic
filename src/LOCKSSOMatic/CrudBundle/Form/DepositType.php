@@ -20,6 +20,7 @@ class DepositType extends AbstractType
             ->add('summary')
             ->add('dateDeposited')
             ->add('contentProvider')
+            ->add('user')
         ;
     }
     

@@ -1,6 +1,6 @@
 {% extends '::base.html.twig' %}
 
-    
+
 {% block pageheader %}
     <h1>New Pln</h1>
 {% endblock %}
@@ -9,13 +9,11 @@
 
     {{ form(form, {"style": "horizontal"}) }}
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('pln') }}">
-            Back to the list
-        </a>
-    </li>
-
-
-</ul>
+	<div class="btn-toolbar">
+		<div class="btn-group pull-right">
+			<a href="{{ path('pln') }}" class="btn btn-default">
+				<span class="glyphicon glyphicon-arrow-left"></span> Back
+			</a>
+		</div>
+	</div>
 {% endblock %}

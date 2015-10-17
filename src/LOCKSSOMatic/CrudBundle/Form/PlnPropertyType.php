@@ -17,6 +17,7 @@ class PlnPropertyType extends AbstractType
         $builder
             ->add('propertyKey')
             ->add('propertyValue')
+            ->add('isList')
             ->add('parent')
             ->add('pln')
         ;

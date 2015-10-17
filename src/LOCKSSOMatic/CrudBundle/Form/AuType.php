@@ -17,10 +17,11 @@ class AuType extends AbstractType
         $builder
             ->add('managed')
             ->add('auid')
+            ->add('auStartUrl')
             ->add('manifestUrl')
             ->add('comment')
             ->add('pln')
-            ->add('contentprovider')
+            ->add('contentProvider')
             ->add('plugin')
         ;
     }

@@ -1,41 +1,14 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
-use LOCKSSOMatic\CrudBundle\Form\ContentProviderType;
-use LOCKSSOMatic\CrudBundle\Utility\DepositBuilder;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
+use LOCKSSOMatic\CrudBundle\Form\ContentProviderType;
 
 /**
  * ContentProvider controller.
@@ -101,7 +74,7 @@ class ContentProviderController extends Controller
      *
      * @param ContentProvider $entity The entity
      *
-     * @return Form The form
+     * @return \Symfony\Component\Form\Form The form
      */
     private function createCreateForm(ContentProvider $entity)
     {
@@ -190,7 +163,7 @@ class ContentProviderController extends Controller
     *
     * @param ContentProvider $entity The entity
     *
-    * @return Form The form
+    * @return \Symfony\Component\Form\Form The form
     */
     private function createEditForm(ContentProvider $entity)
     {
@@ -215,8 +188,7 @@ class ContentProviderController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
-        $this->container->get('logger')->error("UUID IS " . $request->request->get('lockssomatic_crudbundle_contentprovider[uuid]'));
-        
+
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find ContentProvider entity.');
         }
@@ -262,7 +234,7 @@ class ContentProviderController extends Controller
      *
      * @param mixed $id The entity id
      *
-     * @return Form The form
+     * @return \Symfony\Component\Form\Form The form
      */
     private function createDeleteForm($id)
     {

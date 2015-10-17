@@ -21,7 +21,7 @@ class {{ form_class }} extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        {%- for field in fields %}
+        {%- for field in fields if field != 'updated' and field != 'created' %}
 
             ->add('{{ field }}')
         {%- endfor %}

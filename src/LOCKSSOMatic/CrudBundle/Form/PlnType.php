@@ -16,7 +16,7 @@ class PlnType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('propserver')
+            ->add('propServer')
             ->add('propsPath')
         ;
     }

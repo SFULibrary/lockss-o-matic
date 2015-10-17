@@ -6,25 +6,19 @@
 {% endblock %}
 
 {% block body -%}
-    <ul class="record_actions">
-        <li>
-            <a href="{{ path('austatus') }}">
-                Back to the list
-            </a>
-        </li>
-
-        <li>
-            <a href="{{ path('austatus_edit', { 'id': entity.id }) }}">
-                <span class='glyphicon glyphicon-edit'></span>
-            </a>
-        </li>
-
-        <li>
-            <a href="{{ path('austatus_delete', { 'id': entity.id }) }}" class="js-confirm" data-confirm="Are you sure you want to delete this AuStatus?">
-                <span class='glyphicon glyphicon-remove'></span>
-            </a>
-        </li>
-    </ul>
+	<div class="btn-toolbar">
+		<div class="btn-group pull-right">
+			<a href="{{ path('austatus') }}" class="btn btn-default">
+				<span class="glyphicon glyphicon-arrow-left"></span> Back
+			</a>
+			<a href="{{ path('austatus_edit', { 'id': entity.id }) }}" class="btn btn-default">
+				<span class='glyphicon glyphicon-edit'></span> Edit
+			</a>
+			<a href="{{ path('austatus_delete', { 'id': entity.id }) }}" class="btn btn-default js-confirm" data-confirm="Are you sure you want to delete this AuStatus?">
+				<span class='glyphicon glyphicon-remove'></span> Delete
+			</a>
+		</div>
+	</div>
 
     <table class="record_properties table table-striped table-bordered table-hover">
         <tbody>

@@ -10,27 +10,29 @@
 
 {{ "{% block body -%}" }}
 
-    <div class="navigation">
-        {{ '{{ knp_pagination_render(entities) }}' }}
+    {% if 'new' in actions %}
+    <div class="btn-toolbar pull-right">
+        <div class="btn-group">
+            <a href="{{ "{{ path('" ~ route_name_prefix ~ "_new') }}" }}" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> New</a>
+        </div>
     </div>
-
-    <table class="records_list table table-striped table-bordered table-hover">
+    {% endif %}
+    <table class="table table-striped table-condensed table-bordered table-hover">
         <thead>
             <tr>
-            {%- for field, metadata in fields %}
+            {%- for field, metadata in fields if field != 'id' %}
 
                 <th>{{ field|capitalize }}</th>
 
             {%- endfor %}
 
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {{ '{% for entity in entities %}' }}
             <tr>
 
-        {%- for field, metadata in fields %}
+        {%- for field, metadata in fields if field != 'id' %}
             {%- if loop.first and ('show' in actions) %}
 
                 <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity."~ identifier ~" }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
@@ -45,13 +47,6 @@
 
             {%- endif %}
 
-            {%- if loop.last %}
-
-                <td>
-                    {%- include "crud/views/others/actions.html.twig.twig" %}
-                </td>
-
-            {%- endif %}
         {%- endfor %}
 
             </tr>
@@ -63,14 +58,5 @@
         {{ '{{ knp_pagination_render(entities) }}' }}
     </div>
 
-    {% if 'new' in actions %}
-    <ul>
-        <li>
-            <a href="{{ "{{ path('" ~ route_name_prefix ~ "_new') }}" }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
-    {% endif %}
 {{ "{% endblock %}" }}
 {% endblock body %}

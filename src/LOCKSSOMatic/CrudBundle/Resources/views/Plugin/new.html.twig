@@ -9,13 +9,11 @@
 
     {{ form(form, {"style": "horizontal"}) }}
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('plugin') }}">
-            Back to the list
+        <div class="btn-toolbar">
+    <div class="btn-group pull-right">
+        <a href="{{ path('plugin') }}" class="btn btn-default">
+            <span class="glyphicon glyphicon-arrow-left"></span> Back
         </a>
-    </li>
-
-
-</ul>
+    </div>
+</div>
 {% endblock %}
