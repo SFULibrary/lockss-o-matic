@@ -5,6 +5,7 @@ services:
         calls:
             - [ setLogger, ["@logger"] ]
             - [ setRegistry, ["@doctrine"] ]
+            - [ setAuBuilder, ["@crud.builder.au"] ]
 
     crud.builder.content:
         class: LOCKSSOMatic\CrudBundle\Service\ContentBuilder

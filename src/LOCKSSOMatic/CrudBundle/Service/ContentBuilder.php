@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
@@ -33,8 +33,9 @@ use LOCKSSOMatic\CrudBundle\Entity\ContentProperty;
 use Monolog\Logger;
 use SimpleXMLElement;
 
-class ContentBuilder {
-    
+class ContentBuilder
+{
+
     /**
      * @var Logger
      */
@@ -44,44 +45,73 @@ class ContentBuilder {
      * @var ObjectManager 
      */
     private $em;
-    
-    public function setLogger(Logger $logger) {
+
+    public function setLogger(Logger $logger)
+    {
         $this->logger = $logger;
     }
-    
-    public function setRegistry(Registry $registry) {
+
+    public function setRegistry(Registry $registry)
+    {
         $this->em = $registry->getManager();
     }
-    
+
+    protected function buildProperty(Content $content, $key, $value)
+    {
+        $contentProperty = new ContentProperty();
+        $contentProperty->setContent($content);
+        $contentProperty->setPropertyKey($key);
+        $contentProperty->setPropertyValue($value);
+        if($this->em !== null) {
+            $this->em->persist($contentProperty);
+        }
+        return $contentProperty;
+    }
+
     /**
      * 
      * @param SimpleXMLElement $xml
      * @return Content
      */
-    public function fromSimpleXML(SimpleXMLElement $xml, ObjectManager $em = null) {
+    public function fromSimpleXML(SimpleXMLElement $xml)
+    {
         $content = new Content();
         $content->setSize($xml->attributes()->size);
         $content->setChecksumType($xml->attributes()->checksumType);
         $content->setChecksumValue($xml->attributes()->checksumValue);
-        $content->setUrl(trim((string)$xml));
+        $content->setUrl(trim((string) $xml));
         $content->setRecrawl(true);
         $content->setTitle('Some generated title');
-        if($em !== null) {
+        if ($em !== null) {
             $em->persist($content);
         }
 
-        foreach($xml->xpath('lom:property') as $node) {
-            $contentProperty = new ContentProperty();
-            $contentProperty->setContent($content);
-            $contentProperty->setPropertyKey((string)$node->attributes()->name);
-            $contentProperty->setPropertyValue((string)$node->attributes()->value);
-            $content->addContentProperty($contentProperty);
-            if($em !== null) {
-                $em->persist($contentProperty);
-            }
+        foreach ($xml->xpath('lom:property') as $node) {
+            $this->buildProperty($content, (string) $node->attributes()->name, (string) $node->attributes()->value);
         }
 
         return $content;
     }
-    
+
+    public function fromArray($row, $headerIdx)
+    {
+        $content = new Content();
+        $content->setSize($row[$headerIdx['size']]);
+        $content->setChecksumType($row[$headerIdx['checksum type']]);
+        $content->setChecksumValue($row[$headerIdx['checksum value']]);
+        $content->setUrl($row[$headerIdx['url']]);
+        $content->setRecrawl(true);
+        $content->setTitle($row[$headerIdx['title']]);
+        if ($this->em !== null) {
+            $this->em->persist($content);
+        } else {
+            $this->logger->warn('No ORM No Save.');
+        }
+
+        foreach (array_keys($headerIdx) as $key) {
+            $this->buildProperty($content, $key, $row[$headerIdx[$key]]);
+        }
+        return $content;
+    }
+
 }

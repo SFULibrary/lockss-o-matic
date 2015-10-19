@@ -116,7 +116,7 @@ class Content implements GetPlnInterface
 
     /**
      * @ORM\OneToMany(targetEntity="ContentProperty", mappedBy="content")
-     * @var ContentProperty[]
+     * @var ArrayCollection
      */
     private $contentProperties;
 
@@ -373,6 +373,10 @@ class Content implements GetPlnInterface
     public function removeContentProperty(ContentProperty $contentProperties)
     {
         $this->contentProperties->removeElement($contentProperties);
+    }
+
+    public function hasContentProperty($key) {
+        return $this->contentProperties->containsKey($key);
     }
 
     /**

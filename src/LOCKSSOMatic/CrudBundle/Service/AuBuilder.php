@@ -28,6 +28,16 @@ class AuBuilder {
     public function setRegistry(Registry $registry) {
         $this->em = $registry->getManager();
     }
+
+    protected function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null) {
+        $property = new AuProperty();
+        $property->setAu($au);
+        $property->setPropertyKey($key);
+        $property->setPropertyValue($value);
+        $property->setParent($parent);
+        $this->em->persist($property);
+        return $property;
+    }
     
     /**
      * Build an AU for the content item.
@@ -42,16 +52,19 @@ class AuBuilder {
         $au->setPlugin($content->getDeposit()->getContentProvider()->getPlugin());
         if($em !== null) {
             $em->persist($au);
+            $em->flush($au);
         }
 
-        foreach($au->getPlugin()->getDefinitionalProperties() as $property) {
-            $property = new AuProperty();
-            $property->setAu($au);
-            $property->getPropertyKey($property);
-            $property->setPropertyValue($content->getContentPropertyValue($property));
-            if($em !== null) {
-                $em->persist($property);
-            }
+        $root = $this->buildProperty($au, 'lockssomatic' + $au->getId());
+        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journalTitle'), $root);
+        $this->buildProperty($au, 'title', $content->getContentPropertyValue('title'), $root);
+        $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier());
+
+
+        foreach($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
+            $grouping = $this->buildProperty($au, 'param.' + $index, null, $root);
+            $this->buildProperty($au, 'key', $property, $grouping);
+            $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
         }
     }
 

@@ -6,19 +6,19 @@
 {% endblock %}
 
 {% block body -%}
-	<div class="btn-toolbar">
-		<div class="btn-group pull-right">
-			<a href="{{ path('content') }}" class="btn btn-default">
-				<span class="glyphicon glyphicon-arrow-left"></span> Back
-			</a>
-			<a href="{{ path('content_edit', { 'id': entity.id }) }}" class="btn btn-default">
-				<span class='glyphicon glyphicon-edit'></span> Edit
-			</a>
-			<a href="{{ path('content_delete', { 'id': entity.id }) }}" class="btn btn-default js-confirm" data-confirm="Are you sure you want to delete this Content?">
-				<span class='glyphicon glyphicon-remove'></span> Delete
-			</a>
-		</div>
-	</div>
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('content') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+            <a href="{{ path('content_edit', { 'id': entity.id }) }}" class="btn btn-default">
+                <span class='glyphicon glyphicon-edit'></span> Edit
+            </a>
+            <a href="{{ path('content_delete', { 'id': entity.id }) }}" class="btn btn-default js-confirm" data-confirm="Are you sure you want to delete this Content?">
+                <span class='glyphicon glyphicon-remove'></span> Delete
+            </a>
+        </div>
+    </div>
 
     <table class="record_properties table table-striped table-bordered table-hover">
         <tbody>
@@ -51,6 +51,10 @@
                 <td>{{ entity.recrawl }}</td>
             </tr>
             <tr>
+                <th>Deposit</th>
+                <td><a href="{{ path('deposit_show', {'id': entity.deposit.id}) }}">{{ entity.deposit.title }}</a></td>
+            </tr>
+            <tr>
                 <th>Au</th>
                 <td>
                     {% if entity.au %}
@@ -60,7 +64,16 @@
                     {% endif %}
                 </td>
             </tr>
-
         </tbody>
     </table>
+
+    <h2>Content Properties</h2>
+    <ul>
+        {% for property in entity.contentProperties %}
+            <li>
+                <b>{{ property.propertyKey }}</b>:
+                    {{ property.propertyValue }}
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

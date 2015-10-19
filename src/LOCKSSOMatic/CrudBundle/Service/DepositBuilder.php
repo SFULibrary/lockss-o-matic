@@ -27,6 +27,11 @@ class DepositBuilder
      * @var ObjectManager 
      */
     private $em;
+
+    /**
+     * @var AuBuilder
+     */
+    private $auBuilder;
     
     public function setLogger(Logger $logger) {
         $this->logger = $logger;
@@ -34,6 +39,10 @@ class DepositBuilder
     
     public function setRegistry(Registry $registry) {
         $this->em = $registry->getManager();
+    }
+
+    public function setAuBuilder(AuBuilder $auBuilder) {
+        $this->auBuilder = $auBuilder;
     }
     
     /**
@@ -74,42 +83,7 @@ class DepositBuilder
         }
 
         /** @var SplFileInfo $dataFile */
-        $dataFile = $data['file'];
-        $fh = $dataFile->openFile();
-        $headers = array_map(function($h) { return strtolower($h);}, $fh->fgetcsv());
-        $headerIdx = array_flip($headers);
-        $headerCount = count($headers);
         
-        while($row = $fh->fgetcsv()) {
-            if(count($row) !== $headerCount) {
-                break;
-            }
-            $this->logger->error(print_r($row, true));
-            $content = new Content();
-            $content->setDeposit($deposit);
-            $content->setTitle($row[$headerIdx['title']]);
-            $content->setSize($row[$headerIdx['size']]);
-            $content->setChecksumType($row[$headerIdx['checksum type']]);
-            $content->setChecksumValue($row[$headerIdx['checksum value']]);
-            $content->setUrl($row[$headerIdx['url']]);
-            $content->setRecrawl(true);
-            
-			// assign the content to an AU.
-			
-            foreach($plugin->getDefinitionalProperties() as $propName) {
-                $prop = new ContentProperty();
-                $prop->setContent($content);
-                $prop->setPropertyKey($propName);
-                $prop->setPropertyValue($row[$headerIdx[strtolower($propName)]]);
-                $this->em->persist($prop);
-            }
-            
-            $this->em->persist($content);
-        }
-        
-        // map required and other parameters to indexes in $headers.
-        // use those indexes to build out the content.
-
         if($this->em !== null) {
             $this->em->persist($deposit);
             $this->em->flush();
