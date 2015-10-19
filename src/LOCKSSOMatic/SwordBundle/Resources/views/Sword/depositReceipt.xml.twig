@@ -1,0 +1,22 @@
+<entry xmlns="http://www.w3.org/2005/Atom" 
+       xmlns:sword="http://purl.org/net/sword/">
+    
+    <sword:treatment>Content URLs deposited to {{ lom_sitename }}, 
+        collection {{ contentProvider.name }}.</sword:treatment>
+    
+    <content src="{{ url('deposit_show', {'id': deposit.id}) }}"/>
+    
+    <!-- Col-IRI. -->
+    <link rel="edit-media" href="{{ url('sword_collection', { 'providerUuid': contentProvider.uuid } ) }}" />
+
+    <!-- SE-IRI (can be same as Edit-IRI) -->
+    <link rel="http://purl.org/net/sword/terms/add" href="{{ url('sword_reciept', { 'providerUuid': contentProvider.uuid, 'depositUuid': deposit.uuid } ) }}" />
+
+    <!-- Edit-IRI -->
+    <link rel="edit" href="{{ url('sword_reciept', { 'providerUuid': contentProvider.uuid, 'depositUuid': deposit.uuid } ) }}" />
+
+    <!-- In LOCKSS-O-Matic, the State-IRI will be the EM-IRI/Cont-IRI with the string '/state' appended. -->
+    <link rel="http://purl.org/net/sword/terms/statement" type="application/atom+xml;type=feed" 
+          href="{{ url('sword_statement', { 'providerUuid': contentProvider.uuid, 'depositUuid': deposit.uuid } ) }}" />
+</entry>
+

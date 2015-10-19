@@ -1,0 +1,32 @@
+{% extends "::base.html.twig" %}
+
+{% block pageheader %}
+    <h1>Reset Password</h1>
+{% endblock %}
+
+{% block body %}
+
+    {% if invalid_username is defined %}
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Error:</strong> Unknown email address.<br>
+        </div>
+    {% endif %}
+
+    <form action="{{ path('fos_user_resetting_send_email') }}" method="POST" class="form form-horizontal">
+        <div class="form-group">
+            <label for="username" class="col-sm-2 control-label">Email address</label>
+            <div class='col-sm-10'>
+                <input type="text" id="username" name="username" required="required" class='form-control'/>
+            </div>            
+        </div>
+
+        <div class='form-group'>
+             <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <button type="submit" class="btn-default btn">Request</button></div>
+        </div>
+    </form>
+
+{% endblock %}
+

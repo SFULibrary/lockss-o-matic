@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<service xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:sword="http://purl.org/net/sword/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:lom="http://lockssomatic.info/SWORD2"
+    xmlns="http://www.w3.org/2007/app">
+    
+    <sword:version>2.0</sword:version>
+    
+    <!-- sword:maxUploadSize is the maximum file size in content element, measured in kB (1,000 bytes). -->
+    <sword:maxUploadSize>{{ contentProvider.maxFileSize }}</sword:maxUploadSize>
+    <lom:uploadChecksumType>
+        {%- for m in checksumMethods %}{{ m }}{% if not loop.last %} {% endif -%}
+        {% endfor -%}
+    </lom:uploadChecksumType>
+    <workspace>
+        <atom:title>{{ lom_sitename }}</atom:title>     
+        <!-- Each LOCKSS-O-Matic content provider will have its own SWORD collection,
+            identified in the 'On-Behalf-Of' header sent along with the GET request
+            for this document. -->
+        <collection href="{{ url('sword_collection', {'providerUuid': contentProvider.uuid}) }}">
+            <lom:pluginIdentifier id="{{ plugin.getPluginIdentifier() }}"/>
+            <atom:title>{{ contentProvider.name }}</atom:title>
+            <accept>application/atom+xml;type=entry</accept> 
+            <sword:mediation>true</sword:mediation>
+            {% for p in plugin.getDefinitionalProperties() %}
+                <lom:property name="{{ p }}"/>
+            {% endfor %}
+        </collection>
+        
+    </workspace>
+            
+</service>

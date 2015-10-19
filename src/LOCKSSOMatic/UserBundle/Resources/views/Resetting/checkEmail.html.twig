@@ -1,0 +1,13 @@
+{% extends "::base.html.twig" %}
+
+
+{% block pageheader %}
+    Email sent
+{% endblock %}
+
+{% block fos_user_content %}
+    <p>
+        An email has been sent to your address. It contains a link you must 
+        click to reset your password.
+    </p>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>User List</h1>
+{% endblock %}
+
+{% block body -%}
+
+    <div class="btn-toolbar pull-right">
+        <div class="btn-group">
+            <a href="{{ path('admin_user_new') }}" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> New</a>
+        </div>
+    </div>
+    <table class="records_list table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Full name</th>
+                <th>Email</th>
+                <th>Institution</th>
+                <th>Roles</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td><a href="{{ path('admin_user_show', { 'id': entity.id }) }}">{{ entity.fullname }}</a></td>
+                    <td><a href="mailto:{{ entity.email }}">{{ entity.email}}</a></td>
+                    <td>{{ entity.institution }}</td>
+                    <td>
+                        {% for role in entity.roles %}
+                            {{ role }}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

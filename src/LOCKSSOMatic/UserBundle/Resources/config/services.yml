@@ -1,0 +1,23 @@
+services:
+    app.form.profile:
+        class: LOCKSSOMatic\UserBundle\Form\ProfileType
+        tags:
+            - { name: form.type, alias: lom_user_profile }
+
+    app.registration.listener:
+        class: LOCKSSOMatic\UserBundle\EventListener\RegistrationListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ["@router"]
+        
+    lom.twig.lom_userextension:
+        class: LOCKSSOMatic\UserBundle\Twig\UsersExtension
+        arguments: [@doctrine]
+        tags:
+            - { name: twig.extension }
+
+    lom.access:
+        class: LOCKSSOMatic\UserBundle\Security\Services\Access
+        arguments: [@security.authorization_checker, @security.token_storage, @problematic.acl_manager, @security.acl.provider, @doctrine]
+        tags:
+            - { name: acl.check }

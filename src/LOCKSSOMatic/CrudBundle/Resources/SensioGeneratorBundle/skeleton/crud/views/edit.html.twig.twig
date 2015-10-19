@@ -1,0 +1,16 @@
+{% block extends %}
+{{ "{% extends '::base.html.twig' %}" }}
+{% endblock extends %}
+
+{% block body %}
+    
+{{ "{% block pageheader %}"}}
+    <h1>{{ entity }} Edit</h1>
+{{ "{% endblock %}"}}
+    
+{{ "{% block body -%}" }}
+
+    {{ '{{ form(edit_form) }}' }}
+
+{{ "{% endblock %}" }}
+{% endblock body %}
