@@ -113,7 +113,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $this->em->persist($au);
     }
 
-    protected function buildAu(SimpleXMLElement $title)
+    public function buildAu(SimpleXMLElement $title)
     {
         $au = new Au();
         $au->setComment('AU created by import command a.');
@@ -162,15 +162,12 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         if (array_key_exists($pluginId, $pluginCache) && $this->em->contains($pluginCache[$pluginId])) {
             return $pluginCache[$pluginId];
         }
-        $property = $this->em->getRepository('LOCKSSOMaticCrudBundle:PluginProperty')
-            ->findOneBy(array(
-            'propertyKey'   => 'plugin_identifier',
-            'propertyValue' => $pluginId
-        ));
-        if ($property === null) {
+        $pluginRepo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
+        $plugin = $pluginRepo->findByPluginIdentifier($pluginId);
+        if ($plugin === null) {
             throw new Exception("Unknown pluginId: {$pluginId}");
         }
-        $pluginCache[$pluginId] = $property->getPlugin();
+        $pluginCache[$pluginId] = $plugin;
         return $pluginCache[$pluginId];
     }
 

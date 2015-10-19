@@ -261,7 +261,7 @@ class Deposit implements GetPlnInterface
      * Set the date of the deposit. Called automatically, and set to the current
      * timestamp.
      * 
-     * @ORM\prePersist
+     * @ORM\PrePersist
      */
     public function setDepositDate() {
         if($this->dateDeposited === null) {

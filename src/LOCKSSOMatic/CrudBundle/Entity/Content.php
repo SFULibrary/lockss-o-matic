@@ -344,7 +344,7 @@ class Content implements GetPlnInterface
         return $this->au;
     }
     /**
-     * @ORM\prePersist
+     * @ORM\PrePersist
      */
     public function setDepositDate() {
         if($this->dateDeposited === null) {

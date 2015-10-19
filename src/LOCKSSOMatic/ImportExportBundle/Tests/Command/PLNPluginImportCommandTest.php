@@ -45,12 +45,12 @@ class PLNPluginImportCommandTest extends AbstractTestCase
         ));
 
         $plugin = $repo->findOneBy(array(
-            'name' => 'Simon Fraser University Library Editorial Cartoons Collection Plugin'
+            'name' => 'Test Plugin'
         ));
         $this->assertNotNull($plugin);
         $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\Plugin', $plugin);
         $this->assertEquals(
-            'ca.sfu.lib.plugin.cartoons.SFUCartoonsPlugin',
+            'ca.sfu.test',
             $plugin->getPluginIdentifier()
         );
     }

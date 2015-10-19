@@ -24,9 +24,9 @@ class RegistrationListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return [
+        return array(
             FOSUserEvents::REGISTRATION_INITIALIZE => 'onRegistrationInitialize',
-        ];
+        );
     }
 
     public function onRegistrationInitialize(GetResponseUserEvent $event)

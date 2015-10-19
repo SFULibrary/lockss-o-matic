@@ -438,7 +438,7 @@ class ContentProvider implements GetPlnInterface
      * Generate a UUID for the provider, if it needs one. Called automatically
      * by doctrine.
      *
-     * @ORM\prePersist
+     * @ORM\PrePersist
      */
     public function generateUuid() {
         if($this->uuid === null) {

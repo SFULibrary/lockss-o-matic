@@ -253,7 +253,7 @@ class Au implements GetPlnInterface
      * Generate a LOCKSS AUid. Called automatically before the AU is persisted
      * to the database.
      * 
-     * @ORM\prePersist
+     * @ORM\PrePersist
      * @return string
      */
     public function generateAuid() {
@@ -323,12 +323,15 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * @ORM\prePersist
+     * @ORM\PrePersist
      * @return string
      */
     public function generateAuStartUrl() {
         $plugin = $this->getPlugin();
         // auStart looks like "%slockss/%s/%s/index.html", base_url, journal_id, volume_name
+        if( ! $plugin) {
+            return;
+        }
         $auStart = $plugin->getProperty('au_start_url');
         if($auStart === null || $auStart === '') {
             return '';

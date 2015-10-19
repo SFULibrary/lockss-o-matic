@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * LOCKSS Plugin
  *
  * @ORM\Table(name="plugins")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="PluginRepository")
  */
 class Plugin
 {

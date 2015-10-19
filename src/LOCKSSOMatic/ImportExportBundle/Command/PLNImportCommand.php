@@ -85,7 +85,7 @@ class PLNImportCommand extends ContainerAwareCommand
 
     private function getList(SimpleXMLElement $node) {
         $valueNodes = $node->xpath('value');
-        $values = [];
+        $values = array();
         foreach($valueNodes as $n) {
             $values[] = (string)$n;
         }

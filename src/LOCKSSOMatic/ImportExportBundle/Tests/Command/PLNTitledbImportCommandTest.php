@@ -4,6 +4,7 @@ namespace LOCKSSOMatic\ImportExportBundle\Tests\Command;
 
 use Exception;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
+use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 use LOCKSSOMatic\ImportExportBundle\Command\PLNTitledbImportCommand;
 use SimpleXMLElement;
 
@@ -27,6 +28,15 @@ class PLNTitledbImportCommandTest extends AbstractTestCase
         parent::setUp();
         $this->command = new PLNTitledbImportCommand();
         $this->command->setContainer($this->getContainer());
+    }
+
+    /**
+     * @param string $id
+     * @return Plugin
+     */
+    protected function getPlugin($id) {
+        $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
+        return $repo->findByPluginIdentifier($id);
     }
 
 
@@ -63,23 +73,12 @@ ENDXML;
     }
 
     /**
-     * @covers LOCKSSOMatic\ImportExportBundle\Command\PLNTitledbImportCommand::getPlugin
-     * @todo   Implement testGetPlugin().
-     */
-    public function testGetPlugin()
-    {
-        $plugin = $this->command->getPlugin('ca.sfu.test');
-        $this->assertNotNull($plugin);
-        $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\Plugin', $plugin);
-    }
-
-    /**
      * @covers LOCKSSOMatic\ImportExportBundle\Command\PLNTitledbImportCommand::getContentOwner
      * @todo   Implement testGetContentOwner().
      */
     public function testGetContentOwner()
     {
-        $plugin = $this->command->getPlugin('ca.sfu.test');
+        $plugin = $this->getPlugin('ca.sfu.test');
         $owner = $this->command->getContentOwner('Test Owner', $plugin);
         $this->assertNotNull($owner);
         $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\ContentOwner', $owner);
@@ -99,9 +98,9 @@ ENDXML;
     public function testAddAu()
     {
         $xml = new SimpleXMLElement($this->getXml());
-        $this->command->addAu($xml);
+        $this->command->buildAu($xml);
 
-        $plugin = $this->command->getPlugin('ca.sfu.test');
+        $plugin = $this->getPlugin('ca.sfu.test');
         $this->assertEquals(2, count($plugin->getAus()));
     }
 
