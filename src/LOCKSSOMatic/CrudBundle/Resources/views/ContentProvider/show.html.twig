@@ -14,6 +14,9 @@
 			<a href="{{ path('contentprovider_edit', { 'id': entity.id }) }}" class="btn btn-default">
 				<span class='glyphicon glyphicon-edit'></span> Edit
 			</a>
+			<a href="{{ path('contentprovider_csv_import', { 'id': entity.id }) }}" class="btn btn-default">
+				<span class="glyphicon glyphicon-th-list"></span> Deposit
+			</a>
 			<a href="{{ path('contentprovider_delete', { 'id': entity.id }) }}" class="btn btn-default js-confirm" data-confirm="Are you sure you want to delete this ContentProvider?">
 				<span class='glyphicon glyphicon-remove'></span> Delete
 			</a>

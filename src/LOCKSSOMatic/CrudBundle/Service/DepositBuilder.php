@@ -94,6 +94,8 @@ class DepositBuilder
             $content->setUrl($row[$headerIdx['url']]);
             $content->setRecrawl(true);
             
+			// assign the content to an AU.
+			
             foreach($plugin->getDefinitionalProperties() as $propName) {
                 $prop = new ContentProperty();
                 $prop->setContent($content);

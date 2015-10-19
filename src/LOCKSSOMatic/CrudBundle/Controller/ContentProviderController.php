@@ -2,13 +2,16 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
+use LOCKSSOMatic\CrudBundle\Form\ContentProviderType;
+use LOCKSSOMatic\CrudBundle\Service\DepositBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
-use LOCKSSOMatic\CrudBundle\Form\ContentProviderType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * ContentProvider controller.
@@ -74,7 +77,7 @@ class ContentProviderController extends Controller
      *
      * @param ContentProvider $entity The entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createCreateForm(ContentProvider $entity)
     {
@@ -163,7 +166,7 @@ class ContentProviderController extends Controller
     *
     * @param ContentProvider $entity The entity
     *
-    * @return \Symfony\Component\Form\Form The form
+    * @return Form The form
     */
     private function createEditForm(ContentProvider $entity)
     {
@@ -234,7 +237,7 @@ class ContentProviderController extends Controller
      *
      * @param mixed $id The entity id
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createDeleteForm($id)
     {
@@ -300,11 +303,13 @@ class ContentProviderController extends Controller
         $form->handleRequest($request);
 
         if($form->isValid()) {
+			/** @var DepositBuilder $builder */
             $builder = $this->container->get('crud.builder.deposit');
             $deposit = $builder->fromForm($form, $provider, $em);
             return $this->redirect($this->generateUrl('deposit_show', array('id' => $deposit->getId())));
         }
         return array(
+			'entity' => $provider,
             'required' => $requiredParams,
             'form' => $form->createView(),
         );

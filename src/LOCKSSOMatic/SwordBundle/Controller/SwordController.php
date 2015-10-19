@@ -267,7 +267,12 @@ class SwordController extends Controller
             if($au === null) {
                 $au = new Au();
                 $em->persist($au);
+				// content provider
+				// pln
+				// plugin
+				// managed = yes
                 // set au props here.
+				
             } 
             $content->setAu($au);
         }
