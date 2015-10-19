@@ -1,3 +1,0 @@
-locksso_matic_pln_monitor_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: LOCKSSOMaticPLNMonitorBundle:Default:index }

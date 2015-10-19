@@ -1,3 +1,0 @@
-LOCKSSOMaticSWORDBundle_API:
-    resource: "@LOCKSSOMaticSWORDBundle/Resources/config/routing/default.yml"
-    prefix:   /api/sword/2.0

@@ -1,3 +1,0 @@
-locksso_matic_logging_log:
-    resource: "@LOCKSSOMaticLoggingBundle/Resources/config/routing/logentry.yml"
-    prefix:   /log

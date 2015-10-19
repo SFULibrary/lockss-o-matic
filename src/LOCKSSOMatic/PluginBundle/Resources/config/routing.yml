@@ -1,3 +1,0 @@
-locksso_matic_plugin_default:
-    resource: "@LOCKSSOMaticPluginBundle/Resources/config/routing/default.yml"
-    prefix:     /plugins_manager

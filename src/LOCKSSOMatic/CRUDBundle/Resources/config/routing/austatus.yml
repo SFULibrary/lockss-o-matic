@@ -1,7 +1,0 @@
-austatus:
-    path:     /
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:index" }
-
-austatus_show:
-    path:     /{id}/show
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:AuStatus:show" }
