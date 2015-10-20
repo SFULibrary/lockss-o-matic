@@ -93,23 +93,32 @@ class ContentBuilder
         return $content;
     }
 
+    private function fieldOrNull($row, $headerIdx, $field) {
+        if( ! array_key_exists($field, $headerIdx)) {
+            return null;
+        }
+        $index = $headerIdx[$field];
+        if( ! array_key_exists($index, $row)) {
+            return null;
+        }
+        return $row[$index];
+    }
+
     public function fromArray($row, $headerIdx)
     {
         $content = new Content();
-        $content->setSize($row[$headerIdx['size']]);
-        $content->setChecksumType($row[$headerIdx['checksum type']]);
-        $content->setChecksumValue($row[$headerIdx['checksum value']]);
+        $content->setSize($this->fieldOrNull($row, $headerIdx, 'size'));
+        $content->setChecksumType($this->fieldOrNull($row, $headerIdx, 'checksum type'));
+        $content->setChecksumValue($this->fieldOrNull($row, $headerIdx, 'checksum value'));
         $content->setUrl($row[$headerIdx['url']]);
         $content->setRecrawl(true);
         $content->setTitle($row[$headerIdx['title']]);
         if ($this->em !== null) {
             $this->em->persist($content);
-        } else {
-            $this->logger->warn('No ORM No Save.');
         }
-
+        
         foreach (array_keys($headerIdx) as $key) {
-            $this->buildProperty($content, $key, $row[$headerIdx[$key]]);
+            $this->buildProperty($content, $key, $this->fieldOrNull($row, $headerIdx, $key));
         }
         return $content;
     }

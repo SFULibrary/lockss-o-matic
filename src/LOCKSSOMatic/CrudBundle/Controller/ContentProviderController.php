@@ -333,10 +333,9 @@ class ContentProviderController extends Controller
                 return strtolower($h);
             }, $fh->fgetcsv());
             $headerIdx = array_flip($headers);
-            $headerCount = count($headers);
 
             while ($row = $fh->fgetcsv()) {
-                if (count($row) !== $headerCount) {
+                if (count($row) < 2) {
                     break;
                 }
                 $content = $contentBuilder->fromArray($row, $headerIdx);
