@@ -112,7 +112,7 @@ class ContentBuilder
         $content->setChecksumValue($this->fieldOrNull($row, $headerIdx, 'checksum value'));
         $content->setUrl($row[$headerIdx['url']]);
         $content->setRecrawl(true);
-        $content->setTitle($row[$headerIdx['title']]);
+        $content->setTitle("Generated Title");
         if ($this->em !== null) {
             $this->em->persist($content);
         }

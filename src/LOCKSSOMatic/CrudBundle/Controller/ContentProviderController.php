@@ -268,7 +268,7 @@ class ContentProviderController extends Controller
         $em = $this->getDoctrine()->getManager();
         $provider = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
         $params = array_merge(
-            array('URL', 'Title', 'Size', 'Checksum Type', 'Checksum Value'),
+            array('URL', 'journalTitle', 'Size', 'Checksum Type', 'Checksum Value'),
             $provider->getPlugin()->getDefinitionalProperties()
         );
         $fh = fopen("php://temp", 'r+');
@@ -340,7 +340,14 @@ class ContentProviderController extends Controller
                 }
                 $content = $contentBuilder->fromArray($row, $headerIdx);
                 $content->setDeposit($deposit);
-                // add to an au here.
+                $auid = $content->generateAuid();
+                $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
+                    'auid' => $auid
+                ));
+                if($au === null) {
+                    $au = $auBuilder->fromContent($content);
+                }
+                $content->setAu($au);
             }
             $em->flush();
             return $this->redirect($this->generateUrl('deposit_show',

@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Content implements GetPlnInterface
 {
+
     /**
      * @var integer
      *
@@ -305,8 +306,10 @@ class Content implements GetPlnInterface
     public function setDeposit(Deposit $deposit = null)
     {
         $this->deposit = $deposit;
-        $deposit->addContent($this);
-        
+        if ($deposit !== null) {
+            $deposit->addContent($this);
+        }
+
         return $this;
     }
 
@@ -329,7 +332,9 @@ class Content implements GetPlnInterface
     public function setAu(Au $au = null)
     {
         $this->au = $au;
-        $au->addContent($this);
+        if ($au !== null) {
+            $au->addContent($this);
+        }
 
         return $this;
     }
@@ -343,11 +348,13 @@ class Content implements GetPlnInterface
     {
         return $this->au;
     }
+
     /**
      * @ORM\PrePersist
      */
-    public function setDepositDate() {
-        if($this->dateDeposited === null) {
+    public function setDepositDate()
+    {
+        if ($this->dateDeposited === null) {
             $this->dateDeposited = new DateTime();
         }
     }
@@ -375,7 +382,8 @@ class Content implements GetPlnInterface
         $this->contentProperties->removeElement($contentProperties);
     }
 
-    public function hasContentProperty($key) {
+    public function hasContentProperty($key)
+    {
         return $this->contentProperties->containsKey($key);
     }
 
@@ -389,15 +397,16 @@ class Content implements GetPlnInterface
         return $this->contentProperties;
     }
 
-    public function getContentPropertyValue($key, $encoded = false) {
+    public function getContentPropertyValue($key, $encoded = false)
+    {
         $value = null;
-        foreach($this->getContentProperties() as $prop) {
-            if($prop->getPropertyKey() === $key) {
+        foreach ($this->getContentProperties() as $prop) {
+            if ($prop->getPropertyKey() === $key) {
                 $value = $prop->getPropertyValue();
                 break;
             }
         }
-        if($encoded === false || $value === null) {
+        if ($encoded === false || $value === null) {
             return $value;
         }
         $callback = function($matches) {
@@ -412,9 +421,10 @@ class Content implements GetPlnInterface
      *
      * @return string
      */
-    public function generateAuid() {
+    public function generateAuid()
+    {
         $plugin = $this->getDeposit()->getContentProvider()->getPlugin();
-        if($plugin === null) {
+        if ($plugin === null) {
             return null;
         }
         $pluginKey = str_replace('.', '|', $plugin->getPluginIdentifier());
@@ -422,8 +432,9 @@ class Content implements GetPlnInterface
         $propNames = $plugin->getDefinitionalProperties();
         sort($propNames);
 
-        foreach($propNames as $name) {
-            $auKey .= '&' . $name . '~' . $this->getContentPropertyValue($name, true);
+        foreach ($propNames as $name) {
+            $auKey .= '&' . $name . '~' . $this->getContentPropertyValue($name,
+                    true);
         }
         $this->auid = $pluginKey . $auKey;
         return $this->auid;
@@ -436,6 +447,5 @@ class Content implements GetPlnInterface
     {
         return $this->getDeposit()->getContentProvider()->getPln();
     }
-
 
 }

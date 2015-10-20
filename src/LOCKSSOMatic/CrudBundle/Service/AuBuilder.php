@@ -45,27 +45,24 @@ class AuBuilder {
      * @return Au
      * @param Content $content
      */
-    public function fromContent(Content $content, ObjectManager $em = null) {
+    public function fromContent(Content $content) {
         $au = new Au();
         $au->setContentprovider($content->getDeposit()->getContentProvider());
         $au->setPln($content->getDeposit()->getContentProvider()->getPln());
         $au->setPlugin($content->getDeposit()->getContentProvider()->getPlugin());
-        if($em !== null) {
-            $em->persist($au);
-            $em->flush($au);
-        }
 
-        $root = $this->buildProperty($au, 'lockssomatic' + $au->getId());
-        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journalTitle'), $root);
-        $this->buildProperty($au, 'title', $content->getContentPropertyValue('title'), $root);
+        $root = $this->buildProperty($au, 'lockssomatic' . uniqid('', true));
+        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journaltitle'), $root);
+        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier());
 
-
         foreach($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
-            $grouping = $this->buildProperty($au, 'param.' + $index, null, $root);
+            $grouping = $this->buildProperty($au, 'param.' . $index, null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
             $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
         }
+        $this->em->persist($au);
+        $this->em->flush($au);
     }
 
 }

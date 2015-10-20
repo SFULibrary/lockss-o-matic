@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class AuProperty implements GetPlnInterface
 {
+
     /**
      * @var integer
      *
@@ -72,7 +73,8 @@ class AuProperty implements GetPlnInterface
      */
     private $children;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->children = new ArrayCollection();
     }
 
@@ -141,8 +143,9 @@ class AuProperty implements GetPlnInterface
     public function setParent(AuProperty $parent = null)
     {
         $this->parent = $parent;
-        $parent->addChild($this);
-        
+        if ($parent !== null) {
+            $parent->addChild($this);
+        }
         return $this;
     }
 
@@ -161,7 +164,8 @@ class AuProperty implements GetPlnInterface
      *
      * @return boolean
      */
-    public function hasParent() {
+    public function hasParent()
+    {
         return $this->parent !== null;
     }
 
@@ -175,7 +179,7 @@ class AuProperty implements GetPlnInterface
     {
         $this->au = $au;
         $au->addAuProperty($this);
-        
+
         return $this;
     }
 
@@ -227,7 +231,8 @@ class AuProperty implements GetPlnInterface
      *
      * @return boolean
      */
-    public function hasChildren() {
+    public function hasChildren()
+    {
         return count($this->children) > 0;
     }
 

@@ -66,6 +66,14 @@
                 <td><a href="{{ path('plugin_show', {'id': entity.plugin.id}) }}">{{ entity.plugin }}</a></td>
             </tr>
             <tr>
+                <th>Content Provider</th>
+                <td><a href="{{ path('contentprovider_show', {'id': entity.contentProvider.id}) }}">{{ entity.contentProvider.name }}</a></td>
+            </tr>
+            <tr>
+                <th>PLN</th>
+                <td><a href="{{ path('pln_show', {'id': entity.pln.id}) }}">{{ entity.pln.name }}</a></td>
+            </tr>
+            <tr>
                 <th>Comment</th>
                 <td>{{ entity.comment }}</td>
             </tr>
