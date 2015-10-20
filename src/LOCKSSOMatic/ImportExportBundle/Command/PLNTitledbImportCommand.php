@@ -2,12 +2,12 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
-use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
+use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use Monolog\Logger;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -37,8 +37,10 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
     {
         $this->setName('lom:import:titledb')
             ->setDescription('Import PLN titledb file.')
+            ->addArgument('plnId', InputArgument::REQUIRED,
+                'ID of the PLN which will own the titles')
             ->addArgument('titledbs', InputArgument::IS_ARRAY,
-                'Local path to the titledb xml file.');
+                'Local path(s) to the titledb xml file.');
     }
 
     /**
@@ -56,6 +58,8 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $titleFiles = $input->getArgument('titledbs');
+        $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($input->getArgument('plnId'));
+        
         $logger = $this->getLogger();
 
         foreach ($titleFiles as $file) {
@@ -64,11 +68,11 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
                 $logger->critical("Cannot find {$file}");
                 continue;
             }
-            $this->processFile($file, $output);
+            $this->processFile($file, $output, $pln);
         }
     }
 
-    protected function processFile($file, OutputInterface $output)
+    protected function processFile($file, OutputInterface $output, Pln $pln)
     {
         $xml = simplexml_load_file($file);
         $titles = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
@@ -78,7 +82,7 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $i = 0;
         foreach ($titles as $title) {
             try {
-                $this->processTitle($title);
+                $this->processTitle($title, $pln);
             } catch (Exception $e) {
                 $output->writeln("Import error: {$e->getMessage()}");
                 if (($p = $e->getPrevious()) !== null) {
@@ -104,9 +108,10 @@ class PLNTitledbImportCommand extends ContainerAwareCommand
         $output->writeln(" {$processed} / {$total} - {$memory} of {$available}");
     }
 
-    protected function processTitle(SimpleXMLElement $title)
+    protected function processTitle(SimpleXMLElement $title, Pln $pln)
     {
         $au = $this->buildAu($title);
+        $au->setPln($pln);
         foreach ($au->getAuProperties() as $property) {
             $this->em->persist($property);
         }

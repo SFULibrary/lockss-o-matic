@@ -82,8 +82,8 @@ class ContentBuilder
         $content->setUrl(trim((string) $xml));
         $content->setRecrawl(true);
         $content->setTitle('Some generated title');
-        if ($em !== null) {
-            $em->persist($content);
+        if ($this->em !== null) {
+            $this->em->persist($content);
         }
 
         foreach ($xml->xpath('lom:property') as $node) {

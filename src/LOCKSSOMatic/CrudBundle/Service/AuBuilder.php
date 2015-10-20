@@ -61,8 +61,10 @@ class AuBuilder {
             $this->buildProperty($au, 'key', $property, $grouping);
             $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
         }
+        foreach($content->getContentProperties() as $property) {
+            $this->buildProperty($au, $property->getPropertyKey(), $property->getPropertyValue(), $root);
+        }
         $this->em->persist($au);
-        $this->em->flush($au);
     }
 
 }
