@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+{% macro au_props(props) %}
+    {% import _self as macros %}
+    {% for prop in props %}
+        {% if prop.hasChildren() %}
+            <property name="{{ prop.propertyKey }}">
+                {{ macros.au_props(prop.children) }}
+            </property>
+        {% else %}
+            <property name="{{ prop.propertyKey }}" value="{{ prop.propertyValue }}"/>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% import _self as macros %}
+
+<lockss-config>
+    <property name="org.lockss.title">
+        {% for au in aus %}
+            {{ macros.au_props(au.getRootPluginProperties()) }}
+        {% endfor %}
+    </property>
+</lockss-config>
