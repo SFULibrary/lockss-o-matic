@@ -3,13 +3,10 @@
 namespace LOCKSSOMatic\SwordBundle\Controller;
 
 use Exception;
-use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
-use LOCKSSOMatic\CrudBundle\Utility\ContentBuilder;
-use LOCKSSOMatic\CrudBundle\Utility\DepositBuilder;
 use LOCKSSOMatic\LogBundle\Services\LoggingService;
 use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SwordBundle\Exceptions\DepositUnknownException;

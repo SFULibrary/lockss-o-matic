@@ -65,6 +65,7 @@ class AuBuilder {
             $this->buildProperty($au, $property->getPropertyKey(), $property->getPropertyValue(), $root);
         }
         $this->em->persist($au);
+        return $au;
     }
 
 }

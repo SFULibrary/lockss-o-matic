@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\UserBundle\DataFixtures\ORM;
+namespace LOCKSSOMatic\UserBundle\DataFixtures\ORM\dev;
 
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;

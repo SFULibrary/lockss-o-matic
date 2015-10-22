@@ -1,6 +1,6 @@
 <?php
 
-namespace LOCKSSOMatic\UserBundle\DataFixtures\ORM\dev;
+namespace LOCKSSOMatic\UserBundle\DataFixtures\ORM\prod;
 
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -10,24 +10,6 @@ use LOCKSSOMatic\UserBundle\Entity\User;
 class LoadUserData extends AbstractDataFixture implements OrderedFixtureInterface {
     
     /**
-     * Users to create.
-     *
-     * @var array
-     */
-    private $userdata = array(
-        array('franklin-admin', 'franklin.admin@example.com', 'franklin Admin', 'ROLE_LOMADMIN'),
-        array('franklin-depositor', 'franklin.depositor@example.com', 'franklin depositor', null),
-        array('franklin-monitor', 'franklin.monitor@example.com', 'franklin monitor', null),
-        array('dewey-admin', 'dewey.admin@example.com', 'dewey Admin', 'ROLE_LOMADMIN'),
-        array('dewey-depositor', 'dewey.depositor@example.com', 'dewey depositor', 'ROLE_LOMADMIN'),
-        array('dewey-monitor', 'dewey.monitor@example.com', 'dewey monitor', null),
-        array('shared-admin', 'shared.admin@example.com', 'shared Admin', 'ROLE_LOMADMIN'),
-        array('shared-depositor', 'shared.depositor@example.com', 'shared depositor', null),
-        array('shared-monitor', 'shared.monitor@example.com', 'shared monitor', null),
-        array('user-noaccess', 'user@example.com', 'User without access', null),
-    );
-
-    /**
      * Load the user fixtures.
      *
      * @param ObjectManager $manager
@@ -36,12 +18,6 @@ class LoadUserData extends AbstractDataFixture implements OrderedFixtureInterfac
     {
         $admin = $this->buildUser($manager, 'admin@example.com', 'Site admin', 'ROLE_ADMIN');
         $this->setReference('admin-user', $admin);
-
-        foreach ($this->userdata as $d) {
-            $user = $this->buildUser($manager, $d[1], $d[2], $d[3]);
-            $this->setReference($d[0], $user);
-        }
-
         $manager->flush();
     }
 
@@ -86,7 +62,7 @@ class LoadUserData extends AbstractDataFixture implements OrderedFixtureInterfac
 
     protected function getEnvironments()
     {
-        return array('dev');
+        return array('prod');
     }
 
 }
