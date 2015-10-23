@@ -35,7 +35,7 @@ use LOCKSSOMatic\CrudBundle\Entity\PluginProperty;
 /**
  * Load some  plugin property test data into the database.
  */
-class LoadPluginPropertyTestData extends AbstractDataFixture implements OrderedFixtureInterface
+class LoadPluginPropertyData extends AbstractDataFixture implements OrderedFixtureInterface
 {
 
     protected function doLoad(ObjectManager $em)
@@ -48,6 +48,8 @@ class LoadPluginPropertyTestData extends AbstractDataFixture implements OrderedF
         );
         $this->buildPluginProperty($em, $plugin, 'plugin_version', 'test beta');
         $this->buildPluginProperty($em, $plugin, 'plugin_identifier', 'ca.sfu.test');
+        $this->buildPluginProperty($em, $plugin, 'au_start_url', '"%s/lockss/%d", base_url, year');
+        $this->buildPluginProperty($em, $plugin, 'au_name', '"Archive from %s %d", base_url, year');
 
         $config = $this->buildPluginProperty($em, $plugin, 'plugin_config_props');
         $this->setReference('prop_config', $config);

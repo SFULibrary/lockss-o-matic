@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test;
+namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\dev;
 
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -33,17 +33,19 @@ use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 
 /**
- * Load some test AU property data into the database for testing.
+ * Load some test AU data into the database for testing.
  */
-class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtureInterface
+class LoadAuData extends AbstractDataFixture implements OrderedFixtureInterface
 {
 
     /**
+     * PLNs must be loaded before Boxes. This sets the order.
+     *
      * @return int the order
      */
     public function getOrder()
     {
-        return 6; // must be after au.
+        return 5; // must be after content provider.
     }
 
     /**
@@ -53,7 +55,12 @@ class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtu
      */
     public function doload(ObjectManager $em)
     {
-        $au = $this->getReference('au');
+        $au = new Au();
+        $au->setPln($this->getReference('pln-franklin'));
+        $au->setContentprovider($this->getReference('provider'));
+        $au->setPlugin($this->getReference('plugin'));
+        $this->setReference('au', $au);
+
         $root = new AuProperty();
         $root->setPropertyKey('TestStuffGoesHere');
         $root->setAu($au);
@@ -64,6 +71,9 @@ class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtu
         $this->setReference('auprop-child', $this->buildAuProperty($em, 'param.2', 'pub_id', 'kittens', $root, $au));
         $this->buildAuProperty($em, 'param.3', 'foot_id', 'left', $root, $au);
         $this->buildAuProperty($em, 'param.4', 'year', '1991', $root, $au);
+
+
+        $em->persist($au);
         $em->flush();
     }
 
@@ -88,7 +98,7 @@ class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtu
         $valProp->setPropertyKey('value');
         $valProp->setPropertyValue($value);
         $em->persist($valProp);
-        
+
         return $parent;
     }
 
@@ -97,7 +107,7 @@ class LoadAuPropertyTestData extends AbstractDataFixture implements OrderedFixtu
      */
     protected function getEnvironments()
     {
-        return array('test');
+        return array('dev');
     }
 
 }

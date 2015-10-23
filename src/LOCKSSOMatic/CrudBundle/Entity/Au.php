@@ -5,6 +5,7 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 
 /**
  * LOCKSS archival unit.
@@ -39,6 +40,14 @@ class Au implements GetPlnInterface
      * @ORM\Column(name="auid", type="string", length=512, nullable=true)
      */
     private $auid;
+
+    /**
+     * The generated name of the AU.
+     *
+     * @var type
+     * @ORM\Column(name="au_name", type="string", length=512, nullable=false)
+     */
+    private $auName;
 
     /**
      * The URL for the manifest of this AU. Manifests are optional.
@@ -322,39 +331,55 @@ class Au implements GetPlnInterface
         return $this->auStartUrl;
     }
 
-    /**
-     * @ORM\PrePersist
-     * @return string
-     */
-    public function generateAuStartUrl() {
+    // should this be in a service? Adds logging options.
+    // make this more testable.
+    protected function generateSymbol($name) {
         $plugin = $this->getPlugin();
-        // auStart looks like "%slockss/%s/%s/index.html", base_url, journal_id, volume_name
         if( ! $plugin) {
-            return;
+            throw new Exception("Au requires plugin to generate $name.");
         }
-        $auStart = $plugin->getProperty('au_start_url');
-        if($auStart === null || $auStart === '') {
-            return '';
+        $property = $plugin->getProperty($name);
+        if( ! $property) {
+            throw new Exception("$name plugin property is required.");
         }
         $formatStr = null;
         $matches = array();
-        if( ! preg_match('/^"([^"]*)"/', $auStart, $matches)) {
-            return 'no formatstr match';
-        } else {
+        if( preg_match('/^"([^"]*)"/', $property, $matches)) {
             $formatStr = $matches[1];
+        } else {
+            throw new Exception("$name property cannot be parsed: {$property}");
         }
-        
-        $parts = preg_split('/, */', $auStart);
-
+        $parts = preg_split('/, */', $property);
         if($parts[0] !== '"' . $formatStr . '"') {
-            return "split failed: {$parts[0]} !== \"{$formatStr}\"";
+            throw new Exception("Format string does not match property string: {$formatStr}/{$property}");
         }
         $values = array();
         foreach(array_slice($parts, 1) as $parameterName) {
             $values[] = $this->getAuProperty($parameterName, false);
         }
-        $this->auStartUrl = vsprintf($formatStr, $values);
+        $paramCount = preg_match_all('/%[a-zA-Z]/', $formatStr);
+        if($paramCount != count($values)) {
+            throw new Exception("Wrong number of parameters for format string: {$formatStr}/{$paramCount} --" . print_r(array($parts), true));
+        }
+        return vsprintf($formatStr, $values);
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @return string
+     */
+    public function generateAuStartUrl() {
+        $this->auStartUrl = $this->generateSymbol('au_start_url');
         return $this->auStartUrl;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @return string
+     */
+    public function generateAuName() {
+        $this->auName = $this->generateSymbol('au_name');
+        return $this->auName;
     }
 
     /**
@@ -570,4 +595,27 @@ class Au implements GetPlnInterface
         return "AU #" . $this->id;
     }
 
+
+    /**
+     * Set auName
+     *
+     * @param string $auName
+     * @return Au
+     */
+    public function setAuName($auName)
+    {
+        $this->auName = $auName;
+
+        return $this;
+    }
+
+    /**
+     * Get auName
+     *
+     * @return string 
+     */
+    public function getAuName()
+    {
+        return $this->auName;
+    }
 }

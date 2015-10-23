@@ -29,12 +29,13 @@ namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\dev;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
-use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
+use LOCKSSOMatic\CrudBundle\Entity\Pln;
+use LOCKSSOMatic\CrudBundle\Entity\PlnProperty;
 
 /**
- * Load some test content provider data into the database for development.
+ * Load some test pln property data into the database.
  */
-class LoadProviderData extends AbstractDataFixture implements OrderedFixtureInterface
+class LoadPlnPropertyTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
 
     /**
@@ -44,30 +45,44 @@ class LoadProviderData extends AbstractDataFixture implements OrderedFixtureInte
      */
     public function getOrder()
     {
-        return 3;
+        return 2;
     }
 
     /**
      * Load the PLNs.
      *
-     * @param ObjectManager $manager
+     * @param ObjectManager $em
      */
-    public function doLoad(ObjectManager $manager)
+    public function doload(ObjectManager $em)
     {
-        $provider = new ContentProvider();
-        $provider->setUuid('473a1b0d-425f-417b-94cf-28c3fc04b0e2');
-        $provider->setPermissionurl("http://example.com/path/to/permissions");
-        $provider->setName("Test provider");
-        $provider->setMaxFileSize("10000");
-        $provider->setMaxAuSize("1000000");
-        $provider->setContentOwner($this->getReference("owner"));
-        $provider->setPln($this->getReference("pln-franklin"));
-        $provider->setPlugin($this->getReference('plugin'));
-        $this->setReference('provider', $provider);
-        $manager->persist($provider);
-        $manager->flush();
+        /** @var Pln $pln */
+        $pln = $this->getReference('pln-franklin');
+        $prop = $this->buildProperty($em, $pln, 'leaf', 'crunchyleaves');
+        $season = $this->buildProperty($em, $pln, 'season', null);
+        $this->buildProperty($em, $pln, 'autumn', 'lots of leaves', $season);
+        $this->buildProperty($em, $pln, 'winter', 'not many leaves', $season);
+        $this->buildProperty($em, $pln, 'list', array('foo', 'bar', 'baz'), $season);
+        $em->flush();
     }
-    
+
+    /**
+     * @param ObjectManager $em
+     * @param type $key
+     * @param type $value
+     * @param PlnProperty $parent
+     * @return PlnProperty
+     */
+    private function buildProperty(ObjectManager $em, Pln $pln, $key, $value, PlnProperty $parent = null) {
+        $prop = new PlnProperty();
+        $prop->setPln($pln);
+        $prop->setPropertyKey($key);
+        $prop->setPropertyValue($value);
+        $prop->setParent($parent);
+        $this->setReference("plnprop-{$key}", $prop);
+        $em->persist($prop);
+        return $prop;
+    }
+
     /**
      * {@inheritDocs}
      */
@@ -75,4 +90,5 @@ class LoadProviderData extends AbstractDataFixture implements OrderedFixtureInte
     {
         return array('dev');
     }
+
 }

@@ -29,12 +29,12 @@ namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\dev;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
-use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
+use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 
 /**
- * Load some test content provider data into the database for development.
+ * Load some test deposits into the database.
  */
-class LoadProviderData extends AbstractDataFixture implements OrderedFixtureInterface
+class LoadDepositTestData extends AbstractDataFixture implements OrderedFixtureInterface
 {
 
     /**
@@ -44,7 +44,7 @@ class LoadProviderData extends AbstractDataFixture implements OrderedFixtureInte
      */
     public function getOrder()
     {
-        return 3;
+        return 4; // must be after content provider.
     }
 
     /**
@@ -52,22 +52,18 @@ class LoadProviderData extends AbstractDataFixture implements OrderedFixtureInte
      *
      * @param ObjectManager $manager
      */
-    public function doLoad(ObjectManager $manager)
+    public function doload(ObjectManager $manager)
     {
-        $provider = new ContentProvider();
-        $provider->setUuid('473a1b0d-425f-417b-94cf-28c3fc04b0e2');
-        $provider->setPermissionurl("http://example.com/path/to/permissions");
-        $provider->setName("Test provider");
-        $provider->setMaxFileSize("10000");
-        $provider->setMaxAuSize("1000000");
-        $provider->setContentOwner($this->getReference("owner"));
-        $provider->setPln($this->getReference("pln-franklin"));
-        $provider->setPlugin($this->getReference('plugin'));
-        $this->setReference('provider', $provider);
-        $manager->persist($provider);
+        $deposit = new Deposit();
+        $deposit->setContentProvider($this->getReference('provider'));
+        $deposit->setSummary('summary');
+        $deposit->setTitle('title goes here');
+        $deposit->setUuid('1bfb4f67-d822-489a-94e6-a069d9d40a18');
+        $this->setReference('deposit', $deposit);
+        $manager->persist($deposit);
         $manager->flush();
     }
-    
+
     /**
      * {@inheritDocs}
      */
@@ -75,4 +71,5 @@ class LoadProviderData extends AbstractDataFixture implements OrderedFixtureInte
     {
         return array('dev');
     }
+
 }
