@@ -189,6 +189,17 @@ class PLNPluginImportService {
         return $plugin;
     }
 
+    private static $importProps = array(
+        'au_name',
+        'au_start_url',
+        'plugin_identifier',
+        'plugin_name',
+        'plugin_publishing_platform',
+        'plugin_status',
+        'plugin_version',
+        'required_daemon_version',
+    );
+
     /**
      * Import the data from the plugin. Does not create content
      * owners for the plugins, that's handled by the titledb import
@@ -197,11 +208,9 @@ class PLNPluginImportService {
      * @param SimpleXMLElement $xml
      */
     public function addProperties(Plugin $plugin, SimpleXMLElement $xml) {
-        $this->newPluginProperty($plugin, 'plugin_name', $plugin->getName());
-        $this->newPluginProperty($plugin, 'plugin_version', $this->findXmlPropString($xml, 'plugin_version'));
-        $this->newPluginProperty($plugin, 'plugin_identifier', $this->findXmlPropString($xml, 'plugin_identifier'));
-        $this->newPluginProperty($plugin, 'au_start_url', $this->findXmlPropString($xml, 'au_start_url'));
-        $this->newPluginProperty($plugin, 'au_name', $this->findXmlPropString($xml, 'au_name'));
+        foreach(self::$importProps as $prop) {
+            $this->newPluginProperty($plugin, $prop, $this->findXmlPropString($xml, $prop));
+        }
 
         $configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
         if ($configProps === null) {

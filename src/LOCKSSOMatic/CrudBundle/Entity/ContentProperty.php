@@ -171,4 +171,27 @@ class ContentProperty implements GetPlnInterface
     }
 
 
+
+    /**
+     * Set isList
+     *
+     * @param boolean $isList
+     * @return ContentProperty
+     */
+    public function setIsList($isList)
+    {
+        $this->isList = $isList;
+
+        return $this;
+    }
+
+    /**
+     * Get isList
+     *
+     * @return boolean 
+     */
+    public function getIsList()
+    {
+        return $this->isList;
+    }
 }

@@ -261,4 +261,27 @@ class PlnProperty implements GetPlnInterface
     public function hasChildren() {
         return $this->children->count() > 0;
     }
+
+    /**
+     * Set isList
+     *
+     * @param boolean $isList
+     * @return PlnProperty
+     */
+    public function setIsList($isList)
+    {
+        $this->isList = $isList;
+
+        return $this;
+    }
+
+    /**
+     * Get isList
+     *
+     * @return boolean 
+     */
+    public function getIsList()
+    {
+        return $this->isList;
+    }
 }
