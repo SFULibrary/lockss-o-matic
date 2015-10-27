@@ -83,11 +83,16 @@
                                         </a>
                                     </li>
                                     <li>
+                                        <a href="{{ path('message') }}">
+                                            Messages ({{ app.user.getMessages(false)|length }})
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a href="{{ path('fos_user_change_password') }}">
                                             Change Password
                                         </a>
                                     </li>
-                                    {% if is_granted('ROLE_ADMIN') %}
+                                    {# % if is_granted('ROLE_ADMIN') %}
                                         <li class="disabled"><a href="#">Switch user</a></li>
                                             {% for user in userList() %}
                                             <li>
@@ -96,7 +101,7 @@
                                                 </a>
                                             </li>
                                         {% endfor %}
-                                    {% endif %}
+                                    {% endif % #}
                                 </ul>
                             </li>
                         {% endif %}

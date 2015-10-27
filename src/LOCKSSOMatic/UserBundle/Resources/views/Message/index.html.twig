@@ -1,0 +1,24 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Message list</h1>
+
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('message_clear') }}" class="btn btn-default">
+                <span class='glyphicon glyphicon-remove-circle'></span> Clear
+            </a>
+        </div>
+    </div>
+    {% for entity in entities %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+            {{ entity.content|nl2br }}
+            </div>
+            <div class="panel-footer text-right">
+                {{ entity.created|date('Y-m-d H:i:s') }}
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}

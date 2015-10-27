@@ -30,6 +30,10 @@ security:
             logout:       true
             anonymous:    true
             switch_user:  { role: ROLE_ADMIN }
+            remember_me:
+                key: "%secret%"
+                lifetime: 31536000 # one year in seconds
+                path: /
 
     access_control:
         - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }

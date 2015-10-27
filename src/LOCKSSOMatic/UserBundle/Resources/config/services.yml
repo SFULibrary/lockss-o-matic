@@ -21,3 +21,10 @@ services:
         arguments: [@security.authorization_checker, @security.token_storage, @problematic.acl_manager, @security.acl.provider, @doctrine]
         tags:
             - { name: acl.check }
+
+    lom.message:
+        class: LOCKSSOMatic\UserBundle\Service\MessageService
+        calls:
+            - [ setLogger, ["@logger"] ]
+            - [ setRegistry, ["@doctrine"] ]
+            - [ setTokenStorage, ["@security.token_storage"]]

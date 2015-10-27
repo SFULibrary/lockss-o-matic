@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\UserBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
@@ -38,14 +39,24 @@ class User extends BaseUser
 
     /**
      * @ORM\OneToMany(targetEntity="LOCKSSOMatic\CrudBundle\Entity\Deposit", mappedBy="user")
+     * @var Deposit[]
      */
     private $deposits;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="user")
+     * @var Message[]
+     */
+    private $messages;
+
 
     public function __construct() {
         parent::__construct();
         $this->fullname = '';
         $this->institution = '';
         $this->deposits = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
     
     public function setEmail($email) {
@@ -112,10 +123,10 @@ class User extends BaseUser
     /**
      * Add deposits
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Deposit $deposits
+     * @param Deposit $deposits
      * @return User
      */
-    public function addDeposit(\LOCKSSOMatic\CrudBundle\Entity\Deposit $deposits)
+    public function addDeposit(Deposit $deposits)
     {
         $this->deposits[] = $deposits;
 
@@ -125,9 +136,9 @@ class User extends BaseUser
     /**
      * Remove deposits
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Deposit $deposits
+     * @param Deposit $deposits
      */
-    public function removeDeposit(\LOCKSSOMatic\CrudBundle\Entity\Deposit $deposits)
+    public function removeDeposit(Deposit $deposits)
     {
         $this->deposits->removeElement($deposits);
     }
@@ -135,10 +146,49 @@ class User extends BaseUser
     /**
      * Get deposits
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Deposit[]
      */
     public function getDeposits()
     {
         return $this->deposits;
     }
+
+    /**
+     * Add messages
+     *
+     * @param Message $messages
+     * @return User
+     */
+    public function addMessage(Message $messages)
+    {
+        $this->messages[] = $messages;
+
+        return $this;
+    }
+
+    /**
+     * Remove messages
+     *
+     * @param Message $messages
+     */
+    public function removeMessage(Message $messages)
+    {
+        $this->messages->removeElement($messages);
+    }
+
+    /**
+     * Get messages
+     *
+     * @return Message[]
+     */
+    public function getMessages($seen = null)
+    {
+        if($seen === null) {
+            return $this->messages;
+        }
+        return $this->messages->filter(function($message) use($seen) {
+            return $message->getSeen() === $seen;
+        });
+    }
+
 }
