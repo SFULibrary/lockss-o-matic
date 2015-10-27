@@ -58,14 +58,6 @@ class Au implements GetPlnInterface
     private $auStartUrl;
 
     /**
-     * The URL for the manifest of this AU. Manifests are optional.
-     * @var string
-     *
-     * @ORM\Column(name="manifest_url", type="string", length=512, nullable=true)
-     */
-    private $manifestUrl;
-
-    /**
      * LOCKSSOMatic comment for this au. Its specific to LOCKSSOMatic.
      * @var string
      *
@@ -194,9 +186,6 @@ class Au implements GetPlnInterface
      */
     public function getAuid()
     {
-        if($this->auid === null || $this->auid === '') {
-            $this->auid = $this->generateAuid();
-        }
         return $this->auid;
     }
 
@@ -259,56 +248,6 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Generate a LOCKSS AUid. Called automatically before the AU is persisted
-     * to the database.
-     * 
-     * @ORM\PrePersist
-     * @return string
-     */
-    public function generateAuid() {
-        $plugin = $this->getPlugin();
-        if($plugin === null) {
-            $this->auid = null;
-            return null;
-        }
-        $pluginKey = str_replace('.', '|', $plugin->getPluginIdentifier());
-        $auKey = '';
-        $propNames = $plugin->getDefinitionalProperties();
-        sort($propNames);
-
-        foreach($propNames as $name) {
-            $propertyValue = $this->getAuProperty($name, true);
-            $auKey .= "&{$name}~{$propertyValue}";
-        }
-        $this->auid = $pluginKey . $auKey;
-        return $this->auid;
-    }
-
-    /**
-     * Set manifestUrl
-     *
-     * @param string $manifestUrl
-     * @return Au
-     */
-    public function setManifestUrl($manifestUrl)
-    {
-        $this->manifestUrl = $manifestUrl;
-
-        return $this;
-    }
-
-    /**
-     * Get manifestUrl
-     *
-     * @return string
-     */
-    public function getManifestUrl()
-    {
-        return $this->manifestUrl;
-    }
-
-
-    /**
      * Set auStartUrl
      *
      * @param string $auStartUrl
@@ -330,58 +269,7 @@ class Au implements GetPlnInterface
     {
         return $this->auStartUrl;
     }
-
-    // should this be in a service? Adds logging options.
-    // make this more testable.
-    protected function generateSymbol($name) {
-        $plugin = $this->getPlugin();
-        if( ! $plugin) {
-            throw new Exception("Au requires plugin to generate $name.");
-        }
-        $property = $plugin->getProperty($name);
-        if( ! $property) {
-            throw new Exception("$name plugin property is required.");
-        }
-        $formatStr = null;
-        $matches = array();
-        if( preg_match('/^"([^"]*)"/', $property, $matches)) {
-            $formatStr = $matches[1];
-        } else {
-            throw new Exception("$name property cannot be parsed: {$property}");
-        }
-        $parts = preg_split('/, */', $property);
-        if($parts[0] !== '"' . $formatStr . '"') {
-            throw new Exception("Format string does not match property string: {$formatStr}/{$property}");
-        }
-        $values = array();
-        foreach(array_slice($parts, 1) as $parameterName) {
-            $values[] = $this->getAuProperty($parameterName, false);
-        }
-        $paramCount = preg_match_all('/%[a-zA-Z]/', $formatStr);
-        if($paramCount != count($values)) {
-            throw new Exception("Wrong number of parameters for format string: {$formatStr}/{$paramCount} --" . print_r(array($parts), true));
-        }
-        return vsprintf($formatStr, $values);
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @return string
-     */
-    public function generateAuStartUrl() {
-        $this->auStartUrl = $this->generateSymbol('au_start_url');
-        return $this->auStartUrl;
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @return string
-     */
-    public function generateAuName() {
-        $this->auName = $this->generateSymbol('au_name');
-        return $this->auName;
-    }
-
+    
     /**
      * Set comment
      *

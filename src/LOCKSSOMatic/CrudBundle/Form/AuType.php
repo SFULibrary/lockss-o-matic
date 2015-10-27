@@ -18,7 +18,6 @@ class AuType extends AbstractType
             ->add('managed')
             ->add('auid')
             ->add('auStartUrl')
-            ->add('manifestUrl')
             ->add('comment')
             ->add('pln')
             ->add('contentProvider')

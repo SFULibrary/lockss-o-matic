@@ -1,5 +1,11 @@
 
 services:
+
+    crud.listener.au:
+        class: LOCKSSOMatic\CrudBundle\EventListener\AuAttributeGenerator
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+
     crud.builder.deposit:
         class: LOCKSSOMatic\CrudBundle\Service\DepositBuilder
         calls:
