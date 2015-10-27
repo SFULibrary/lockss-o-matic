@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Private Lockss network plugin import command-line
  */
-class PLNPluginImportCommand extends ContainerAwareCommand
+class PluginImportCommand extends ContainerAwareCommand
 {
 
     /**

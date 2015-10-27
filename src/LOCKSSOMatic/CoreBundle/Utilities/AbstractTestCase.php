@@ -62,7 +62,6 @@ class AbstractTestCase extends BaseTestCase {
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadProviderTestData',
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadDepositTestData',
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAuTestData',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAuPropertyTestData',
         );
         $this->references = $this->loadFixtures($fixtures)->getReferenceRepository();
         $this->em = $this->getContainer()->get('doctrine')->getManager();

@@ -49,6 +49,7 @@ class LoadPluginPropertyTestData extends AbstractDataFixture implements OrderedF
         $this->buildPluginProperty($em, $plugin, 'plugin_version', 'test beta');
         $this->buildPluginProperty($em, $plugin, 'plugin_identifier', 'ca.sfu.test');
         $this->buildPluginProperty($em, $plugin, 'au_start_url', '"%s/lockss/%d", base_url, year');
+        $this->buildPluginProperty($em, $plugin, 'au_name', '"AU %s - %d", base_url, year');
 
         $config = $this->buildPluginProperty($em, $plugin, 'plugin_config_props');
         $this->setReference('prop_config', $config);

@@ -70,10 +70,10 @@ class AuTest extends AbstractTestCase {
     }
 
     public function testGenerateAuid() {
-        $this->assertEquals('ca|sfu|test&base_url~http%3A%2F%2Fexample%2Ecom', $this->au->generateAuid());
+        $this->assertEquals('ca|sfu|test&base_url~http%3A%2F%2Fexample%2Ecom', $this->au->getAuid());
     }
 
     public function testGenerateAuStartUrl() {
-        $this->assertEquals('http://example.com/lockss/1991', $this->au->generateAuStartUrl());
+        $this->assertEquals('http://example.com/lockss/1991', $this->au->getAuStartUrl());
     }
 }

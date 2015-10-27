@@ -27,11 +27,13 @@ class PluginTest extends AbstractTestCase
     public function testGetRootPluginProperties() {
         /** @var PluginProperty[] $props */
         $props = $this->plugin->getRootPluginProperties();
-        $this->assertEquals(4, count($props));
+        $this->assertEquals(6, count($props));
         $this->assertEquals($props[0]->getPropertyKey(), 'plugin_name');
         $this->assertEquals($props[1]->getPropertyKey(), 'plugin_version');
         $this->assertEquals($props[2]->getPropertyKey(), 'plugin_identifier');
-        $this->assertEquals($props[3]->getPropertyKey(), 'plugin_config_props');
+        $this->assertEquals($props[3]->getPropertyKey(), 'au_start_url');
+        $this->assertEquals($props[4]->getPropertyKey(), 'au_name');
+        $this->assertEquals($props[5]->getPropertyKey(), 'plugin_config_props');
     }
 
     public function testGetPluginIdentifier() {

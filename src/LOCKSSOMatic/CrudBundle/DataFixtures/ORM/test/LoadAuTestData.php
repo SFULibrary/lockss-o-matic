@@ -30,6 +30,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
+use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 
 /**
  * Load some test AU data into the database for testing.
@@ -58,9 +59,47 @@ class LoadAuTestData extends AbstractDataFixture implements OrderedFixtureInterf
         $au->setPln($this->getReference('pln-franklin'));
         $au->setContentprovider($this->getReference('provider'));
         $au->setPlugin($this->getReference('plugin'));
+
         $this->setReference('au', $au);
+
+        $root = new AuProperty();
+        $root->setPropertyKey('TestStuffGoesHere');
+        $root->setAu($au);
+        $this->setReference('auprop-root', $root);
+
+        $this->buildAuProperty($manager, 'param.1', 'base_url', 'http://example.com', $root, $au);
+        $this->setReference('auprop-child', $this->buildAuProperty($manager, 'param.2', 'pub_id', 'kittens', $root, $au));
+        $this->buildAuProperty($manager, 'param.3', 'foot_id', 'left', $root, $au);
+        $this->buildAuProperty($manager, 'param.4', 'year', '1991', $root, $au);
+
+        $manager->persist($root);
         $manager->persist($au);
         $manager->flush();
+    }
+
+    private function buildAuProperty(ObjectManager $em, $id, $key, $value, AuProperty $gp, Au $au) {
+        $parent = new AuProperty();
+        $parent->setAu($au);
+        $parent->setParent($gp);
+        $parent->setPropertyKey($id);
+        $em->persist($parent);
+
+        $keyProp = new AuProperty();
+        $keyProp->setAu($au);
+        $keyProp->setParent($parent);
+        $keyProp->setPropertyKey('key');
+        $keyProp->setPropertyValue($key);
+        $em->persist($keyProp);
+        $this->setReference('auprop-leaf', $keyProp);
+
+        $valProp = new AuProperty();
+        $valProp->setAu($au);
+        $valProp->setParent($parent);
+        $valProp->setPropertyKey('value');
+        $valProp->setPropertyValue($value);
+        $em->persist($valProp);
+
+        return $parent;
     }
 
     /**

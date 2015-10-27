@@ -8,13 +8,16 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PLNTitledbExportCommand extends ContainerAwareCommand {
+class TitledbExportCommand extends ContainerAwareCommand {
     
     public function configure() {
         $this->setName('lom:export:titledb')
             ->setDescription('Export a PLN titledb file.')
-            ->addArgument('plnId', null, InputArgument::REQUIRED, 
-                "LOCKSSOMatic's ID for the PLN");
+            ->addArgument('plnId', InputArgument::REQUIRED, 
+                "LOCKSSOMatic's ID for the PLN")
+            ->addArgument('file', InputArgument::OPTIONAL,
+                "Optional Output file");
+
     }
     
     public function execute(InputInterface $input, OutputInterface $output) {
@@ -24,14 +27,18 @@ class PLNTitledbExportCommand extends ContainerAwareCommand {
             $output->writeln('Cannot find PLN.');
             exit;
         }
-        
+        $fh = fopen('php://output', 'w');
+        if($input->hasArgument('file') && $input->getArgument('file')) {
+            $fh = fopen($input->getArgument('file'), 'w');
+        }
+
         $aus = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findBy(array(
             'pln' => $pln
         ));
         $twig = $this->getContainer()->get('templating');
-        print $twig->render('LOCKSSOMaticCrudBundle:Pln:titledb.xml.twig', array(
+        fputs($fh, $twig->render('LOCKSSOMaticCrudBundle:Pln:titledb.xml.twig', array(
             'aus' => $aus
-        ));
+        )));
     }
     
 }
