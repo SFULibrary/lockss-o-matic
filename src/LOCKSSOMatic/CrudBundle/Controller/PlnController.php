@@ -2,13 +2,15 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LOCKSSOMatic\CrudBundle\Entity\Pln;
+use LOCKSSOMatic\CrudBundle\Form\PlnType;
+use LOCKSSOMatic\UserBundle\Security\Acl\Permission\PlnAccessLevels;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use LOCKSSOMatic\CrudBundle\Entity\Pln;
-use LOCKSSOMatic\CrudBundle\Form\PlnType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Pln controller.
@@ -74,7 +76,7 @@ class PlnController extends Controller
      *
      * @param Pln $entity The entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createCreateForm(Pln $entity)
     {
@@ -163,7 +165,7 @@ class PlnController extends Controller
     *
     * @param Pln $entity The entity
     *
-    * @return \Symfony\Component\Form\Form The form
+    * @return Form The form
     */
     private function createEditForm(Pln $entity)
     {
@@ -234,7 +236,7 @@ class PlnController extends Controller
      *
      * @param mixed $id The entity id
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createDeleteForm($id)
     {

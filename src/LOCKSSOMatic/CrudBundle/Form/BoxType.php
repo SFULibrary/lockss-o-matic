@@ -20,7 +20,8 @@ class BoxType extends AbstractType
             ->add('ipAddress', 'text', array(
                 'required' => false,
                 'attr' => array(
-                    'class' => 'ipAddress '
+                    'class' => 'ipAddress ',
+                    'help' => 'LOCKSSOMatic will look up the IP address if it is blank.',
                 )
             ))
             ->add('port')
