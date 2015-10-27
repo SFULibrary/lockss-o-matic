@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Private Lockss network plugin import command-line
  */
-class PLNTitledbImportCommand extends ContainerAwareCommand
+class TitledbImportCommand extends ContainerAwareCommand
 {
 
     /**

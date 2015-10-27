@@ -10,7 +10,7 @@ php:
 cache: apt
 
 before_script:
-  - composer install -n --dev --prefer-source
+  - composer install -n -o
 
 script:
   - phpunit src
