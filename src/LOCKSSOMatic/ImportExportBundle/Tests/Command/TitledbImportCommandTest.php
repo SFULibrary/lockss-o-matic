@@ -5,7 +5,7 @@ namespace LOCKSSOMatic\ImportExportBundle\Tests\Command;
 use Exception;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
-use LOCKSSOMatic\ImportExportBundle\Command\PLNTitledbImportCommand;
+use LOCKSSOMatic\ImportExportBundle\Command\TitledbImportCommand;
 use SimpleXMLElement;
 
 /**
@@ -26,7 +26,7 @@ class TitledbImportCommandTest extends AbstractTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->command = new PLNTitledbImportCommand();
+        $this->command = new TitledbImportCommand();
         $this->command->setContainer($this->getContainer());
     }
 
