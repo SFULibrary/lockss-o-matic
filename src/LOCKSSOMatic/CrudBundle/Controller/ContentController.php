@@ -64,5 +64,4 @@ class ContentController extends Controller
             'entity'      => $entity,
         );
     }
-
 }

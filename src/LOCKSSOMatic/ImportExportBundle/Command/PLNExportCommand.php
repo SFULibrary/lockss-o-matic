@@ -37,8 +37,12 @@ class PLNExportCommand extends ContainerAwareCommand
     {
         $this->setName('lom:export:pln')
             ->setDescription('Export a PLN LOCKSS XML file.')
-            ->addArgument('id', null, InputArgument::REQUIRED,
-                "LOCKSSOMatic's ID for the PLN");
+            ->addArgument(
+                'id',
+                null,
+                InputArgument::REQUIRED,
+                "LOCKSSOMatic's ID for the PLN"
+            );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -50,14 +54,14 @@ class PLNExportCommand extends ContainerAwareCommand
         $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($input->getArgument('id'));
         $boxes = $pln->getBoxes();
         $boxList = array();
-        foreach($boxes as $box) {
+        foreach ($boxes as $box) {
             $boxList[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
         }
         $boxProp = $pln->getProperty('id.initialV3PeerList');
         $boxProp->setPropertyValue($boxList);
         $this->em->flush();
 
-        if( $pln === null) {
+        if ($pln === null) {
             $output->writeln('Cannot find pln.');
             exit;
         }

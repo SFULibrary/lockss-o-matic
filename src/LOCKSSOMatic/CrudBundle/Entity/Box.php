@@ -98,7 +98,8 @@ class Box implements GetPlnInterface
      */
     private $status;
     
-    public function __construct() {
+    public function __construct()
+    {
         $this->status = new ArrayCollection();
         $this->protocol = 'TCP';
         $this->port = 9729;
@@ -107,7 +108,7 @@ class Box implements GetPlnInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -130,7 +131,7 @@ class Box implements GetPlnInterface
     /**
      * Get hostname
      *
-     * @return string 
+     * @return string
      */
     public function getHostname()
     {
@@ -153,7 +154,7 @@ class Box implements GetPlnInterface
     /**
      * Get ipAddress
      *
-     * @return string 
+     * @return string
      */
     public function getIpAddress()
     {
@@ -176,7 +177,7 @@ class Box implements GetPlnInterface
     /**
      * Get username
      *
-     * @return string 
+     * @return string
      */
     public function getUsername()
     {
@@ -199,7 +200,7 @@ class Box implements GetPlnInterface
     /**
      * Get password
      *
-     * @return string 
+     * @return string
      */
     public function getPassword()
     {
@@ -279,7 +280,7 @@ class Box implements GetPlnInterface
     /**
      * Get protocol
      *
-     * @return string 
+     * @return string
      */
     public function getProtocol()
     {
@@ -302,7 +303,7 @@ class Box implements GetPlnInterface
     /**
      * Get port
      *
-     * @return integer 
+     * @return integer
      */
     public function getPort()
     {
@@ -318,10 +319,11 @@ class Box implements GetPlnInterface
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
-    public function resolveHostname($force = false) {
-        if($force === true || $this->ipAddress === null || $this->ipAddress === '') {
+    public function resolveHostname($force = false)
+    {
+        if ($force === true || $this->ipAddress === null || $this->ipAddress === '') {
             $ip = gethostbyname($this->hostname);
-            if($ip !== $this->hostname) {
+            if ($ip !== $this->hostname) {
                 $this->ipAddress = $ip;
             }
         }

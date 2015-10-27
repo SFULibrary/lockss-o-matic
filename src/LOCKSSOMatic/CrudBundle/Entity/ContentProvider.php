@@ -59,7 +59,7 @@ class ContentProvider implements GetPlnInterface
     private $name;
 
     /**
-     * The maximum file size for the provider. 
+     * The maximum file size for the provider.
      *
      * @var integer
      *
@@ -89,7 +89,7 @@ class ContentProvider implements GetPlnInterface
     private $contentOwner;
 
     /**
-     * PLN for the provider. 
+     * PLN for the provider.
      *
      * @var Pln
      *
@@ -130,7 +130,8 @@ class ContentProvider implements GetPlnInterface
      */
     private $deposits;
 
-     public function __construct() {
+    public function __construct()
+    {
         $this->aus = new ArrayCollection();
         $this->deposits = new ArrayCollection();
     }
@@ -138,7 +139,7 @@ class ContentProvider implements GetPlnInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -161,7 +162,7 @@ class ContentProvider implements GetPlnInterface
     /**
      * Get type
      *
-     * @return string 
+     * @return string
      */
     public function getType()
     {
@@ -184,7 +185,7 @@ class ContentProvider implements GetPlnInterface
     /**
      * Get uuid
      *
-     * @return string 
+     * @return string
      */
     public function getUuid()
     {
@@ -207,14 +208,15 @@ class ContentProvider implements GetPlnInterface
     /**
      * Get permissionurl
      *
-     * @return string 
+     * @return string
      */
     public function getPermissionurl()
     {
         return $this->permissionurl;
     }
 
-    public function getPermissionHost() {
+    public function getPermissionHost()
+    {
         return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
     }
 
@@ -234,7 +236,7 @@ class ContentProvider implements GetPlnInterface
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -257,7 +259,7 @@ class ContentProvider implements GetPlnInterface
     /**
      * Get maxFileSize
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaxFileSize()
     {
@@ -280,7 +282,7 @@ class ContentProvider implements GetPlnInterface
     /**
      * Get maxAuSize
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaxAuSize()
     {
@@ -430,7 +432,8 @@ class ContentProvider implements GetPlnInterface
      *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->name;
     }
 
@@ -440,8 +443,9 @@ class ContentProvider implements GetPlnInterface
      *
      * @ORM\PrePersist
      */
-    public function generateUuid() {
-        if($this->uuid === null) {
+    public function generateUuid()
+    {
+        if ($this->uuid === null) {
             $this->uuid = \J20\Uuid\Uuid::v4();
         }
     }

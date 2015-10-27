@@ -69,5 +69,4 @@ class LoadOwnerTestData extends AbstractDataFixture implements OrderedFixtureInt
     {
         return array('prod');
     }
-
 }

@@ -18,7 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @Route("/admin/user")
  */
-class AdminUserController extends Controller {
+class AdminUserController extends Controller
+{
 
     /**
      * Lists all User entities.
@@ -27,7 +28,8 @@ class AdminUserController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getRepository('LOCKSSOMaticUserBundle:User')->findAll();
@@ -44,7 +46,8 @@ class AdminUserController extends Controller {
      * @Method("POST")
      * @Template("LOCKSSOMaticUserBundle:AdminUser:new.html.twig")
      */
-    public function createAction(Request $request) {
+    public function createAction(Request $request)
+    {
         $entity = new User();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
@@ -70,7 +73,8 @@ class AdminUserController extends Controller {
      *
      * @return Form The form
      */
-    private function createCreateForm(User $entity) {
+    private function createCreateForm(User $entity)
+    {
         $form = $this->createForm(new AdminUserType(), $entity, array(
             'action' => $this->generateUrl('admin_user_create'),
             'method' => 'POST',
@@ -88,7 +92,8 @@ class AdminUserController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function newAction() {
+    public function newAction()
+    {
         $entity = new User();
         $form = $this->createCreateForm($entity);
 
@@ -105,7 +110,8 @@ class AdminUserController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id) {
+    public function showAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticUserBundle:User')->find($id);
@@ -129,7 +135,8 @@ class AdminUserController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id) {
+    public function editAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticUserBundle:User')->find($id);
@@ -155,7 +162,8 @@ class AdminUserController extends Controller {
      *
      * @return Form The form
      */
-    private function createEditForm(User $entity) {
+    private function createEditForm(User $entity)
+    {
         $form = $this->createForm(new AdminUserType(), $entity, array(
             'action' => $this->generateUrl('admin_user_update', array('id' => $entity->getId())),
             'method' => 'PUT',
@@ -173,7 +181,8 @@ class AdminUserController extends Controller {
      * @Method("PUT")
      * @Template("LOCKSSOMaticUserBundle:AdminUser:edit.html.twig")
      */
-    public function updateAction(Request $request, $id) {
+    public function updateAction(Request $request, $id)
+    {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticUserBundle:User')->find($id);
@@ -205,7 +214,8 @@ class AdminUserController extends Controller {
      * @Route("/{id}", name="admin_user_delete")
      * @Method("DELETE")
      */
-    public function deleteAction(Request $request, $id) {
+    public function deleteAction(Request $request, $id)
+    {
         $form = $this->createDeleteForm($id);
         $form->handleRequest($request);
 
@@ -231,7 +241,8 @@ class AdminUserController extends Controller {
      *
      * @return Form The form
      */
-    private function createDeleteForm($id) {
+    private function createDeleteForm($id)
+    {
         return $this->createFormBuilder()
                         ->setAction($this->generateUrl('admin_user_delete', array('id' => $id)))
                         ->setMethod('DELETE')
@@ -242,12 +253,13 @@ class AdminUserController extends Controller {
 
     /**
      * Show the access levels for the user in the Plns.
-     * 
+     *
      * @Route("/{id}/access", name="admin_user_access")
      * @Template("LOCKSSOMaticUserBundle:AdminUser:access.html.twig")
      * @param type $id
      */
-    public function showAccessAction($id) {
+    public function showAccessAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find($id);
         $plns = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
@@ -258,7 +270,8 @@ class AdminUserController extends Controller {
         );
     }
 
-    private function createEditAccessForm(User $user) {
+    private function createEditAccessForm(User $user)
+    {
         $em = $this->getDoctrine()->getManager();
         $plns = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
         $accessManager = $this->get('lom.access');
@@ -267,7 +280,8 @@ class AdminUserController extends Controller {
         $options = array(
             'method' => 'POST',
             'action' => $this->generateUrl(
-                    'user_access_update', array('id' => $user->getId())
+                'user_access_update',
+                array('id' => $user->getId())
             ),
         );
         $builder = $this->createFormBuilder($defaultData, $options);
@@ -293,7 +307,8 @@ class AdminUserController extends Controller {
      * @Template("LOCKSSOMaticUserBundle:AdminUser:accessEdit.html.twig")
      * @param type $id
      */
-    public function editAccessAction($id) {
+    public function editAccessAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find($id);
         $form = $this->createEditAccessForm($user);
@@ -303,7 +318,8 @@ class AdminUserController extends Controller {
         );
     }
 
-    private function updateAccess(Request $request, User $user) {
+    private function updateAccess(Request $request, User $user)
+    {
         $em = $this->getDoctrine()->getManager();
         $plns = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
         $accessManager = $this->get('lom.access');
@@ -324,7 +340,8 @@ class AdminUserController extends Controller {
      * @param Request $request
      * @param type $id
      */
-    public function updateAccessAction(Request $request, $id) {
+    public function updateAccessAction(Request $request, $id)
+    {
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find($id);
         $form = $this->createEditAccessForm($user);
@@ -337,5 +354,4 @@ class AdminUserController extends Controller {
         $this->addFlash('error', "The form was not saved.");
         return $this->redirect($this->generateUrl('user_access_edit', array('id' => $id)));
     }
-
 }

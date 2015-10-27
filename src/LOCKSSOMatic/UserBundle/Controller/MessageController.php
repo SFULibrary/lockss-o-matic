@@ -33,7 +33,7 @@ class MessageController extends Controller
         $entities = $em->getRepository('LOCKSSOMaticUserBundle:Message')->findBy(array(
             'user' => $user
         ));
-        foreach($entities as $entity) {
+        foreach ($entities as $entity) {
             $entity->setSeen(true);
         }
         $em->flush();
@@ -46,15 +46,16 @@ class MessageController extends Controller
     /**
      * @Route("/clear", name="message_clear")
      */
-    public function clearMessagesAction() {
+    public function clearMessagesAction()
+    {
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getRepository('LOCKSSOMaticUserBundle:Message')->findBy(array(
             'user' => $user
         ));
-        foreach($entities as $entity) {
-            if($entity->getSeen()) {
+        foreach ($entities as $entity) {
+            if ($entity->getSeen()) {
                 $em->remove($entity);
             }
         }
@@ -62,5 +63,4 @@ class MessageController extends Controller
         $this->addFlash("success", "Messages cleared.");
         return $this->redirect($this->generateUrl('message'));
     }
-    
 }

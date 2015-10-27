@@ -4,7 +4,8 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 
-class AuRepository extends EntityRepository {
+class AuRepository extends EntityRepository
+{
     
 
 }

@@ -5,20 +5,22 @@ namespace LOCKSSOMatic\CrudBundle\Tests\Entity;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 
-class DepositTest extends AbstractTestCase {
+class DepositTest extends AbstractTestCase
+{
 
     /**
      * @var Deposit
      */
     protected $deposit;
     
-    protected function setUp() {
+    protected function setUp()
+    {
         parent::setUp();
         $this->deposit = $this->references->getReference('deposit');
     }
 
-    public function testUuidUpperCase() {
+    public function testUuidUpperCase()
+    {
         $this->assertEquals('1BFB4F67-D822-489A-94E6-A069D9D40A18', $this->deposit->getUuid());
     }
-
 }

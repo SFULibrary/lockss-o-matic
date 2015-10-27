@@ -65,7 +65,8 @@ class LoadPluginPropertyTestData extends AbstractDataFixture implements OrderedF
         $em->flush();
     }
 
-    private function buildPluginProperty(ObjectManager $em, Plugin $plugin, $key, $value = null, PluginProperty $parent = null) {
+    private function buildPluginProperty(ObjectManager $em, Plugin $plugin, $key, $value = null, PluginProperty $parent = null)
+    {
         $p = new PluginProperty();
         $p->setPlugin($plugin);
         $p->setPropertyKey($key);
@@ -92,5 +93,4 @@ class LoadPluginPropertyTestData extends AbstractDataFixture implements OrderedF
     {
         return 2;
     }
-
 }

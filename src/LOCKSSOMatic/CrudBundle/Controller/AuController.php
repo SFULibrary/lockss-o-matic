@@ -64,5 +64,4 @@ class AuController extends Controller
             'entity'      => $entity,
         );
     }
-
 }

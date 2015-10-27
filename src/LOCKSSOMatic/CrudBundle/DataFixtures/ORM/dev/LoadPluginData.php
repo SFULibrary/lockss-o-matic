@@ -65,5 +65,4 @@ class LoadPluginData extends AbstractDataFixture implements OrderedFixtureInterf
     {
         return 1;
     }
-
 }

@@ -52,7 +52,7 @@ class PlnProperty implements GetPlnInterface
 
     /**
      * The parent of this property.
-     * 
+     *
      * @var PlnProperty
      *
      * @ORM\ManyToOne(targetEntity="PlnProperty", inversedBy="children")
@@ -64,7 +64,7 @@ class PlnProperty implements GetPlnInterface
 
     /**
      * The PLN for the property
-     * 
+     *
      * @var Pln
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="plnProperties")
@@ -76,13 +76,14 @@ class PlnProperty implements GetPlnInterface
 
     /**
      * The children of the property.
-     * 
+     *
      * @ORM\OneToMany(targetEntity="PlnProperty", mappedBy="parent")
      * @var ArrayCollection
      */
     private $children;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->children = new ArrayCollection();
         $this->isList = false;
     }
@@ -90,7 +91,7 @@ class PlnProperty implements GetPlnInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -113,7 +114,7 @@ class PlnProperty implements GetPlnInterface
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -128,7 +129,7 @@ class PlnProperty implements GetPlnInterface
      */
     public function setPropertyValue($propertyValue)
     {
-        if(is_array($propertyValue)) {
+        if (is_array($propertyValue)) {
             $this->isList = true;
             $this->propertyValue = serialize($propertyValue);
         } else {
@@ -146,7 +147,7 @@ class PlnProperty implements GetPlnInterface
      */
     public function getPropertyValue()
     {
-        if($this->isList) {
+        if ($this->isList) {
             return unserialize($this->propertyValue);
         }
         return $this->propertyValue;
@@ -157,7 +158,8 @@ class PlnProperty implements GetPlnInterface
      *
      * @return boolean
      */
-    public function isList() {
+    public function isList()
+    {
         return $this->isList;
     }
 
@@ -170,7 +172,7 @@ class PlnProperty implements GetPlnInterface
     public function setParent(PlnProperty $parent = null)
     {
         $this->parent = $parent;
-        if($parent !== null) {
+        if ($parent !== null) {
             $parent->addChild($this);
         }
 
@@ -192,7 +194,8 @@ class PlnProperty implements GetPlnInterface
      *
      * @return boolean
      */
-    public function hasParent() {
+    public function hasParent()
+    {
         return $this->parent !== null;
     }
 
@@ -258,7 +261,8 @@ class PlnProperty implements GetPlnInterface
      *
      * @return boolean
      */
-    public function hasChildren() {
+    public function hasChildren()
+    {
         return $this->children->count() > 0;
     }
 
@@ -278,7 +282,7 @@ class PlnProperty implements GetPlnInterface
     /**
      * Get isList
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getIsList()
     {

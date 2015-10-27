@@ -64,5 +64,4 @@ class DepositController extends Controller
             'entity'      => $entity,
         );
     }
-
 }

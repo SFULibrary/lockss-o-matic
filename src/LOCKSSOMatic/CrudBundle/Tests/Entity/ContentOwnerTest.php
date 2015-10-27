@@ -5,14 +5,16 @@ namespace LOCKSSOMatic\CrudBundle\Tests\Entity;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
 
-class ContentOwnerTest extends AbstractTestCase {
+class ContentOwnerTest extends AbstractTestCase
+{
 
     /**
      * @var ContentOwner
      */
     protected $owner;
     
-    protected function setUp() {
+    protected function setUp()
+    {
         parent::setUp();
         $this->owner = $this->references->getReference('owner');
     }
@@ -20,7 +22,8 @@ class ContentOwnerTest extends AbstractTestCase {
     /**
      * @expectedException Doctrine\DBAL\DBALException
      */
-    public function testBadEmail() {
+    public function testBadEmail()
+    {
         $owner = new ContentOwner();
         $owner->setEmailAddress('not an email address');
         $this->em->persist($owner);
@@ -28,8 +31,8 @@ class ContentOwnerTest extends AbstractTestCase {
         $this->fail('No exception thrown');
     }
 
-    public function testToString() {
+    public function testToString()
+    {
         $this->assertEquals('Test Owner', "{$this->owner}");
     }
-
 }

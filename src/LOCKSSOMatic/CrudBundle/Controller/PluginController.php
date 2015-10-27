@@ -62,5 +62,4 @@ class PluginController extends Controller
             'entity'      => $entity,
         );
     }
-
 }

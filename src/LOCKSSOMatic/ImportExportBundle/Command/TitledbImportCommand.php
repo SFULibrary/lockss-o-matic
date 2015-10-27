@@ -37,10 +37,16 @@ class TitledbImportCommand extends ContainerAwareCommand
     {
         $this->setName('lom:import:titledb')
             ->setDescription('Import PLN titledb file.')
-            ->addArgument('plnId', InputArgument::REQUIRED,
-                'ID of the PLN which will own the titles')
-            ->addArgument('titledbs', InputArgument::IS_ARRAY,
-                'Local path(s) to the titledb xml file.');
+            ->addArgument(
+                'plnId',
+                InputArgument::REQUIRED,
+                'ID of the PLN which will own the titles'
+            )
+            ->addArgument(
+                'titledbs',
+                InputArgument::IS_ARRAY,
+                'Local path(s) to the titledb xml file.'
+            );
     }
 
     /**
@@ -187,7 +193,7 @@ class TitledbImportCommand extends ContainerAwareCommand
         $owner = $this->em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')
             ->findOneBy(array(
             'name' => $name
-        ));
+            ));
         if ($owner === null) {
             $owner = new ContentOwner();
             $owner->setName($name);
@@ -196,5 +202,4 @@ class TitledbImportCommand extends ContainerAwareCommand
         $ownerCache[$name] = $owner;
         return $ownerCache[$name];
     }
-
 }

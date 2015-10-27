@@ -219,9 +219,9 @@ class ContentOwnerController extends Controller
             $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')->find($id);
 
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find ContentOwner entity.');
-            }
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find ContentOwner entity.');
+        }
 
             $em->remove($entity);
             $em->flush();

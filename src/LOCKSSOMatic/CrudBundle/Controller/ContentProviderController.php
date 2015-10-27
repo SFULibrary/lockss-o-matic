@@ -36,7 +36,9 @@ class ContentProviderController extends Controller
         $query = $em->createQuery($dql);
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
-            $query, $request->query->getInt('page', 1), 25
+            $query,
+            $request->query->getInt('page', 1),
+            25
         );
 
 
@@ -60,14 +62,16 @@ class ContentProviderController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            if($entity->getUuid() === null || $entity->getUuid() === '') {
+            if ($entity->getUuid() === null || $entity->getUuid() === '') {
                 $entity->setUuid(Uuid::v4());
             }
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('contentprovider_show',
-                        array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl(
+                'contentprovider_show',
+                array('id' => $entity->getId())
+            ));
         }
 
         return array(
@@ -85,15 +89,18 @@ class ContentProviderController extends Controller
      */
     private function createCreateForm(ContentProvider $entity)
     {
-        $form = $this->createForm(new ContentProviderType(), $entity,
+        $form = $this->createForm(
+            new ContentProviderType(),
+            $entity,
             array(
             'action' => $this->generateUrl('contentprovider_create'),
             'method' => 'POST',
-        ));
+            )
+        );
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+            $form->add('submit', 'submit', array('label' => 'Create'));
 
-        return $form;
+            return $form;
     }
 
     /**
@@ -175,16 +182,21 @@ class ContentProviderController extends Controller
      */
     private function createEditForm(ContentProvider $entity)
     {
-        $form = $this->createForm(new ContentProviderType(), $entity,
+        $form = $this->createForm(
+            new ContentProviderType(),
+            $entity,
             array(
-            'action' => $this->generateUrl('contentprovider_update',
-                array('id' => $entity->getId())),
+            'action' => $this->generateUrl(
+                'contentprovider_update',
+                array('id' => $entity->getId())
+            ),
             'method' => 'PUT',
-        ));
+            )
+        );
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+            $form->add('submit', 'submit', array('label' => 'Update'));
 
-        return $form;
+            return $form;
     }
 
     /**
@@ -211,8 +223,10 @@ class ContentProviderController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('contentprovider_edit',
-                        array('id' => $id)));
+            return $this->redirect($this->generateUrl(
+                'contentprovider_edit',
+                array('id' => $id)
+            ));
         }
 
         return array(
@@ -252,8 +266,10 @@ class ContentProviderController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-                ->setAction($this->generateUrl('contentprovider_delete',
-                        array('id' => $id)))
+                ->setAction($this->generateUrl(
+                    'contentprovider_delete',
+                    array('id' => $id)
+                ))
                 ->setMethod('DELETE')
                 ->add('submit', 'submit', array('label' => 'Delete'))
                 ->getForm()
@@ -278,31 +294,39 @@ class ContentProviderController extends Controller
         $fh = fopen("php://temp", 'r+');
         fputcsv($fh, $params);
         rewind($fh);
-        return new Response(stream_get_contents($fh), Response::HTTP_OK,
+        return new Response(
+            stream_get_contents($fh),
+            Response::HTTP_OK,
             array(
             'Content-Type' => 'text/csv',
-        ));
+            )
+        );
     }
 
     private function createImportForm($id)
     {
         $formBuilder = $this->createFormBuilder();
-        $formBuilder->add('uuid', 'text',
+        $formBuilder->add(
+            'uuid',
+            'text',
             array(
             'label'    => 'Deposit UUID',
             'required' => false,
             'attr'     => array(
                 'help' => 'Leave UUID blank to have one generated.'
             )
-        ));
-        $formBuilder->add('title', 'text');
-        $formBuilder->add('summary', 'textarea');
-        $formBuilder->add('file', 'file', array('label' => 'CSV File'));
-        $formBuilder->add('submit', 'submit', array('label' => 'Import'));
-        $formBuilder->setAction($this->generateUrl('contentprovider_csv_import',
-                array('id' => $id)));
-        $formBuilder->setMethod('POST');
-        return $formBuilder->getForm();
+            )
+        );
+            $formBuilder->add('title', 'text');
+            $formBuilder->add('summary', 'textarea');
+            $formBuilder->add('file', 'file', array('label' => 'CSV File'));
+            $formBuilder->add('submit', 'submit', array('label' => 'Import'));
+            $formBuilder->setAction($this->generateUrl(
+                'contentprovider_csv_import',
+                array('id' => $id)
+            ));
+            $formBuilder->setMethod('POST');
+            return $formBuilder->getForm();
     }
 
     /**
@@ -333,7 +357,7 @@ class ContentProviderController extends Controller
             
             $dataFile = $data['file'];
             $fh = $dataFile->openFile();
-            $headers = array_map(function($h) {
+            $headers = array_map(function ($h) {
                 return strtolower($h);
             }, $fh->fgetcsv());
             $headerIdx = array_flip($headers);
@@ -348,14 +372,16 @@ class ContentProviderController extends Controller
                 $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
                     'auid' => $auid
                 ));
-                if($au === null) {
+                if ($au === null) {
                     $au = $auBuilder->fromContent($content);
                 }
                 $content->setAu($au);
             }
             $em->flush();
-            return $this->redirect($this->generateUrl('deposit_show',
-                        array('id' => $deposit->getId())));
+            return $this->redirect($this->generateUrl(
+                'deposit_show',
+                array('id' => $deposit->getId())
+            ));
         }
         return array(
             'entity'   => $provider,
@@ -363,5 +389,4 @@ class ContentProviderController extends Controller
             'form'     => $form->createView(),
         );
     }
-
 }

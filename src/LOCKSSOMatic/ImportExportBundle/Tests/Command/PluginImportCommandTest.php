@@ -26,7 +26,8 @@ class PluginImportCommandTest extends AbstractTestCase
         $this->command = new PluginImportCommand();
     }
 
-    public function testExecute() {
+    public function testExecute()
+    {
         $file = __DIR__ . '/../data/SFUCartoonsPlugin.jar';
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
 
@@ -53,5 +54,4 @@ class PluginImportCommandTest extends AbstractTestCase
             $plugin->getPluginIdentifier()
         );
     }
-
 }

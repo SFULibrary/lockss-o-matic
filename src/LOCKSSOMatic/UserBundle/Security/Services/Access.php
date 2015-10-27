@@ -118,10 +118,11 @@ class Access
         return false;
     }
 
-    public function findAccessLevel($user, $entity) {
+    public function findAccessLevel($user, $entity)
+    {
         $levels = PlnAccessLevels::names();
-        foreach($levels as $level) {
-            if($this->hasAccess($level, $entity, $user)) {
+        foreach ($levels as $level) {
+            if ($this->hasAccess($level, $entity, $user)) {
                 return $level;
             }
         }

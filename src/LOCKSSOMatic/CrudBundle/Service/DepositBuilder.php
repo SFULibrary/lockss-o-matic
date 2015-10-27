@@ -24,7 +24,7 @@ class DepositBuilder
     private $logger;
 
     /**
-     * @var ObjectManager 
+     * @var ObjectManager
      */
     private $em;
 
@@ -33,15 +33,18 @@ class DepositBuilder
      */
     private $auBuilder;
     
-    public function setLogger(Logger $logger) {
+    public function setLogger(Logger $logger)
+    {
         $this->logger = $logger;
     }
     
-    public function setRegistry(Registry $registry) {
+    public function setRegistry(Registry $registry)
+    {
         $this->em = $registry->getManager();
     }
 
-    public function setAuBuilder(AuBuilder $auBuilder) {
+    public function setAuBuilder(AuBuilder $auBuilder)
+    {
         $this->auBuilder = $auBuilder;
     }
     
@@ -60,14 +63,15 @@ class DepositBuilder
         $deposit->setTitle((string) $title);
         $deposit->setUuid($id);
 
-        if($this->em !== null) {
+        if ($this->em !== null) {
             $this->em->persist($deposit);
         }
 
         return $deposit;
     }
 
-    public function fromForm(Form $form, ContentProvider $provider) {
+    public function fromForm(Form $form, ContentProvider $provider)
+    {
         $data = $form->getData();
         $plugin = $provider->getPlugin();
         
@@ -76,7 +80,7 @@ class DepositBuilder
         $deposit->setSummary($data['summary']);
         $deposit->setContentProvider($provider);
 
-        if($data['uuid'] !== null && $data['uuid'] !== '') {
+        if ($data['uuid'] !== null && $data['uuid'] !== '') {
             $deposit->setUuid($data['uuid']);
         } else {
             $deposit->setUuid(Uuid::v4());
@@ -84,11 +88,10 @@ class DepositBuilder
 
         /** @var SplFileInfo $dataFile */
         
-        if($this->em !== null) {
+        if ($this->em !== null) {
             $this->em->persist($deposit);
             $this->em->flush();
         }
         return $deposit;
     }
-
 }

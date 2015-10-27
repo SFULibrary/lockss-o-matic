@@ -77,7 +77,8 @@ class LoadAuData extends AbstractDataFixture implements OrderedFixtureInterface
         $em->flush();
     }
 
-    private function buildAuProperty(ObjectManager $em, $id, $key, $value, AuProperty $gp, Au $au) {
+    private function buildAuProperty(ObjectManager $em, $id, $key, $value, AuProperty $gp, Au $au)
+    {
         $parent = new AuProperty();
         $parent->setAu($au);
         $parent->setParent($gp);
@@ -109,5 +110,4 @@ class LoadAuData extends AbstractDataFixture implements OrderedFixtureInterface
     {
         return array('dev');
     }
-
 }

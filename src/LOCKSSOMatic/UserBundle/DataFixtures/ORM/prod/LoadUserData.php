@@ -7,7 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\UserBundle\Entity\User;
 
-class LoadUserData extends AbstractDataFixture implements OrderedFixtureInterface {
+class LoadUserData extends AbstractDataFixture implements OrderedFixtureInterface
+{
     
     /**
      * Load the user fixtures.
@@ -64,5 +65,4 @@ class LoadUserData extends AbstractDataFixture implements OrderedFixtureInterfac
     {
         return array('prod');
     }
-
 }

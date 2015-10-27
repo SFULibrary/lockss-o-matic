@@ -19,23 +19,27 @@ class AuPropertyTest extends AbstractTestCase
         parent::setUp();
     }
 
-    public function testHasParentNull() {
+    public function testHasParentNull()
+    {
         $this->assertNull($this->references->getReference('auprop-root')->getParent());
         $this->assertFalse($this->references->getReference('auprop-root')->hasParent());
     }
 
-    public function testHasParent() {
+    public function testHasParent()
+    {
         $this->assertNotNull($this->references->getReference('auprop-child')->getParent());
         $this->assertTrue($this->references->getReference('auprop-child')->hasParent());
     }
 
-    public function testHasChildrenNull() {
+    public function testHasChildrenNull()
+    {
         $leaf = $this->references->getReference('auprop-leaf');
         $this->assertEquals(0, count($leaf->getChildren()));
         $this->assertFalse($this->references->getReference('auprop-leaf')->hasChildren());
     }
 
-    public function testHasChildren() {
+    public function testHasChildren()
+    {
         $child = $this->references->getReference('auprop-child');
         $this->assertEquals(2, count($child->getChildren()));
         $this->assertTrue($this->references->getReference('auprop-child')->hasChildren());

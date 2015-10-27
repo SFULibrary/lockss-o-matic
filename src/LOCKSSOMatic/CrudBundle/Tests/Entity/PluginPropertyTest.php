@@ -27,13 +27,15 @@ class PluginPropertyTest extends AbstractTestCase
         $this->plugin = $this->references->getReference('plugin');
     }
 
-    public function testGetNullParent() {
+    public function testGetNullParent()
+    {
         $p1 = $this->references->getReference('prop_name');
         $this->assertFalse($p1->hasParent());
         $this->assertNull($p1->getParent());
     }
 
-    public function testGetParent() {
+    public function testGetParent()
+    {
         /** @var PluginProperty $prop */
         $prop = $this->references->getReference('plugin_configparamdescr');
         $this->assertTrue($prop->hasParent());
@@ -42,7 +44,8 @@ class PluginPropertyTest extends AbstractTestCase
         $this->assertEquals('plugin_config_props', $parent->getPropertyKey());
     }
 
-    public function testGetChildren() {
+    public function testGetChildren()
+    {
         $prop = $this->references->getReference('prop_config');
         $this->assertTrue($prop->hasChildren());
 
@@ -51,5 +54,4 @@ class PluginPropertyTest extends AbstractTestCase
         $this->assertEquals('configparamdescr', $children[0]->getPropertyKey());
         $this->assertEquals('configparamdescr', $children[1]->getPropertyKey());
     }
-
 }

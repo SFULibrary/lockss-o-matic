@@ -65,5 +65,4 @@ class LoadPluginTestData extends AbstractDataFixture implements OrderedFixtureIn
     {
         return 1;
     }
-
 }

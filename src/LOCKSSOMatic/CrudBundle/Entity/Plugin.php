@@ -34,7 +34,7 @@ class Plugin
 
     /**
      * Path, in the local file system, to the plugin.
-     * 
+     *
      * @var string
      * @ORM\Column(name="path", type="string", length=255, nullable=false)
      */
@@ -50,7 +50,7 @@ class Plugin
 
     /**
      * Content owners which use the plugin.
-     * 
+     *
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="plugin")
      * @var ContentOwner[]
      */
@@ -64,7 +64,8 @@ class Plugin
      */
     private $pluginProperties;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->aus = new ArrayCollection();
         $this->contentProviders = new ArrayCollection();
         $this->pluginProperties = new ArrayCollection();
@@ -73,7 +74,7 @@ class Plugin
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -96,7 +97,7 @@ class Plugin
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -119,7 +120,7 @@ class Plugin
     /**
      * Get path
      *
-     * @return string 
+     * @return string
      */
     public function getPath()
     {
@@ -230,10 +231,11 @@ class Plugin
      *
      * @return PluginProperty[]
      */
-    public function getRootPluginProperties() {
+    public function getRootPluginProperties()
+    {
         $properties = array();
-        foreach($this->pluginProperties as $p) {
-            if($p->hasParent()) {
+        foreach ($this->pluginProperties as $p) {
+            if ($p->hasParent()) {
                 continue;
             }
             $properties[] = $p;
@@ -283,13 +285,14 @@ class Plugin
 
     /**
      * Get the value of one property for the plugin.
-     * 
+     *
      * @param string $propertyKey
      * @return string|null
      */
-    public function getProperty($propertyKey) {
-        foreach($this->getPluginProperties() as $property) {
-            if($property->getPropertyKey() === $propertyKey) {
+    public function getProperty($propertyKey)
+    {
+        foreach ($this->getPluginProperties() as $property) {
+            if ($property->getPropertyKey() === $propertyKey) {
                 return $property->getPropertyValue();
             }
         }
@@ -308,18 +311,18 @@ class Plugin
         foreach ($this->getPluginConfigParams() as $prop) {
             $key = '';
             $definitional = false;
-            foreach($prop->getChildren() as $child) {
-                if($child->getPropertyKey() === 'key') {
+            foreach ($prop->getChildren() as $child) {
+                if ($child->getPropertyKey() === 'key') {
                     $key = $child->getPropertyValue();
                 }
-                if($child->getPropertyKey() !== 'definitional') {
+                if ($child->getPropertyKey() !== 'definitional') {
                     continue;
                 }
-                if($child->getPropertyValue() === 'true') {
+                if ($child->getPropertyValue() === 'true') {
                     $definitional = true;
                 }
             }
-            if($key !== '' && $definitional === true) {
+            if ($key !== '' && $definitional === true) {
                 $properties[] = $key;
             }
         }
@@ -332,7 +335,8 @@ class Plugin
      *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getName();
     }
 }

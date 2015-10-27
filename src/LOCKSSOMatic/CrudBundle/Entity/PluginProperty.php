@@ -33,7 +33,7 @@ class PluginProperty
     private $propertyKey;
 
     /**
-     * The value of the property, if it has one. Properties that have children 
+     * The value of the property, if it has one. Properties that have children
      * do not have values of their own.
      *
      * @var string
@@ -74,7 +74,8 @@ class PluginProperty
      */
     private $children;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->children = new ArrayCollection();
     }
 
@@ -82,7 +83,7 @@ class PluginProperty
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -105,7 +106,7 @@ class PluginProperty
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -128,7 +129,7 @@ class PluginProperty
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -144,7 +145,7 @@ class PluginProperty
     public function setParent(PluginProperty $parent = null)
     {
         $this->parent = $parent;
-        if($parent !== null) {
+        if ($parent !== null) {
             $parent->addChild($this);
         }
         
@@ -166,7 +167,8 @@ class PluginProperty
      *
      * @return boolean
      */
-    public function hasParent() {
+    public function hasParent()
+    {
         return $this->parent !== null;
     }
 
@@ -232,7 +234,8 @@ class PluginProperty
      *
      * @return boolean
      */
-    public function hasChildren() {
+    public function hasChildren()
+    {
         return count($this->children) > 0;
     }
 }

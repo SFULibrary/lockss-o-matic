@@ -28,7 +28,7 @@ class Pln
 
     /**
      * Name of the PLN.
-     * 
+     *
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
@@ -55,7 +55,7 @@ class Pln
 
     /**
      * A list of all AUs in the PLN. Probably very large.
-     * 
+     *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
      * @var Au[]
      */
@@ -84,7 +84,8 @@ class Pln
      */
     private $contentProviders;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->aus = new ArrayCollection();
         $this->boxes = new ArrayCollection();
         $this->plnProperties = new ArrayCollection();
@@ -94,7 +95,7 @@ class Pln
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -117,7 +118,7 @@ class Pln
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -140,7 +141,7 @@ class Pln
     /**
      * Get propserver
      *
-     * @return string 
+     * @return string
      */
     public function getPropserver()
     {
@@ -163,14 +164,15 @@ class Pln
     /**
      * Get propsPath
      *
-     * @return string 
+     * @return string
      */
     public function getPropsPath()
     {
         return $this->propsPath;
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->name;
     }
 
@@ -278,10 +280,11 @@ class Pln
      *
      * @return PlnProperty[]
      */
-    public function getRootPluginProperties() {
+    public function getRootPluginProperties()
+    {
         $properties = array();
-        foreach($this->plnProperties as $p) {
-            if($p->hasParent()) {
+        foreach ($this->plnProperties as $p) {
+            if ($p->hasParent()) {
                 continue;
             }
             $properties[] = $p;
@@ -296,9 +299,10 @@ class Pln
      * @param type $name
      * @return PlnProperty
      */
-    public function getProperty($name) {
-        foreach($this->getPlnProperties() as $prop) {
-            if($prop->getPropertyKey() === $name) {
+    public function getProperty($name)
+    {
+        foreach ($this->getPlnProperties() as $prop) {
+            if ($prop->getPropertyKey() === $name) {
                 return $prop;
             }
         }
@@ -331,7 +335,7 @@ class Pln
     /**
      * Get contentProviders
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getContentProviders()
     {

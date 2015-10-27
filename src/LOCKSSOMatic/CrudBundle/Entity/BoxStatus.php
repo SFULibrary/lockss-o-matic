@@ -58,7 +58,7 @@ class BoxStatus implements GetPlnInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -81,7 +81,7 @@ class BoxStatus implements GetPlnInterface
     /**
      * Get queryDate
      *
-     * @return DateTime 
+     * @return DateTime
      */
     public function getQueryDate()
     {
@@ -104,7 +104,7 @@ class BoxStatus implements GetPlnInterface
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -127,7 +127,7 @@ class BoxStatus implements GetPlnInterface
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -165,6 +165,4 @@ class BoxStatus implements GetPlnInterface
     {
         return $this->getBox()->getPln();
     }
-
-
 }

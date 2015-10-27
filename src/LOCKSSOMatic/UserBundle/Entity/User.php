@@ -51,7 +51,8 @@ class User extends BaseUser
     private $messages;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->fullname = '';
         $this->institution = '';
@@ -59,7 +60,8 @@ class User extends BaseUser
         $this->messages = new ArrayCollection();
     }
     
-    public function setEmail($email) {
+    public function setEmail($email)
+    {
         parent::setEmail($email);
         $this->setUsername($email);
     }
@@ -67,7 +69,7 @@ class User extends BaseUser
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -90,7 +92,7 @@ class User extends BaseUser
     /**
      * Get fullname
      *
-     * @return string 
+     * @return string
      */
     public function getFullname()
     {
@@ -113,7 +115,7 @@ class User extends BaseUser
     /**
      * Get institution
      *
-     * @return string 
+     * @return string
      */
     public function getInstitution()
     {
@@ -183,12 +185,11 @@ class User extends BaseUser
      */
     public function getMessages($seen = null)
     {
-        if($seen === null) {
+        if ($seen === null) {
             return $this->messages;
         }
-        return $this->messages->filter(function($message) use($seen) {
+        return $this->messages->filter(function ($message) use ($seen) {
             return $message->getSeen() === $seen;
         });
     }
-
 }

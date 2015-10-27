@@ -81,5 +81,4 @@ class LoadPlnTestData extends AbstractDataFixture implements OrderedFixtureInter
     {
         return array('test');
     }
-
 }

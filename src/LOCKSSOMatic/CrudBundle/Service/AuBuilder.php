@@ -9,7 +9,8 @@ use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use Monolog\Logger;
 
-class AuBuilder {
+class AuBuilder
+{
 
     /**
      * @var Logger
@@ -17,19 +18,22 @@ class AuBuilder {
     private $logger;
 
     /**
-     * @var ObjectManager 
+     * @var ObjectManager
      */
     private $em;
     
-    public function setLogger(Logger $logger) {
+    public function setLogger(Logger $logger)
+    {
         $this->logger = $logger;
     }
     
-    public function setRegistry(Registry $registry) {
+    public function setRegistry(Registry $registry)
+    {
         $this->em = $registry->getManager();
     }
 
-    protected function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null) {
+    protected function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null)
+    {
         $property = new AuProperty();
         $property->setAu($au);
         $property->setPropertyKey($key);
@@ -41,11 +45,12 @@ class AuBuilder {
     
     /**
      * Build an AU for the content item.
-     * 
+     *
      * @return Au
      * @param Content $content
      */
-    public function fromContent(Content $content) {
+    public function fromContent(Content $content)
+    {
         $au = new Au();
         $au->setContentprovider($content->getDeposit()->getContentProvider());
         $au->setPln($content->getDeposit()->getContentProvider()->getPln());
@@ -56,16 +61,15 @@ class AuBuilder {
         $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
 
-        foreach($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
+        foreach ($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
             $grouping = $this->buildProperty($au, 'param.' . $index, null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
             $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
         }
-        foreach($content->getContentProperties() as $property) {
+        foreach ($content->getContentProperties() as $property) {
             $this->buildProperty($au, $property->getPropertyKey(), $property->getPropertyValue(), $root);
         }
         $this->em->persist($au);
         return $au;
     }
-
 }

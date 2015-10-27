@@ -40,7 +40,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
  *
  * http://stackoverflow.com/questions/11817971
  */
-abstract class AbstractDataFixture extends AbstractFixture implements ContainerAwareInterface, OrderedFixtureInterface {
+abstract class AbstractDataFixture extends AbstractFixture implements ContainerAwareInterface, OrderedFixtureInterface
+{
 
     protected $container;
 
@@ -48,7 +49,7 @@ abstract class AbstractDataFixture extends AbstractFixture implements ContainerA
      * Check if the class should load data, and then load it via the overridden
      * doLoad() method.
      */
-    public final function load(ObjectManager $em)
+    final public function load(ObjectManager $em)
     {
         /** @var KernelInterface $kernel */
         $kernel = $this->container->get('kernel');

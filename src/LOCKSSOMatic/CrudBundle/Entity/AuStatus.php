@@ -66,7 +66,7 @@ class AuStatus implements GetPlnInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -89,7 +89,7 @@ class AuStatus implements GetPlnInterface
     /**
      * Get boxHostname
      *
-     * @return string 
+     * @return string
      */
     public function getBoxHostname()
     {
@@ -112,7 +112,7 @@ class AuStatus implements GetPlnInterface
     /**
      * Get queryDate
      *
-     * @return DateTime 
+     * @return DateTime
      */
     public function getQueryDate()
     {
@@ -135,7 +135,7 @@ class AuStatus implements GetPlnInterface
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -158,7 +158,7 @@ class AuStatus implements GetPlnInterface
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -196,5 +196,4 @@ class AuStatus implements GetPlnInterface
     {
         return $this->getAu()->getPln();
     }
-    
 }

@@ -19,15 +19,15 @@ class ContentProviderType extends AbstractType
                 'required' => false,
                 'attr' => array(
                 'help' => 'Leave UUID blank to have one generated.'
-            )))
-            ->add('permissionurl')
-            ->add('name')
-            ->add('maxFileSize')
-            ->add('maxAuSize')
-            ->add('contentOwner')
-            ->add('plugin')
-            ->add('pln')
-        ;
+                )))
+                ->add('permissionurl')
+                ->add('name')
+                ->add('maxFileSize')
+                ->add('maxAuSize')
+                ->add('contentOwner')
+                ->add('plugin')
+                ->add('pln')
+                ;
     }
     
     /**

@@ -221,9 +221,9 @@ class PlnController extends Controller
             $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
 
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Pln entity.');
-            }
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Pln entity.');
+        }
 
             $em->remove($entity);
             $em->flush();
@@ -253,7 +253,8 @@ class PlnController extends Controller
      * @Template("LOCKSSOMaticCrudBundle:Pln:access.html.twig")
      * @param type $id
      */
-    public function showAccessAction($id) {
+    public function showAccessAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository("LOCKSSOMaticCrudBundle:Pln")->find($id);
         $this->get('lom.access')->checkAccess("PLNADMIN", $entity);
@@ -265,7 +266,8 @@ class PlnController extends Controller
         );
     }
 
-    private function createEditAccessForm(Pln $pln) {
+    private function createEditAccessForm(Pln $pln)
+    {
         $em = $this->getDoctrine()->getManager();
         $users = $em->getRepository("LOCKSSOMaticUserBundle:User")->findAll();
         $accessManager = $this->get('lom.access');
@@ -279,8 +281,8 @@ class PlnController extends Controller
             )
         );
         $builder = $this->createFormBuilder($defaultData, $options);
-        foreach($users as $user) {
-            if($user->hasRole('ROLE_ADMIN')) {
+        foreach ($users as $user) {
+            if ($user->hasRole('ROLE_ADMIN')) {
                 continue; // skip admins - they can do anything.
             }
             $builder->add('user_' . $user->getId(), 'choice', array(
@@ -304,7 +306,8 @@ class PlnController extends Controller
      * @Template("LOCKSSOMaticCrudBundle:Pln:accessEdit.html.twig")
      * @param type $id
      */
-    public function editAccessAction($id) {
+    public function editAccessAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
         $this->get('lom.access')->checkAccess("PLNADMIN", $pln);
@@ -315,15 +318,16 @@ class PlnController extends Controller
         );
     }
 
-    private function updateAccess(Request $request, Pln $pln) {
+    private function updateAccess(Request $request, Pln $pln)
+    {
         $em = $this->getDoctrine()->getManager();
         $users = $em->getRepository("LOCKSSOMaticUserBundle:User")->findAll();
         $accessManager = $this->get('lom.access');
         $formData = $request->request->all();
         $data = $formData['form'];
-        foreach($users as $user) {
+        foreach ($users as $user) {
             $key = 'user_' . $user->getId();
-            if( !array_key_exists($key, $data)) {
+            if (!array_key_exists($key, $data)) {
                 continue;
             }
             $accessManager->setAccess($data[$key], $pln, $user);
@@ -335,13 +339,14 @@ class PlnController extends Controller
      * @Method("POST")
      * @param type $id
      */
-    public function updateAccessAction(Request $request, $id) {
+    public function updateAccessAction(Request $request, $id)
+    {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
         $this->get('lom.access')->checkAccess("PLNADMIN", $pln);
         $form = $this->createEditAccessForm($pln);
         $form->handleRequest($request);
-        if($form->isValid()) {
+        if ($form->isValid()) {
             $this->updateAccess($request, $pln);
             $this->addFlash('success', "The form was saved.");
             return $this->redirect($this->generateUrl('pln_access', array('id' => $id)));

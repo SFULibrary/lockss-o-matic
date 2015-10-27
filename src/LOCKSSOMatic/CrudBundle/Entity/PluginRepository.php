@@ -26,5 +26,4 @@ class PluginRepository extends EntityRepository
         }
         return $property->getPlugin();
     }
-
 }

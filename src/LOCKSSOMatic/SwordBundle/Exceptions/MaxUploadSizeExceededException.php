@@ -48,7 +48,7 @@ class MaxUploadSizeExceededException extends BadRequestException
         \Exception $previous = null,
         array $headers = array(),
         $code = 0
-) {
+    ) {
         $str = 'A content item exceeds the size limit for the content provider.';
         parent::__construct($str . $message, $previous, $headers, $code);
     }

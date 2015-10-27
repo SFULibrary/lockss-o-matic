@@ -47,7 +47,7 @@ class DepositUnknownException extends BadRequestException
         \Exception $previous = null,
         array $headers = array(),
         $code = 0
-) {
+    ) {
         $str = 'A valid deposit UUID is required. ';
         parent::__construct($str . $message, $previous, $headers, $code);
     }

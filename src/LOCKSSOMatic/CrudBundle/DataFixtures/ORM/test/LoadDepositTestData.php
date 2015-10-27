@@ -71,5 +71,4 @@ class LoadDepositTestData extends AbstractDataFixture implements OrderedFixtureI
     {
         return array('test');
     }
-
 }

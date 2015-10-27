@@ -26,33 +26,39 @@ class PlnPropertyTest extends AbstractTestCase
         parent::setUp();
     }
 
-    public function testGetNullParent() {
+    public function testGetNullParent()
+    {
         $prop = $this->references->getReference('plnprop-leaf');
         $this->assertNull($prop->getParent());
     }
 
-    public function testGetParent() {
+    public function testGetParent()
+    {
         $prop = $this->references->getReference('plnprop-autumn');
         $this->assertNotNull($prop->getParent());
     }
 
-    public function testGetChildren() {
+    public function testGetChildren()
+    {
         $prop = $this->references->getReference('plnprop-season');
         $this->assertEquals(3, count($prop->getChildren()));
     }
 
-    public function testGetNullChildren() {
+    public function testGetNullChildren()
+    {
         $prop = $this->references->getReference('plnprop-winter');
         $this->assertEquals(0, count($prop->getChildren()));
     }
 
-    public function testStringValue() {
+    public function testStringValue()
+    {
         $prop = $this->references->getReference('plnprop-winter');
         $this->assertFalse($prop->isList());
         $this->assertEquals('not many leaves', $prop->getPropertyValue());
     }
 
-    public function testListValue() {
+    public function testListValue()
+    {
         $prop = $this->references->getReference('plnprop-list');
         $this->assertTrue($prop->isList());
         $values = $prop->getPropertyValue();
@@ -60,5 +66,4 @@ class PlnPropertyTest extends AbstractTestCase
         $this->assertEquals(3, count($values));
         $this->assertEquals(array('foo', 'bar', 'baz'), $values);
     }
-
 }

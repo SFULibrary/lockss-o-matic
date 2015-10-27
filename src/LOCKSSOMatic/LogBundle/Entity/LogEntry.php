@@ -110,14 +110,15 @@ class LogEntry
      */
     private $ip;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->created = new DateTime();
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -140,15 +141,15 @@ class LogEntry
     /**
      * Get bundle
      *
-     * @return string 
+     * @return string
      */
     public function getBundle()
     {
-        if($this->bundle) {
+        if ($this->bundle) {
             return $this->bundle;
         }
         $matches = array();
-        if(preg_match('{([a-zA-Z]*)Bundle}', $this->class, $matches)) {
+        if (preg_match('{([a-zA-Z]*)Bundle}', $this->class, $matches)) {
             return $matches[1];
         }
         return '';
@@ -171,7 +172,7 @@ class LogEntry
     /**
      * Get class
      *
-     * @return string 
+     * @return string
      */
     public function getClass()
     {
@@ -194,7 +195,7 @@ class LogEntry
     /**
      * Get caller
      *
-     * @return string 
+     * @return string
      */
     public function getCaller()
     {
@@ -217,7 +218,7 @@ class LogEntry
     /**
      * Get level
      *
-     * @return string 
+     * @return string
      */
     public function getLevel()
     {
@@ -240,7 +241,7 @@ class LogEntry
     /**
      * Get summary
      *
-     * @return string 
+     * @return string
      */
     public function getSummary()
     {
@@ -263,7 +264,7 @@ class LogEntry
     /**
      * Get message
      *
-     * @return string 
+     * @return string
      */
     public function getMessage()
     {
@@ -278,7 +279,7 @@ class LogEntry
      */
     public function setCreated()
     {
-        if($this->created === null) {
+        if ($this->created === null) {
             $this->created = new \DateTime();
         }
         
@@ -288,7 +289,7 @@ class LogEntry
     /**
      * Get created
      *
-     * @return DateTime 
+     * @return DateTime
      */
     public function getCreated()
     {
@@ -326,7 +327,7 @@ class LogEntry
      */
     public function setUser($user = null)
     {
-        if($user instanceof User) {
+        if ($user instanceof User) {
             $this->user = $user->getEmail();
         } else {
             $this->user = $user;
@@ -337,7 +338,7 @@ class LogEntry
     /**
      * Get user
      *
-     * @return mixed 
+     * @return mixed
      */
     public function getUser()
     {
@@ -360,7 +361,7 @@ class LogEntry
     /**
      * Get ip
      *
-     * @return string 
+     * @return string
      */
     public function getIp()
     {
@@ -369,10 +370,11 @@ class LogEntry
 
     /**
      * Return a list of field names, in the order returned by toArray().
-     * 
+     *
      * @return array
      */
-    public static function toArrayHeader() {
+    public static function toArrayHeader()
+    {
         return array(
             'created',
             'ip',
@@ -389,10 +391,11 @@ class LogEntry
     
     /**
      * Return a list of fields, in the same order as toArrayHeader().
-     * 
+     *
      * @return type
      */
-    public function toArray() {
+    public function toArray()
+    {
         return array(
             $this->created->format('c'),
             $this->ip,

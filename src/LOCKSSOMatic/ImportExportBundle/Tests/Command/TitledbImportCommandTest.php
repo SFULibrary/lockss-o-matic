@@ -34,13 +34,15 @@ class TitledbImportCommandTest extends AbstractTestCase
      * @param string $id
      * @return Plugin
      */
-    protected function getPlugin($id) {
+    protected function getPlugin($id)
+    {
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
         return $repo->findByPluginIdentifier($id);
     }
 
 
-    public function testGetPropertyValue() {
+    public function testGetPropertyValue()
+    {
         $xmlStr = <<<'ENDXML'
   <property name="BioOneAtyponPluginRadiationResearch169">
    <property name="attributes.publisher" value="Radiation Research Society" />
@@ -58,7 +60,8 @@ ENDXML;
     /**
      * @expectedException Exception
      */
-    public function testGetPropertyValueException() {
+    public function testGetPropertyValueException()
+    {
         $xmlStr = <<<'ENDXML'
   <property name="BioOneAtyponPluginRadiationResearch169">
    <property name="attributes.publisher" value="Radiation Research Society" />
@@ -104,7 +107,8 @@ ENDXML;
         $this->assertEquals(2, count($plugin->getAus()));
     }
 
-    private function getXml() {
+    private function getXml()
+    {
         $str = <<<'ENDXML'
 <property name="Foo">
    <property name="attributes.publisher" value="Radiation Society" />

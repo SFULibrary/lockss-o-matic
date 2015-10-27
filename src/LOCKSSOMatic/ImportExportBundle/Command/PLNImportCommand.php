@@ -39,10 +39,18 @@ class PLNImportCommand extends ContainerAwareCommand
     {
         $this->setName('lom:import:pln')
             ->setDescription('Import PLN XML file.')
-            ->addArgument('id', null, InputArgument::REQUIRED,
-                "LOCKSSOMatic's ID for the PLN")
-            ->addArgument('file', null, InputArgument::REQUIRED,
-                'Local file path to the lockss.xml file');
+            ->addArgument(
+                'id',
+                null,
+                InputArgument::REQUIRED,
+                "LOCKSSOMatic's ID for the PLN"
+            )
+            ->addArgument(
+                'file',
+                null,
+                InputArgument::REQUIRED,
+                'Local file path to the lockss.xml file'
+            );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -52,7 +60,7 @@ class PLNImportCommand extends ContainerAwareCommand
 
         /** @var Pln $pln */
         $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($input->getArgument('id'));
-        if( $pln === null) {
+        if ($pln === null) {
             $output->writeln('Cannot find pln.');
             exit;
         }
@@ -67,7 +75,7 @@ class PLNImportCommand extends ContainerAwareCommand
         $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($input->getArgument('id'));
 
         $boxDefs = $pln->getProperty('id.initialV3PeerList');
-        foreach($boxDefs->getPropertyValue() as $def) {
+        foreach ($boxDefs->getPropertyValue() as $def) {
             $matches = array();
             preg_match('/^(\w+):\[(\d+\.\d+\.\d+\.\d+)\]:(\d+)$/', $def, $matches);
             $box = new Box();
@@ -83,16 +91,18 @@ class PLNImportCommand extends ContainerAwareCommand
         $activityLog->enable();
     }
 
-    private function getList(SimpleXMLElement $node) {
+    private function getList(SimpleXMLElement $node)
+    {
         $valueNodes = $node->xpath('value');
         $values = array();
-        foreach($valueNodes as $n) {
+        foreach ($valueNodes as $n) {
             $values[] = (string)$n;
         }
         return $values;
     }
 
-    private function importProperties(Pln $pln, SimpleXMLElement $node, PlnProperty $parent = null) {
+    private function importProperties(Pln $pln, SimpleXMLElement $node, PlnProperty $parent = null)
+    {
         $property = new PlnProperty();
         $property->setPropertyKey($node['name']);
         $property->setParent($parent);
@@ -100,8 +110,8 @@ class PLNImportCommand extends ContainerAwareCommand
         $property->setPropertyValue($node['value']);
         $this->em->persist($property);
 
-        foreach($node->children() as $child) {
-            switch($child->getName()) {
+        foreach ($node->children() as $child) {
+            switch ($child->getName()) {
                 case 'property':
                     $this->importProperties($pln, $child, $property);
                     break;
@@ -113,6 +123,4 @@ class PLNImportCommand extends ContainerAwareCommand
             }
         }
     }
-
-
 }

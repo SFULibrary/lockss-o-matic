@@ -42,7 +42,7 @@ class ContentBuilder
     private $logger;
 
     /**
-     * @var ObjectManager 
+     * @var ObjectManager
      */
     private $em;
 
@@ -62,14 +62,14 @@ class ContentBuilder
         $contentProperty->setContent($content);
         $contentProperty->setPropertyKey($key);
         $contentProperty->setPropertyValue($value);
-        if($this->em !== null) {
+        if ($this->em !== null) {
             $this->em->persist($contentProperty);
         }
         return $contentProperty;
     }
 
     /**
-     * 
+     *
      * @param SimpleXMLElement $xml
      * @return Content
      */
@@ -93,12 +93,13 @@ class ContentBuilder
         return $content;
     }
 
-    private function fieldOrNull($row, $headerIdx, $field) {
-        if( ! array_key_exists($field, $headerIdx)) {
+    private function fieldOrNull($row, $headerIdx, $field)
+    {
+        if (! array_key_exists($field, $headerIdx)) {
             return null;
         }
         $index = $headerIdx[$field];
-        if( ! array_key_exists($index, $row)) {
+        if (! array_key_exists($index, $row)) {
             return null;
         }
         return $row[$index];
@@ -122,5 +123,4 @@ class ContentBuilder
         }
         return $content;
     }
-
 }

@@ -47,15 +47,22 @@ class ExportLogsCommand extends ContainerAwareCommand
     {
         $this->setName('lom:export:logs')
             ->setDescription('Export logs from the database for archiving.')
-            ->addArgument('file', InputArgument::REQUIRED,
-                'File to write the logs to.')
-            ->addOption('purge', null, InputOption::VALUE_NONE,
-                'Remove old log entries from the database.');
+            ->addArgument(
+                'file',
+                InputArgument::REQUIRED,
+                'File to write the logs to.'
+            )
+            ->addOption(
+                'purge',
+                null,
+                InputOption::VALUE_NONE,
+                'Remove old log entries from the database.'
+            );
     }
 
     /**
-     * Execute the command. 
-     * 
+     * Execute the command.
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      */
@@ -75,7 +82,7 @@ class ExportLogsCommand extends ContainerAwareCommand
         $fileHandle = fopen($input->getArgument('file'), 'a');
         $csvHandle = $actLog->export($header, $input->getOption('purge'));
 
-        while($data = fread($csvHandle, 8192)) {
+        while ($data = fread($csvHandle, 8192)) {
             fwrite($fileHandle, $data, 8192);
         }
 
@@ -83,5 +90,4 @@ class ExportLogsCommand extends ContainerAwareCommand
             'Logs exported to ' . realpath($file) . ($exists ? ' (appended)' : '')
         );
     }
-
 }

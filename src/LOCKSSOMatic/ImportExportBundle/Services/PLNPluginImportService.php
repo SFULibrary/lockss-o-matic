@@ -12,7 +12,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use ZipArchive;
 
-class PLNPluginImportService {
+class PLNPluginImportService
+{
 
     /**
      * @var EntityManager
@@ -27,7 +28,8 @@ class PLNPluginImportService {
     private $fs;
     private $logger;
 
-    public function setContainer(ContainerInterface $container = null) {
+    public function setContainer(ContainerInterface $container = null)
+    {
         $this->container = $container;
         $this->logger = $container->get('logger');
         $this->em = $container->get('doctrine')->getManager();
@@ -50,12 +52,13 @@ class PLNPluginImportService {
     }
 
     /**
-     * 
+     *
      * @param SplFileInfo $jarInfo
      * @return Plugins
      * @throws Exception if an error occurs
      */
-    public function importJarFile(SplFileInfo $jarInfo, $copy = true) {
+    public function importJarFile(SplFileInfo $jarInfo, $copy = true)
+    {
         $zip = new ZipArchive();
         $res = $zip->open($jarInfo->getPathname());
         if ($res !== true) {
@@ -82,7 +85,8 @@ class PLNPluginImportService {
      *
      * @return string
      */
-    public function getPluginPath($rawManifest) {
+    public function getPluginPath($rawManifest)
+    {
         $manifest = preg_replace('/\r\n/', "\n", $rawManifest);
         $blocks = preg_split('/\n\s*\n/s', $manifest);
 
@@ -114,7 +118,8 @@ class PLNPluginImportService {
      *
      * @throws Exception
      */
-    public function findXmlPropString(SimpleXMLElement $xml, $propName) {
+    public function findXmlPropString(SimpleXMLElement $xml, $propName)
+    {
         $data = $xml->xpath("//entry[string[1]/text() = '{$propName}']/string[2]");
         if (count($data) === 1) {
             return $data[0];
@@ -135,7 +140,8 @@ class PLNPluginImportService {
      *
      * @throws Exception
      */
-    public function findXmlPropElement(SimpleXMLElement $xml, $propName) {
+    public function findXmlPropElement(SimpleXMLElement $xml, $propName)
+    {
         $data = $xml->xpath("//entry[string[1]/text() = '{$propName}']/list");
         if (count($data) === 1) {
             return $data[0];
@@ -155,7 +161,8 @@ class PLNPluginImportService {
      *
      * @return PluginProperty
      */
-    public function newPluginProperty(Plugin $plugin, $name, $value) {
+    public function newPluginProperty(Plugin $plugin, $name, $value)
+    {
         $property = new PluginProperty();
         $property->setPlugin($plugin);
         $property->setPropertyKey($name);
@@ -164,7 +171,8 @@ class PLNPluginImportService {
         return $property;
     }
 
-    public function buildPlugin(SimpleXMLElement $xml, SplFileInfo $jarInfo, $copy) {
+    public function buildPlugin(SimpleXMLElement $xml, SplFileInfo $jarInfo, $copy)
+    {
         $pluginRepo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
 
         $pluginName = $this->findXmlPropString($xml, 'plugin_name');
@@ -207,8 +215,9 @@ class PLNPluginImportService {
      *
      * @param SimpleXMLElement $xml
      */
-    public function addProperties(Plugin $plugin, SimpleXMLElement $xml) {
-        foreach(self::$importProps as $prop) {
+    public function addProperties(Plugin $plugin, SimpleXMLElement $xml)
+    {
+        foreach (self::$importProps as $prop) {
             $this->newPluginProperty($plugin, $prop, $this->findXmlPropString($xml, $prop));
         }
 
@@ -231,5 +240,4 @@ class PLNPluginImportService {
 
         return $plugin;
     }
-
 }

@@ -72,7 +72,8 @@ class LoadPlnPropertyTestData extends AbstractDataFixture implements OrderedFixt
      * @param PlnProperty $parent
      * @return PlnProperty
      */
-    private function buildProperty(ObjectManager $em, Pln $pln, $key, $value, PlnProperty $parent = null) {
+    private function buildProperty(ObjectManager $em, Pln $pln, $key, $value, PlnProperty $parent = null)
+    {
         $prop = new PlnProperty();
         $prop->setPln($pln);
         $prop->setPropertyKey($key);
@@ -90,5 +91,4 @@ class LoadPlnPropertyTestData extends AbstractDataFixture implements OrderedFixt
     {
         return array('test');
     }
-
 }

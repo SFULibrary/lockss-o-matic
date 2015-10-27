@@ -58,7 +58,8 @@ class DefaultController extends Controller
      * @Method({"GET"})
      * @param Request $request
      */
-    public function resolveHostNameAction(Request $request) {
+    public function resolveHostNameAction(Request $request)
+    {
         $hostname = $request->query->get('hostname');
         $ip = gethostbyname($hostname);
         $response = new Response(json_encode(array('hostname' => $hostname, 'address' => $ip)));

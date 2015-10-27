@@ -7,7 +7,8 @@ use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
 use SimpleXMLElement;
 
-class SwordControllerTest extends AbstractTestCase {
+class SwordControllerTest extends AbstractTestCase
+{
 
     /**
      * @var Namespaces
@@ -20,21 +21,25 @@ class SwordControllerTest extends AbstractTestCase {
         $this->namespaces = new Namespaces();
     }
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
     }
 
-    private function getXml($string) {
+    private function getXml($string)
+    {
         $xml = new SimpleXMLElement($string);
         $this->namespaces->registerNamespaces($xml);
         return $xml;
     }
 
-    private function assertXpath(SimpleXMLElement $xml, $expected, $xpath, $method='assertEquals') {
+    private function assertXpath(SimpleXMLElement $xml, $expected, $xpath, $method = 'assertEquals')
+    {
         $this->$method($expected, (string)($xml->xpath($xpath)[0]));
     }
 
-    public function testServiceDocumentMissingOnBehalfOf() {
+    public function testServiceDocumentMissingOnBehalfOf()
+    {
         $client = static::createClient();
         $crawler = $client->request('GET', '/api/sword/2.0/sd-iri');
         $this->assertEquals(400, $client->getResponse()->getStatusCode());
@@ -46,7 +51,8 @@ class SwordControllerTest extends AbstractTestCase {
         );
     }
 
-    public function testServiceDocument() {
+    public function testServiceDocument()
+    {
         $provider = $this->references->getReference('provider');
         $client = static::createClient();
         $crawler = $client->request(
@@ -71,7 +77,8 @@ class SwordControllerTest extends AbstractTestCase {
     }
 
 
-    public function testCreateDepositMissingParam() {
+    public function testCreateDepositMissingParam()
+    {
         $provider = $this->references->getReference('provider');
         $xmlStr = file_get_contents(dirname(__FILE__) . '/data/depositMissingParam.xml');
         $client = static::createClient();
@@ -82,7 +89,7 @@ class SwordControllerTest extends AbstractTestCase {
             array(),
             array('Content-Type' => 'application/xml'),
             $xmlStr
-            );
+        );
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
         $xml = $this->getXml($response->getContent());
@@ -93,7 +100,8 @@ class SwordControllerTest extends AbstractTestCase {
         );
     }
 
-    public function testCreateDepositMismatchedUrl() {
+    public function testCreateDepositMismatchedUrl()
+    {
         $provider = $this->references->getReference('provider');
         $xmlStr = file_get_contents(dirname(__FILE__) . '/data/depositMismatchedHosts.xml');
         $client = static::createClient();
@@ -104,7 +112,7 @@ class SwordControllerTest extends AbstractTestCase {
             array(),
             array('Content-Type' => 'application/xml'),
             $xmlStr
-            );
+        );
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
         $xml = $this->getXml($response->getContent());
@@ -116,7 +124,8 @@ class SwordControllerTest extends AbstractTestCase {
         );
     }
 
-    public function testCreateDeposit() {
+    public function testCreateDeposit()
+    {
         $provider = $this->references->getReference('provider');
         $xmlStr = file_get_contents(dirname(__FILE__) . '/data/depositSingle.xml');
         $client = static::createClient();
@@ -127,7 +136,7 @@ class SwordControllerTest extends AbstractTestCase {
             array(),
             array('Content-Type' => 'application/xml'),
             $xmlStr
-            );
+        );
         $response = $client->getResponse();
         $this->assertEquals(201, $response->getStatusCode());
         $this->assertEquals(
@@ -168,7 +177,8 @@ class SwordControllerTest extends AbstractTestCase {
         $this->assertEquals('http://example.com/3691/11186563486_8796f4f843_o_d.jpg', $content[0]->getUrl());
     }
 
-    public function testCreateDepositMultipleContent() {
+    public function testCreateDepositMultipleContent()
+    {
         $provider = $this->references->getReference('provider');
         $xmlStr = file_get_contents(dirname(__FILE__) . '/data/depositMultiple.xml');
         $client = static::createClient();
@@ -179,7 +189,7 @@ class SwordControllerTest extends AbstractTestCase {
             array(),
             array('Content-Type' => 'application/xml'),
             $xmlStr
-            );
+        );
         $response = $client->getResponse();
         $this->assertEquals(201, $response->getStatusCode());
         $this->assertEquals(
@@ -223,12 +233,13 @@ class SwordControllerTest extends AbstractTestCase {
         $this->assertEquals('http://example.com/wm/paint/auth/monet/parliament/parliament.jpg', $content[2]->getUrl());
     }
 
-    public function testEditDeposit() {
+    public function testEditDeposit()
+    {
 
     }
 
-    public function testStatement() {
+    public function testStatement()
+    {
         
     }
-
 }

@@ -67,7 +67,7 @@ class Au implements GetPlnInterface
 
     /**
      * The PLN for this AU.
-     * 
+     *
      * @var Pln
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="aus")
@@ -126,7 +126,8 @@ class Au implements GetPlnInterface
     private $content;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->managed = false;
         $this->auProperties = new ArrayCollection();
         $this->auStatus = new ArrayCollection();
@@ -136,7 +137,7 @@ class Au implements GetPlnInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -159,7 +160,7 @@ class Au implements GetPlnInterface
     /**
      * Get managed
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getManaged()
     {
@@ -194,10 +195,11 @@ class Au implements GetPlnInterface
      *
      * @return PluginProperty[]
      */
-    public function getRootPluginProperties() {
+    public function getRootPluginProperties()
+    {
         $properties = array();
-        foreach($this->auProperties as $p) {
-            if($p->hasParent()) {
+        foreach ($this->auProperties as $p) {
+            if ($p->hasParent()) {
                 continue;
             }
             $properties[] = $p;
@@ -210,7 +212,8 @@ class Au implements GetPlnInterface
      * XML description.
      * @return AuProperty[]
      */
-    public function getDefinitionalProperties() {
+    public function getDefinitionalProperties()
+    {
         return $this->getPlugin()->getDefinitionalProperties();
     }
 
@@ -221,26 +224,27 @@ class Au implements GetPlnInterface
      * @param bool $encoded
      * @return string
      */
-    public function getAuProperty($name, $encoded = false) {
+    public function getAuProperty($name, $encoded = false)
+    {
         $value = '';
-        foreach($this->getAuProperties() as $prop) {
-            if($prop->getPropertyKey() !== 'key') {
+        foreach ($this->getAuProperties() as $prop) {
+            if ($prop->getPropertyKey() !== 'key') {
                 continue;
             }
-            if($prop->getPropertyValue() !== $name) {
+            if ($prop->getPropertyValue() !== $name) {
                 continue;
             }
-            foreach($prop->getParent()->getChildren() as $child) {
-                if($child->getPropertyKey() !== 'value') {
+            foreach ($prop->getParent()->getChildren() as $child) {
+                if ($child->getPropertyKey() !== 'value') {
                     continue;
                 }
                 $value = $child->getPropertyValue();
             }
         }
-        if($encoded === false) {
+        if ($encoded === false) {
             return $value;
         }
-        $callback = function($matches) {
+        $callback = function ($matches) {
             $char = ord($matches[0]);
             return '%' . strtoupper(sprintf("%02x", $char));
         };
@@ -286,7 +290,7 @@ class Au implements GetPlnInterface
     /**
      * Get comment
      *
-     * @return string 
+     * @return string
      */
     public function getComment()
     {
@@ -470,9 +474,10 @@ class Au implements GetPlnInterface
      *
      * @return int
      */
-    public function getContentSize() {
+    public function getContentSize()
+    {
         $size = 0;
-        foreach($this->getContent() as $content) {
+        foreach ($this->getContent() as $content) {
             $size += $content->getSize();
         }
         return $size;
@@ -500,7 +505,7 @@ class Au implements GetPlnInterface
     /**
      * Get auName
      *
-     * @return string 
+     * @return string
      */
     public function getAuName()
     {

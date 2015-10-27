@@ -91,7 +91,7 @@ class PurgeCommand extends ContainerAwareCommand
 
         $this->exec('doctrine:schema:drop', array('--force' => true), $output);
         $this->exec('doctrine:schema:create', array(), $output);
-        if($fixtures) {
+        if ($fixtures) {
             $this->exec('doctrine:fixtures:load', array('--append' => true), $output);
         }
         $this->exec('cache:clear', array('--no-warmup' => true), $output);

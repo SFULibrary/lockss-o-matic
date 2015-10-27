@@ -72,5 +72,4 @@ class AuAttributeGenerator
         $entity->setAuName($this->generateSymbol($entity, 'au_name'));
         $entity->setAuid($this->generateAuid($entity));
     }
-
 }

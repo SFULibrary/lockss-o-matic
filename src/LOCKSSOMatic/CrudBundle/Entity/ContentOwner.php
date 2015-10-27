@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Content owner. Deposits are made by a content provider on behalf of a content
- * owner. 
+ * owner.
  *
  * @ORM\Table(name="content_owners")
  * @ORM\Entity
@@ -52,14 +52,15 @@ class ContentOwner
      */
     private $contentProviders;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->contentProviders = new ArrayCollection();
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -82,7 +83,7 @@ class ContentOwner
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -105,7 +106,7 @@ class ContentOwner
     /**
      * Get emailAddress
      *
-     * @return string 
+     * @return string
      */
     public function getEmailAddress()
     {
@@ -144,7 +145,7 @@ class ContentOwner
     /**
      * Get contentProviders
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getContentProviders()
     {

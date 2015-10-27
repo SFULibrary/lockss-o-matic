@@ -285,14 +285,15 @@ class LoggingService
             return;
         }
         $reflect = new ReflectionClass($entity);
-        $this->log(implode(' ',
-                array(
+        $this->log(implode(
+            ' ',
+            array(
             'User ',
             $details['action'],
             $reflect->getShortName(),
             $id,
-            )), $details
-        );
+                )
+        ), $details);
     }
 
     /**
@@ -302,11 +303,13 @@ class LoggingService
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        $this->doctrineLog($args,
+        $this->doctrineLog(
+            $args,
             array(
             'action' => 'created',
             'level'  => 'doctrine',
-        ));
+            )
+        );
     }
 
     /**
@@ -316,11 +319,13 @@ class LoggingService
      */
     public function postUpdate(LifecycleEventArgs $args)
     {
-        $this->doctrineLog($args,
+        $this->doctrineLog(
+            $args,
             array(
             'action' => 'updated',
             'level'  => 'doctrine',
-        ));
+            )
+        );
     }
 
     /**
@@ -340,11 +345,13 @@ class LoggingService
         if (in_array($class, $this->ignoredClasses)) {
             return;
         }
-        $this->container->get('session')->set('entity_removed',
+        $this->container->get('session')->set(
+            'entity_removed',
             array(
             'entity' => $entity,
             'id'     => $entity->getId(),
-        ));
+            )
+        );
     }
 
     /**
@@ -370,14 +377,16 @@ class LoggingService
             return true;
         }
 
-        $this->doctrineLog($args,
+        $this->doctrineLog(
+            $args,
             array(
             'action' => 'deleted',
             'level'  => 'doctrine',
             'entity' => $entity,
             'id'     => $id,
-        ));
-        return true;
+            )
+        );
+            return true;
     }
 
     /**
@@ -447,7 +456,7 @@ class LoggingService
 
         $iterator->next(); // get the iterator started.
 
-        $callback = function($n = 100) use($em, $iterator, $finished) {
+        $callback = function ($n = 100) use ($em, $iterator, $finished) {
             if ($finished) {
                 return null;
             }
@@ -480,5 +489,4 @@ class LoggingService
 
         return $callback;
     }
-
 }

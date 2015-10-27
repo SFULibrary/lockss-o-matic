@@ -37,10 +37,17 @@ class PluginImportCommand extends ContainerAwareCommand
     {
         $this->setName('lom:import:plugin')
             ->setDescription('Import PLN plugins.')
-            ->addOption('nocopy', null, InputOption::VALUE_NONE,
-                'Do not copy the plugin .jar file.')
-            ->addArgument('plugin_files', InputArgument::IS_ARRAY,
-                'Local path to the folder containing the PLN plugin JAR files?');
+            ->addOption(
+                'nocopy',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not copy the plugin .jar file.'
+            )
+            ->addArgument(
+                'plugin_files',
+                InputArgument::IS_ARRAY,
+                'Local path to the folder containing the PLN plugin JAR files?'
+            );
     }
 
     /**
@@ -82,7 +89,7 @@ class PluginImportCommand extends ContainerAwareCommand
                 $importer->importJarFile($fileInfo, $nocopy);
             } catch (Exception $e) {
                 $logger->error("Import error: {$e->getMessage()}");
-                if(($p = $e->getPrevious()) !== null) {
+                if (($p = $e->getPrevious()) !== null) {
                     $logger->error($p->getMessage());
                 }
             }

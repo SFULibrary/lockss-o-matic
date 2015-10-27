@@ -42,7 +42,7 @@ class AuProperty implements GetPlnInterface
     private $propertyValue;
 
     /**
-     * The parent of the property, if it has one. 
+     * The parent of the property, if it has one.
      *
      * @var AuProperty
      *
@@ -81,7 +81,7 @@ class AuProperty implements GetPlnInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -104,7 +104,7 @@ class AuProperty implements GetPlnInterface
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -127,7 +127,7 @@ class AuProperty implements GetPlnInterface
     /**
      * Get propertyValue
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyValue()
     {
@@ -243,5 +243,4 @@ class AuProperty implements GetPlnInterface
     {
         return $this->getAu()->getPln();
     }
-
 }

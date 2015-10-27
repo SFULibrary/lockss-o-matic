@@ -50,7 +50,7 @@ class ContentProperty implements GetPlnInterface
 
     /**
      * The Content for the property
-     * 
+     *
      * @var Content
      *
      * @ORM\ManyToOne(targetEntity="Content", inversedBy="contentProperties")
@@ -60,14 +60,15 @@ class ContentProperty implements GetPlnInterface
      */
     private $content;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->isList = false;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -90,7 +91,7 @@ class ContentProperty implements GetPlnInterface
     /**
      * Get propertyKey
      *
-     * @return string 
+     * @return string
      */
     public function getPropertyKey()
     {
@@ -105,7 +106,7 @@ class ContentProperty implements GetPlnInterface
      */
     public function setPropertyValue($propertyValue)
     {
-        if(is_array($propertyValue)) {
+        if (is_array($propertyValue)) {
             $this->isList = true;
             $this->propertyValue = serialize($propertyValue);
         } else {
@@ -123,7 +124,7 @@ class ContentProperty implements GetPlnInterface
      */
     public function getPropertyValue()
     {
-        if($this->isList) {
+        if ($this->isList) {
             return unserialize($this->propertyValue);
         }
         return $this->propertyValue;
@@ -134,7 +135,8 @@ class ContentProperty implements GetPlnInterface
      *
      * @return boolean
      */
-    public function isList() {
+    public function isList()
+    {
         return $this->isList;
     }
 
@@ -155,7 +157,7 @@ class ContentProperty implements GetPlnInterface
     /**
      * Get content
      *
-     * @return \LOCKSSOMatic\CrudBundle\Entity\Content 
+     * @return \LOCKSSOMatic\CrudBundle\Entity\Content
      */
     public function getContent()
     {
@@ -188,7 +190,7 @@ class ContentProperty implements GetPlnInterface
     /**
      * Get isList
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getIsList()
     {

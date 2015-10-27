@@ -93,7 +93,8 @@ class Deposit implements GetPlnInterface
      */
     private $content;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->content = new ArrayCollection();
     }
 
@@ -101,7 +102,7 @@ class Deposit implements GetPlnInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -124,7 +125,7 @@ class Deposit implements GetPlnInterface
     /**
      * Get uuid
      *
-     * @return string 
+     * @return string
      */
     public function getUuid()
     {
@@ -147,7 +148,7 @@ class Deposit implements GetPlnInterface
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -170,7 +171,7 @@ class Deposit implements GetPlnInterface
     /**
      * Get summary
      *
-     * @return string 
+     * @return string
      */
     public function getSummary()
     {
@@ -193,7 +194,7 @@ class Deposit implements GetPlnInterface
     /**
      * Get dateDeposited
      *
-     * @return DateTime 
+     * @return DateTime
      */
     public function getDateDeposited()
     {
@@ -260,11 +261,12 @@ class Deposit implements GetPlnInterface
     /**
      * Set the date of the deposit. Called automatically, and set to the current
      * timestamp.
-     * 
+     *
      * @ORM\PrePersist
      */
-    public function setDepositDate() {
-        if($this->dateDeposited === null) {
+    public function setDepositDate()
+    {
+        if ($this->dateDeposited === null) {
             $this->dateDeposited = new DateTime();
         }
     }
@@ -300,6 +302,4 @@ class Deposit implements GetPlnInterface
     {
         return $this->getContentProvider()->getPln();
     }
-
-
 }

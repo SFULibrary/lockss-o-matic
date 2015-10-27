@@ -60,7 +60,7 @@ class Message
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -83,7 +83,7 @@ class Message
     /**
      * Get seen
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getSeen()
     {
@@ -106,7 +106,7 @@ class Message
     /**
      * Get content
      *
-     * @return string 
+     * @return string
      */
     public function getContent()
     {
@@ -148,7 +148,7 @@ class Message
     /**
      * Get user
      *
-     * @return \LOCKSSOMatic\UserBundle\Entity\User 
+     * @return \LOCKSSOMatic\UserBundle\Entity\User
      */
     public function getUser()
     {

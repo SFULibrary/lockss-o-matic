@@ -9,7 +9,8 @@ use LOCKSSOMatic\UserBundle\Entity\User;
 use Monolog\Logger;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
-class MessageService {
+class MessageService
+{
 
     /**
      * @var Logger
@@ -26,22 +27,26 @@ class MessageService {
      */
     private $tokenStorage;
 
-    public function setLogger(Logger $logger) {
+    public function setLogger(Logger $logger)
+    {
         $this->logger = $logger;
     }
 
-    public function setRegistry(Registry $registry) {
+    public function setRegistry(Registry $registry)
+    {
         $this->em = $registry->getManager();
     }
 
-    public function setTokenStorage(TokenStorage $tokenStorage) {
+    public function setTokenStorage(TokenStorage $tokenStorage)
+    {
         $this->tokenStorage = $tokenStorage;
     }
     
-    public function send($content, User $user = null) {
+    public function send($content, User $user = null)
+    {
         $message = new Message();
         $message->setContent($content);
-        if($user === null) {
+        if ($user === null) {
             $message->setUser($this->tokenStorage->getToken()->getUser());
         } else {
             $message->setUser($user);

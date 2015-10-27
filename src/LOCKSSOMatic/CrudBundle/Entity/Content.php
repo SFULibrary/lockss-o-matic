@@ -28,7 +28,7 @@ class Content implements GetPlnInterface
 
     /**
      * The URL for the content.
-     * 
+     *
      * @var string
      *
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
@@ -37,7 +37,7 @@ class Content implements GetPlnInterface
 
     /**
      * The title of the content as deposited to LOCKSSOMatic.
-     * 
+     *
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
@@ -129,7 +129,7 @@ class Content implements GetPlnInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -152,7 +152,7 @@ class Content implements GetPlnInterface
     /**
      * Get url
      *
-     * @return string 
+     * @return string
      */
     public function getUrl()
     {
@@ -175,7 +175,7 @@ class Content implements GetPlnInterface
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -198,7 +198,7 @@ class Content implements GetPlnInterface
     /**
      * Get size
      *
-     * @return integer 
+     * @return integer
      */
     public function getSize()
     {
@@ -244,7 +244,7 @@ class Content implements GetPlnInterface
     /**
      * Get checksumType
      *
-     * @return string 
+     * @return string
      */
     public function getChecksumType()
     {
@@ -267,7 +267,7 @@ class Content implements GetPlnInterface
     /**
      * Get checksumValue
      *
-     * @return string 
+     * @return string
      */
     public function getChecksumValue()
     {
@@ -290,7 +290,7 @@ class Content implements GetPlnInterface
     /**
      * Get recrawl
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRecrawl()
     {
@@ -409,7 +409,7 @@ class Content implements GetPlnInterface
         if ($encoded === false || $value === null) {
             return $value;
         }
-        $callback = function($matches) {
+        $callback = function ($matches) {
             $char = ord($matches[0]);
             return '%' . strtoupper(sprintf("%02x", $char));
         };
@@ -433,8 +433,10 @@ class Content implements GetPlnInterface
         sort($propNames);
 
         foreach ($propNames as $name) {
-            $auKey .= '&' . $name . '~' . $this->getContentPropertyValue($name,
-                    true);
+            $auKey .= '&' . $name . '~' . $this->getContentPropertyValue(
+                $name,
+                true
+            );
         }
         $this->auid = $pluginKey . $auKey;
         return $this->auid;
@@ -447,5 +449,4 @@ class Content implements GetPlnInterface
     {
         return $this->getDeposit()->getContentProvider()->getPln();
     }
-
 }

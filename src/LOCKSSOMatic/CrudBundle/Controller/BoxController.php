@@ -219,9 +219,9 @@ class BoxController extends Controller
             $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
 
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Box entity.');
-            }
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Box entity.');
+        }
 
             $em->remove($entity);
             $em->flush();

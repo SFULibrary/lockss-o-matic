@@ -85,5 +85,4 @@ class LoadPlnData extends AbstractDataFixture implements OrderedFixtureInterface
     {
         return array('prod');
     }
-
 }

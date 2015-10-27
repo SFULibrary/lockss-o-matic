@@ -24,7 +24,8 @@ class PluginTest extends AbstractTestCase
         $this->plugin = $this->references->getReference('plugin');
     }
 
-    public function testGetRootPluginProperties() {
+    public function testGetRootPluginProperties()
+    {
         /** @var PluginProperty[] $props */
         $props = $this->plugin->getRootPluginProperties();
         $this->assertEquals(6, count($props));
@@ -36,12 +37,14 @@ class PluginTest extends AbstractTestCase
         $this->assertEquals($props[5]->getPropertyKey(), 'plugin_config_props');
     }
 
-    public function testGetPluginIdentifier() {
+    public function testGetPluginIdentifier()
+    {
         $p = $this->plugin->getPluginIdentifier();
         $this->assertEquals('ca.sfu.test', $p);
     }
 
-    public function testGetPluginConfigParams() {
+    public function testGetPluginConfigParams()
+    {
         $props = $this->plugin->getPluginConfigParams();
         $this->assertEquals(2, count($props));
         $this->assertEquals($props[0]->getPropertyKey(), 'configparamdescr');
@@ -50,10 +53,10 @@ class PluginTest extends AbstractTestCase
         $this->assertNull($props[1]->getPropertyValue());
     }
 
-    public function testGetDefinitionalProperties() {
+    public function testGetDefinitionalProperties()
+    {
         $props = $this->plugin->getDefinitionalProperties();
         $this->assertEquals(1, count($props));
         $this->assertEquals($props[0], 'base_url');
     }
-
 }

@@ -125,5 +125,4 @@ class LoadAclData extends AbstractDataFixture implements OrderedFixtureInterface
     {
         return array('dev');
     }
-
 }

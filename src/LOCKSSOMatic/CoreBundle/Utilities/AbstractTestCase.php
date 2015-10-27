@@ -34,7 +34,8 @@ use Liip\FunctionalTestBundle\Test\WebTestCase as BaseTestCase;
  * Thin wrapper around Liip\FunctionalTestBundle\Test\WebTestCase to preload
  * fixtures into the database.
  */
-class AbstractTestCase extends BaseTestCase {
+class AbstractTestCase extends BaseTestCase
+{
 
     /**
      * @var ObjectManager
@@ -44,7 +45,7 @@ class AbstractTestCase extends BaseTestCase {
     /**
      * As the fixtures load data, they save references. Use $this->references
      * to get them.
-     * 
+     *
      * @var ReferenceRepository
      */
     protected $references;
@@ -52,7 +53,8 @@ class AbstractTestCase extends BaseTestCase {
     /**
      * {@inheritDocs}
      */
-    protected function setUp() {
+    protected function setUp()
+    {
         $fixtures = array(
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPlnTestData',
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPlnPropertyTestData',
