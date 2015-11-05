@@ -35,7 +35,7 @@ Roadmap
 =======
 
 LOCKSS-O-Matic is being developed primarily at
-Simon Fraser University Library](http://www.lib.sfu.ca/). Development has
+[Simon Fraser University Library](http://www.lib.sfu.ca/). Development has
 already begun and early versions of LOCKSS-O-Matic should be available for
 testing in fall of 2015.
 [Details](https://github.com/mjordan/lockss-o-matic/wiki/Roadmap) are available
