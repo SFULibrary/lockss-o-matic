@@ -1,19 +1,30 @@
 services:
-    
+    app.form.profile:
+        class: LOCKSSOMatic\UserBundle\Form\ProfileType
+        tags:
+            - { name: form.type, alias: lom_user_profile }
+
+    app.registration.listener:
+        class: LOCKSSOMatic\UserBundle\EventListener\RegistrationListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ["@router"]
+        
     lom.twig.lom_userextension:
         class: LOCKSSOMatic\UserBundle\Twig\UsersExtension
         arguments: [@doctrine]
         tags:
             - { name: twig.extension }
 
-    lom_user.profile.form.type:
-        class: LOCKSSOMatic\UserBundle\Form\Type\ProfileFormType
-        arguments: [ LOCKSSOMatic\UserBundle\Entity\User ]
-        tags:
-            - { name: form.type, alias: lom_user_profile }
-
     lom.access:
         class: LOCKSSOMatic\UserBundle\Security\Services\Access
-        arguments: [@security.context, @problematic.acl_manager, @security.acl.provider]
+        arguments: [@security.authorization_checker, @security.token_storage, @problematic.acl_manager, @security.acl.provider, @doctrine]
         tags:
             - { name: acl.check }
+
+    lom.message:
+        class: LOCKSSOMatic\UserBundle\Service\MessageService
+        calls:
+            - [ setLogger, ["@logger"] ]
+            - [ setRegistry, ["@doctrine"] ]
+            - [ setTokenStorage, ["@security.token_storage"]]

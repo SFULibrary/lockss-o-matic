@@ -1,4 +1,0 @@
-locksso_matic_pln_importer_default:
-    pattern:  /plnimporter/
-    defaults: { _controller: LOCKSSOMaticPLNImporterBundle:Default:index}
-    methods: [GET]

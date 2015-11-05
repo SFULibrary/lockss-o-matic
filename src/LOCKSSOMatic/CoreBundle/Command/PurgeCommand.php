@@ -44,7 +44,7 @@ class PurgeCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this->setName('lockssomatic:purge')
+        $this->setName('lom:purge')
                 ->setDescription('Purge *ALL* data from the database.');
     }
 
@@ -78,6 +78,8 @@ class PurgeCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $activityLog = $this->getContainer()->get('activity_log');
+        $activityLog->disable();
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion('This command will purge all data from the database. Continue y/N? ', false);
         if (!$helper->ask($input, $output, $question)) {
@@ -89,7 +91,7 @@ class PurgeCommand extends ContainerAwareCommand
 
         $this->exec('doctrine:schema:drop', array('--force' => true), $output);
         $this->exec('doctrine:schema:create', array(), $output);
-        if($fixtures) {
+        if ($fixtures) {
             $this->exec('doctrine:fixtures:load', array('--append' => true), $output);
         }
         $this->exec('cache:clear', array('--no-warmup' => true), $output);

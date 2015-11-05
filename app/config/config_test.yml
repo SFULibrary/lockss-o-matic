@@ -1,22 +1,15 @@
 imports:
     - { resource: config_dev.yml }
 
-security:
-    encoders:
-        FOS\UserBundle\Model\UserInterface:
-            algorithm: plaintext
+liip_functional_test:
+    cache_sqlite_db: true
 
 framework:
     test: ~
     session:
-        storage_id: session.storage.mock_file
+        storage_id: session.storage.filesystem
     profiler:
         collect: false
-
-monolog:
-    handlers:
-        main:
-            level:  warning
 
 web_profiler:
     toolbar: false
@@ -25,20 +18,10 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
-monolog:
-    handlers:
-        main:
-            type:   stream
-            path:   "%kernel.logs_dir%/%kernel.environment%.log"
-            level:  error
-        console:
-            type:   console
-            bubble: false
-            
 doctrine:
     dbal:
-        # variables are defined in parameters.yml
-        host: 127.0.0.1
-        dbname: lomtest
-        user: lomtest
-        password: abc123
+        default_connection: default
+        connections:
+            default:
+                driver: pdo_sqlite
+                path: %kernel.cache_dir%/test.db

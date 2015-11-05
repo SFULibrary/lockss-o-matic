@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lockss-config[
+<!ELEMENT lockss-config (if|property)+>
+<!ELEMENT property (property|list|value|if)*>
+<!ELEMENT list (value)+>
+<!ELEMENT value (#PCDATA)>
+<!ELEMENT test EMPTY>
+<!ELEMENT and (and|or|not|test)*>
+<!ELEMENT or (and|or|not|test)*>
+<!ELEMENT not (and|or|not|test)*>
+<!ELEMENT if (and|or|not|then|else|test|property)*>
+<!ELEMENT then (if|property)*>
+<!ELEMENT else (if|property)*>
+<!ATTLIST property name CDATA #REQUIRED>
+<!ATTLIST property value CDATA #IMPLIED>
+<!ATTLIST test hostname CDATA #IMPLIED>
+<!ATTLIST test group CDATA #IMPLIED>
+<!ATTLIST test daemonVersionMin CDATA #IMPLIED>
+<!ATTLIST test daemonVersionMax CDATA #IMPLIED>
+<!ATTLIST test daemonVersion CDATA #IMPLIED>
+<!ATTLIST test platformVersionMin CDATA #IMPLIED>
+<!ATTLIST test platformVersionMax CDATA #IMPLIED>
+<!ATTLIST test platformVersion CDATA #IMPLIED>
+<!ATTLIST test platformName CDATA #IMPLIED>
+<!ATTLIST if hostname CDATA #IMPLIED>
+<!ATTLIST if group CDATA #IMPLIED>
+<!ATTLIST if daemonVersionMin CDATA #IMPLIED>
+<!ATTLIST if daemonVersionMax CDATA #IMPLIED>
+<!ATTLIST if daemonVersion CDATA #IMPLIED>
+<!ATTLIST if platformVersionMin CDATA #IMPLIED>
+<!ATTLIST if platformVersionMax CDATA #IMPLIED>
+<!ATTLIST if platformVersion CDATA #IMPLIED>
+<!ATTLIST if platformName CDATA #IMPLIED>
+]>
+
+<lockss-config>
+
+  <property name="org.lockss">
+
+    <!-- @begin prod -->
+
+    <if>
+      <and>
+        <test platformName="OpenBSD CD" />
+        <test platformVersionMax="249" />
+      </and>
+      <then>
+        <property name="ui.warning" value="This LOCKSS box is running a version of the LOCKSS Platform CD that is no longer supported. This machine will remain operational but you are no longer receiving software updates. Please upgrade to &lt;a href='http://www.lockss.org/lockss/Installation_Instructions'&gt;CD261&lt;/a&gt;." />
+      </then>
+    </if>
+
+    <property name="platform.isodirectory" value="/cache" />
+
+    <property name="state.pollHistory.maxSize" value="50" />
+    <property name="state.pollHistory.trimRewrite" value="true" />
+
+    <property name="HtmlTagFilter.throwIfNoEndTag" value="false" />
+
+    <property name="poll.defaultPollProtocol" value="3" />
+
+    <property name="poll.expireRecent" value="2d" />
+
+    <property name="plugin.registries.crawlInterval" value="12h"/>  
+    <property name="plugin.registries.enablePolls" value="true"/>  
+
+    <property name="backupEmail.sendTo" value="lockssbeta@lockss.org" />
+    <property name="backupEmail.enabled" value="true" />
+    <property name="backupEmail.infoUrl" value="http://www.lockss.org/pub-wiki/" />
+    <property name="remoteApi.backupFileExtension" value="bak" />
+
+    <property name="admin.redirectRoot" value="Home" />
+
+    <property name="ui.maxUploadFileSize" value="7000000" />
+    <property name="jetty.MaxFormSize" value="7000000" />
+
+    <property name="admin.helpUrl" value="http://www.lockss.org/lockss/Cache_Help" />
+
+    <property name="repository.globalNodeCache.enabled" value="true" />
+    <property name="repository.globalNodeCache.size" value="500" />
+    <property name="state.globalNodeCache.enabled" value="true" />
+    <property name="state.globalNodeCache.size" value="500" />
+
+    <property name="jetty.Proxy.priority" value="6" />
+    <property name="jetty.LocalUI.priority" value="6" />
+
+    <property name="proxy.noManifestIndexResponses" value="301;302;303;307" />
+
+    <property name="crawler.maxRepairRate" value="1000/1d" />
+
+    <property name="baseau.useCrawlWindowByDefault" value="true" />
+
+    <property name="crawler.threadPool.max" value="3" />
+    <property name="baseau.defaultFetchRateLimiterSource" value="plugin" />
+    <property name="crawler.threadPool.queueSize" value="25" />
+    <property name="crawler.startCrawlsInterval" value="1h" />
+
+    <property name="state.cache.size" value="10" />
+    <property name="repository.nodeCache.size" value="10" />
+
+    <property name="admin.contactEmail" value="lockss-support@lockss.org" />
+
+    <property name="comm.router.dupMsgHashSize" value="100" />
+
+    <property name="log">
+      <property name="default.level" value="debug" />
+      <property name="Scheduler.level" value="info" />
+      <property name="CrawlerImpl.level" value="info" />
+      <property name="BaseCrawler.level" value="info" />
+    </property>
+
+    <property name="mail.enabled" value="true" />
+
+    <property name="hasher">
+      <property name="estimate.pad.constant" value="5000" />
+      <property name="estimate.pad.percent" value="40" />
+      <property name="nameHashEstimate" value="5000" />
+    </property>
+
+    <property name="protocol.hashAlgorithm" value="SHA-1" />
+
+    <property name="scheduler.maxBackgroundLoad" value="50" />
+    <property name="scheduler.overheadLoad" value="30" />
+    <property name="treewalk.use.scheduler" value="true" />
+    <property name="hasher.use.scheduler" value="true" />
+
+    <property name="app.exitOnce" value="false" />
+
+    <property name="baseau">
+      <property name="toplevel.poll.interval.min" value="8w" />
+      <property name="toplevel.poll.interval.max" value="10w" />
+    </property>
+
+    <property name="treewalk.v1.mode" value="off" />
+
+    <property name="thread.hungThreadDump" value="true" />
+
+    <property name="poll">
+      <property name="quorum" value="4" />
+      <property name="agreeVerify" value="02" />
+      <property name="disagreeVerify" value="02" />
+      <property name="namepoll.deadline" value="30m" />
+      <property name="contentpoll.min" value="30m" />
+      <property name="contentpoll.max" value="2d" />
+      <property name="voteMargin" value="70" />
+      <property name="trustedMargin" value="51" />
+      <property name="trustedWeight" value="350" />
+      <property name="expireVerifier" value="4h" />
+    </property>
+
+    <property name="treewalk">
+      <property name="interval" value="24h" />
+      <property name="initial.estimate" value="5m" />
+    </property>
+
+    <property name="metrics.hash.duration" value="1m" />
+
+    <property name="config.reloadInterval" value="30m" />
+
+    <property name="ui.access">
+      <property name="ip.logForbidden" value="true" />
+      <property name="ip.include">
+        <list>
+          <value>171.66.236.0/26</value>
+        </list>
+      </property>
+    </property>
+
+    <property name="accounts">
+      <property name="policy" value="basic" />
+    </property>
+
+    <property name="proxy">
+      <property name="port" value="8080" />
+      <property name="audit.port" value="8082" />
+      <property name="access">
+        <property name="ip.logForbidden" value="true" />
+        <property name="ip.include">
+          <list>
+            <value>171.66.236.0/26</value>
+          </list>
+        </property>
+      </property>
+    </property>
+
+    <!-- @end prod -->
+
+    <!-- @begin klockss -->
+
+    <property name="config.reloadInterval" value="30m" />
+
+    <!-- <property name="app.exitOnce" value="true" /> -->
+
+    <property name="treewalk">
+      <property name="initial.estimate" value="10s" />
+      <property name="interval.min" value="2h" />
+      <property name="interval.max" value="8h" />
+    </property>
+
+    <property name="metrics">
+      <property name="default.hash.speed" value="10500" />
+      <property name="slowest.hashrate" value="10500" />
+    </property>
+
+    <property name="scomm.enabled" value="true" />
+    <property name="scomm.channelIdleTime" value="30s" />
+    <property name="scomm.maxChannels" value="200" />
+    <property name="scomm.maxMessageSize" value="536870912" /> <!-- 512MB -->
+    <property name="poll.v3">
+      <property name="deleteExtraFiles" value="false" />
+      <property name="voteDurationMultiplier" value="5" />
+      <property name="tallyDurationMultiplier" value="5" />
+      <!-- For 1.28, replace 1800000 with "30m" -->
+      <property name="voteDurationPadding" value="1800000" />
+      <property name="tallyDurationPadding" value="1800000" />
+      <property name="enableDiscovery" value="false" />
+      <property name="minNominationSize" value="0" />
+      <property name="maxNominationSize" value="0" />
+      <property name="quorum" value="3" />
+      <property name="maxSimultaneousV3Pollers" value="5" />
+      <property name="maxSimultaneousV3Voters" value="200" />
+      <property name="timeBetweenInvitations" value="3m" />
+      <property name="repairFromCachePercent" value="25" />
+    </property>
+
+    <property name="plugin.restartAusWithNewPlugin" value="true"/>
+
+    <property name="id.initialV3PeerList">
+      <list>
+        <value>TCP:[142.58.129.145]:9729</value>
+        <value>TCP:[142.58.129.146]:9729</value>
+        <value>TCP:[142.58.129.147]:9729</value>
+        <value>TCP:[142.58.129.148]:9729</value>
+      </list>
+    </property>
+
+    <property name="titleDbs">
+      <list>
+        <value>http://lib-general.lib.sfu.ca/klockss/titledb/titledb.xml</value>
+        <value>http://lib-general.lib.sfu.ca/klockss/titledb/titledb_2.xml</value>
+      </list>
+    </property>
+
+    <property name="plugin.registries">
+      <list>
+        <value>http://lib-general.lib.sfu.ca/klockss/plugins/</value>
+      </list>
+    </property>
+
+    <!-- @end klockss -->
+
+    <property name="poll.v3.pollIntervalAgreementCurve" value="[70,2d],[70,4d],[80,4d],[80,6d],[90,6d],[90,8d],[95,8d],[95,10d]" />
+    <property name="poll.v3.pollIntervalAgreementLastResult" value="1;6" />
+
+  </property>
+
+</lockss-config>

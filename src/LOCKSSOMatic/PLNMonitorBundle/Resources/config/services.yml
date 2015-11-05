@@ -1,9 +1,0 @@
-parameters:
-    locksso_matic_pln_monitor.pln_monitor.class: LOCKSSOMatic\PLNMonitorBundle\DependencyInjection\PlnMonitor
-
-services:
-    pln_monitor:
-        class: %locksso_matic_pln_monitor.pln_monitor.class%
-        arguments: [@doctrine.orm.entity_manager, @lom_logger]
-        tags:
-            - { name: monolog.logger, channel: lomlogger}

@@ -1,7 +1,0 @@
-boxstatus:
-    path:     /
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:index" }
-
-boxstatus_show:
-    path:     /{id}/show
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:BoxStatus:show" }

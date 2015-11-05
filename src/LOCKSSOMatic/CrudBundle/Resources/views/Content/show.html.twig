@@ -1,0 +1,73 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>Content</h1>
+{% endblock %}
+
+{% block body -%}
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('content') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+        </div>
+    </div>
+
+    <table class="record_properties table table-striped table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th>Url</th>
+                <td>{{ entity.url }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ entity.title }}</td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <td>{{ entity.size }}</td>
+            </tr>
+            <tr>
+                <th>Datedeposited</th>
+                <td>{{ entity.dateDeposited|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Checksumtype</th>
+                <td>{{ entity.checksumType }}</td>
+            </tr>
+            <tr>
+                <th>Checksumvalue</th>
+                <td>{{ entity.checksumValue }}</td>
+            </tr>
+            <tr>
+                <th>Recrawl</th>
+                <td>{{ entity.recrawl }}</td>
+            </tr>
+            <tr>
+                <th>Deposit</th>
+                <td><a href="{{ path('deposit_show', {'id': entity.deposit.id}) }}">{{ entity.deposit.title }}</a></td>
+            </tr>
+            <tr>
+                <th>Au</th>
+                <td>
+                    {% if entity.au %}
+                        <a href="{{path('au_show', {'id': entity.au.id}) }}">{{ entity.au }}</a>
+                    {% else %}
+                        (none)
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Content Properties</h2>
+    <ul>
+        {% for property in entity.contentProperties %}
+            <li>
+                <b>{{ property.propertyKey }}</b>:
+                    {{ property.propertyValue }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

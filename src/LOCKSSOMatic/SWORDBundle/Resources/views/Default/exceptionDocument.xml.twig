@@ -1,8 +1,0 @@
-<sword:error xmlns="http://www.w3.org/2005/Atom" 
-             xmlns:sword="http://purl.org/net/sword/"
-             href="{{ exception.errorUri }}">    
-    <summary>{{ exception.statusCode }} - {{ exception.message }}</summary>
-    <sword:verboseDescription>
-{{ exception.getTraceAsString()|escape('html') }}
-    </sword:verboseDescription>
-</sword:error>

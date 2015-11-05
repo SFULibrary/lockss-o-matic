@@ -1,7 +1,0 @@
-deposits:
-    path:     /
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:index" }
-
-deposits_show:
-    path:     /{id}/show
-    defaults: { _controller: "LOCKSSOMaticCRUDBundle:Deposits:show" }

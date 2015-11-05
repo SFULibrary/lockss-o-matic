@@ -1,35 +1,50 @@
-locksso_matic_logging:
-    resource: "@LOCKSSOMaticLoggingBundle/Resources/config/routing.yml"
-    prefix:   /
-
-locksso_matic_plugin:
-    resource: "@LOCKSSOMaticPluginBundle/Resources/config/routing.yml"
-    prefix:   /
-
 locksso_matic_core:
-    resource: "@LOCKSSOMaticCoreBundle/Resources/config/routing.yml"
-    prefix:   /
-
-locksso_matic_pln_monitor:
-    resource: "@LOCKSSOMaticPLNMonitorBundle/Resources/config/routing.yml"
-    prefix:   /
-
-locksso_matic_crud:
-    resource: "@LOCKSSOMaticCRUDBundle/Resources/config/routing.yml"
+    resource: "@LOCKSSOMaticCoreBundle/Controller/"
+    type:     annotation
     prefix:   /
 
 locksso_matic_sword:
-    resource: "@LOCKSSOMaticSWORDBundle/Resources/config/routing.yml"
+    resource: "@LOCKSSOMaticSwordBundle/Controller/"
+    type:     annotation
     prefix:   /
 
-locksso_matic_pln_importer:
-    resource: "@LOCKSSOMaticPLNImporterBundle/Resources/config/routing.yml"
+locksso_matic_import_export:
+    resource: "@LOCKSSOMaticImportExportBundle/Controller/"
+    type:     annotation
     prefix:   /
 
-fos_user:
-    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+locksso_matic_log:
+    resource: "@LOCKSSOMaticLogBundle/Controller/"
+    type:     annotation
+    prefix:   /
 
-locksso_matic_user:
-    resource: "@LOCKSSOMaticUserBundle/Resources/config/routing.yml"
-    prefix: /
+locksso_matic_crud:
+    resource: "@LOCKSSOMaticCrudBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+# We don't want open registration.
+# fos_user_register:
+#    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+#    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile
+
+lockssomatic_user:
+    resource: "@LOCKSSOMaticUserBundle/Controller/"
+    type:     annotation
+    prefix:   /
     

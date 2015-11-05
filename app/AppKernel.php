@@ -15,27 +15,25 @@ class AppKernel extends Kernel
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new LOCKSSOMatic\SWORDBundle\LOCKSSOMaticSWORDBundle(),
-            new LOCKSSOMatic\CRUDBundle\LOCKSSOMaticCRUDBundle(),
-            new LOCKSSOMatic\PLNExporterBundle\LOCKSSOMaticPLNExporterBundle(),
-            new LOCKSSOMatic\PLNImporterBundle\LOCKSSOMaticPLNImporterBundle(),
-            new LOCKSSOMatic\PLNMonitorBundle\LOCKSSOMaticPLNMonitorBundle(),
-            new LOCKSSOMatic\CoreBundle\LOCKSSOMaticCoreBundle(),
-            new Braincrafted\Bundle\BootstrapBundle\BraincraftedBootstrapBundle(),
             new FOS\UserBundle\FOSUserBundle(),
-            new Problematic\AclManagerBundle\ProblematicAclManagerBundle(),
             new LOCKSSOMatic\UserBundle\LOCKSSOMaticUserBundle(),
-            new LOCKSSOMatic\PluginBundle\LOCKSSOMaticPluginBundle(),
+            new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
+            new LOCKSSOMatic\CrudBundle\LOCKSSOMaticCrudBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
-            new LOCKSSOMatic\LoggingBundle\LOCKSSOMaticLoggingBundle(),
+            new Problematic\AclManagerBundle\ProblematicAclManagerBundle(),
+            new LOCKSSOMatic\LogBundle\LOCKSSOMaticLogBundle(),
+            new LOCKSSOMatic\ImportExportBundle\LOCKSSOMaticImportExportBundle(),
+            new LOCKSSOMatic\SwordBundle\LOCKSSOMaticSwordBundle(),
+            new LOCKSSOMatic\CoreBundle\LOCKSSOMaticCoreBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
+            $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
+            $bundles[] = new Liip\FunctionalTestBundle\LiipFunctionalTestBundle();
         }
 
         return $bundles;
@@ -43,6 +41,6 @@ class AppKernel extends Kernel
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
+        $loader->load($this->getRootDir().'/config/config_'.$this->getEnvironment().'.yml');
     }
 }

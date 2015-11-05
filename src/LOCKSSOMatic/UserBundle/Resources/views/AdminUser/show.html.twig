@@ -1,20 +1,33 @@
 {% extends '::base.html.twig' %}
 
-{% block body -%}
-    <h1>User</h1>
 
-    <table class="record_properties table table-striped table-hover table-bordered">
+{% block pageheader %}
+    <h1>User</h1>
+{% endblock %}
+
+{% block body -%}
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('admin_user') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+            <a href="{{ path('admin_user_edit', { 'id': entity.id }) }}" class="btn btn-default">
+                <span class='glyphicon glyphicon-edit'></span> Edit
+            </a>
+            <a href="{{ path('admin_user_delete', { 'id': entity.id }) }}" class="btn btn-default js-confirm" data-confirm="Are you sure you want to delete this user?">
+                <span class='glyphicon glyphicon-remove'></span> Delete
+            </a>
+        </div>
+    </div>
+
+    <table class="record_properties table table-striped table-bordered table-hover">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
                 <th>Email</th>
-                <td>{{ entity.email }}</td>
+                <td><a href="mailto:{{ entity.email }}">{{ entity.email}}</a></td>
             </tr>
             <tr>
-                <th>Fullname</th>
+                <th>Full name</th>
                 <td>{{ entity.fullname }}</td>
             </tr>
             <tr>
@@ -22,41 +35,21 @@
                 <td>{{ entity.institution }}</td>
             </tr>
             <tr>
-                <th>Roles</th>
-                <td>{% for role in entity.roles %}{{ role }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
-            </tr>
-            <tr>
-                <th>Most recent login</th>
-                <td>
-                    {% if entity.lastLogin %}
-                        {{ entity.lastLogin|date('Y-m-d H:i:s') }}
-                    {% else %}
-                        Never
-                    {% endif %}
-                </td>
-            </tr>
-            <tr>
                 <th>Enabled</th>
-                <td>{% if entity.enabled %}Yes{% else %}No{% endif %}</td>
+                <td>{% if entity.enabled %} Yes {% else %} No {% endif %}</td>
             </tr>
             <tr>
-                <th>Locked</th>
-                <td>{% if entity.locked %}Yes{% else %}No{% endif %}</td>
+                <th>Last login</th>
+                <td>{{ entity.lastLogin|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>
+                    {% for role in entity.roles %}
+                        {{ role }}
+                    {% endfor %}
+                </td>
             </tr>
         </tbody>
     </table>
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('admin_user') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('admin_user_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
 {% endblock %}

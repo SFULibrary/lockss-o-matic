@@ -1,39 +1,17 @@
 <?php
 
-/* 
- * The MIT License
- *
- * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\UserBundle\Security\Services;
 
 use LOCKSSOMatic\UserBundle\Entity\User;
 use LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder;
+use LOCKSSOMatic\UserBundle\Security\Acl\Permission\PlnAccessLevels;
 use Problematic\AclManagerBundle\Domain\AclManager;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * Wrapper around ProblematicAclBundle and around some of Symfony's ACL and role
@@ -50,21 +28,22 @@ use Symfony\Component\Security\Core\SecurityContext;
  */
 class Access
 {
-
     private $securityContext;
+    private $tokenStorage;
     private $aclManager;
     private $aclProvider;
 
     /**
      * Build the access wrapper. The parameters are configured in services.yml
      *
-     * @param SecurityContext $securityContext
+     * @param AuthorizationChecker $securityContext
      * @param AclManager $aclManager
      * @param MutableAclProvider $aclProvider
      */
-    public function __construct(SecurityContext $securityContext, AclManager $aclManager, MutableAclProvider $aclProvider)
+    public function __construct(AuthorizationChecker $securityContext, TokenStorage $tokenStorage, AclManager $aclManager, MutableAclProvider $aclProvider)
     {
         $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
         $this->aclManager = $aclManager;
         $this->aclProvider = $aclProvider;
     }
@@ -107,7 +86,7 @@ class Access
     public function hasAccess($permission, $entity = null, $user = null)
     {
         if ($user === null) {
-            $user = $this->securityContext->getToken()->getUser();
+            $user = $this->tokenStorage->getToken()->getUser();
         }
         
         if ($user->hasRole('ROLE_ADMIN')) {
@@ -137,6 +116,17 @@ class Access
         }
         
         return false;
+    }
+
+    public function findAccessLevel($user, $entity)
+    {
+        $levels = PlnAccessLevels::names();
+        foreach ($levels as $level) {
+            if ($this->hasAccess($level, $entity, $user)) {
+                return $level;
+            }
+        }
+        return null;
     }
 
     /**

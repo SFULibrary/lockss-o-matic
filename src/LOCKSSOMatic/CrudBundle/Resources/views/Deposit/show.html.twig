@@ -1,0 +1,63 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>Deposit</h1>
+{% endblock %}
+
+{% block body -%}
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('deposit') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+        </div>
+    </div>
+
+    <table class="record_properties table table-striped table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th>Uuid</th>
+                <td>{{ entity.uuid }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ entity.title }}</td>
+            </tr>
+            <tr>
+                <th>Summary</th>
+                <td>{{ entity.summary }}</td>
+            </tr>
+            <tr>
+                <th>Datedeposited</th>
+                <td>{{ entity.dateDeposited|date('Y-m-d H:i:s') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Deposit content</h2>
+
+    <table class="records_list table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Url</th>
+                <th>Title</th>
+                <th>Size</th>
+                <th>Datedeposited</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for content in entity.content %}
+                <tr>
+                    <td><a href="{{ path('content_show', { 'id': content.id }) }}">{{ content.id }}</a></td>
+                    <td>{{ content.url }}</td>
+                    <td>{{ content.title }}</td>
+                    <td>{{ content.size }}</td>
+                    <td>{% if content.dateDeposited %}{{ content.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

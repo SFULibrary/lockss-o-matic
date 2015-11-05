@@ -1,106 +1,139 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <title>{% block title %}Welcome!{% endblock %}</title>
+
+        {% stylesheets '@bootstrap_css' %}
+        <link rel="stylesheet" type="text/css" media="screen" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+
+        {% stylesheets 'bundles/lockssomatic*/css/*' filter='cssrewrite' %}
+        <link rel='stylesheet' href='{{ asset_url }}'>
+        {% endstylesheets %}
+
+        {% block stylesheets %}
+        {% endblock %}
+
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        {% block stylesheets %}{% endblock %}
-        <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet" media="screen">
     </head>
     <body>
 
-        <!-- Static navbar -->
-    <div class="navbar navbar-default navbar-static-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="{{ path('lom_default_homepage') }}">LOCKSS-O-MATTIC</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">              
-            <li class="active"><a href="{{ path('lom_default_homepage') }}">Home</a></li> 
-            
-            {% if app.user %}
-            
-            <li class="dropdown" role="menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Entities <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="{{ path('aus') }}">Archival Units</a></li>
-                    <li><a href="{{ path('auproperties') }}">Properties</a></li>
-                    <li><a href="{{ path('austatus') }}">Status</a></li>
-                    <li role="presentation" class="divider"></li>
-                    <li><a href="{{ path('boxes') }}">Boxes</a></li>
-                    <li><a href="{{ path('boxstatus') }}">Status</a></li>
-                    <li role="presentation" class="divider"></li>
-                    <li><a href="{{ path('content') }}">Content</a></li>
-                    <li><a href="{{ path('contentowners') }}">Owners</a></li>
-                    <li><a href="{{ path('contentproviders') }}">Providers</a></li>
-                    <li><a href="{{ path('deposits') }}">Deposits</a></li>
-                    <li role="presentation" class="divider"></li>
-                    <li><a href="{{ path('plns') }}">Networks</a></li>
-                    <li><a href="{{ path('plnproperties') }}">Properties</a></li>
-                    <li role="presentation" class="divider"></li>
-                    <li><a href="{{ path('plugins') }}">Plugins</a></li>
-                    <li><a href="{{ path('pluginproperties') }}">Plugin Properties</a></li>
-                    {% if is_granted('ROLE_ADMIN') %}
-                    <li role='presentation' class='divider'></li>
-                    <li><a href="{{ path('admin_user') }}">Users</a></li>
-                    {% endif %}
-                </ul>
-            </li>
-            
-            {% endif %}
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">LOCKSSOMatic</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
 
-          </ul>
-          
-          <ul class="nav navbar-nav navbar-right">              
-              {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
-                    <li>
-                        <a href="{{ path(app.request.attributes.get('_route'), 
-                                    app.request.attributes.get('_route_params')|merge({'_switch_user': '_exit' })) }}">
-                            Exit {{ app.user.username }}
-                        </a>
-                    </li>
-              {% elseif is_granted('ROLE_ADMIN') %}
-                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Switch user <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                        {% for user in userList() %}
+                        {% if app.user %}
+                            <li class="dropdown" role="menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Entities <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ path('au') }}">Archival Units</a></li>
+                                    <li role="presentation" class="divider"></li>
+                                    <li><a href="{{ path('box') }}">Boxes</a></li>
+                                    <li role="presentation" class="divider"></li>
+                                    <li><a href="{{ path('content') }}">Content</a></li>
+                                    <li><a href="{{ path('contentowner') }}">Owners</a></li>
+                                    <li><a href="{{ path('contentprovider') }}">Providers</a></li>
+                                    <li><a href="{{ path('deposit') }}">Deposits</a></li>
+                                    <li role="presentation" class="divider"></li>
+                                    <li><a href="{{ path('pln') }}">Networks</a></li>
+                                    <li role="presentation" class="divider"></li>
+                                    <li><a href="{{ path('plugin') }}">Plugins</a></li>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <li role='presentation' class='divider'></li>
+                                        <li><a href='{{ path('admin_user') }}'>Users</a></li>
+                                        <li><a href='{{ path('log') }}'>Access logs</a></li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                             <li>
-                                <a href="{{ path(app.request.attributes.get('_route'), 
-                                         app.request.attributes.get('_route_params')|merge({'_switch_user': user.username })) }}">
-                                        {{ user.username }}
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    {{ app.user.username }} <span class="caret"></span>
                                 </a>
-                             </li>
-                            {% endfor %}                           
-                        </ul>
-                    </li>
-              {% endif %}
-                    
-              {% if app.user %}
-                    <li><a href="{{ path('fos_user_profile_show') }}">{{ app.user.username }}</a></li>
-                  {% if not is_granted('ROLE_PREVIOUS_ADMIN') %}
-                        <li><a href="{{ path('fos_user_security_logout') }}">Logout</a></li>
-                  {% endif %}
-              {% else %}
-                    <li><a href="{{ path('fos_user_security_login') }}">Login</a></li>
-              {% endif %}
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </div>
-        
+                                <ul class="dropdown-menu">
+                                    {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                                        <li>
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_switch_user': '_exit' })) }}">
+                                                Exit {{ app.user.username }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                    <li>
+                                        <a href="{{ path('fos_user_profile_show') }}">
+                                            Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('message') }}">
+                                            Messages ({{ app.user.getMessages(false)|length }})
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('fos_user_change_password') }}">
+                                            Change Password
+                                        </a>
+                                    </li>
+                                    {# % if is_granted('ROLE_ADMIN') %}
+                                        <li class="disabled"><a href="#">Switch user</a></li>
+                                            {% for user in userList() %}
+                                            <li>
+                                                <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_switch_user': user.username })) }}">
+                                                    {{ user.username }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    {% endif % #}
+                                </ul>
+                            </li>
+                        {% endif %}
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
 
         <div class="container">
-            {% block body %}{% endblock %}
+            {% set _pageheader = block("pageheader") %}
+            {% if _pageheader is not empty %}
+                <div class="page-header">
+                    {{ _pageheader|raw }}
+                </div>
+            {% endif %}
+
+            {% for type, messages in app.session.flashbag.all() %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }}">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}
+            {% endblock %}
         </div>
-        {% block javascripts %}{% endblock %}
-        <!-- jQuery (necessary for Bootstraps JavaScript plugins) -->
-        <script src="{{ asset('js/jquery.js') }}"></script>
-        <!-- Include all JavaScripts, compiled by Assetic -->
-        <script src="{{ asset('js/bootstrap.js') }}"></script>
-</body>
+
+        {% javascripts '@jquery' '@bootstrap_js' 'bundles/app/js/*' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% block javascripts %}
+        {% endblock %}
+    </body>
 </html>

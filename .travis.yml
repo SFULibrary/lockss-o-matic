@@ -1,17 +1,17 @@
+sudo: false
+
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
+  - 5.6
   
 cache: apt
 
 before_script:
-  - cp app/config/LOMSettings.yml.dist app/config/LOMSettings.yml
-  - composer install -n
-  - mysql -e 'create database lomtest;'
-  - cp app/config/config_test.yml.travis app/config/config_test.yml
-  - php app/console --env=test doctrine:schema:update --force
+  - composer install -n -o
 
-script: phpunit -c app
+script:
+  - phpunit src
+

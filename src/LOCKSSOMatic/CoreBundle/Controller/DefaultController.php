@@ -1,74 +1,69 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CoreBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Default controller, handles requests that don't fit into any of the larger
+ * controllers.
+ */
 class DefaultController extends Controller
 {
     /**
-     * Render a static index page.
+     * Home page for LOCKSSOMatic.
      *
-     * @return Response the response
+     * @Route("/", name="home")
+     * @Template()
      */
     public function indexAction()
     {
-        return $this->render('LOCKSSOMaticCoreBundle:Default:index.html.twig');
+        return array();
     }
-    
+
     /**
-     * Contoller for creating manually uploaded LOM deposits.
-     * 
-     * LOCKSS-O-Matic offers two ways to deposit content URLs:
-     * via SWORD and manually. Manual deposits are created by
-     * uploading a CSV file listing content URLs. The content
-     * provider for these deposits needs to be either selected
-     * from a list by the user uploading the file or predetermined
-     * in some way (e.g., by user permission), and need to exist
-     * at the time the depoist is created.
-     * 
-     * @param object $request
-     * 
-     * @todo Create a custom validator for Content URLs that
-     * verifies the URL returns a 200 to LOM. On failure of a single
-     * URL, reject the entire deposit. This validator should also
-     * apply to deposits created via SWORD.
+     * Resolve a domain name into an IP address, return a JSON
+     * response. Useful for AJAX requests.
+     *
+     * @Route("/api/resolve", name="resolve_host")
+     * @Method({"GET"})
+     * @param Request $request
      */
-    public function uploadDepositAction(Request $request)
+    public function resolveHostNameAction(Request $request)
     {
-        $defaultData = array('message' => 'Type your message here');
-        $form = $this->createFormBuilder($defaultData)
-            ->add('attachment', 'file', array('label' => "Upload a CSV file containing URLs"))
-            ->add('create deposit', 'submit')
-            ->getForm();
-
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            // No data yet, but we could put the content provider ID in a hidden field.
-            $data = $form->getData();
-            $logger = $this->get('logger');
-            if ($form['attachment']->getData()->move('/tmp', 'uploadtestsaved.txt')) {
-                $this->doSomething();
-            }
-        }
-
-        return $this->render('LOCKSSOMaticCoreBundle:Default:uploadDeposit.html.twig', array(
-            'form' => $form->createView(),
-        ));
-    }
-    
-    /**
-     * Placeholder / test function.
-     */
-    public function doSomething()
-    {
-        $logger = $this->get('logger');
-        $lines = file('/tmp/uploadtestsaved.txt');
-        foreach ($lines as $line) {
-            $logger->info(trim($line));
-        }
+        $hostname = $request->query->get('hostname');
+        $ip = gethostbyname($hostname);
+        $response = new Response(json_encode(array('hostname' => $hostname, 'address' => $ip)));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
 }

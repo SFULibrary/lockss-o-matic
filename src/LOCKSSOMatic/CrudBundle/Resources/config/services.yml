@@ -1,0 +1,26 @@
+
+services:
+
+    crud.listener.au:
+        class: LOCKSSOMatic\CrudBundle\EventListener\AuAttributeGenerator
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+
+    crud.builder.deposit:
+        class: LOCKSSOMatic\CrudBundle\Service\DepositBuilder
+        calls:
+            - [ setLogger, ["@logger"] ]
+            - [ setRegistry, ["@doctrine"] ]
+            - [ setAuBuilder, ["@crud.builder.au"] ]
+
+    crud.builder.content:
+        class: LOCKSSOMatic\CrudBundle\Service\ContentBuilder
+        calls:
+            - [ setLogger, ["@logger"] ]
+            - [ setRegistry, ["@doctrine"] ]
+
+    crud.builder.au:
+        class: LOCKSSOMatic\CrudBundle\Service\AuBuilder
+        calls:
+            - [ setLogger, ["@logger"] ]
+            - [ setRegistry, ["@doctrine"] ]

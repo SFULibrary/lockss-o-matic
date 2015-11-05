@@ -1,5 +1,49 @@
-{% extends "FOSUserBundle::layout.html.twig" %}
+{% extends '::base.html.twig' %}
 
-{% block fos_user_content %}
-{% include "FOSUserBundle:Profile:show_content.html.twig" %}
-{% endblock fos_user_content %}
+
+{% block pageheader %}
+    <h1>Profile</h1>
+{% endblock %}
+
+{% block body -%}
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('fos_user_profile_edit') }}" class="btn btn-default">
+                <span class='glyphicon glyphicon-edit'></span> Edit
+            </a>
+        </div>
+    </div>
+
+    <table class="record_properties table table-striped table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th>Email</th>
+                <td><a href="mailto:{{ user.email }}">{{ user.email}}</a></td>
+            </tr>
+            <tr>
+                <th>Full name</th>
+                <td>{{ user.fullname }}</td>
+            </tr>
+            <tr>
+                <th>Institution</th>
+                <td>{{ user.institution }}</td>
+            </tr>
+            <tr>
+                <th>Enabled</th>
+                <td>{% if user.enabled %} Yes {% else %} No {% endif %}</td>
+            </tr>
+            <tr>
+                <th>Last login</th>
+                <td>{{ user.lastLogin|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>
+                    {% for role in user.roles %}
+                        {{ role }}
+                    {% endfor %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

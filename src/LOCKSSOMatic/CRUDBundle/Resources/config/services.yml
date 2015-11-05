@@ -1,7 +1,0 @@
-parameters:
-#    locksso_matic_crud.example.class: LOCKSSOMatic\CRUDBundle\Example
-
-services:
-#    locksso_matic_crud.example:
-#        class: %locksso_matic_crud.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

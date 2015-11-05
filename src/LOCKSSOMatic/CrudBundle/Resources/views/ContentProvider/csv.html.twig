@@ -1,0 +1,35 @@
+{% extends '::base.html.twig' %}
+
+{% block pageheader %}
+    <h1>CSV File Import</h1>
+{% endblock %}
+
+{% block body -%}
+
+    <div class="row">
+        <div class="col-sm-6">
+            <p>The CSV file must include the following columns, in any order: </p>
+            <ul>
+                <li>URL</li>
+                <li>journalTitle</li>
+                    {% for param in required %}
+                    <li>{{ param }}</li>
+                    {% endfor %}
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <p>The CSV file should include the following columns:</p>
+            <ul>
+                <li>Size (in 1000-byte units)</li>
+                <li>Checksum Type</li>
+                <li>Checksum Value</li>
+            </ul>
+        </div>
+    </div>
+    <p>A <a href="{{ path('contentprovider_csv_sample', { 'id': entity.id }) }}">
+            Starter CSV file</a> with the column names is available for this
+        provider. Column names are case sensitive.</p>
+
+    {{ form(form) }}
+
+{% endblock %}

@@ -1,3 +1,0 @@
-plugins_manager:
-    path:     /
-    defaults: { _controller: "LOCKSSOMaticPluginBundle:Default:index" }
