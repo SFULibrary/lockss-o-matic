@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lockss-config [
+<!ELEMENT lockss-config (if|property)*>
+<!ELEMENT property (property|list|value|if)*>
+<!ELEMENT list (value)+>
+<!ELEMENT value (#PCDATA)>
+<!ELEMENT test EMPTY>
+<!ELEMENT and (and|or|not|test)*>
+<!ELEMENT or (and|or|not|test)*>
+<!ELEMENT not (and|or|not|test)*>
+<!ELEMENT if (and|or|not|then|else|test|property)*>
+<!ELEMENT then (if|property)*>
+<!ELEMENT else (if|property)*>
+<!ATTLIST property name CDATA #REQUIRED>
+<!ATTLIST property value CDATA #IMPLIED>
+<!ATTLIST test hostname CDATA #IMPLIED>
+<!ATTLIST test group CDATA #IMPLIED>
+<!ATTLIST test daemonVersionMin CDATA #IMPLIED>
+<!ATTLIST test daemonVersionMax CDATA #IMPLIED>
+<!ATTLIST test daemonVersion CDATA #IMPLIED>
+<!ATTLIST test platformVersionMin CDATA #IMPLIED>
+<!ATTLIST test platformVersionMax CDATA #IMPLIED>
+<!ATTLIST test platformVersion CDATA #IMPLIED>
+<!ATTLIST test platformName CDATA #IMPLIED>
+<!ATTLIST if hostname CDATA #IMPLIED>
+<!ATTLIST if group CDATA #IMPLIED>
+<!ATTLIST if daemonVersionMin CDATA #IMPLIED>
+<!ATTLIST if daemonVersionMax CDATA #IMPLIED>
+<!ATTLIST if daemonVersion CDATA #IMPLIED>
+<!ATTLIST if platformVersionMin CDATA #IMPLIED>
+<!ATTLIST if platformVersionMax CDATA #IMPLIED>
+<!ATTLIST if platformVersion CDATA #IMPLIED>
+<!ATTLIST if platformName CDATA #IMPLIED>
+<!ATTLIST list append CDATA #IMPLIED>
+]>
+
+<lockss-config>
+
+ <property name="org.lockss.title">
+
+  <property name="SFUTestContent1953">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1953" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1953" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1954">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1954" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1954" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1955">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1955" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1955" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1956">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1956" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1956" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1958">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1958" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1958" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1969">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1969" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1969" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1970">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1970" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1970" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1971">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1971" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1971" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1972">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1972" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1972" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1973">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1973" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1973" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1974">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1974" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1974" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1975">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1975" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1975" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1976">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1976" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1976" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1977">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1977" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1977" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1978">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1978" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1978" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1979">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1979" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1979" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1980">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1980" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1980" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1981">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1981" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1981" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1982">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1982" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1982" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1983">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1983" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1983" />
+   </property>
+  </property>
+
+  <property name="SFUTestContent1984">
+   <property name="attributes.pkppln.journaluuid" value="4A59D705-3031-4551-9190-0169DC912F90" />
+   <property name="attributes.publisher" value="PKP PLN" />
+   <property name="journalTitle" value="Journal of useless stuff" />
+   <property name="title" value="SFU Test Content 1984" />
+   <property name="plugin" value="ca.sfu.lib.plugin.test.SFUTestPlugin" />
+   <property name="param.1">
+    <property name="key" value="base_url" />
+    <property name="value" value="http://example.com/projects/Cartoons/lockss/" />
+   </property>
+   <property name="param.2">
+    <property name="key" value="year" />
+    <property name="value" value="1984" />
+   </property>
+  </property>
+   
+ </property>
+
+</lockss-config>
