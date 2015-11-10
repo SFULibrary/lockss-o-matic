@@ -9,3 +9,13 @@ services:
         tags:
             - { name: twig.extension }
 
+    # http://www.petethompson.net/blog/symfony/2015/03/15/symfony-logging-client-ip/
+    monolog.processor.web:
+        class: Monolog\Processor\WebProcessor
+        tags:
+            - { name: monolog.processor }
+
+    monolog.formatter.standard:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            format: "%%datetime%% | %%extra.ip%% | %%channel%%.%%level_name%%: %%message%% %%context%%\n"
