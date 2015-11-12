@@ -40,7 +40,7 @@ class Pln
      *
      * @var string
      *
-     * @ORM\Column(name="propServer", type="string", length=255, nullable=false)
+     * @ORM\Column(name="prop_server", type="string", length=255, nullable=false)
      */
     private $propServer;
 
