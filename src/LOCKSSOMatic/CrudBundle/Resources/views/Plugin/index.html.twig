@@ -11,6 +11,7 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Version</th>
                 <th>Path</th>
             </tr>
         </thead>
@@ -18,6 +19,7 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('plugin_show', { 'id': entity.id }) }}">{{ entity.name }}</a></td>
+                <td>{{ entity.version }}</td>
                 <td>{{ entity.path }}</td>
             </tr>
         {% endfor %}

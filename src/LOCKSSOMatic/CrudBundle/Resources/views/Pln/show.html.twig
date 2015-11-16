@@ -39,6 +39,9 @@
 			<a href="{{ path('pln_access', { 'id': entity.id }) }}" class="btn btn-default">
 				<span class="glyphicon glyphicon-user"></span> Access
 			</a>
+			<a href="{{ path('pln_plugins', { 'id': entity.id }) }}" class="btn btn-default">
+				<span class="glyphicon glyphicon-cog"></span> Plugins
+			</a>
 			<a href="{{ path('pln_delete', { 'id': entity.id }) }}" class="btn btn-default js-confirm" data-confirm="Are you sure you want to delete this Pln?">
 				<span class='glyphicon glyphicon-remove'></span> Delete
 			</a>				

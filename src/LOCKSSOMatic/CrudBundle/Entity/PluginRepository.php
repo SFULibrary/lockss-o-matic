@@ -15,15 +15,26 @@ class PluginRepository extends EntityRepository
      */
     public function findByPluginIdentifier($pluginId)
     {
+        return $results = $this->findBy(array(
+            'identifier' => $pluginId,
+        ));
+    }
+
+    public function pluginIds() {
+        $query = $this->createQueryBuilder('p')
+            ->select('p.identifier')
+            ->distinct()
+            ->getQuery();
+        return $query->getArrayResult();
+    }
+
+    public function findVersions($pluginId)
+    {
         $em = $this->getEntityManager();
-        $property = $em->getRepository('LOCKSSOMaticCrudBundle:PluginProperty')
-            ->findOneBy(array(
-                'propertyKey'   => 'plugin_identifier',
-                'propertyValue' => $pluginId
-            ));
-        if ($property === null) {
-            return null;
-        }
-        return $property->getPlugin();
+        $query = $em->createQuery(
+                'SELECT p FROM LOCKSSOMaticCrudBundle:Plugin p '
+                . 'WHERE p.identifier = :identifier ORDER BY p.version DESC')
+            ->setParameter('identifier', $pluginId);
+        return $query->getResult();
     }
 }
