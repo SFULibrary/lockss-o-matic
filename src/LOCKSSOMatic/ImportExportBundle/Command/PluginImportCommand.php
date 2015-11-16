@@ -77,16 +77,16 @@ class PluginImportCommand extends ContainerAwareCommand
             $jarFiles[] = new SplFileInfo($path);
         }
 
-        $nocopy = false;
+        $copy = true;
         if ($input->getOption('nocopy')) {
-            $nocopy = true;
+            $copy = false;
         }
 
         $importer = $this->getContainer()->get('pln_plugin_importer');
         foreach ($jarFiles as $fileInfo) {
             $logger->notice("Importing {$fileInfo->getFilename()}");
             try {
-                $importer->importJarFile($fileInfo, $nocopy);
+                $importer->importJarFile($fileInfo, $copy);
             } catch (Exception $e) {
                 $logger->error("Import error: {$e->getMessage()}");
                 if (($p = $e->getPrevious()) !== null) {

@@ -36,7 +36,7 @@ class PLNPluginImportService
         $this->jarDir = $container->getParameter('lockss_jar_directory');
         $this->fs = new Filesystem();
         if (!$this->fs->isAbsolutePath($this->jarDir)) {
-            $this->jarDir = $this->container->get('kernel')->getRootDir() . '/' . $this->jarDir;
+            $this->jarDir = $this->container->get('kernel')->getRootDir() . '/../' . $this->jarDir;
         }
         try {
             if (!$this->fs->exists($this->jarDir)) {
@@ -191,8 +191,7 @@ class PLNPluginImportService
         if ($copy) {
             copy($jarInfo->getPathname(), $jarPath);
         }
-        $plugin->setPath($jarPath);
-
+        $plugin->setPath(realpath($jarPath));
 
         return $plugin;
     }
