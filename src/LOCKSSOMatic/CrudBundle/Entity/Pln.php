@@ -77,6 +77,19 @@ class Pln
      */
     private $plnProperties;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Plugin", inversedBy="plns")
+     * @ORM\JoinTable(
+     *   name="pln_plugins",
+     *   joinColumns={
+     *      @ORM\JoinColumn(name="pln_id", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *      @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
+     * })
+     * @var Collection|Plugin[]
+     */
+    private $plugins;
 
     /**
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
@@ -90,6 +103,7 @@ class Pln
         $this->boxes = new ArrayCollection();
         $this->plnProperties = new ArrayCollection();
         $this->contentProviders = new ArrayCollection();
+        $this->plugins = new ArrayCollection();
     }
 
     /**
@@ -312,10 +326,10 @@ class Pln
     /**
      * Add contentProviders
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
+     * @param ContentProvider $contentProviders
      * @return Pln
      */
-    public function addContentProvider(\LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders)
+    public function addContentProvider(ContentProvider $contentProviders)
     {
         $this->contentProviders[] = $contentProviders;
 
@@ -325,9 +339,9 @@ class Pln
     /**
      * Remove contentProviders
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
+     * @param ContentProvider $contentProviders
      */
-    public function removeContentProvider(\LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders)
+    public function removeContentProvider(ContentProvider $contentProviders)
     {
         $this->contentProviders->removeElement($contentProviders);
     }
@@ -340,5 +354,38 @@ class Pln
     public function getContentProviders()
     {
         return $this->contentProviders;
+    }
+
+    /**
+     * Add plugins
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\Plugin $plugins
+     * @return Pln
+     */
+    public function addPlugin(\LOCKSSOMatic\CrudBundle\Entity\Plugin $plugins)
+    {
+        $this->plugins[] = $plugins;
+
+        return $this;
+    }
+
+    /**
+     * Remove plugins
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\Plugin $plugins
+     */
+    public function removePlugin(\LOCKSSOMatic\CrudBundle\Entity\Plugin $plugins)
+    {
+        $this->plugins->removeElement($plugins);
+    }
+
+    /**
+     * Get plugins
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPlugins()
+    {
+        return $this->plugins;
     }
 }

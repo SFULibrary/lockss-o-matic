@@ -85,11 +85,18 @@ class Plugin
      */
     private $pluginProperties;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Pln", mappedBy="plugins")
+     * @var Collection|Pln[]
+     */
+    private $plns;
+
     public function __construct()
     {
         $this->aus = new ArrayCollection();
         $this->contentProviders = new ArrayCollection();
         $this->pluginProperties = new ArrayCollection();
+        $this->plns = new ArrayCollection();
     }
 
     /**
@@ -428,5 +435,38 @@ class Plugin
     public function getIdentifier()
     {
         return $this->identifier;
+    }
+
+    /**
+     * Add plns
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\Pln $plns
+     * @return Plugin
+     */
+    public function addPln(\LOCKSSOMatic\CrudBundle\Entity\Pln $plns)
+    {
+        $this->plns[] = $plns;
+
+        return $this;
+    }
+
+    /**
+     * Remove plns
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\Pln $plns
+     */
+    public function removePln(\LOCKSSOMatic\CrudBundle\Entity\Pln $plns)
+    {
+        $this->plns->removeElement($plns);
+    }
+
+    /**
+     * Get plns
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPlns()
+    {
+        return $this->plns;
     }
 }
