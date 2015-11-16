@@ -335,7 +335,7 @@ class Pln
     /**
      * Get contentProviders
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ContentProvider[]
      */
     public function getContentProviders()
     {
