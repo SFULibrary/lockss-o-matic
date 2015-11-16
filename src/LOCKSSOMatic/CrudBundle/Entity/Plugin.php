@@ -390,7 +390,7 @@ class Plugin
      * @param \int $version
      * @return Plugin
      */
-    public function setVersion(\int $version)
+    public function setVersion($version)
     {
         $this->version = $version;
 

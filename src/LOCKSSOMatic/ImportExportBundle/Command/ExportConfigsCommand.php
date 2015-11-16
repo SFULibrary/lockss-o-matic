@@ -54,11 +54,13 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 
     public function execute(InputInterface $input, OutputInterface $output) {
         $tempPath = sys_get_temp_dir();
-        $webPath =  $this->getContainer()->get('kernel')->getRootDir() . '/../web/plnconfigs';
+        $webPath =  $this->getContainer()->get('kernel')->getRootDir() . '/../data/plnconfigs';
 
         foreach($this->getPlns() as $pln) {
             try {
                 $tempDirName = tempnam($tempPath, "lom-export-configs-{$pln->getId()}-");
+                $output->writeln("Using {$tempDirName}");
+
                 $this->fs->remove($tempDirName); // don't need the file.
                 $this->fs->mkdir($tempDirName);
 
@@ -82,11 +84,13 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 
         $pluginPath = "{$dir}/plugins";
         $this->fs->mkdir($pluginPath);
-        foreach($pln->getContentProviders() as $provider) {
-            $providerPath = "{$pluginPath}/{$provider->getContentOwner()->getId()}/{$provider->getId()}";
-            $this->fs->mkdir($providerPath);
-            // export the titledb files for the provider.
+        foreach($pln->getPlugins() as $plugin) {
+            copy($plugin->getPath(), $pluginPath . '/p.jar');
+            // use $this->fs->symlink() to link the plugin files.
+            // export the plugins for the provider.
         }
+        // build plugin index.html page. See http://lib-general.lib.sfu.ca/klockss/plugins/
+        // for an example.
 
         $titlePath = "{$dir}/titledbs";
         $this->fs->mkdir($titlePath);
