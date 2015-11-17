@@ -37,7 +37,7 @@ class TitledbImportCommandTest extends AbstractTestCase
     protected function getPlugin($id)
     {
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
-        return $repo->findByPluginIdentifier($id);
+        return $repo->findByPluginIdentifier($id)[0];
     }
 
 

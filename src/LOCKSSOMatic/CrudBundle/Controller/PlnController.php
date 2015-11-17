@@ -391,6 +391,7 @@ class PlnController extends Controller
             'class' => 'LOCKSSOMaticCrudBundle:Plugin',
             'multiple' => true,
             'group_by' => 'identifier',
+            'required' => false,
         ));
 
         $builder->add('submit', 'submit', array('label' => 'Update'));
