@@ -34,9 +34,7 @@ class PlnController extends Controller
         $query = $em->createQuery($dql);
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            25
+            $query, $request->query->getInt('page', 1), 25
         );
 
 
@@ -44,6 +42,7 @@ class PlnController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new Pln entity.
      *
@@ -62,7 +61,8 @@ class PlnController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('pln_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('pln_show',
+                        array('id' => $entity->getId())));
         }
 
         return array(
@@ -80,7 +80,8 @@ class PlnController extends Controller
      */
     private function createCreateForm(Pln $entity)
     {
-        $form = $this->createForm(new PlnType(), $entity, array(
+        $form = $this->createForm(new PlnType(), $entity,
+            array(
             'action' => $this->generateUrl('pln_create'),
             'method' => 'POST',
         ));
@@ -100,7 +101,7 @@ class PlnController extends Controller
     public function newAction()
     {
         $entity = new Pln();
-        $form   = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity);
 
         return array(
             'entity' => $entity,
@@ -161,16 +162,18 @@ class PlnController extends Controller
     }
 
     /**
-    * Creates a form to edit a Pln entity.
-    *
-    * @param Pln $entity The entity
-    *
-    * @return Form The form
-    */
+     * Creates a form to edit a Pln entity.
+     *
+     * @param Pln $entity The entity
+     *
+     * @return Form The form
+     */
     private function createEditForm(Pln $entity)
     {
-        $form = $this->createForm(new PlnType(), $entity, array(
-            'action' => $this->generateUrl('pln_update', array('id' => $entity->getId())),
+        $form = $this->createForm(new PlnType(), $entity,
+            array(
+            'action' => $this->generateUrl('pln_update',
+                array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -178,6 +181,7 @@ class PlnController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing Pln entity.
      *
@@ -202,7 +206,8 @@ class PlnController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('pln_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('pln_edit',
+                        array('id' => $id)));
         }
 
         return array(
@@ -211,6 +216,7 @@ class PlnController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a Pln entity.
      *
@@ -218,15 +224,15 @@ class PlnController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Pln entity.');
         }
 
-            $em->remove($entity);
-            $em->flush();
+        $em->remove($entity);
+        $em->flush();
 
         return $this->redirect($this->generateUrl('pln'));
     }
@@ -241,10 +247,10 @@ class PlnController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('pln_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
+                ->setAction($this->generateUrl('pln_delete', array('id' => $id)))
+                ->setMethod('DELETE')
+                ->add('submit', 'submit', array('label' => 'Delete'))
+                ->getForm()
         ;
     }
 
@@ -260,8 +266,8 @@ class PlnController extends Controller
         $this->get('lom.access')->checkAccess("PLNADMIN", $entity);
         $users = $em->getRepository("LOCKSSOMaticUserBundle:User")->findAll();
         return array(
-            'users' => $users,
-            'pln' => $entity,
+            'users'  => $users,
+            'pln'    => $entity,
             'levels' => PlnAccessLevels::levels()
         );
     }
@@ -276,8 +282,7 @@ class PlnController extends Controller
         $options = array(
             'method' => 'POST',
             'action' => $this->generateUrl(
-                'pln_access_update',
-                array('id' => $pln->getId())
+                'pln_access_update', array('id' => $pln->getId())
             )
         );
         $builder = $this->createFormBuilder($defaultData, $options);
@@ -285,15 +290,16 @@ class PlnController extends Controller
             if ($user->hasRole('ROLE_ADMIN')) {
                 continue; // skip admins - they can do anything.
             }
-            $builder->add('user_' . $user->getId(), 'choice', array(
-                'label' => $user->getFullname(),
-                'choices' => $levels,
+            $builder->add('user_' . $user->getId(), 'choice',
+                array(
+                'label'       => $user->getFullname(),
+                'choices'     => $levels,
                 'empty_value' => 'No access',
-                'data' => $accessManager->findAccessLevel($user, $pln),
-                'multiple' => false,
-                'expanded' => false,
-                'mapped' => false,
-                'required' => false,
+                'data'        => $accessManager->findAccessLevel($user, $pln),
+                'multiple'    => false,
+                'expanded'    => false,
+                'mapped'      => false,
+                'required'    => false,
             ));
         }
         $builder->add('submit', 'submit', array('label' => 'Update'));
@@ -314,7 +320,7 @@ class PlnController extends Controller
         $form = $this->createEditAccessForm($pln);
         return array(
             'access_edit_form' => $form->createView(),
-            'pln' => $pln
+            'pln'              => $pln
         );
     }
 
@@ -349,10 +355,86 @@ class PlnController extends Controller
         if ($form->isValid()) {
             $this->updateAccess($request, $pln);
             $this->addFlash('success', "The form was saved.");
-            return $this->redirect($this->generateUrl('pln_access', array('id' => $id)));
+            return $this->redirect($this->generateUrl('pln_access',
+                        array('id' => $id)));
         } else {
             $this->addFlash('error', "The form was not saved.");
-            return $this->redirect($this->generateUrl('pln_access_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('pln_access_edit',
+                        array('id' => $id)));
         }
     }
+
+    /**
+     * @Route("/{id}/plugins", name="pln_plugins")
+     * @Template("LOCKSSOMaticCrudBundle:Pln:plugins.html.twig")
+     */
+    public function showPluginsAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
+        return array(
+            'pln' => $pln,
+        );
+    }
+
+    private function createEditPluginsForm(Pln $pln)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $options = array(
+            'method' => 'POST',
+            'action' => $this->generateUrl('pln_plugins_update', array(
+                'id' => $pln->getId(),
+            ))
+        );
+        $builder = $this->createFormBuilder($pln, $options);
+        $builder->add('plugins', 'entity', array(
+            'class' => 'LOCKSSOMaticCrudBundle:Plugin',
+            'multiple' => true,
+            'group_by' => 'identifier',
+            'required' => false,
+        ));
+
+        $builder->add('submit', 'submit', array('label' => 'Update'));
+        return $builder->getForm();
+    }
+
+    /**
+     * @Route("/{id}/plugins/edit", name="pln_plugins_edit")
+     * @Method("GET")
+     * @Template("LOCKSSOMaticCrudBundle:Pln:pluginsEdit.html.twig");
+     *
+     * @param type $id
+     */
+    public function editPluginsAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
+        $form = $this->createEditPluginsForm($pln);
+        return array(
+            'pln' => $pln,
+            'plugins_edit_form' => $form->createView(),
+        );
+    }
+
+    /**
+     * @Route("/{id}/plugins/update", name="pln_plugins_update")
+     * @Method("POST")
+     * @param Request $request
+     * @param type $id
+     */
+    public function updatePluginsAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
+        $form = $this->createEditPluginsForm($pln);
+        $form->handleRequest($request);
+        if($form->isValid()) {
+            $this->addFlash('success', "The plugins for this PLN have been updated.");
+            $em->flush();
+            return $this->redirect($this->generateUrl('pln_plugins', array('id' => $id)));
+        }
+        $this->addFlash('error', 'The form was not saved.');
+        return $this->redirect($this->generateUrl('pln_access_edit', array('id' => $id)));
+    }
+
 }

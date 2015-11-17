@@ -17,7 +17,7 @@
             <property name="{{prop.propertyKey}}">
                 <list>
                 {% for v in prop.propertyValue %}
-                    <item>{{ v }}</item>
+                    <value>{{ v }}</value>
                     {% endfor %}
                 </list>
             </property>
@@ -27,5 +27,5 @@
 
 <lockss-config>
     {% import _self as macros %}
-    {{ macros.pln_props(entity.getRootPluginProperties()) }}
+    {{ macros.pln_props(pln.getRootPluginProperties()) }}
 </lockss-config>

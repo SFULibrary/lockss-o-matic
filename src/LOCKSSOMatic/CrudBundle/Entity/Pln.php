@@ -40,7 +40,7 @@ class Pln
      *
      * @var string
      *
-     * @ORM\Column(name="propServer", type="string", length=255, nullable=false)
+     * @ORM\Column(name="prop_server", type="string", length=255, nullable=false)
      */
     private $propServer;
 
@@ -57,7 +57,7 @@ class Pln
      * A list of all AUs in the PLN. Probably very large.
      *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
-     * @var Au[]
+     * @var ArrayCollection|Au[]
      */
     private $aus;
 
@@ -77,7 +77,6 @@ class Pln
      */
     private $plnProperties;
 
-
     /**
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
      * @var Pln[]
@@ -90,6 +89,7 @@ class Pln
         $this->boxes = new ArrayCollection();
         $this->plnProperties = new ArrayCollection();
         $this->contentProviders = new ArrayCollection();
+        $this->plugins = new ArrayCollection();
     }
 
     /**
@@ -202,11 +202,15 @@ class Pln
     /**
      * Get aus
      *
-     * @return Collection
+     * @return ArrayCollection
      */
     public function getAus()
     {
         return $this->aus;
+    }
+    
+    public function countAus() {
+        return $this->aus->count();
     }
 
     /**
@@ -235,7 +239,7 @@ class Pln
     /**
      * Get boxes
      *
-     * @return Collection
+     * @return ArrayCollection|Box[]
      */
     public function getBoxes()
     {
@@ -312,10 +316,10 @@ class Pln
     /**
      * Add contentProviders
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
+     * @param ContentProvider $contentProviders
      * @return Pln
      */
-    public function addContentProvider(\LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders)
+    public function addContentProvider(ContentProvider $contentProviders)
     {
         $this->contentProviders[] = $contentProviders;
 
@@ -325,9 +329,9 @@ class Pln
     /**
      * Remove contentProviders
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
+     * @param ContentProvider $contentProviders
      */
-    public function removeContentProvider(\LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders)
+    public function removeContentProvider(ContentProvider $contentProviders)
     {
         $this->contentProviders->removeElement($contentProviders);
     }
@@ -335,10 +339,25 @@ class Pln
     /**
      * Get contentProviders
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ContentProvider[]
      */
     public function getContentProviders()
     {
         return $this->contentProviders;
+    }
+
+    /**
+     * Get plugins
+     *
+     * @return Collection|Plugin[] 
+     */
+    public function getPlugins()
+    {
+        $plugins = array();
+        foreach($this->getContentProviders() as $provider) {
+            $plugin = $provider->getPlugin();
+            $plugins[$plugin->getIdentifier()] = $plugin;
+        }
+        return $plugins;
     }
 }

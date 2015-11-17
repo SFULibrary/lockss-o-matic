@@ -46,10 +46,8 @@ class AuAttributeGenerator
         } else {
             throw new Exception("$name property cannot be parsed: {$property}");
         }
-        $parts = preg_split('/, */', $property);
-        if ($parts[0] !== '"' . $formatStr . '"') {
-            throw new Exception("Format string does not match property string: {$formatStr}/{$property}");
-        }
+        // substr/strlen skips the $formatstr part of the property
+        $parts = preg_split('/, */', substr($property, strlen($formatStr)+2));
         $values = array();
         foreach (array_slice($parts, 1) as $parameterName) {
             $values[] = $au->getAuProperty($parameterName, false);

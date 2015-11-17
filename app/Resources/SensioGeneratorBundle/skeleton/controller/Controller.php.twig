@@ -4,7 +4,9 @@ namespace {{ namespace }}\Controller;
 
 {% block use_statements %}
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 {% if 'annotation' == format.routing -%}
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 {% endif %}

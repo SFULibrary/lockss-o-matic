@@ -42,6 +42,9 @@ class LoadPluginTestData extends AbstractDataFixture implements OrderedFixtureIn
         $plugin = new Plugin();
         $plugin->setName("Test Plugin");
         $plugin->setPath("/path/to/plugin");
+        $plugin->setFilename("TestPlugin.jar");
+        $plugin->setVersion(2);
+        $plugin->setIdentifier("ca.sfu.test");
         $manager->persist($plugin);
         $manager->flush();
 

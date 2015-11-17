@@ -1,0 +1,53 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>Pln Access</h1>
+{% endblock %}
+
+{% block body -%}
+
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('pln') }}">
+                Back to the list
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('pln_plugins_edit', { 'id': pln.id }) }}">
+                Edit plugins for this PLN
+            </a>
+        </li>
+    </ul>
+
+    <p>There are {{ pln.plugins|length }} plugins registered for {{ pln.name }}</p>
+
+    <table class="record_properties table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Plugin</th>
+                <th>Version</th>
+            </tr>
+        </thead>
+        {% for plugin in pln.plugins %}
+            <tr>
+                <td><a href="{{ path('plugin_show', {id: plugin.id}) }}">{{ plugin.name }}</a></td>
+                <td>{{ plugin.version }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('pln') }}">
+                Back to the list
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('pln_plugins_edit', { 'id': pln.id }) }}">
+                Edit plugins for this PLN
+            </a>
+        </li>
+    </ul>
+
+{% endblock %}

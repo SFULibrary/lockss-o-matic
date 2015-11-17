@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+	<h1>Pln edit access</h1>
+
+	<p>This table shows the plugins available to {{ pln.name }}.</p>
+
+	{{ form(plugins_edit_form) }}
+
+	<ul class="record_actions">
+		<li>
+			<a href="{{ path('pln') }}">
+				Back to the list
+			</a>
+		</li>
+	</ul>
+{% endblock %}

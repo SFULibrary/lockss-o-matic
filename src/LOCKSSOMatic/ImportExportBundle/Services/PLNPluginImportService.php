@@ -36,7 +36,7 @@ class PLNPluginImportService
         $this->jarDir = $container->getParameter('lockss_jar_directory');
         $this->fs = new Filesystem();
         if (!$this->fs->isAbsolutePath($this->jarDir)) {
-            $this->jarDir = $this->container->get('kernel')->getRootDir() . '/' . $this->jarDir;
+            $this->jarDir = $this->container->get('kernel')->getRootDir() . '/../' . $this->jarDir;
         }
         try {
             if (!$this->fs->exists($this->jarDir)) {
@@ -122,7 +122,7 @@ class PLNPluginImportService
     {
         $data = $xml->xpath("//entry[string[1]/text() = '{$propName}']/string[2]");
         if (count($data) === 1) {
-            return $data[0];
+            return (string)$data[0];
         }
         if (count($data) === 0) {
             return null;
@@ -174,25 +174,36 @@ class PLNPluginImportService
     public function buildPlugin(SimpleXMLElement $xml, SplFileInfo $jarInfo, $copy)
     {
         $pluginRepo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
-
-        $pluginName = $this->findXmlPropString($xml, 'plugin_name');
-        if ($pluginRepo->findOneBy(array('name' => $pluginName)) !== null) {
-            throw new Exception('Plugin has already been imported.');
-        }
-
-        $plugin = new Plugin();
-        $plugin->setName($pluginName);
-
         $filename = $jarInfo->getFilename();
         if (get_class($jarInfo) === 'Symfony\Component\HttpFoundation\File\UploadedFile') {
             $filename = $jarInfo->getClientOriginalName();
         }
-        $jarPath = $this->jarDir . '/' . $filename;
+
+        $pluginName = $this->findXmlPropString($xml, 'plugin_name');
+        $pluginId = $this->findXmlPropString($xml, 'plugin_identifier');
+
+        $pluginVersion = $this->findXmlPropString($xml, 'plugin_version');
+        if($pluginVersion === null || $pluginVersion === '') {
+            throw new Exception("Plugin {$filename} does not have a plugin_version element in its XML configuration.");
+        }
+        
+
+        if ($pluginRepo->findOneBy(array('identifier' => $pluginId, 'version' => $pluginVersion)) !== null) {
+            throw new Exception("Plugin {$filename} version {$pluginVersion} has already been imported.");
+        }
+
+        $plugin = new Plugin();
+        $plugin->setName($pluginName);
+        $plugin->setIdentifier($pluginId);
+        $plugin->setVersion($pluginVersion);
+
+        $plugin->setFilename($filename);
+        $basename = basename($filename, '.jar');
+        $jarPath = $this->jarDir . '/' . $basename . '-v' . $pluginVersion . '.jar';
         if ($copy) {
             copy($jarInfo->getPathname(), $jarPath);
         }
-        $plugin->setPath($jarPath);
-
+        $plugin->setPath(realpath($jarPath));
 
         return $plugin;
     }
@@ -223,7 +234,7 @@ class PLNPluginImportService
 
         $configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
         if ($configProps === null) {
-            throw new Exception('No PluginConfigProps element.');
+            throw new Exception("No PluginConfigProps element in {$plugin->getFilename()} version {$plugin->getVersion()}");
         }
 
         $parameters = $configProps->children();

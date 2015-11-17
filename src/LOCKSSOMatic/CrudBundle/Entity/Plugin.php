@@ -28,17 +28,38 @@ class Plugin
      *
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=128, nullable=false)
+     * @ORM\Column(name="name", type="string", length=128)
      */
     private $name;
 
     /**
-     * Path, in the local file system, to the plugin.
+     * Path, in the local file system, to the plugin file (includes version number).
      *
      * @var string
-     * @ORM\Column(name="path", type="string", length=255, nullable=false)
+     * @ORM\Column(name="path", type="string", length=255)
      */
     private $path;
+
+    /**
+     * Original file name for the plugin, does not include the version number.
+     * @var string
+     * @ORM\Column(name="filename", type="string", length=127)
+     */
+    private $filename;
+
+    /**
+     * Version number for the plugin, from the plugin's Xml config.
+     * @var int
+     * @ORM\Column(name="version", type="integer")
+     */
+    private $version;
+
+    /**
+     * Plugin identifier (an FQDN) from the plugin's Xml config.
+     * @var string
+     * @ORM\Column(name="identifier", type="string", length=255)
+     */
+    private $identifier;
 
     /**
      * AUs created for this plugin.
@@ -69,6 +90,7 @@ class Plugin
         $this->aus = new ArrayCollection();
         $this->contentProviders = new ArrayCollection();
         $this->pluginProperties = new ArrayCollection();
+        $this->plns = new ArrayCollection();
     }
 
     /**
@@ -337,6 +359,108 @@ class Plugin
      */
     public function __toString()
     {
-        return $this->getName();
+        return $this->getName() . ' version ' . $this->getVersion();
+    }
+
+    /**
+     * Set filename
+     *
+     * @param string $filename
+     * @return Plugin
+     */
+    public function setFilename($filename)
+    {
+        $this->filename = $filename;
+
+        return $this;
+    }
+
+    /**
+     * Get filename
+     *
+     * @return string 
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
+
+    /**
+     * Set version
+     *
+     * @param \int $version
+     * @return Plugin
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
+
+        return $this;
+    }
+
+    /**
+     * Get version
+     *
+     * @return \int 
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Set identifier
+     *
+     * @param string $identifier
+     * @return Plugin
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    /**
+     * Get identifier
+     *
+     * @return string 
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    /**
+     * Add plns
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\Pln $plns
+     * @return Plugin
+     */
+    public function addPln(\LOCKSSOMatic\CrudBundle\Entity\Pln $plns)
+    {
+        $this->plns[] = $plns;
+
+        return $this;
+    }
+
+    /**
+     * Remove plns
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\Pln $plns
+     */
+    public function removePln(\LOCKSSOMatic\CrudBundle\Entity\Pln $plns)
+    {
+        $this->plns->removeElement($plns);
+    }
+
+    /**
+     * Get plns
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPlns()
+    {
+        return $this->plns;
     }
 }
