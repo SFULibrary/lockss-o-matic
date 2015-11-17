@@ -55,7 +55,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
     public function execute(InputInterface $input, OutputInterface $output) {
         $tempPath = sys_get_temp_dir();
         $webPath =  $this->getContainer()->get('kernel')->getRootDir() . '/../data/plnconfigs';
-
+        
         foreach($this->getPlns() as $pln) {
             try {
                 $tempDirName = tempnam($tempPath, "lom-export-configs-{$pln->getId()}-");
@@ -78,26 +78,33 @@ class ExportConfigsCommand extends ContainerAwareCommand {
     }
 
     public function exportPlnConfig(Pln $pln, $dir) {
-        $propPath = "{$dir}/properties";
-        $this->fs->mkdir($propPath);
-        $this->exportLockssXML($pln, "{$propPath}/lockss.xml");
+        $this->exportPlugins($pln, $dir);
 
-        $pluginPath = "{$dir}/plugins";
-        $this->fs->mkdir($pluginPath);
-        foreach($pln->getPlugins() as $plugin) {
-            copy($plugin->getPath(), $pluginPath . '/p.jar');
-            // use $this->fs->symlink() to link the plugin files.
-            // export the plugins for the provider.
-        }
-        // build plugin index.html page. See http://lib-general.lib.sfu.ca/klockss/plugins/
-        // for an example.
-
+        $limit = $this->getContainer()->getParameter('lockss_aus_per_titledb');        
         $titlePath = "{$dir}/titledbs";
         $this->fs->mkdir($titlePath);
+        $twig = $this->getContainer()->get('templating');
         foreach($pln->getContentProviders() as $provider) {
+            $aus = $provider->getAus();
+            $auCount = $aus->count();
+            
+            if($auCount === 0) {
+                continue;
+            }
+            $titleDbFiles = ceil($auCount / $limit);
+            $digits = ceil(log10($titleDbFiles));
+            
             $providerPath = "{$titlePath}/{$provider->getContentOwner()->getId()}/{$provider->getId()}";
             $this->fs->mkdir($providerPath);
-            // export the titledb files for the provider.
+            
+            for($i = 1; $i <= $titleDbFiles; $i++) {
+                $filename = sprintf("titledb_%0{$digits}d.xml", $i);
+                $slice = array_slice($aus->toArray(), ($i-1) * $limit, $limit);
+                $xml = $twig->render('LOCKSSOMaticImportExportBundle:Configs:titledb.xml.twig', array(
+                    'aus' => $slice,
+                ));
+                file_put_contents("$providerPath/$filename", $xml);
+            }
         }
 
         $manifestPath = "{$dir}/manifests";
@@ -106,6 +113,22 @@ class ExportConfigsCommand extends ContainerAwareCommand {
             $providerPath = "{$manifestPath}/{$provider->getContentOwner()->getId()}/{$provider->getId()}";
             $this->fs->mkdir($providerPath);
             // export the manifest files.
+        }
+    }
+
+    /**
+     * Export the plugins for one PLN. Does not write out the index.html
+     * file - that's left to the ConfigsController to do.
+     * 
+     * @param Pln $pln
+     * @param string $dir
+     */
+    public function exportPlugins(Pln $pln, $dir) {
+        $pluginPath = "{$dir}/plugins";
+        $this->fs->mkdir($pluginPath);
+        $plugins = $pln->getPlugins();
+        foreach($plugins as $plugin) {
+            copy($plugin->getPath(), $pluginPath . '/' . $plugin->getFilename());
         }
     }
 
@@ -121,7 +144,11 @@ class ExportConfigsCommand extends ContainerAwareCommand {
         $boxProp->setPropertyValue($boxList);
         $this->em->flush();
         $twig = $this->getContainer()->get('templating');
-        $xml = $twig->render('LOCKSSOMaticCrudBundle:Pln:lockss.xml.twig', array('entity' => $pln));
+        $xml = $twig->render(
+            'LOCKSSOMaticImportExportBundle:Configs:lockss.xml.twig', 
+            array(
+                'entity' => $pln
+        ));
         file_put_contents($path, $xml);
     }
 

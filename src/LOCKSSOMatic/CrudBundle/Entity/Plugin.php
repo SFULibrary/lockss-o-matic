@@ -85,12 +85,6 @@ class Plugin
      */
     private $pluginProperties;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Pln", mappedBy="plugins")
-     * @var Collection|Pln[]
-     */
-    private $plns;
-
     public function __construct()
     {
         $this->aus = new ArrayCollection();

@@ -7,7 +7,7 @@ use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
-use LOCKSSOMatic\CrudBundle\Entity\Pln;
+use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use Monolog\Logger;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -38,9 +38,9 @@ class TitledbImportCommand extends ContainerAwareCommand
         $this->setName('lom:import:titledb')
             ->setDescription('Import PLN titledb file.')
             ->addArgument(
-                'plnId',
+                'providerId',
                 InputArgument::REQUIRED,
-                'ID of the PLN which will own the titles'
+                'ID of the content provider for the titles.'
             )
             ->addArgument(
                 'titledbs',
@@ -64,7 +64,7 @@ class TitledbImportCommand extends ContainerAwareCommand
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $titleFiles = $input->getArgument('titledbs');
-        $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($input->getArgument('plnId'));
+        $provider = $this->em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($input->getArgument('providerId'));
         
         $logger = $this->getLogger();
 
@@ -74,11 +74,11 @@ class TitledbImportCommand extends ContainerAwareCommand
                 $logger->critical("Cannot find {$file}");
                 continue;
             }
-            $this->processFile($file, $output, $pln);
+            $this->processFile($file, $output, $provider);
         }
     }
 
-    protected function processFile($file, OutputInterface $output, Pln $pln)
+    protected function processFile($file, OutputInterface $output, ContentProvider $provider)
     {
         $xml = simplexml_load_file($file);
         $titles = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
@@ -88,7 +88,7 @@ class TitledbImportCommand extends ContainerAwareCommand
         $i = 0;
         foreach ($titles as $title) {
             try {
-                $this->processTitle($title, $pln);
+                $this->processTitle($title, $provider);
             } catch (Exception $e) {
                 $output->writeln("Import error: {$e->getMessage()}");
                 if (($p = $e->getPrevious()) !== null) {
@@ -114,10 +114,11 @@ class TitledbImportCommand extends ContainerAwareCommand
         $output->writeln(" {$processed} / {$total} - {$memory} of {$available}");
     }
 
-    protected function processTitle(SimpleXMLElement $title, Pln $pln)
+    protected function processTitle(SimpleXMLElement $title, ContentProvider $provider)
     {
         $au = $this->buildAu($title);
-        $au->setPln($pln);
+        $au->setContentprovider($provider);
+        $au->setPln($provider->getPln());
         foreach ($au->getAuProperties() as $property) {
             $this->em->persist($property);
         }
@@ -174,7 +175,8 @@ class TitledbImportCommand extends ContainerAwareCommand
             return $pluginCache[$pluginId];
         }
         $pluginRepo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
-        $plugin = $pluginRepo->findByPluginIdentifier($pluginId);
+        $pluginList = $pluginRepo->findByPluginIdentifier($pluginId);
+        $plugin = $pluginList[0];
         if ($plugin === null) {
             throw new Exception("Unknown pluginId: {$pluginId}");
         }

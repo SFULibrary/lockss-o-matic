@@ -57,7 +57,7 @@ class Pln
      * A list of all AUs in the PLN. Probably very large.
      *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
-     * @var Au[]
+     * @var ArrayCollection|Au[]
      */
     private $aus;
 
@@ -76,20 +76,6 @@ class Pln
      * @var PlnProperty[]
      */
     private $plnProperties;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Plugin", inversedBy="plns")
-     * @ORM\JoinTable(
-     *   name="pln_plugins",
-     *   joinColumns={
-     *      @ORM\JoinColumn(name="pln_id", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *      @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
-     * })
-     * @var Collection|Plugin[]
-     */
-    private $plugins;
 
     /**
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
@@ -216,11 +202,15 @@ class Pln
     /**
      * Get aus
      *
-     * @return Collection
+     * @return ArrayCollection
      */
     public function getAus()
     {
         return $this->aus;
+    }
+    
+    public function countAus() {
+        return $this->aus->count();
     }
 
     /**
@@ -249,7 +239,7 @@ class Pln
     /**
      * Get boxes
      *
-     * @return Collection
+     * @return ArrayCollection|Box[]
      */
     public function getBoxes()
     {
@@ -357,35 +347,17 @@ class Pln
     }
 
     /**
-     * Add plugins
-     *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Plugin $plugins
-     * @return Pln
-     */
-    public function addPlugin(\LOCKSSOMatic\CrudBundle\Entity\Plugin $plugins)
-    {
-        $this->plugins[] = $plugins;
-
-        return $this;
-    }
-
-    /**
-     * Remove plugins
-     *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Plugin $plugins
-     */
-    public function removePlugin(\LOCKSSOMatic\CrudBundle\Entity\Plugin $plugins)
-    {
-        $this->plugins->removeElement($plugins);
-    }
-
-    /**
      * Get plugins
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection|Plugin[] 
      */
     public function getPlugins()
     {
-        return $this->plugins;
+        $plugins = array();
+        foreach($this->getContentProviders() as $provider) {
+            $plugin = $provider->getPlugin();
+            $plugins[$plugin->getIdentifier()] = $plugin;
+        }
+        return $plugins;
     }
 }

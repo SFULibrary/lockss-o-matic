@@ -68,6 +68,10 @@ class PLNExportCommand extends ContainerAwareCommand
 
         /** @var TwigEngine $twig */
         $twig = $this->getContainer()->get('templating');
-        print $twig->render('LOCKSSOMaticCrudBundle:Pln:lockss.xml.twig', array('entity' => $pln));
+        print $twig->render(
+            'LOCKSSOMaticImportExportBundle:Configs:lockss.xml.twig', 
+            array(
+                'entity' => $pln
+        ));
     }
 }

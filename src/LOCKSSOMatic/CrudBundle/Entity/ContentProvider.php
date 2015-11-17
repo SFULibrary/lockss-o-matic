@@ -394,6 +394,11 @@ class ContentProvider implements GetPlnInterface
         return $this->aus;
     }
 
+
+    public function countAus() {
+        return $this->aus->count();
+    }
+
     /**
      * Add deposits
      *
