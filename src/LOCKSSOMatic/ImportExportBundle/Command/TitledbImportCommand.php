@@ -64,7 +64,6 @@ class TitledbImportCommand extends ContainerAwareCommand
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $titleFiles = $input->getArgument('titledbs');
-        $provider = $this->em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($input->getArgument('providerId'));
         
         $logger = $this->getLogger();
 
@@ -74,16 +73,17 @@ class TitledbImportCommand extends ContainerAwareCommand
                 $logger->critical("Cannot find {$file}");
                 continue;
             }
-            $this->processFile($file, $output, $provider);
+            $this->processFile($file, $output, $input->getArgument('providerId'));
         }
     }
 
-    protected function processFile($file, OutputInterface $output, ContentProvider $provider)
+    protected function processFile($file, OutputInterface $output, $providerId)
     {
         $xml = simplexml_load_file($file);
         $titles = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
         $count = count($titles);
         $output->writeln("Found $count AU stanzas.");
+        $provider = $this->em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($providerId);
 
         $i = 0;
         foreach ($titles as $title) {
@@ -128,7 +128,7 @@ class TitledbImportCommand extends ContainerAwareCommand
     public function buildAu(SimpleXMLElement $title)
     {
         $au = new Au();
-        $au->setComment('AU created by import command a.');
+        $au->setComment('AU created by import command.');
         $au->setPlugin($this->getPlugin($title));
 
         $root = new AuProperty();
