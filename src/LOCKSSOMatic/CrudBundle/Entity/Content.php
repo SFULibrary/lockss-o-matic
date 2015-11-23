@@ -190,7 +190,9 @@ class Content implements GetPlnInterface
      */
     public function setSize($size)
     {
-        $this->size = $size;
+        if($size !== '') {
+            $this->size = $size;
+        }
 
         return $this;
     }

@@ -80,6 +80,10 @@ class SwordErrorListener
     {
         $exception = $event->getException();
 
+        if( ! $this->controller[0] instanceof SwordController) {
+            return;
+        }
+
         if ($exception instanceof ApiException) {
             $response = new Response();
             $response->headers->add($exception->getHeaders());
@@ -99,22 +103,20 @@ class SwordErrorListener
             return;
         }
         
-        if ($this->controller[0] instanceof SwordController) {
-            $response = new Response();
-            $response->headers->set('Content-Type', 'text/xml');
-            $response->setStatusCode(500);
-            $response->setContent($this->templating->render(
-                'LOCKSSOMaticSwordBundle:Sword:exceptionDocument.xml.twig',
-                array(
-                    'errorUri' => '',
-                    'statusCode' => 500,
-                    'message' => $exception->getMessage(),
-                    'trace' => $exception->getTraceAsString(),
-                )
-            ));
-            $event->setResponse($response);
-            return;
-        }
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+        $response->setStatusCode(500);
+        $response->setContent($this->templating->render(
+            'LOCKSSOMaticSwordBundle:Sword:exceptionDocument.xml.twig',
+            array(
+                'errorUri' => '',
+                'statusCode' => 500,
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            )
+        ));
+        $event->setResponse($response);
+        return;
     }
 
     /**

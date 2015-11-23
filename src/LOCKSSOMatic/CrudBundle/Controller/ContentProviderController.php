@@ -4,8 +4,12 @@ namespace LOCKSSOMatic\CrudBundle\Controller;
 
 use J20\Uuid\Uuid;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
+use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 use LOCKSSOMatic\CrudBundle\Form\ContentProviderType;
 use LOCKSSOMatic\CrudBundle\Service\DepositBuilder;
+use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
+use LOCKSSOMatic\SwordBundle\Exceptions\HostMismatchException;
+use LOCKSSOMatic\SwordBundle\Exceptions\MaxUploadSizeExceededException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -329,6 +333,48 @@ class ContentProviderController extends Controller
             return $formBuilder->getForm();
     }
 
+    private function precheckContent($record, Plugin $plugin) {
+        foreach($plugin->getDefinitionalProperties() as $property) {
+            if( ! array_key_exists($property, $record)) {
+                throw new BadRequestException("{$property} must have a value.");
+            }
+        }
+    }
+
+    private function precheckDeposit($csv, ContentProvider $provider) {
+        $plugin = $provider->getPlugin();
+        $permissionHost = $provider->getPermissionHost();
+        foreach($csv as $record) {
+            $this->precheckContent($record, $plugin);
+            $host = parse_url($record['url'], PHP_URL_HOST);
+            if($host !== $permissionHost) {
+                $msg = "Content host:{$host} Permission host: {$permissionHost}";
+                throw new HostMismatchException($msg);
+            }
+            if($record['size'] && $record['size'] > $provider->getMaxFileSize()) {
+                throw new MaxUploadSizeExceededException("Content size {$record['size']} exceeds provider's maximum: {$provider->getMaxFileSize()}");
+            }
+        }
+        
+    }
+
+    private function getCsvData(Form $form) {
+        $data = $form->getData();
+        $dataFile = $data['file'];
+        $fh = $dataFile->openFile();
+        $headers = array_map(function ($h) { return strtolower($h);}, $fh->fgetcsv());
+        $headerIdx = array_flip($headers);
+        $records = array();
+        while(($row = $fh->fgetcsv()) && (count($row) >= 2)) {
+            $record = array();
+            foreach($headers as $header) {
+                $record[$header] = $row[$headerIdx[$header]];
+            }
+            $records[] = $record;
+        }
+        return $records;
+    }
+
     /**
      * Import a CSV file.
      *
@@ -347,26 +393,17 @@ class ContentProviderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $csv = $this->getCsvData($form);
+            $this->precheckDeposit($csv, $provider);
+
             /** @var DepositBuilder $builder */
             $depositBuilder = $this->container->get('crud.builder.deposit');
             $contentBuilder = $this->container->get('crud.builder.content');
             $auBuilder = $this->container->get('crud.builder.au');
 
             $deposit = $depositBuilder->fromForm($form, $provider, $em);
-            $data = $form->getData();
-            
-            $dataFile = $data['file'];
-            $fh = $dataFile->openFile();
-            $headers = array_map(function ($h) {
-                return strtolower($h);
-            }, $fh->fgetcsv());
-            $headerIdx = array_flip($headers);
-
-            while ($row = $fh->fgetcsv()) {
-                if (count($row) < 2) {
-                    break;
-                }
-                $content = $contentBuilder->fromArray($row, $headerIdx);
+            foreach($csv as $record) {
+                $content = $contentBuilder->fromArray($record);
                 $content->setDeposit($deposit);
                 $auid = $content->generateAuid();
                 $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
@@ -377,6 +414,7 @@ class ContentProviderController extends Controller
                 }
                 $content->setAu($au);
             }
+
             $em->flush();
             return $this->redirect($this->generateUrl(
                 'deposit_show',

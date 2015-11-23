@@ -93,33 +93,21 @@ class ContentBuilder
         return $content;
     }
 
-    private function fieldOrNull($row, $headerIdx, $field)
-    {
-        if (! array_key_exists($field, $headerIdx)) {
-            return null;
-        }
-        $index = $headerIdx[$field];
-        if (! array_key_exists($index, $row)) {
-            return null;
-        }
-        return $row[$index];
-    }
-
-    public function fromArray($row, $headerIdx)
+    public function fromArray($record)
     {
         $content = new Content();
-        $content->setSize($this->fieldOrNull($row, $headerIdx, 'size'));
-        $content->setChecksumType($this->fieldOrNull($row, $headerIdx, 'checksum type'));
-        $content->setChecksumValue($this->fieldOrNull($row, $headerIdx, 'checksum value'));
-        $content->setUrl($row[$headerIdx['url']]);
+        $content->setSize($record['size']);
+        $content->setChecksumType($record['checksum type']);
+        $content->setChecksumValue($record['checksum value']);
+        $content->setUrl($record['url']);
         $content->setRecrawl(true);
         $content->setTitle("Generated Title");
         if ($this->em !== null) {
             $this->em->persist($content);
         }
         
-        foreach (array_keys($headerIdx) as $key) {
-            $this->buildProperty($content, $key, $this->fieldOrNull($row, $headerIdx, $key));
+        foreach (array_keys($record) as $key) {
+            $this->buildProperty($content, $key, $record[$key]);
         }
         return $content;
     }

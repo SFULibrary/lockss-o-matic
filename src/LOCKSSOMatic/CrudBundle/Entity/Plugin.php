@@ -324,7 +324,7 @@ class Plugin
     /**
      * Convenience method. Get the definitional plugin parameter names
      *
-     * @return array
+     * @return ArrayCollection|PluginProperty[]
      */
     public function getDefinitionalProperties()
     {
@@ -434,10 +434,10 @@ class Plugin
     /**
      * Add plns
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Pln $plns
+     * @param Pln $plns
      * @return Plugin
      */
-    public function addPln(\LOCKSSOMatic\CrudBundle\Entity\Pln $plns)
+    public function addPln(Pln $plns)
     {
         $this->plns[] = $plns;
 
@@ -447,9 +447,9 @@ class Plugin
     /**
      * Remove plns
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Pln $plns
+     * @param Pln $plns
      */
-    public function removePln(\LOCKSSOMatic\CrudBundle\Entity\Pln $plns)
+    public function removePln(Pln $plns)
     {
         $this->plns->removeElement($plns);
     }
@@ -457,7 +457,7 @@ class Plugin
     /**
      * Get plns
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getPlns()
     {
