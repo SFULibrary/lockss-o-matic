@@ -1,0 +1,12 @@
+<html>
+    <title>LOCKSSOMatic Manifest Page</title>
+    <body>
+        <h1>LOCKSSOMatic Manifest Page</h1>
+        <ul>
+            {% for item in content %}
+                <li><a href="{{ item.url }}">{{ item.url }}</a></li>
+                {% endfor %}
+        </ul>
+        LOCKSS system has permission to collect, preserve, and serve this Archival Unit
+    </body>
+</html>
