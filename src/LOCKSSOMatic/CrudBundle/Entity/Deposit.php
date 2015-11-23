@@ -248,10 +248,14 @@ class Deposit implements GetPlnInterface
         $this->content->removeElement($content);
     }
 
+    public function countContent() {
+        return $this->content->count();
+    }
+
     /**
      * Get deposits
      *
-     * @return Collection
+     * @return ArrayCollection|Content[]
      */
     public function getContent()
     {

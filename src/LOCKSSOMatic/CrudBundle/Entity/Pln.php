@@ -303,12 +303,20 @@ class Pln
      * @param type $name
      * @return PlnProperty
      */
-    public function getProperty($name)
+    public function getProperty($name, $asList = false)
     {
+        $properties = array();
+
         foreach ($this->getPlnProperties() as $prop) {
             if ($prop->getPropertyKey() === $name) {
-                return $prop;
+                $properties[] = $prop;
             }
+        }
+        if($asList) {
+            return $properties;
+        }
+        if(count($properties) > 0) {
+            return $properties[0];
         }
         return null;
     }

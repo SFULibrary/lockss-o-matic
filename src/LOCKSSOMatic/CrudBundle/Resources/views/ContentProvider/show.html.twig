@@ -30,24 +30,33 @@
                 <td>{{ entity.uuid }}</td>
             </tr>
             <tr>
-                <th>Permissionurl</th>
-                <td>{{ entity.permissionurl }}</td>
+                <th>Permission url</th>
+                <td><a href="{{ entity.permissionurl }}">{{ entity.permissionurl }}</a></td>
             </tr>
             <tr>
                 <th>Name</th>
                 <td>{{ entity.name }}</td>
             </tr>
             <tr>
-                <th>Maxfilesize</th>
+                <th>Max file size</th>
                 <td>{{ entity.maxFileSize }}</td>
             </tr>
             <tr>
-                <th>Maxausize</th>
+                <th>Max au size</th>
                 <td>{{ entity.maxAuSize }}</td>
+            </tr>
+            <tr>
+                <th>Content Owner</th>
+                <td><a href="{{ path('contentowner_show', {'id': entity.contentOwner.id}) }}">{{ entity.contentOwner.name }}</a></td>
+            </tr>
+            <tr>
+                <th>PLN</th>
+                <td><a href="{{ path('pln_show', {'id': entity.pln.id}) }}">{{ entity.pln.name }}</a></td>
             </tr>
             <tr>
                 <th>LOCKSS Plugin</th>
                 <td><a href="{{ path('plugin_show', {'id': entity.plugin.id}) }}">{{ entity.plugin.name }}</a></td>
+            </tr>
         </tbody>
     </table>
 {% endblock %}

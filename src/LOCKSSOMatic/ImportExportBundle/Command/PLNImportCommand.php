@@ -2,14 +2,18 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
+use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Entity\PlnProperty;
+use LOCKSSOMatic\ImportExportBundle\Services\PLNPluginImportService;
+use Monolog\Logger;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -29,10 +33,17 @@ class PLNImportCommand extends ContainerAwareCommand
      */
     private $output;
 
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+
     public function setContainer(ContainerInterface $container = null)
     {
         parent::setContainer($container);
         $this->em = $container->get('doctrine')->getManager();
+        $this->logger = $container->get('logger');
     }
 
     public function configure()
@@ -59,21 +70,25 @@ class PLNImportCommand extends ContainerAwareCommand
         $activityLog->disable();
 
         /** @var Pln $pln */
-        $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($input->getArgument('id'));
+        $id = $input->getArgument('id');
+        $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
         if ($pln === null) {
-            $output->writeln('Cannot find pln.');
+            $this->logger->critical("Cannot find PLN {$id}");
             exit;
         }
         $this->output = $output;
 
         $xml = simplexml_load_file($input->getArgument('file'));
         $root = $xml->xpath('/lockss-config/property');
-        $this->importProperties($pln, $root[0]);
-        
-        $this->em->flush();
-        $this->em->clear();
-        $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($input->getArgument('id'));
+        $this->importProperties($pln, $root[0]);        
+        $this->em->refresh($pln);
+        $this->importBoxes($pln);
 
+        $this->em->flush();
+        $activityLog->enable();
+    }
+    
+    private function importBoxes(Pln $pln) {
         $boxDefs = $pln->getProperty('id.initialV3PeerList');
         foreach ($boxDefs->getPropertyValue() as $def) {
             $matches = array();
@@ -86,9 +101,6 @@ class PLNImportCommand extends ContainerAwareCommand
             $box->setHostname(gethostbyaddr($box->getIpAddress()));
             $this->em->persist($box);
         }
-
-        $this->em->flush();
-        $activityLog->enable();
     }
 
     private function getList(SimpleXMLElement $node)
@@ -119,7 +131,7 @@ class PLNImportCommand extends ContainerAwareCommand
                     $property->setPropertyValue($this->getList($child));
                     break;
                 default:
-                    $this->output->writeln("Warning: Unknown node name: {$child->getName()}");
+                    $this->logger->warning("(probably harmless): Unknown node name: {$child->getName()}");
             }
         }
     }

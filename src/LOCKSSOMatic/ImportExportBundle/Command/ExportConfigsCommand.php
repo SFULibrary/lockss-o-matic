@@ -79,24 +79,57 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 
     public function exportPlnConfig(Pln $pln, $dir) {
         $this->exportPlugins($pln, $dir);
+        $this->exportAuFiles($pln, $dir);
+        $this->exportManifests($pln, $dir);
+    }
 
-        $limit = $this->getContainer()->getParameter('lockss_aus_per_titledb');        
+    public function exportManifests(Pln $pln, $dir) {
+        $twig = $this->getContainer()->get('templating');
+        $manifestPath = "{$dir}/manifests";
+        $this->fs->mkdir($manifestPath);
+        $limit = $this->getContainer()->getParameter('lockss_urls_per_manifest');
+        foreach($pln->getContentProviders() as $provider) {
+
+            $content = $provider->getContent();
+            $contentCount = count($content);
+            if($contentCount === 0) {
+                continue;
+            }
+            $manifestFiles = ceil($contentCount / $limit);
+            $digits = ceil(log10($manifestFiles));
+
+            $providerPath = "{$manifestPath}/{$provider->getContentOwner()->getId()}/{$provider->getId()}";
+            $this->fs->mkdir($providerPath);
+
+            for($i = 1; $i < $manifestFiles; $i++) {
+                $filename = sprintf("au_%0{$digits}d.html", $i);
+                $slice = array_slice($content, ($i-1) * $limit, $limit);
+                $html = $twig->render('LOCKSSOMaticImportExportBundle:Configs:manifest.html.twig', array(
+                    'content' => $slice
+                ));
+                file_put_contents("$providerPath/$filename", $html);
+            }
+        }
+    }
+
+    public function exportAuFiles(Pln $pln, $dir) {
+        $twig = $this->getContainer()->get('templating');
+        $limit = $this->getContainer()->getParameter('lockss_aus_per_titledb');
         $titlePath = "{$dir}/titledbs";
         $this->fs->mkdir($titlePath);
-        $twig = $this->getContainer()->get('templating');
         foreach($pln->getContentProviders() as $provider) {
             $aus = $provider->getAus();
             $auCount = $aus->count();
-            
+
             if($auCount === 0) {
                 continue;
             }
             $titleDbFiles = ceil($auCount / $limit);
             $digits = ceil(log10($titleDbFiles));
-            
+
             $providerPath = "{$titlePath}/{$provider->getContentOwner()->getId()}/{$provider->getId()}";
             $this->fs->mkdir($providerPath);
-            
+
             for($i = 1; $i <= $titleDbFiles; $i++) {
                 $filename = sprintf("titledb_%0{$digits}d.xml", $i);
                 $slice = array_slice($aus->toArray(), ($i-1) * $limit, $limit);
@@ -105,14 +138,6 @@ class ExportConfigsCommand extends ContainerAwareCommand {
                 ));
                 file_put_contents("$providerPath/$filename", $xml);
             }
-        }
-
-        $manifestPath = "{$dir}/manifests";
-        $this->fs->mkdir($manifestPath);
-        foreach($pln->getContentProviders() as $provider) {
-            $providerPath = "{$manifestPath}/{$provider->getContentOwner()->getId()}/{$provider->getId()}";
-            $this->fs->mkdir($providerPath);
-            // export the manifest files.
         }
     }
 

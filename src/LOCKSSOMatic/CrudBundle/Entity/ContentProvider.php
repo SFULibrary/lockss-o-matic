@@ -4,6 +4,7 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -425,11 +426,25 @@ class ContentProvider implements GetPlnInterface
     /**
      * Get deposits
      *
-     * @return Deposit[]
+     * @return ArrayCollection|Deposit[]
      */
     public function getDeposits()
     {
         return $this->deposits;
+    }
+
+    /**
+     * @return Content
+     */
+    public function getContent() {
+        $contentList = array();
+        foreach($this->deposits as $deposit) {
+            $content = $deposit->getContent();
+            if($content !== null && count($content) > 0) {
+                $contentList = array_merge($contentList, $content->toArray());
+            }
+        }
+        return $contentList;
     }
 
     /**

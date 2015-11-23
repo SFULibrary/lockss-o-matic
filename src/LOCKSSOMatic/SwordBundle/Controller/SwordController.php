@@ -197,7 +197,6 @@ class SwordController extends Controller
 
         $permissionHost = $provider->getPermissionHost();
         foreach ($atomEntry->xpath('//lom:content') as $content) {
-            $this->get('logger')->error((string) ($content));
             // check required properties.
             $this->precheckContentProperties($content, $plugin);
             $url = trim((string) $content);
