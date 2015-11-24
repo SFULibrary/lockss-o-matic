@@ -32,7 +32,7 @@ class AuBuilder
         $this->em = $registry->getManager();
     }
 
-    protected function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null)
+    public function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null)
     {
         $property = new AuProperty();
         $property->setAu($au);
@@ -52,24 +52,33 @@ class AuBuilder
     public function fromContent(Content $content)
     {
         $au = new Au();
-        $au->setContentprovider($content->getDeposit()->getContentProvider());
-        $au->setPln($content->getDeposit()->getContentProvider()->getPln());
-        $au->setPlugin($content->getDeposit()->getContentProvider()->getPlugin());
+        $provider = $content->getDeposit()->getContentProvider();
+        $owner = $provider->getContentOwner();
+
+        $au->setContentprovider($provider);
+        $au->setPln($provider->getPln());
+        $au->setPlugin($provider->getPlugin());
 
         $root = $this->buildProperty($au, 'lockssomatic' . uniqid('', true));
-        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journalTitle'), $root);
+        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journaltitle'), $root);
         $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
 
         foreach ($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
-            $grouping = $this->buildProperty($au, 'param.' . $index, null, $root);
+            $grouping = $this->buildProperty($au, 'param.' . ($index+1), null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
             $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
         }
+        $permissionGroup = $this->buildProperty($au, 'param.permission', null, $root);
+        $this->buildProperty($au, 'key', 'permission_url', $permissionGroup);
+        $this->buildProperty($au, 'value', $provider->getPermissionurl(), $permissionGroup);
+
         foreach ($content->getContentProperties() as $property) {
-            $this->buildProperty($au, $property->getPropertyKey(), $property->getPropertyValue(), $root);
+            $this->buildProperty($au, "attributes.pkppln." . $property->getPropertyKey(), $property->getPropertyValue(), $root);
         }
         $this->em->persist($au);
+        $this->em->flush();
+        $this->em->refresh($au);
         return $au;
     }
 }
