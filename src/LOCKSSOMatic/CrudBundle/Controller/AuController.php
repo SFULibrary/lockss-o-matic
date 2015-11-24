@@ -2,22 +2,19 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use LOCKSSOMatic\CrudBundle\Entity\Au;
-use LOCKSSOMatic\CrudBundle\Form\AuType;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Au controller.
  *
  * @Route("/au")
  */
-class AuController extends Controller
+class AuController extends ProtectedController
 {
-
     /**
      * Lists all Au entities.
      *
@@ -27,9 +24,18 @@ class AuController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $pln = $this->currentPln();
+        if($pln === null) {
+            throw new BadRequestException();
+        }
+        $this->requireAccess('MONITOR', $pln);
+
         $em = $this->getDoctrine()->getManager();
-        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Au e';
+        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Au e WHERE e.pln = :pln';
         $query = $em->createQuery($dql);
+        $query->setParameters(array(
+            'pln' => $pln
+        ));
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
             $query,
@@ -53,15 +59,21 @@ class AuController extends Controller
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
+        $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->find($id);
+        
+        $pln = $au->getPln();
+        $this->requireAccess('MONITOR', $pln);
 
-        $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->find($id);
+        if($pln !== $this->currentPln()) {
+            $this->addFlash('warning', "This AU is part of the {$pln->getName()} PLN, but you have selected {$this->currentPln()} to work with.");
+        }
 
-        if (!$entity) {
+        if (!$au) {
             throw $this->createNotFoundException('Unable to find Au entity.');
         }
 
         return array(
-            'entity'      => $entity,
+            'entity'      => $au,
         );
     }
 }

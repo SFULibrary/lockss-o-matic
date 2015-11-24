@@ -2,20 +2,21 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LOCKSSOMatic\CrudBundle\Entity\Box;
+use LOCKSSOMatic\CrudBundle\Form\BoxType;
+use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use LOCKSSOMatic\CrudBundle\Entity\Box;
-use LOCKSSOMatic\CrudBundle\Form\BoxType;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Box controller.
  *
  * @Route("/box")
  */
-class BoxController extends Controller
+class BoxController extends ProtectedController
 {
 
     /**
@@ -27,14 +28,21 @@ class BoxController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $pln = $this->currentPln();
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $this->requireAccess('MONITOR', $pln);
+
         $em = $this->getDoctrine()->getManager();
-        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Box e';
+        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Box e WHERE e.pln = :pln';
         $query = $em->createQuery($dql);
+        $query->setParameters(array(
+            'pln' => $pln
+        ));
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            25
+            $query, $request->query->getInt('page', 1), 25
         );
 
 
@@ -42,6 +50,7 @@ class BoxController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new Box entity.
      *
@@ -51,16 +60,26 @@ class BoxController extends Controller
      */
     public function createAction(Request $request)
     {
+        $pln = $this->currentPln();
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $this->requireAccess('PLNADMIN', $pln);
+
         $entity = new Box();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $entity->setPln($pln);
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('box_show', array('id' => $entity->getId())));
+            $this->addFlash('success', "The box has been added to {$pln->getName()}.");
+
+            return $this->redirect($this->generateUrl('box_show',
+                        array('id' => $entity->getId())));
         }
 
         return array(
@@ -74,11 +93,12 @@ class BoxController extends Controller
      *
      * @param Box $entity The entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createCreateForm(Box $entity)
     {
-        $form = $this->createForm(new BoxType(), $entity, array(
+        $form = $this->createForm(new BoxType(), $entity,
+            array(
             'action' => $this->generateUrl('box_create'),
             'method' => 'POST',
         ));
@@ -97,8 +117,14 @@ class BoxController extends Controller
      */
     public function newAction()
     {
+        $pln = $this->currentPln();
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $this->requireAccess('PLNADMIN', $pln);
+
         $entity = new Box();
-        $form   = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity);
 
         return array(
             'entity' => $entity,
@@ -115,12 +141,21 @@ class BoxController extends Controller
      */
     public function showAction($id)
     {
+        $pln = $this->currentPln();
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $this->requireAccess('PLNADMIN', $pln);
+
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Box entity.');
+        }
+        $this->requireAccess('MONITOR', $entity->getPln());
+
+        if($entity->getPln() !== $pln) {
+            $this->addFlash('warning', "This box is part of the {$entity->getPln()->getName()} network, but you have selected the {$pln->getName()} network.");
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -140,12 +175,20 @@ class BoxController extends Controller
      */
     public function editAction($id)
     {
+        $pln = $this->currentPln();
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $this->requireAccess('PLNADMIN', $pln);
+
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Box entity.');
+        }
+        if($entity->getPln() !== $pln) {
+            $this->addFlash('danger', "This box is part of the {$entity->getPln()->getName()} network, but you have selected the {$pln->getName()} network.");
+            return $this->redirect($this->generateUrl('box', array('id' => $entity->getId())));
         }
 
         $editForm = $this->createEditForm($entity);
@@ -159,16 +202,18 @@ class BoxController extends Controller
     }
 
     /**
-    * Creates a form to edit a Box entity.
-    *
-    * @param Box $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to edit a Box entity.
+     *
+     * @param Box $entity The entity
+     *
+     * @return Form The form
+     */
     private function createEditForm(Box $entity)
     {
-        $form = $this->createForm(new BoxType(), $entity, array(
-            'action' => $this->generateUrl('box_update', array('id' => $entity->getId())),
+        $form = $this->createForm(new BoxType(), $entity,
+            array(
+            'action' => $this->generateUrl('box_update',
+                array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -176,6 +221,7 @@ class BoxController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing Box entity.
      *
@@ -185,12 +231,20 @@ class BoxController extends Controller
      */
     public function updateAction(Request $request, $id)
     {
+        $pln = $this->currentPln();
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $this->requireAccess('PLNADMIN', $pln);
+
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Box entity.');
+        }
+        if($entity->getPln() !== $pln) {
+            $this->addFlash('danger', "This box is part of the {$entity->getPln()->getName()} network, but you have selected the {$pln->getName()} network.");
+            return $this->redirect($this->generateUrl('box', array('id' => $entity->getId())));
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -198,9 +252,12 @@ class BoxController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
+            $entity->setPln($pln);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('box_edit', array('id' => $id)));
+            $this->addFlash('success', "The box has been updated.");
+            return $this->redirect($this->generateUrl('box_show',
+                        array('id' => $id)));
         }
 
         return array(
@@ -209,6 +266,7 @@ class BoxController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a Box entity.
      *
@@ -216,15 +274,26 @@ class BoxController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
+        $pln = $this->currentPln();
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $this->requireAccess('PLNADMIN', $pln);
+        
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
+
+        if($entity->getPln() !== $pln) {
+            $this->addFlash('danger', "This box is part of the {$entity->getPln()->getName()} network, but you have selected the {$pln->getName()} network.");
+            return $this->redirect($this->generateUrl('box', array('id' => $entity->getId())));
+        }
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Box entity.');
         }
 
-            $em->remove($entity);
-            $em->flush();
+        $em->remove($entity);
+        $em->flush();
 
         return $this->redirect($this->generateUrl('box'));
     }
@@ -234,15 +303,16 @@ class BoxController extends Controller
      *
      * @param mixed $id The entity id
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('box_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
+                ->setAction($this->generateUrl('box_delete', array('id' => $id)))
+                ->setMethod('DELETE')
+                ->add('submit', 'submit', array('label' => 'Delete'))
+                ->getForm()
         ;
     }
+
 }
