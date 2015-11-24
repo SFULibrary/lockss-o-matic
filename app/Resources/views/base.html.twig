@@ -59,6 +59,20 @@
                                     {% endif %}
                                 </ul>
                             </li>
+
+                            {% set sessionPln = currentPln() %}
+                            <li class="dropdown" role="menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        {% if sessionPln is defined and sessionPln is not null %}
+                                            {{ sessionPln.name }}
+                                        {% else %}
+                                            Select PLN
+                                        {% endif %} <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    {% for pln in plnList() %}
+                                        <li><a href="{{path('switch_pln', {'pln': pln.id, 'url': app.request.uri}) }}">{{ pln.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
                         {% endif %}
 
                     </ul>
@@ -90,6 +104,11 @@
                                     <li>
                                         <a href="{{ path('fos_user_change_password') }}">
                                             Change Password
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('fos_user_security_logout') }}">
+                                            Log Out
                                         </a>
                                     </li>
                                     {# % if is_granted('ROLE_ADMIN') %}
