@@ -7,7 +7,7 @@
         <h3>{{ pln.name }} Plugin Registry</h3>        
         <ul>
             {% for plugin in pln.plugins %}
-                <li><a href="{{ path('configs_plugin', {'plnId': pln.id, 'filename': plugin.filename}) }}">{{ plugin.filename }}</a></li>
+                <li><a href="{{ plugin.filename }}">{{ plugin.filename }}</a></li>
             {% endfor %}
         </ul>
         <p>

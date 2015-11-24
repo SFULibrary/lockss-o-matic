@@ -34,7 +34,3 @@ parameters:
 
     # Number of AUs per titledb.xml file
     lockss_aus_per_titledb: 50
-
-    # Number of URLs per manifest file
-    lockss_urls_per_manifest: 500
-

@@ -80,9 +80,10 @@ class PLNImportCommand extends ContainerAwareCommand
 
         $xml = simplexml_load_file($input->getArgument('file'));
         $root = $xml->xpath('/lockss-config/property');
-        $this->importProperties($pln, $root[0]);        
-        $this->em->refresh($pln);
-        $this->importBoxes($pln);
+        $this->importProperties($pln, $root[0]);
+        $this->em->flush();
+        $this->em->clear();
+        $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);        $this->importBoxes($pln);
 
         $this->em->flush();
         $activityLog->enable();
@@ -131,7 +132,7 @@ class PLNImportCommand extends ContainerAwareCommand
                     $property->setPropertyValue($this->getList($child));
                     break;
                 default:
-                    $this->logger->warning("(probably harmless): Unknown node name: {$child->getName()}");
+                    $this->logger->notice("(probably harmless): Unknown node name: {$child->getName()}");
             }
         }
     }
