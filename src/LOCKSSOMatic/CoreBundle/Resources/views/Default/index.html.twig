@@ -5,6 +5,86 @@
     <h1>LOCKSSOMatic</h1>
 {% endblock %}
 
-{% block body -%}
-    <p>Welcome to LOCKSSOMatic.</p>
+{% block body %}
+    <h1>LOCKSSOMatic Home</h1>
+    <div class="row">
+        <div class='col-md-6'>
+
+            <div class='panel panel-default'>
+                <div class='panel-heading'>
+                    <h3 class='panel-title'>Messages</h3>
+                </div>
+                <div class='panel-body'>
+                    <p>You have 7 new messages.</p>
+                </div>
+                <ul class='list-group'>
+                    <li class='list-group-item'>First new message</li>
+                    <li class='list-group-item'>Second new message</li>
+                    <li class='list-group-item'>Third new message</li>
+                    <li class='list-group-item'>Fourth new message</li>
+                    <li class='list-group-item'>Fifth new message</li>
+                    <li class='list-group-item'>Sixth new message</li>
+                </ul>
+                <div class="panel-footer text-right">
+                    <a href='#'>Message centre</a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class='col-md-6'>
+            <div class='panel panel-default'>
+                <div class='panel-heading'>
+                    <h3 class='panel-title'>Network</h3>
+                </div>
+                <div class='panel-body'>
+                    <p>Map.</p>
+                </div>
+                <div class="panel-footer text-right">
+                    <a href='#'>Network details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class='col-md-8'>
+            <div class='panel panel-default'>
+                <div class='panel-heading'>
+                    <h3 class='panel-title'>Activity log</h3>
+                </div>
+                <div class='panel-body'>
+                    <p>Recent activity in $CURRENT_NETWORK.</p>
+                </div>
+                <ul class='list-group'>
+                    <li class='list-group-item'>First new message</li>
+                    <li class='list-group-item'>Second new message</li>
+                    <li class='list-group-item'>Third new message</li>
+                    <li class='list-group-item'>Fourth new message</li>
+                    <li class='list-group-item'>Fifth new message</li>
+                    <li class='list-group-item'>Sixth new message</li>
+                </ul>
+                <div class="panel-footer text-right">
+                    <a href='#'>Logging centre</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class='col-md-4'>
+            <div class='panel panel-default'>
+                <div class='panel-heading'>
+                    <h3 class='panel-title'>Monitor</h3>
+                </div>
+                <div class='panel-body'>
+                    <p>Graph</p>
+                </div>
+                <div class="panel-footer text-right">
+                    <a href='#'>Monitor details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
