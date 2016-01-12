@@ -14,9 +14,9 @@
                 {% else %}
                     {% if prop.propertyValue is iterable %}
                         <ul>
-							{% for v in prop.propertyValue %}
-								<li>{{ v }} </li>
-								{% endfor %}
+                            {% for v in prop.propertyValue %}
+                                <li>{{ v }} </li>
+                            {% endfor %}
                         </ul>
                     {% else %}
                         {{ prop.propertyValue }}

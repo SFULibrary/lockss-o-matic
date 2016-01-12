@@ -26,7 +26,7 @@ class AuController extends ProtectedController
     {
         $pln = $this->currentPln();
         if($pln === null) {
-            throw new BadRequestException();
+            throw new BadRequestException("You must select a PLN.");
         }
         $this->requireAccess('MONITOR', $pln);
 

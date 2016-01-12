@@ -122,7 +122,7 @@ class PLNPluginImportService
     {
         $data = $xml->xpath("//entry[string[1]/text() = '{$propName}']/string[2]");
         if (count($data) === 1) {
-            return (string)$data[0];
+            return $data[0];
         }
         if (count($data) === 0) {
             return null;
@@ -157,16 +157,31 @@ class PLNPluginImportService
      *
      * @param Plugin $plugin
      * @param string $name
-     * @param string $value
+     * @param string|SimpleXMLElement $value
      *
      * @return PluginProperty
      */
-    public function newPluginProperty(Plugin $plugin, $name, $value)
+    public function newPluginProperty(Plugin $plugin, $name, SimpleXMLElement $value = null)
     {
         $property = new PluginProperty();
         $property->setPlugin($plugin);
         $property->setPropertyKey($name);
-        $property->setPropertyValue((string) $value);
+        if($value !== null) {
+            switch($value->getName()) {
+                case 'string':
+                    $property->setPropertyValue((string) $value);
+                    break;
+                case 'list':
+                    $values = array();
+                    foreach($value->children() as $child) {
+                        $values[] = (string)$child;
+                    }
+                    $property->setPropertyValue($values);
+                    break;
+                default:
+                    $property->setPropertyValue((string)$value);
+            }
+        }
         $this->em->persist($property);
         return $property;
     }
@@ -208,15 +223,18 @@ class PLNPluginImportService
         return $plugin;
     }
 
-    private static $importProps = array(
+    private static $importPropStrings = array(
         'au_name',
-        'au_start_url',
         'plugin_identifier',
         'plugin_name',
         'plugin_publishing_platform',
         'plugin_status',
         'plugin_version',
         'required_daemon_version',
+    );
+    
+    private static $importPropLists = array(
+        'au_start_url',
     );
 
     /**
@@ -228,8 +246,12 @@ class PLNPluginImportService
      */
     public function addProperties(Plugin $plugin, SimpleXMLElement $xml)
     {
-        foreach (self::$importProps as $prop) {
+        foreach (self::$importPropStrings as $prop) {
             $this->newPluginProperty($plugin, $prop, $this->findXmlPropString($xml, $prop));
+        }
+        
+        foreach(self::$importPropLists as $prop) {
+            $this->newPluginProperty($plugin, $prop, $this->findXmlPropElement($xml, $prop));
         }
 
         $configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
