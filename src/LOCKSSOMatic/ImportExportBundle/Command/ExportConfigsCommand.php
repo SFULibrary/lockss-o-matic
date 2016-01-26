@@ -2,12 +2,12 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
-use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -36,6 +36,11 @@ class ExportConfigsCommand extends ContainerAwareCommand {
     public function configure() {
         $this->setName('lom:export:configs');
         $this->setDescription('Write all the configuration data to files.');
+        $this->addArgument(
+            'pln', 
+            InputArgument::IS_ARRAY, 
+            'List of PLN ids to export.'
+        );
     }
 
     public function setContainer(ContainerInterface $container = null)
@@ -47,17 +52,21 @@ class ExportConfigsCommand extends ContainerAwareCommand {
     }
 
     /**
+     * @param array plnIds
      * @return Pln[]
      */
-    private function getPlns() {
-        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
+    private function getPlns($plnIds = null) {
+        if($plnIds === null || count($plnIds) === 0) {
+            return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
+        }
+        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findById($plnIds);
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
         $tempPath = sys_get_temp_dir();
         $webPath =  $this->getContainer()->get('kernel')->getRootDir() . '/../data/plnconfigs';
-        
-        foreach($this->getPlns() as $pln) {
+        $plnIds = $input->getArgument('pln');
+        foreach($this->getPlns($plnIds) as $pln) {
             try {
                 $tempDirName = tempnam($tempPath, "lom-export-configs-{$pln->getId()}-");
                 $output->writeln("Using {$tempDirName}");
