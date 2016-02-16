@@ -34,57 +34,7 @@ class ConfigsController extends Controller
             throw new AccessDeniedHttpException("Client IP {$ip} is not authorized for this PLN.");
         }
     }
-    
-    private function updatePeerList(Pln $pln) {
-        $boxes = $pln->getBoxes();
-        $boxList = array();
-        foreach ($boxes as $box) {
-            $boxList[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
-        }
-        $boxProp = $pln->getProperty('id.initialV3PeerList');
-        $boxProp->setPropertyValue($boxList);
-    }
-    
-    private function updatePluginRegistryList(Pln $pln) {
-        $pluginUrlList = array(
-            $this->generateUrl(
-                'configs_plugin_list', 
-                array('plnId' => $pln->getId()),
-                UrlGeneratorInterface::ABSOLUTE_URL),
-        );
-        $pluginProp = $pln->getProperty('plugin.registries');
-        $pluginProp->setPropertyValue($pluginUrlList);        
-    }
-    
-    private function updateTitleDbs(Pln $pln) {
-        $urls = array();
         
-        $limit = $this->container->getParameter('lockss_aus_per_titledb');
-        
-        foreach($pln->getContentProviders() as $provider) {
-            $auCount = $provider->countAus();
-            if($auCount === 0) {
-                continue;
-            }
-            $titleDbFiles = ceil($auCount / $limit);
-            $digits = ceil(log10($titleDbFiles));
-            
-            for($i = 1; $i <= $titleDbFiles; $i++) {
-                $urls[] = $this->generateUrl('configs_titledb', array(
-                    'plnId' => $pln->getId(),
-                    'ownerId' => $provider->getContentOwner()->getId(),
-                    'providerId' => $provider->getId(),
-                    'filename' => sprintf("titledb_%0{$digits}d.xml", $i)
-                ), 
-                UrlGeneratorInterface::ABSOLUTE_URL
-                );
-            }
-        }
-        
-        $titleDbProp = $pln->getProperty('titleDbs');
-        $titleDbProp->setPropertyValue($urls);
-    }
-    
     /**
      * @Route(
      *  "/{plnId}/properties/lockss.{_format}", 
@@ -104,15 +54,11 @@ class ConfigsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         $this->checkIp($request, $pln);
-
-//        $this->updatePeerList($pln);
-//        $this->updatePluginRegistryList($pln);
-//        $this->updateTitleDbs($pln);
-        
-        $em->flush();
-        return array(
-            'pln' => $pln
-        );
+        $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
+        $lockssPath = "{$webPath}/{$plnId}/lockss.xml";
+        if( ! file_exists($lockssPath)) {
+            throw new NotFoundHttpException("The requested file does not exist.");
+        }
     }
     
     /**
@@ -129,6 +75,22 @@ class ConfigsController extends Controller
             throw new NotFoundHttpException("The requested file {$filename} does not exist.");
         }
         return new BinaryFileResponse($titleDbPath);
+    }
+    
+    /**
+     * @Route("/{plnId}/manifests/{ownerId}/{providerId}/{filename}", name="configs_manifest")
+     */
+    public function manifestAction(Request $request, $ownerId, $plnId, $providerId, $filename) {
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        $this->checkIp($request, $pln);
+        
+        $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
+        $manifestPath = "{$webPath}/{$plnId}/manifests/{$ownerId}/{$providerId}/{$filename}";
+        if( ! file_exists($manifestPath)) {
+            throw new NotFoundHttpException("The requested file {$filename} does not exist.");
+        }
+        return new BinaryFileResponse($manifestPath);
     }
     
     /**
