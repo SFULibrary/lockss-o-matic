@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -18,16 +19,19 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ConfigsController extends Controller
 {
+	// $logger = $this->get('monolog.logger.lockss')
 
     private function checkIp(Request $request, Pln $pln) {
         $ip = $request->getClientIp();
         $allowed = array_map(function(Box $box) {return $box->getIpAddress();}, $pln->getBoxes()->toArray());
         $env = $this->container->get('kernel')->getEnvironment();
+		$logger = $this->get('monolog.logger.lockss');
         if ($env === 'dev' || $env === 'test') {
             $allowed[] = '127.0.0.1';
         }
         if( ! in_array($ip, $allowed)) {
-            throw new AccessDeniedException("Client IP {$ip} is not authorized for this PLN.");
+			$logger->critical("Client IP {$ip} is not authorized for {$pln->getName()}({$pln->getId()}).");
+            throw new AccessDeniedHttpException("Client IP {$ip} is not authorized for this PLN.");
         }
     }
     
@@ -95,13 +99,15 @@ class ConfigsController extends Controller
      * @param string $plnId
      */
     public function lockssAction(Request $request, $plnId) {
+		$logger = $this->get('monolog.logger.lockss');
+		$logger->notice("lockss.xml - {$plnId} - {$request->getClientIp()}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         $this->checkIp($request, $pln);
 
-        $this->updatePeerList($pln);
-        $this->updatePluginRegistryList($pln);
-        $this->updateTitleDbs($pln);
+//        $this->updatePeerList($pln);
+//        $this->updatePluginRegistryList($pln);
+//        $this->updateTitleDbs($pln);
         
         $em->flush();
         return array(
