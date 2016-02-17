@@ -351,6 +351,36 @@ class Plugin
 
         return $properties;
     }
+    
+    /**
+     * Convenience method. Get the plugin parameter names which are not definitonal.
+     *
+     * @return ArrayCollection|PluginProperty[]
+     */
+    public function getNonDefinitionalProperties() {
+        $properties = array();
+
+        foreach ($this->getPluginConfigParams() as $prop) {
+            $key = '';
+            $definitional = false;
+            foreach ($prop->getChildren() as $child) {
+                if ($child->getPropertyKey() === 'key') {
+                    $key = $child->getPropertyValue();
+                }
+                if ($child->getPropertyKey() !== 'definitional') {
+                    continue;
+                }
+                if ($child->getPropertyValue() === 'false') {
+                    $definitional = true;
+                }
+            }
+            if ($key !== '' && $definitional === true) {
+                $properties[] = $key;
+            }
+        }
+
+        return $properties;
+    }
 
     /**
      * Get a string representation of the plugin.
