@@ -7,27 +7,28 @@
 
 {% block body -%}
 
-	<div class="btn-toolbar pull-right">
+    <div class="btn-toolbar pull-right">
         <div class="btn-group">
             <a href="{{ path('pln_new') }}" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> New</a>
         </div>
     </div>
-	<table class="table table-striped table-condensed table-bordered table-hover">
+    <table class="table table-striped table-condensed table-bordered table-hover">
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Propserver</th>
-                <th>Propspath</th>
+                <th>Description</th>
             </tr>
         </thead>
         <tbody>
-			{% for entity in entities %}
-				<tr>
-					<td><a href="{{ path('pln_show', { 'id': entity.id }) }}">{{ entity.name }}</a></td>
-					<td>{{ entity.propServer }}</td>
-					<td>{{ entity.propsPath }}</td>
-				</tr>
-			{% endfor %}
+            {% for entity in entities %}
+                <tr>
+                    <td><a href="{{ path('pln_show', { 'id': entity.id }) }}">{{ entity.name }}</a></td>
+                    <td>
+                        {{ entity.description|slice(0,60)|nl2br }}
+                        {% if entity.description|length > 60 %} <a href="{{ path('pln_show', { 'id': entity.id }) }}">more</a>{% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 
