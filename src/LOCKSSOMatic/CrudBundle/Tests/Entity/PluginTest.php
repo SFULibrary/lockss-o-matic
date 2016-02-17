@@ -32,7 +32,6 @@ class PluginTest extends AbstractTestCase
         $this->assertEquals($props[0]->getPropertyKey(), 'plugin_name');
         $this->assertEquals($props[1]->getPropertyKey(), 'plugin_version');
         $this->assertEquals($props[2]->getPropertyKey(), 'plugin_identifier');
-        $this->assertEquals($props[3]->getPropertyKey(), 'au_start_url');
         $this->assertEquals($props[4]->getPropertyKey(), 'au_name');
         $this->assertEquals($props[5]->getPropertyKey(), 'plugin_config_props');
     }

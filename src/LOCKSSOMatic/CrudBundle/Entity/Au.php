@@ -50,14 +50,6 @@ class Au implements GetPlnInterface
     private $auName;
 
     /**
-     * The URL for the manifest of this AU. Manifests are optional.
-     * @var string
-     *
-     * @ORM\Column(name="au_start_url", type="string", length=512, nullable=true)
-     */
-    private $auStartUrl;
-
-    /**
      * LOCKSSOMatic comment for this au. Its specific to LOCKSSOMatic.
      * @var string
      *
@@ -251,29 +243,6 @@ class Au implements GetPlnInterface
         return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
     }
 
-    /**
-     * Set auStartUrl
-     *
-     * @param string $auStartUrl
-     * @return Au
-     */
-    public function setAuStartUrl($auStartUrl)
-    {
-        $this->auStartUrl = $auStartUrl;
-
-        return $this;
-    }
-
-    /**
-     * Get auStartUrl
-     *
-     * @return string
-     */
-    public function getAuStartUrl()
-    {
-        return $this->auStartUrl;
-    }
-    
     /**
      * Set comment
      *

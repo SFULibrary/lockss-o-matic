@@ -232,10 +232,6 @@ class PLNPluginImportService
         'plugin_version',
         'required_daemon_version',
     );
-    
-    private static $importPropLists = array(
-        'au_start_url',
-    );
 
     /**
      * Import the data from the plugin. Does not create content
@@ -250,10 +246,6 @@ class PLNPluginImportService
             $this->newPluginProperty($plugin, $prop, $this->findXmlPropString($xml, $prop));
         }
         
-        foreach(self::$importPropLists as $prop) {
-            $this->newPluginProperty($plugin, $prop, $this->findXmlPropElement($xml, $prop));
-        }
-
         $configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
         if ($configProps === null) {
             throw new Exception("No PluginConfigProps element in {$plugin->getFilename()} version {$plugin->getVersion()}");

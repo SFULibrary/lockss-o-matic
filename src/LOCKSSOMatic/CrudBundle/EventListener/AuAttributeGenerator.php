@@ -94,7 +94,6 @@ class AuAttributeGenerator
         if (!$entity instanceof Au) {
             return;
         }
-        $entity->setAuStartUrl($this->generateSymbol($entity, 'au_start_url'));
         $entity->setAuName($this->generateSymbol($entity, 'au_name'));
         $entity->setAuid($this->generateAuid($entity));
     }
