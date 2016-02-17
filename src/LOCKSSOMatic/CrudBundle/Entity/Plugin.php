@@ -311,11 +311,26 @@ class Plugin
      * @param string $propertyKey
      * @return string|null
      */
-    public function getProperty($propertyKey)
+    public function getPropertyValue($propertyKey)
     {
         foreach ($this->getPluginProperties() as $property) {
             if ($property->getPropertyKey() === $propertyKey) {
                 return $property->getPropertyValue();
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get a Property object
+     * 
+     * @param type $propertyKey
+     * @return PluginProperty|null
+     */
+    public function getProperty($propertyKey) {
+        foreach($this->getPluginProperties() as $property) {
+            if($property->getPropertyKey() === $propertyKey) {
+                return $property;
             }
         }
         return null;

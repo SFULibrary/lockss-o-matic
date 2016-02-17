@@ -65,10 +65,16 @@ class AuBuilder
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
 
         foreach ($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
-            $grouping = $this->buildProperty($au, 'param.' . ($index+1), null, $root);
+            $grouping = $this->buildProperty($au, 'param.d.' . ($index+1), null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
             $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
         }
+        foreach ($au->getPlugin()->getNonDefinitionalProperties() as $index => $property) {
+            $grouping = $this->buildProperty($au, 'param.n.' . ($index+1), null, $root);
+            $this->buildProperty($au, 'key', $property, $grouping);
+            $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
+        }
+
         $permissionGroup = $this->buildProperty($au, 'param.permission', null, $root);
         $this->buildProperty($au, 'key', 'permission_url', $permissionGroup);
         $this->buildProperty($au, 'value', $provider->getPermissionurl(), $permissionGroup);
