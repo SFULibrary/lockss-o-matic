@@ -15,7 +15,7 @@ use LOCKSSOMatic\CrudBundle\Form\ContentType;
  *
  * @Route("/content")
  */
-class ContentController extends Controller
+class ContentController extends ProtectedController
 {
 
     /**
@@ -27,9 +27,17 @@ class ContentController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $pln = $this->currentPln();
+        if($pln === null) {
+            throw new BadRequestException();
+        }
+        $this->requireAccess('MONITOR', $pln);
         $em = $this->getDoctrine()->getManager();
-        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Content e';
+        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Content e JOIN e.au a WHERE a.pln = :pln';
         $query = $em->createQuery($dql);
+        $query->setParameters(array(
+            'pln' => $pln
+        ));
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
             $query,
@@ -53,8 +61,13 @@ class ContentController extends Controller
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Content')->find($id);
+
+        $pln = $entity->getPln();
+        $this->requireAccess('MONITOR', $pln);
+        if($pln !== $this->currentPln()) {
+            $this->addFlash('warning', "This content item is part of the {$pln->getName()} PLN, but you have selected {$this->currentPln()} to work with.");
+        }
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Content entity.');

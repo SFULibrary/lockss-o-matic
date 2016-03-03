@@ -36,23 +36,13 @@ class Pln
     private $name;
 
     /**
-     * Property server for the PLN. This is the host of the lockss.xml file.
-     *
+     * Description of the PLN
+     * 
      * @var string
-     *
-     * @ORM\Column(name="prop_server", type="string", length=255, nullable=false)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
-    private $propServer;
-
-    /**
-     * Path to the lockss.xml file in the propServer.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="props_path", type="text", nullable=true)
-     */
-    private $propsPath;
-
+    private $description;
+    
     /**
      * A list of all AUs in the PLN. Probably very large.
      *
@@ -89,7 +79,7 @@ class Pln
         $this->boxes = new ArrayCollection();
         $this->plnProperties = new ArrayCollection();
         $this->contentProviders = new ArrayCollection();
-        $this->plugins = new ArrayCollection();
+        $this->plugins = new ArrayCollection(); // $this->plugins is not defined here.
     }
 
     /**
@@ -123,52 +113,6 @@ class Pln
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Set propserver
-     *
-     * @param string $propserver
-     * @return Pln
-     */
-    public function setPropserver($propserver)
-    {
-        $this->propServer = $propserver;
-
-        return $this;
-    }
-
-    /**
-     * Get propserver
-     *
-     * @return string
-     */
-    public function getPropserver()
-    {
-        return $this->propServer;
-    }
-
-    /**
-     * Set propsPath
-     *
-     * @param string $propsPath
-     * @return Pln
-     */
-    public function setPropsPath($propsPath)
-    {
-        $this->propsPath = $propsPath;
-
-        return $this;
-    }
-
-    /**
-     * Get propsPath
-     *
-     * @return string
-     */
-    public function getPropsPath()
-    {
-        return $this->propsPath;
     }
 
     public function __toString()
@@ -367,5 +311,28 @@ class Pln
             $plugins[$plugin->getIdentifier()] = $plugin;
         }
         return $plugins;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Pln
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

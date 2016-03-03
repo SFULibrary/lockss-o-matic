@@ -4,24 +4,33 @@ namespace LOCKSSOMatic\ImportExportBundle\Controller;
 
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
+use Monolog\Logger;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @Route("/plnconfigs")
  */
 class ConfigsController extends Controller
 {
-	// $logger = $this->get('monolog.logger.lockss')
-
-    private function checkIp(Request $request, Pln $pln) {
+    /**
+     * @var Logger
+     */
+    private $logger;
+    
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+        $this->logger = $this->get('monolog.logger.lockss');
+    }
+    
+	private function checkIp(Request $request, Pln $pln) {
         $ip = $request->getClientIp();
         $allowed = array_map(function(Box $box) {return $box->getIpAddress();}, $pln->getBoxes()->toArray());
         $env = $this->container->get('kernel')->getEnvironment();
@@ -44,47 +53,7 @@ class ConfigsController extends Controller
         $boxProp = $pln->getProperty('id.initialV3PeerList');
         $boxProp->setPropertyValue($boxList);
     }
-    
-    private function updatePluginRegistryList(Pln $pln) {
-        $pluginUrlList = array(
-            $this->generateUrl(
-                'configs_plugin_list', 
-                array('plnId' => $pln->getId()),
-                UrlGeneratorInterface::ABSOLUTE_URL),
-        );
-        $pluginProp = $pln->getProperty('plugin.registries');
-        $pluginProp->setPropertyValue($pluginUrlList);        
-    }
-    
-    private function updateTitleDbs(Pln $pln) {
-        $urls = array();
         
-        $limit = $this->container->getParameter('lockss_aus_per_titledb');
-        
-        foreach($pln->getContentProviders() as $provider) {
-            $auCount = $provider->countAus();
-            if($auCount === 0) {
-                continue;
-            }
-            $titleDbFiles = ceil($auCount / $limit);
-            $digits = ceil(log10($titleDbFiles));
-            
-            for($i = 1; $i <= $titleDbFiles; $i++) {
-                $urls[] = $this->generateUrl('configs_titledb', array(
-                    'plnId' => $pln->getId(),
-                    'ownerId' => $provider->getContentOwner()->getId(),
-                    'providerId' => $provider->getId(),
-                    'filename' => sprintf("titledb_%0{$digits}d.xml", $i)
-                ), 
-                UrlGeneratorInterface::ABSOLUTE_URL
-                );
-            }
-        }
-        
-        $titleDbProp = $pln->getProperty('titleDbs');
-        $titleDbProp->setPropertyValue($urls);
-    }
-    
     /**
      * @Route(
      *  "/{plnId}/properties/lockss.{_format}", 
@@ -99,26 +68,22 @@ class ConfigsController extends Controller
      * @param string $plnId
      */
     public function lockssAction(Request $request, $plnId) {
-		$logger = $this->get('monolog.logger.lockss');
-		$logger->notice("lockss.xml - {$plnId} - {$request->getClientIp()}");
+		$this->logger->notice("lockss.xml - {$plnId} - {$request->getClientIp()}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         $this->checkIp($request, $pln);
-
-//        $this->updatePeerList($pln);
-//        $this->updatePluginRegistryList($pln);
-//        $this->updateTitleDbs($pln);
-        
-        $em->flush();
-        return array(
-            'pln' => $pln
-        );
+        $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
+        $lockssPath = "{$webPath}/{$plnId}/lockss.xml";
+        if( ! file_exists($lockssPath)) {
+            throw new NotFoundHttpException("The requested file does not exist.");
+        }
     }
     
     /**
      * @Route("/{plnId}/titledbs/{ownerId}/{providerId}/{filename}", name="configs_titledb")
      */
     public function titleDbAction(Request $request, $plnId, $ownerId, $providerId, $filename) {
+        $this->logger->notice("titledb - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$filename}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         $this->checkIp($request, $pln);
@@ -132,6 +97,23 @@ class ConfigsController extends Controller
     }
     
     /**
+     * @Route("/{plnId}/manifests/{ownerId}/{providerId}/{filename}", name="configs_manifest")
+     */
+    public function manifestAction(Request $request, $ownerId, $plnId, $providerId, $filename) {
+        $this->logger->notice("manifest - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$filename}");
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        $this->checkIp($request, $pln);
+        
+        $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
+        $manifestPath = "{$webPath}/{$plnId}/manifests/{$ownerId}/{$providerId}/{$filename}";
+        if( ! file_exists($manifestPath)) {
+            throw new NotFoundHttpException("The requested file {$filename} does not exist.");
+        }
+        return new BinaryFileResponse($manifestPath);
+    }
+    
+    /**
      * @Route("/{plnId}/plugins/index.html", name="configs_plugin_list")
      * @Route("/{plnId}/plugins/")
      * @Route("/{plnId}/plugins")
@@ -141,6 +123,7 @@ class ConfigsController extends Controller
      * @param string $plnId
      */
     public function pluginListAction(Request $request, $plnId) {
+        $this->logger->notice("pluginList - {$plnId} - {$request->getClientIp()}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         $this->checkIp($request, $pln);
@@ -156,6 +139,7 @@ class ConfigsController extends Controller
      * @param $filename
      */
     public function pluginAction(Request $request, $plnId, $filename) {
+        $this->logger->notice("plugin - {$plnId} - {$request->getClientIp()} - {$filename}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         $this->checkIp($request, $pln);

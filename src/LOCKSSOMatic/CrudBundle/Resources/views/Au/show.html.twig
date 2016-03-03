@@ -13,7 +13,15 @@
                 {% if prop.hasChildren() %}
                     {{ macros.plugin_props(prop.children) }}
                 {% else %}
-                    {{ prop.propertyValue }}
+                    {% if prop.propertyValue is iterable %}
+                        <ul>
+                            {% for v in prop.propertyValue %}
+                                <li>{{ v }} </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        {{ prop.propertyValue }}
+                    {% endif %}
                 {% endif %}
             </li>
         {% endfor %}
@@ -50,10 +58,6 @@
             <tr>
                 <th>Size (kB)</th>
                 <td>{{ entity.contentSize }}</td>
-            </tr>
-            <tr>
-                <th>Start Url</th>
-                <td><a href="{{ entity.auStartUrl }}">{{ entity.auStartUrl() }}</a></td>
             </tr>
             <tr>
                 <th>Plugin</th>

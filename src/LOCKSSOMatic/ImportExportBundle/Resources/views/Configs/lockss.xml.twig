@@ -1,19 +1,13 @@
 {% macro pln_props(props) %}
     {% import _self as macros %}
     {% for prop in props %}
-
         {% if prop.hasChildren() %}
-
             <property name="{{prop.propertyKey}}">
                 {{ macros.pln_props(prop.children) }}
             </property>
-
         {% elseif prop.propertyValue is not iterable %}
-
             <property name="{{prop.propertyKey}}" value="{{prop.propertyValue}}"/>
-
         {% else %}
-
             <property name="{{prop.propertyKey}}">
                 <list>
                 {% for v in prop.propertyValue %}

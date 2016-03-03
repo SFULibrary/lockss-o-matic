@@ -30,6 +30,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder;
+use LOCKSSOMatic\UserBundle\Security\Services\Access;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
@@ -37,6 +38,14 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
  */
 class LoadAclData extends AbstractDataFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
+
+    /**
+     * @return Access
+     */
+    private function getLomAccess() {
+        return $this->container->get('lom.access');
+    }
+
     /**
      * Load the user fixtures.
      *
@@ -44,71 +53,22 @@ class LoadAclData extends AbstractDataFixture implements OrderedFixtureInterface
      */
     public function doload(ObjectManager $manager)
     {
-        $aclManager = $this->container->get('problematic.acl_manager');
-        
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-dewey'),
-            MaskBuilder::MASK_PLNADMIN,
-            $this->getReference('dewey-admin')
-        );
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-dewey'),
-            MaskBuilder::MASK_DEPOSIT,
-            $this->getReference('dewey-depositor')
-        );
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-dewey'),
-            MaskBuilder::MASK_MONITOR,
-            $this->getReference('dewey-monitor')
-        );
-        
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-franklin'),
-            MaskBuilder::MASK_PLNADMIN,
-            $this->getReference('franklin-admin')
-        );
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-franklin'),
-            MaskBuilder::MASK_DEPOSIT,
-            $this->getReference('franklin-depositor')
-        );
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-franklin'),
-            MaskBuilder::MASK_MONITOR,
-            $this->getReference('franklin-monitor')
-        );
-        
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-dewey'),
-            MaskBuilder::MASK_PLNADMIN,
-            $this->getReference('shared-admin')
-        );
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-dewey'),
-            MaskBuilder::MASK_DEPOSIT,
-            $this->getReference('shared-depositor')
-        );
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-dewey'),
-            MaskBuilder::MASK_MONITOR,
-            $this->getReference('shared-monitor')
-        );
-        
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-larkin'),
-            MaskBuilder::MASK_PLNADMIN,
-            $this->getReference('shared-admin')
-        );
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-larkin'),
-            MaskBuilder::MASK_DEPOSIT,
-            $this->getReference('shared-depositor')
-        );
-        $aclManager->addObjectPermission(
-            $this->getReference('pln-larkin'),
-            MaskBuilder::MASK_MONITOR,
-            $this->getReference('shared-monitor')
-        );
+        $access = $this->getLomAccess();
+        $access->grantAccess('PLNADMIN', $this->getReference('pln-dewey'), $this->getReference('dewey-admin'));
+        $access->grantAccess('DEPOSIT', $this->getReference('pln-dewey'), $this->getReference('dewey-depositor'));
+        $access->grantAccess('MONITOR', $this->getReference('pln-dewey'), $this->getReference('dewey-monitor'));
+
+        $access->grantAccess('PLNADMIN', $this->getReference('pln-franklin'), $this->getReference('franklin-admin'));
+        $access->grantAccess('DEPOSIT', $this->getReference('pln-franklin'), $this->getReference('franklin-depositor'));
+        $access->grantAccess('MONITOR', $this->getReference('pln-franklin'), $this->getReference('franklin-monitor'));
+
+        $access->grantAccess('PLNADMIN', $this->getReference('pln-dewey'), $this->getReference('shared-admin'));
+        $access->grantAccess('DEPOSIT', $this->getReference('pln-dewey'), $this->getReference('shared-depositor'));
+        $access->grantAccess('MONITOR', $this->getReference('pln-dewey'), $this->getReference('shared-monitor'));
+
+        $access->grantAccess('PLNADMIN', $this->getReference('pln-franklin'), $this->getReference('shared-admin'));
+        $access->grantAccess('DEPOSIT', $this->getReference('pln-franklin'), $this->getReference('shared-depositor'));
+        $access->grantAccess('MONITOR', $this->getReference('pln-franklin'), $this->getReference('shared-monitor'));
     }
 
     /**

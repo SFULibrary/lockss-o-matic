@@ -6,6 +6,10 @@
                    term="http://purl.org/net/sword/terms/originalDeposit" 
                    label="Orignal Deposit"/>
     
+    <atom:category scheme="http://purl.org/net/sword/terms/state" term="{{ deposit.state }}" label="PLN State">
+        The deposit is in an unknown state.
+    </atom:category>
+
     {% for item in content %}
         <lom:content id="{{ item.url }}" recrawl="{{ item.recrawl }}">
             <lom:serverlist>

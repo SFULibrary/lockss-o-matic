@@ -2,16 +2,18 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
-use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Router;
 
 /**
  * Private Lockss network plugin import command-line
@@ -32,10 +34,25 @@ class ExportConfigsCommand extends ContainerAwareCommand {
      * @var Filesystem
      */
     private $fs;
+    
+    /**
+     * @var Router
+     */
+    private $router;
+    
+    /**
+     * @var int
+     */
+    private $titlesPerAu;
 
     public function configure() {
         $this->setName('lom:export:configs');
         $this->setDescription('Write all the configuration data to files.');
+        $this->addArgument(
+            'pln', 
+            InputArgument::IS_ARRAY, 
+            'List of PLN ids to export.'
+        );
     }
 
     public function setContainer(ContainerInterface $container = null)
@@ -43,41 +60,115 @@ class ExportConfigsCommand extends ContainerAwareCommand {
         parent::setContainer($container);
         $this->em = $container->get('doctrine')->getManager();
         $this->logger = $container->get('logger');
+        $this->router = $container->get('router');
+        $this->titlesPerAu = $container->getParameter('lockss_aus_per_titledb');
         $this->fs = new Filesystem();
     }
 
     /**
+     * @param array plnIds
      * @return Pln[]
      */
-    private function getPlns() {
-        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
+    private function getPlns($plnIds = null) {
+        if($plnIds === null || count($plnIds) === 0) {
+            return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
+        }
+        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findById($plnIds);
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
-        $tempPath = sys_get_temp_dir();
+        $plnIds = $input->getArgument('pln');
         $webPath =  $this->getContainer()->get('kernel')->getRootDir() . '/../data/plnconfigs';
-        
-        foreach($this->getPlns() as $pln) {
+        if( ! $this->fs->exists($webPath)) {
+            $this->fs->mkdir($webPath);
+        }
+        foreach($this->getPlns($plnIds) as $pln) {
             try {
-                $tempDirName = tempnam($tempPath, "lom-export-configs-{$pln->getId()}-");
-                $output->writeln("Using {$tempDirName}");
-
-                $this->fs->remove($tempDirName); // don't need the file.
-                $this->fs->mkdir($tempDirName);
-
-                $configDirName = "{$webPath}/{$pln->getId()}";
-                // do the .htaccess here.
-                $this->exportPlnConfig($pln, $tempDirName);
-                $this->fs->mirror($tempDirName, $configDirName);
-                $output->writeln("Exported {$pln->getName()} to {$configDirName})");
+                $this->updatePlnConfig($pln);
+                $this->em->flush();
+                $this->exportPln($pln);
             } catch (Exception $ex) {
-                $m = "Error while exporting {$pln->getName()}: {$ex->getMessage()}";
+                $m = "Error while exporting {$pln->getName()}: {$ex->getMessage()}\nIn{$ex->getFile()}:{$ex->getLine()}";
                 $this->logger->critical($m);
+                $this->logger->critical($ex->getTraceAsString());
                 continue;
             }
         }
     }
+    
+    public function generateUrl($route, $parameters, $referenceType) {
+        return $this->router->generate($route, $parameters, $referenceType);
+    }
+    
+    public function updatePlnConfig(Pln $pln) {
+        $this->updatePeerList($pln);
+        $this->updatePluginRegistryList($pln);
+        $this->updateTitleDbs($pln);
+    }
 
+    public function updatePeerList(Pln $pln) {
+        $boxes = $pln->getBoxes();
+        $boxList = array();
+        foreach ($boxes as $box) {
+            $boxList[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
+        }
+        $boxProp = $pln->getProperty('id.initialV3PeerList');
+        $boxProp->setPropertyValue($boxList);
+    }
+    
+    public function updatePluginRegistryList(Pln $pln) {
+        $pluginUrlList = array(
+            $this->generateUrl(
+                'configs_plugin_list', 
+                array('plnId' => $pln->getId()),
+                UrlGeneratorInterface::ABSOLUTE_URL),
+        );
+        $pluginProp = $pln->getProperty('plugin.registries');
+        $pluginProp->setPropertyValue($pluginUrlList);        
+    }
+    
+    public function updateTitleDbs(Pln $pln) {
+        $urls = array();
+        
+        foreach($pln->getContentProviders() as $provider) {
+            $auCount = $provider->countAus();
+            if($auCount === 0) {
+                continue;
+            }
+            $titleDbFiles = ceil($auCount / $this->titlesPerAu);
+            $digits = ceil(log10($titleDbFiles));
+            
+            for($i = 1; $i <= $titleDbFiles; $i++) {
+                $urls[] = $this->generateUrl('configs_titledb', array(
+                    'plnId' => $pln->getId(),
+                    'ownerId' => $provider->getContentOwner()->getId(),
+                    'providerId' => $provider->getId(),
+                    'filename' => sprintf("titledb_%0{$digits}d.xml", $i)
+                ), 
+                UrlGeneratorInterface::ABSOLUTE_URL
+                );
+            }
+        }
+
+        $titleDbProp = $pln->getProperty('titleDbs');
+        $titleDbProp->setPropertyValue($urls);
+        $this->em->flush($titleDbProp);
+    }
+    
+    public function exportPln($pln) {
+        $tempPath = sys_get_temp_dir();        
+        $tempDirName = tempnam($tempPath, "lom-export-configs-{$pln->getId()}-");
+        $this->fs->remove($tempDirName); // just in case.
+        $this->fs->mkdir($tempDirName);
+
+        $webPath =  $this->getContainer()->get('kernel')->getRootDir() . '/../data/plnconfigs';
+        $configDirName = "{$webPath}/{$pln->getId()}";
+
+        $this->exportPlnConfig($pln, $tempDirName);
+        $this->fs->remove($configDirName);
+        $this->fs->rename($tempDirName, $configDirName);
+    }
+    
     public function exportPlnConfig(Pln $pln, $dir) {
         $this->exportPlugins($pln, $dir);
         $auFiles = $this->exportAuFiles($pln, $dir);
@@ -133,7 +224,14 @@ class ExportConfigsCommand extends ContainerAwareCommand {
                     $root = $au->getRootPluginProperties();
                     $manifestProp = $auBuilder->buildProperty($au, 'param.manifest', null, $root[0]);
                     $auBuilder->buildProperty($au, 'key', 'manifest_url', $manifestProp);
-                    $auBuilder->buildProperty($au, 'value', "manifests/{$provider->getContentOwner()->getId()}/{$provider->getId()}/au_{$au->getId()}.html", $manifestProp);
+                    $auBuilder->buildProperty($au, 'value', 
+                        $this->generateUrl('config_manifest', array(
+                            'plnId' => $pln->getId(),
+                            'ownerId' => $provider->getContentOwner()->getId(),
+                            'providerId' => $provider->getId(),
+                            'filename' => "au_{$au->getId()}.html"                                
+                        ),
+                        UrlGeneratorInterface::ABSOLUTE_URL)); 
                 } 
             }
 

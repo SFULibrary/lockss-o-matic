@@ -21,7 +21,6 @@
                 <th>Pln</th>
                 <th>Ipaddress</th>
                 <th>Username</th>
-                <th>Password</th>
             </tr>
         </thead>
         <tbody>
@@ -33,7 +32,6 @@
                     <td><a href="{{ path('pln_show', {'id': entity.pln.id }) }}">{{ entity.pln.name }}</a></td>
                     <td>{{ entity.ipAddress }}</td>
                     <td>{{ entity.username }}</td>
-                    <td>{{ entity.password }}</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -7,6 +7,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    security.acl.permission.map.class: LOCKSSOMatic\UserBundle\Security\Acl\Permission\PermissionMap
 
 framework:
     #esi:             ~

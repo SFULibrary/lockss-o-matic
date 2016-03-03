@@ -24,10 +24,11 @@
             <accept>application/atom+xml;type=entry</accept> 
             <sword:mediation>true</sword:mediation>
             {% for p in plugin.getDefinitionalProperties() %}
-                <lom:property name="{{ p }}"/>
+                <lom:property name="{{ p }}" definitional="true" />
             {% endfor %}
+            {%- for p in plugin.getNonDefinitionalProperties() %}
+                <lom:property name="{{ p }}" definitional="false" />
+            {% endfor -%}
         </collection>
-        
     </workspace>
-            
 </service>

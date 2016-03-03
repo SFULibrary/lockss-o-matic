@@ -43,6 +43,14 @@ class PluginProperty
     private $propertyValue;
 
     /**
+     * True if the property value is a list/array.
+     * @var boolean
+     *
+     * @ORM\Column(name="is_list", type="boolean", nullable=false)
+     */
+    private $isList;
+
+    /**
      * The parent of the property
      *
      * @var PluginProperty
@@ -77,6 +85,7 @@ class PluginProperty
     public function __construct()
     {
         $this->children = new ArrayCollection();
+        $this->isList = false;
     }
 
 
@@ -116,12 +125,18 @@ class PluginProperty
     /**
      * Set propertyValue
      *
-     * @param string $propertyValue
-     * @return PluginProperty
+     * @param string|array $propertyValue
+     * @return PlnProperty
      */
     public function setPropertyValue($propertyValue)
     {
-        $this->propertyValue = $propertyValue;
+        if (is_array($propertyValue)) {
+            $this->isList = true;
+            $this->propertyValue = serialize($propertyValue);
+        } else {
+            $this->isList = false;
+            $this->propertyValue = $propertyValue;
+        }
 
         return $this;
     }
@@ -129,11 +144,24 @@ class PluginProperty
     /**
      * Get propertyValue
      *
-     * @return string
+     * @return mixed
      */
     public function getPropertyValue()
     {
+        if ($this->isList) {
+            return unserialize($this->propertyValue);
+        }
         return $this->propertyValue;
+    }
+
+    /**
+     * Return true if the value of the property is a list.
+     *
+     * @return boolean
+     */
+    public function isList()
+    {
+        return $this->isList;
     }
 
     /**

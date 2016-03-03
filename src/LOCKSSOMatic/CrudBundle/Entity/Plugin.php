@@ -311,11 +311,26 @@ class Plugin
      * @param string $propertyKey
      * @return string|null
      */
-    public function getProperty($propertyKey)
+    public function getPropertyValue($propertyKey)
     {
         foreach ($this->getPluginProperties() as $property) {
             if ($property->getPropertyKey() === $propertyKey) {
                 return $property->getPropertyValue();
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get a Property object
+     * 
+     * @param type $propertyKey
+     * @return PluginProperty|null
+     */
+    public function getProperty($propertyKey) {
+        foreach($this->getPluginProperties() as $property) {
+            if($property->getPropertyKey() === $propertyKey) {
+                return $property;
             }
         }
         return null;
@@ -341,6 +356,36 @@ class Plugin
                     continue;
                 }
                 if ($child->getPropertyValue() === 'true') {
+                    $definitional = true;
+                }
+            }
+            if ($key !== '' && $definitional === true) {
+                $properties[] = $key;
+            }
+        }
+
+        return $properties;
+    }
+    
+    /**
+     * Convenience method. Get the plugin parameter names which are not definitonal.
+     *
+     * @return ArrayCollection|PluginProperty[]
+     */
+    public function getNonDefinitionalProperties() {
+        $properties = array();
+
+        foreach ($this->getPluginConfigParams() as $prop) {
+            $key = '';
+            $definitional = false;
+            foreach ($prop->getChildren() as $child) {
+                if ($child->getPropertyKey() === 'key') {
+                    $key = $child->getPropertyValue();
+                }
+                if ($child->getPropertyKey() !== 'definitional') {
+                    continue;
+                }
+                if ($child->getPropertyValue() === 'false') {
                     $definitional = true;
                 }
             }
