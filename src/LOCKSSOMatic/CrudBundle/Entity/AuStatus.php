@@ -56,7 +56,7 @@ class AuStatus implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auStatus")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $au;

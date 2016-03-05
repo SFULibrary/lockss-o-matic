@@ -98,7 +98,7 @@ class Content implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="content")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="deposit_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="deposit_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $deposit;
@@ -110,7 +110,7 @@ class Content implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="content")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $au;

@@ -69,7 +69,7 @@ class PluginProperty
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="pluginProperties")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $plugin;

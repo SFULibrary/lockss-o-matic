@@ -48,7 +48,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="Box", inversedBy="status")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="box_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="box_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $box;

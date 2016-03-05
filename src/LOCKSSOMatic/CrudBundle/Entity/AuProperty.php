@@ -48,7 +48,7 @@ class AuProperty implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="AuProperty", inversedBy="children")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $parent;
@@ -60,7 +60,7 @@ class AuProperty implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auProperties")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", nullable=false)
+     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * })
      */
     private $au;

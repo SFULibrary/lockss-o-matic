@@ -55,7 +55,7 @@ class ContentProperty implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="Content", inversedBy="contentProperties")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="content_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="content_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $content;
@@ -143,10 +143,10 @@ class ContentProperty implements GetPlnInterface
     /**
      * Set content
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Content $content
+     * @param Content $content
      * @return ContentProperty
      */
-    public function setContent(\LOCKSSOMatic\CrudBundle\Entity\Content $content = null)
+    public function setContent(Content $content = null)
     {
         $this->content = $content;
         $content->addContentProperty($this);
@@ -157,7 +157,7 @@ class ContentProperty implements GetPlnInterface
     /**
      * Get content
      *
-     * @return \LOCKSSOMatic\CrudBundle\Entity\Content
+     * @return Content
      */
     public function getContent()
     {
