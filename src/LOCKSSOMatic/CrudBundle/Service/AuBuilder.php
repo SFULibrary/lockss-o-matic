@@ -60,7 +60,7 @@ class AuBuilder
         $au->setPlugin($provider->getPlugin());
 
         $root = $this->buildProperty($au, 'lockssomatic' . uniqid('', true));
-        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journaltitle'), $root);
+        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journalTitle'), $root);
         $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
 

@@ -82,6 +82,7 @@ class ContentBuilder
         $content->setUrl(trim((string) $xml));
         $content->setRecrawl(true);
         $content->setTitle('Some generated title');
+		$this->buildProperty($content, 'journalTitle', $xml->attributes('pkp', true)->journalTitle);
         if ($this->em !== null) {
             $this->em->persist($content);
         }
