@@ -4,3 +4,10 @@ services:
         arguments: [@doctrine, @session, @lom.access]
         tags:
             - { name: twig.extension }
+
+    lom.filepaths:
+        class: LOCKSSOMatic\CoreBundle\Services\FilePaths
+        calls:
+            - [ setLogger, ["@monolog.logger" ]]
+            - [ setKernelEnv, ["%kernel.root_dir%"]]
+            

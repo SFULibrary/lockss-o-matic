@@ -34,3 +34,8 @@ parameters:
 
     # Number of AUs per titledb.xml file
     lockss_aus_per_titledb: 50
+
+    # override the command-line router URL generator.    
+    router.request_context.host: lom.dv
+    router.request_context.scheme: http
+    router.request_context.base_url: /web/app_dev.php

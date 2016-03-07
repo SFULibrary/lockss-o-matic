@@ -44,16 +44,6 @@ class ConfigsController extends Controller
         }
     }
     
-    private function updatePeerList(Pln $pln) {
-        $boxes = $pln->getBoxes();
-        $boxList = array();
-        foreach ($boxes as $box) {
-            $boxList[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
-        }
-        $boxProp = $pln->getProperty('id.initialV3PeerList');
-        $boxProp->setPropertyValue($boxList);
-    }
-        
     /**
      * @Route(
      *  "/{plnId}/properties/lockss.{_format}", 
