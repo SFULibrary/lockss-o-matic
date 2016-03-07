@@ -210,27 +210,19 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get the named AU property, optionally %-encoded.
+     * Get the named AU property value, optionally %-encoded.
      *
      * @param string $name
      * @param bool $encoded
      * @return string
      */
-    public function getAuProperty($name, $encoded = false)
+    public function getAuPropertyValue($name, $encoded = false)
     {
+        $property = $this->getAuProperty($name);
         $value = '';
-        foreach ($this->getAuProperties() as $prop) {
-            if ($prop->getPropertyKey() !== 'key') {
-                continue;
-            }
-            if ($prop->getPropertyValue() !== $name) {
-                continue;
-            }
-            foreach ($prop->getParent()->getChildren() as $child) {
-                if ($child->getPropertyKey() !== 'value') {
-                    continue;
-                }
-                $value = $child->getPropertyValue();
+        foreach($property->getChildren() as $prop) {
+            if($prop->getPropertyKey() === 'value') {
+                $value = $prop->getPropertyValue();
             }
         }
         if ($encoded === false) {
@@ -241,6 +233,23 @@ class Au implements GetPlnInterface
             return '%' . strtoupper(sprintf("%02x", $char));
         };
         return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
+    }
+
+    /**
+     * Get the named AU property.
+     *
+     * @param string $name
+     * @param bool $encoded
+     * @return AuProperty
+     */
+    public function getAuProperty($name)
+    {
+        foreach ($this->getAuProperties() as $prop) {
+            if ($prop->getPropertyKey() === 'key' && $prop->getPropertyValue() === $name) {
+                return $prop->getParent();
+            }
+        }
+        return null;
     }
 
     /**

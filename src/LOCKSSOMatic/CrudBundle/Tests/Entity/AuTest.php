@@ -64,12 +64,12 @@ class AuTest extends AbstractTestCase
 
     public function testGetAuProperty()
     {
-        $this->assertEquals('http://example.com', $this->au->getAuProperty('base_url'));
+        $this->assertEquals('http://example.com', $this->au->getAuPropertyValue('base_url'));
     }
 
     public function testGetAuPropertyEncoded()
     {
-        $this->assertEquals('http%3A%2F%2Fexample%2Ecom', $this->au->getAuProperty('base_url', true));
+        $this->assertEquals('http%3A%2F%2Fexample%2Ecom', $this->au->getAuPropertyValue('base_url', true));
     }
 
     public function testGetDefinitionalProperties()

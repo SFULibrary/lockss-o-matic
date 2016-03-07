@@ -21,7 +21,7 @@ class AuAttributeGenerator
         sort($propNames);
 
         foreach ($propNames as $name) {
-            $propertyValue = $au->getAuProperty($name, true);
+            $propertyValue = $au->getAuPropertyValue($name, true);
             $auKey .= "&{$name}~{$propertyValue}";
         }
         return $pluginKey . $auKey;
@@ -77,7 +77,7 @@ class AuAttributeGenerator
             $parts = preg_split('/, */', substr($propertyValue, strlen($formatStr)+2));
             $values = array();
             foreach (array_slice($parts, 1) as $parameterName) {
-                $values[] = $au->getAuProperty($parameterName, false);
+                $values[] = $au->getAuPropertyValue($parameterName, false);
             }
             $paramCount = preg_match_all('/%[a-zA-Z]/', $formatStr);
             if ($paramCount != count($values)) {

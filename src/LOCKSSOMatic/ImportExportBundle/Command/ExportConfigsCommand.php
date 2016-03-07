@@ -159,11 +159,11 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 			
 			$aus = $provider->getAus();
 			foreach($aus as $au) {
-				$this->logger->critical('mu: ' . $au->getAuProperty('manifest_url'));
-				if(! $au->getAuProperty('manifest_url')) {
+				$this->logger->critical('mu: ' . $au->getAuPropertyValue('manifest_url'));
+				if( ! $au->getAuPropertyValue('manifest_url')) {
 					$this->buildManifestProp($au);
 				}				
-				$this->logger->critical('mu: ' . $au->getAuProperty('manifest_url'));
+				$this->logger->critical('mu: ' . $au->getAuPropertyValue('manifest_url'));
 				$xml = $this->twig->render('LOCKSSOMaticImportExportBundle:Configs:titledb.xml.twig', array(
 					'aus' => array($au)
 				));
