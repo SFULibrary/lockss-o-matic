@@ -41,31 +41,31 @@ class AuAttributeGenerator
         }
         $formatStr = null;
         
-        if($property->isList()) {
-            $symbols = array();
-            foreach($property->getPropertyValue() as $propertyValue) {
-                $matches = array();
-                $propertyValue;
-                if (preg_match('/^"([^"]*)"/', $propertyValue, $matches)) {
-                    $formatStr = $matches[1];
-                } else {
-                    throw new Exception("$name property cannot be parsed: {$propertyValue}");
-                }
-                // substr/strlen skips the $formatstr part of the property
-                $parts = preg_split('/, */', substr($propertyValue, strlen($formatStr)+2));
-                $values = array();
-                foreach (array_slice($parts, 1) as $parameterName) {
-                    $values[] = $au->getAuProperty($parameterName, false);
-                }
-                $paramCount = preg_match_all('/%[a-zA-Z]/', $formatStr);
-                if ($paramCount != count($values)) {
-                    throw new Exception("Wrong number of parameters for format string: {$formatStr}/{$paramCount} --" . print_r(array(
-                        $parts), true));
-                }
-                $symbols[] = vsprintf($formatStr, $values);
-            }
-            return $symbols;
-        } else {
+//        if($property->isList()) {
+//            $symbols = array();
+//            foreach($property->getPropertyValue() as $propertyValue) {
+//                $matches = array();
+//                $propertyValue;
+//                if (preg_match('/^"([^"]*)"/', $propertyValue, $matches)) {
+//                    $formatStr = $matches[1];
+//                } else {
+//                    throw new Exception("$name property cannot be parsed: {$propertyValue}");
+//                }
+//                // substr/strlen skips the $formatstr part of the property
+//                $parts = preg_split('/, */', substr($propertyValue, strlen($formatStr)+2));
+//                $values = array();
+//                foreach (array_slice($parts, 1) as $parameterName) {
+//                    $values[] = $au->getAuProperty($parameterName, false);
+//                }
+//                $paramCount = preg_match_all('/%[a-zA-Z]/', $formatStr);
+//                if ($paramCount != count($values)) {
+//                    throw new Exception("Wrong number of parameters for format string: {$formatStr}/{$paramCount} --" . print_r(array(
+//                        $parts), true));
+//                }
+//                $symbols[] = vsprintf($formatStr, $values);
+//            }
+//            return $symbols;
+//        } else {
             $matches = array();
             $propertyValue = $property->getPropertyValue();
             if (preg_match('/^"([^"]*)"/', $propertyValue, $matches)) {
@@ -85,7 +85,7 @@ class AuAttributeGenerator
                     $parts), true));
             }
             return vsprintf($formatStr, $values);
-        }
+//        }
     }
 
     public function prePersist(LifecycleEventArgs $args)

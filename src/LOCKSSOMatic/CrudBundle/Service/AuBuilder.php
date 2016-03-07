@@ -8,6 +8,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use Monolog\Logger;
+use Symfony\Component\Routing\Router;
 
 class AuBuilder
 {
@@ -22,6 +23,11 @@ class AuBuilder
      */
     private $em;
     
+    /**
+     * @var Router
+     */
+    private $router;
+    
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
@@ -30,6 +36,10 @@ class AuBuilder
     public function setRegistry(Registry $registry)
     {
         $this->em = $registry->getManager();
+    }
+    
+    public function setRouter(Router $router) {
+        $this->router = $router;
     }
 
     public function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null)
@@ -72,7 +82,20 @@ class AuBuilder
         foreach ($au->getPlugin()->getNonDefinitionalProperties() as $index => $property) {
             $grouping = $this->buildProperty($au, 'param.n.' . ($index+1), null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
-            $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
+            if($property === 'manifest_url') {
+                $url = $this->router->generate(
+                    'configs_manifest', 
+                    array(
+                        'plnId' => $au->getPln()->getId(),
+                        'ownerId' => $owner->getId(),
+                        'providerId' => $provider->getId(),
+                        'filename' => "titledb.xml",
+                    ), 
+                    Router::ABSOLUTE_URL);
+                $this->buildProperty($au, 'value', $url, $grouping);
+            } else {
+                $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
+            }
         }
 
         $permissionGroup = $this->buildProperty($au, 'param.permission', null, $root);

@@ -52,7 +52,6 @@ class ConfigsController extends Controller
      *      "_format": "xml"
      *  }
      * )
-     * @Template()
      * 
      * @param Request $request
      * @param string $plnId
@@ -67,6 +66,9 @@ class ConfigsController extends Controller
         if( ! file_exists($lockssPath)) {
             throw new NotFoundHttpException("The requested file does not exist.");
         }
+        return new BinaryFileResponse($lockssPath, 200, array(
+            'Content-Type' => 'text/xml'
+        ));
     }
     
     /**
