@@ -360,7 +360,9 @@ class ContentProvider implements GetPlnInterface
     public function setPlugin(Plugin $plugin = null)
     {
         $this->plugin = $plugin;
-        $plugin->addContentProvider($this);
+		if($plugin !== null) {
+			$plugin->addContentProvider($this);
+		}
 
         return $this;
     }

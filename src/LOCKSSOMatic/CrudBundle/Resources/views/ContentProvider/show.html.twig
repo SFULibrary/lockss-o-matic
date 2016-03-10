@@ -55,7 +55,11 @@
             </tr>
             <tr>
                 <th>LOCKSS Plugin</th>
-                <td><a href="{{ path('plugin_show', {'id': entity.plugin.id}) }}">{{ entity.plugin.name }}</a></td>
+                <td>
+					{% if entity.plugin %}
+						<a href="{{ path('plugin_show', {'id': entity.plugin.id}) }}">{{ entity.plugin.name }}</a>
+					{% endif %}
+				</td>
             </tr>
             <tr>
                 <th>Service Document</th>
