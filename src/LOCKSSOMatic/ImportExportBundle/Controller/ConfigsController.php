@@ -38,7 +38,7 @@ class ConfigsController extends Controller
         if ($env === 'dev' || $env === 'test') {
             $allowed[] = '127.0.0.1';
         }
-        if( ! in_array($ip, $allowed)) {
+        if(! in_array($ip, $allowed)) {
 			$logger->critical("Client IP {$ip} is not authorized for {$pln->getName()}({$pln->getId()}).");
             throw new AccessDeniedHttpException("Client IP {$ip} is not authorized for this PLN.");
         }
@@ -63,7 +63,7 @@ class ConfigsController extends Controller
         $this->checkIp($request, $pln);
         $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
         $lockssPath = "{$webPath}/{$plnId}/lockss.xml";
-        if( ! file_exists($lockssPath)) {
+        if(! file_exists($lockssPath)) {
             throw new NotFoundHttpException("The requested file does not exist.");
         }
         return new BinaryFileResponse($lockssPath, 200, array(
@@ -82,7 +82,7 @@ class ConfigsController extends Controller
         
         $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
         $titleDbPath = "{$webPath}/{$plnId}/titledbs/{$ownerId}/{$providerId}/{$filename}";
-        if( ! file_exists($titleDbPath)) {
+        if(! file_exists($titleDbPath)) {
             throw new NotFoundHttpException("The requested file {$filename} does not exist.");
         }
         return new BinaryFileResponse($titleDbPath);
@@ -99,7 +99,7 @@ class ConfigsController extends Controller
         
         $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
         $manifestPath = "{$webPath}/{$plnId}/manifests/{$ownerId}/{$providerId}/{$filename}";
-        if( ! file_exists($manifestPath)) {
+        if(! file_exists($manifestPath)) {
             throw new NotFoundHttpException("The requested file {$filename} does not exist.");
         }
         return new BinaryFileResponse($manifestPath);
@@ -138,7 +138,7 @@ class ConfigsController extends Controller
 
         $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';        
         $pluginPath = "{$webPath}/{$plnId}/plugins/{$filename}";
-        if( ! file_exists($pluginPath)) {
+        if(! file_exists($pluginPath)) {
             throw new NotFoundHttpException("The requested file {$filename} does not exist.");
         }
         return new BinaryFileResponse($pluginPath);

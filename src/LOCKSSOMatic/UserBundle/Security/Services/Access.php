@@ -236,8 +236,8 @@ class Access
     public function revokeAccess($entity, $user = null)
     {
         $this->aclManager->revokeAllObjectPermissions(
-            $entity, $user
+            $entity,
+            $user
         );
     }
-
 }

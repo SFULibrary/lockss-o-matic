@@ -80,7 +80,7 @@ class SwordErrorListener
     {
         $exception = $event->getException();
 
-        if( ! $this->controller[0] instanceof SwordController) {
+        if(! $this->controller[0] instanceof SwordController) {
             return;
         }
 

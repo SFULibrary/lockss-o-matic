@@ -53,7 +53,7 @@ class PlnExtension extends Twig_Extension {
 
     public function currentPln() {
         $plnId = $this->session->get('plnId');
-        if( ! $plnId) {
+        if(! $plnId) {
             return null;
         }
         $em = $this->doctrine->getManager();
@@ -64,5 +64,4 @@ class PlnExtension extends Twig_Extension {
     {
         return 'lom_plnsextension';
     }
-
 }

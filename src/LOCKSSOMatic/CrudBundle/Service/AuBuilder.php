@@ -91,7 +91,8 @@ class AuBuilder
                         'providerId' => $provider->getId(),
                         'filename' => "titledb.xml",
                     ), 
-                    Router::ABSOLUTE_URL);
+                    Router::ABSOLUTE_URL
+                );
                 $this->buildProperty($au, 'value', $url, $grouping);
             } else {
                 $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);

@@ -16,32 +16,44 @@ class ContentProviderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('uuid', 'text',
+            ->add(
+                'uuid',
+                'text',
                 array(
                 'required' => false,
                 'attr'     => array(
                     'help' => 'Leave UUID blank to have one generated.'
-            )))
-            ->add('permissionurl', 'url',
+                ))
+            )
+            ->add(
+                'permissionurl',
+                'url',
                 array(
                 'label' => 'Permission URL',
                 'attr'  => array(
                     'help' => 'URL for the LOCKSS permission statement.'
                 )
-            ))
+                )
+            )
             ->add('name')
-            ->add('maxFileSize', 'integer',
+            ->add(
+                'maxFileSize',
+                'integer',
                 array(
                 'attr' => array(
                     'help' => 'Maximum file size allowed in an AU, in kb (1,000 bytes)'
                 )
-            ))
-            ->add('maxAuSize', 'integer',
+                )
+            )
+            ->add(
+                'maxAuSize',
+                'integer',
                 array(
                 'attr' => array(
                     'help' => 'Maximum AU size, in kb (1,000 bytes)'
                 )
-            ))
+                )
+            )
             ->add('contentOwner')
             ->add('plugin')
             ->add('pln')
@@ -65,5 +77,4 @@ class ContentProviderType extends AbstractType
     {
         return 'lockssomatic_crudbundle_contentprovider';
     }
-
 }

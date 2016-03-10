@@ -335,7 +335,7 @@ class ContentProviderController extends Controller
 
     private function precheckContent($record, Plugin $plugin) {
         foreach($plugin->getDefinitionalProperties() as $property) {
-            if( ! array_key_exists($property, $record)) {
+            if(! array_key_exists($property, $record)) {
                 throw new BadRequestException("{$property} must have a value.");
             }
         }

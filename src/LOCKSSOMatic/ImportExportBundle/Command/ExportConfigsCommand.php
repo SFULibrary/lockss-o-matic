@@ -104,7 +104,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 	
 	public function exportPlugins(Pln $pln) {
 		$path = $this->fp->getPluginsExportDir($pln);
-		if( ! $this->fs->exists($path)) {
+		if(! $this->fs->exists($path)) {
 			$this->fs->mkdir($path);
 		}
 		$plugins = $pln->getPlugins();
@@ -120,7 +120,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 	public function exportManifests(Pln $pln) {
 		foreach($pln->getAus() as $au) {
 			$manifestDir = $this->fp->getManifestDir($pln, $au->getContentprovider());
-			if( ! $this->fs->exists($manifestDir)) {
+			if(! $this->fs->exists($manifestDir)) {
 				$this->fs->mkdir($manifestDir);
 			}
 			$manifestFile = $this->fp->getManifestPath($au);
@@ -153,14 +153,14 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 	public function exportAus(Pln $pln) {
 		foreach($pln->getContentProviders() as $provider) {
 			$titleDir = $this->fp->getTitleDbDir($pln, $provider);
-			if( ! $this->fs->exists($titleDir)) {
+			if(! $this->fs->exists($titleDir)) {
 				$this->fs->mkdir($titleDir);
 			}
 			
 			$aus = $provider->getAus();
 			foreach($aus as $au) {
 				$this->logger->critical('mu: ' . $au->getAuProperty('manifest_url'));
-				if( ! $au->getAuProperty('manifest_url')) {
+				if(! $au->getAuProperty('manifest_url')) {
 					$this->buildManifestProp($au);
 				}				
 				$this->logger->critical('mu: ' . $au->getAuProperty('manifest_url'));
@@ -171,5 +171,4 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 			}
 		}
 	}
-	
 }

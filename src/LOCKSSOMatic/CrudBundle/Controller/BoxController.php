@@ -42,7 +42,9 @@ class BoxController extends ProtectedController
         ));
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
-            $query, $request->query->getInt('page', 1), 25
+            $query,
+            $request->query->getInt('page', 1),
+            25
         );
 
 
@@ -78,8 +80,10 @@ class BoxController extends ProtectedController
 
             $this->addFlash('success', "The box has been added to {$pln->getName()}.");
 
-            return $this->redirect($this->generateUrl('box_show',
-                        array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl(
+                'box_show',
+                array('id' => $entity->getId())
+            ));
         }
 
         return array(
@@ -97,11 +101,14 @@ class BoxController extends ProtectedController
      */
     private function createCreateForm(Box $entity)
     {
-        $form = $this->createForm(new BoxType(), $entity,
+        $form = $this->createForm(
+            new BoxType(),
+            $entity,
             array(
             'action' => $this->generateUrl('box_create'),
             'method' => 'POST',
-        ));
+            )
+        );
 
         $form->add('submit', 'submit', array('label' => 'Create'));
 
@@ -210,12 +217,17 @@ class BoxController extends ProtectedController
      */
     private function createEditForm(Box $entity)
     {
-        $form = $this->createForm(new BoxType(), $entity,
+        $form = $this->createForm(
+            new BoxType(),
+            $entity,
             array(
-            'action' => $this->generateUrl('box_update',
-                array('id' => $entity->getId())),
+            'action' => $this->generateUrl(
+                'box_update',
+                array('id' => $entity->getId())
+            ),
             'method' => 'PUT',
-        ));
+            )
+        );
 
         $form->add('submit', 'submit', array('label' => 'Update'));
 
@@ -256,8 +268,10 @@ class BoxController extends ProtectedController
             $em->flush();
 
             $this->addFlash('success', "The box has been updated.");
-            return $this->redirect($this->generateUrl('box_show',
-                        array('id' => $id)));
+            return $this->redirect($this->generateUrl(
+                'box_show',
+                array('id' => $id)
+            ));
         }
 
         return array(
@@ -314,5 +328,4 @@ class BoxController extends ProtectedController
                 ->getForm()
         ;
     }
-
 }

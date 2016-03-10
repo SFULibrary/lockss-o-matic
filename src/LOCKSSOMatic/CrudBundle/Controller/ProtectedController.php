@@ -38,5 +38,4 @@ abstract class ProtectedController extends Controller
         $access = $this->container->get('lom.access');
         $access->checkAccess($permission, $pln);
     }
-
 }

@@ -139,5 +139,4 @@ class FilePaths {
 		));
 		return $path;
 	}
-	
 }
