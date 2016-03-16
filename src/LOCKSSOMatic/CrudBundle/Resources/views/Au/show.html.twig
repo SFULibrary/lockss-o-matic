@@ -45,7 +45,7 @@
             </tr>
             <tr>
                 <th>Au Name</th>
-                <td>{{ prop_generator.generateSymbol(entity, 'au_name') }}</td>
+                <td></td>
             </tr>
             <tr>
                 <th>Managed</th>
@@ -70,6 +70,17 @@
             <tr>
                 <th>PLN</th>
                 <td><a href="{{ path('pln_show', {'id': entity.pln.id}) }}">{{ entity.pln.name }}</a></td>
+            </tr>
+            <tr>
+                <th>Computed Properties</th>
+                <td>
+					<dl class='dl-horizontal'>
+						<dt>au_name</dt>
+						<dd>{{ prop_generator.generateSymbol(entity, 'au_name') }}</dd>
+						<dt>au_start_url</dt>
+						<dd>{{ prop_generator.generateSymbol(entity, 'au_start_url') }}</dd>
+					</dl>
+				</td>
             </tr>
             <tr>
                 <th>Comment</th>

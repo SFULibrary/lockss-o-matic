@@ -89,7 +89,7 @@ class ConfigsController extends Controller
     }
     
     /**
-     * @Route("/{plnId}/manifests/{ownerId}/{providerId}/{filename}", name="configs_manifest")
+     * @Route("/{plnId}/manifests/{ownerId}/{providerId}/manifest_{auId}.html", name="configs_manifest")
      */
     public function manifestAction(Request $request, $ownerId, $plnId, $providerId, $filename) {
         $this->logger->notice("manifest - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$filename}");

@@ -61,8 +61,10 @@ class AuPropertyGenerator
         }
         $property = $plugin->getProperty($name);
         if ($property === null) {
-            throw new Exception("$name plugin property is required.");
+			$this->logger->error("{$plugin->getName()} is missing parameter {$name}.");
+			return null;
         }
+		
         $formatStr = null;
         $matches = array();
         $propertyValue = $property->getPropertyValue();
@@ -71,9 +73,9 @@ class AuPropertyGenerator
         } else {
             throw new Exception("$name property cannot be parsed: {$propertyValue}");
         }
-        // substr/strlen skips the $formatstr part of the property
+		// substr/strlen skips the $formatstr part of the property
         $parts = preg_split('/, */', substr($propertyValue, strlen($formatStr)+2));
-        $values = array();
+		$values = array();
         foreach (array_slice($parts, 1) as $parameterName) {
             $values[] = $au->getAuPropertyValue($parameterName, false);
         }
@@ -127,10 +129,8 @@ class AuPropertyGenerator
         $content = $au->getContent()[0];
 
         $root = $this->buildProperty($au, $rootName);
-        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journalTitle'), $root);
-        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
-        $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
         
+		// config params are used to build other properties. So set them first.
         foreach ($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
             $grouping = $this->buildProperty($au, 'param.' . ($index+1), null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
@@ -138,15 +138,29 @@ class AuPropertyGenerator
         }
         
         foreach ($au->getPlugin()->getNonDefinitionalProperties() as $index => $property) {
+			if($property === 'manifest_url') {
+				$value = $this->router->generate('configs_manifest', array(
+					'plnId' => $au->getPln()->getId(),
+					'ownerId' => $au->getContentprovider()->getId(),
+					'providerId' => $au->getContentprovider()->getId(),
+					'auId' => $au->getId(),
+				), Router::ABSOLUTE_URL);
+			} else {
+				$value = $content->getContentPropertyValue($property);
+			}
             $grouping = $this->buildProperty($au, 'param.' . ($index+1), null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
-            $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
+            $this->buildProperty($au, 'value', $value, $grouping);
         }
 
+        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journalTitle'), $root);
+        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
+        $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
+		
         foreach ($content->getContentProperties() as $property) {
             $this->buildProperty($au, "attributes.pkppln." . $property->getPropertyKey(), $property->getPropertyValue(), $root);
         }
-        
-        $this->em->flush();
+
+		$this->em->flush();
     }
 }

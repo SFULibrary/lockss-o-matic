@@ -160,7 +160,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 			$aus = $provider->getAus();
 			foreach($aus as $au) {
 				$this->logger->critical('mu: ' . $au->getAuPropertyValue('manifest_url'));
-				if( ! $au->getAuPropertyValue('manifest_url')) {
+				if(! $au->getAuPropertyValue('manifest_url')) {
 					$this->buildManifestProp($au);
 				}				
 				$this->logger->critical('mu: ' . $au->getAuPropertyValue('manifest_url'));

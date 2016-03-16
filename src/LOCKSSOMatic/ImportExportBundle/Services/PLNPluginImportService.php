@@ -201,7 +201,6 @@ class PLNPluginImportService
         if($pluginVersion === null || $pluginVersion === '') {
             throw new Exception("Plugin {$filename} does not have a plugin_version element in its XML configuration.");
         }
-        
 
         if ($pluginRepo->findOneBy(array('identifier' => $pluginId, 'version' => $pluginVersion)) !== null) {
             throw new Exception("Plugin {$filename} version {$pluginVersion} has already been imported.");
@@ -225,13 +224,21 @@ class PLNPluginImportService
 
     private static $importPropStrings = array(
         'au_name',
+		'au_start_url',
+		'au_permission_url',
+		'plugin_crawl_type',
         'plugin_identifier',
         'plugin_name',
         'plugin_publishing_platform',
         'plugin_status',
         'plugin_version',
+		'plugin_parent',
         'required_daemon_version',
     );
+	
+	private static $importPropLists = array(
+		'au_crawlrules',
+	);
 
     /**
      * Import the data from the plugin. Does not create content
@@ -246,7 +253,11 @@ class PLNPluginImportService
             $this->newPluginProperty($plugin, $prop, $this->findXmlPropString($xml, $prop));
         }
         
-        $configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
+        foreach (self::$importPropLists as $prop) {
+            $this->newPluginProperty($plugin, $prop, $this->findXmlPropElement($xml, $prop));
+        }
+
+		$configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
         if ($configProps === null) {
             throw new Exception("No PluginConfigProps element in {$plugin->getFilename()} version {$plugin->getVersion()}");
         }
