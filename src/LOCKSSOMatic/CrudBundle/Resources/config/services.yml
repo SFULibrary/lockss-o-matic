@@ -1,11 +1,6 @@
 
 services:
 
-    crud.listener.au:
-        class: LOCKSSOMatic\CrudBundle\EventListener\AuAttributeGenerator
-        tags:
-            - { name: doctrine.event_listener, event: prePersist }
-
     crud.builder.deposit:
         class: LOCKSSOMatic\CrudBundle\Service\DepositBuilder
         calls:
@@ -24,4 +19,12 @@ services:
         calls:
             - [ setLogger, ["@logger"] ]
             - [ setRegistry, ["@doctrine"] ]
+            - [ setPropertyGenerator, ["@crud.propertygenerator"]]
+    
+    crud.propertygenerator:
+        class: LOCKSSOMatic\CrudBundle\Service\AuPropertyGenerator
+        calls:
+            - [ setLogger, ["@logger"] ]
+            - [ setRegistry, ["@doctrine"] ]
             - [ setRouter, ["@router"]]
+        

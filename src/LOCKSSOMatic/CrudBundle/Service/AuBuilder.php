@@ -24,9 +24,9 @@ class AuBuilder
     private $em;
     
     /**
-     * @var Router
+     * @var AuPropertyGenerator
      */
-    private $router;
+    private $generator;
     
     public function setLogger(Logger $logger)
     {
@@ -38,21 +38,10 @@ class AuBuilder
         $this->em = $registry->getManager();
     }
     
-    public function setRouter(Router $router) {
-        $this->router = $router;
+    public function setPropertyGenerator(AuPropertyGenerator $generator) {
+        $this->generator = $generator;
     }
 
-    public function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null)
-    {
-        $property = new AuProperty();
-        $property->setAu($au);
-        $property->setPropertyKey($key);
-        $property->setPropertyValue($value);
-        $property->setParent($parent);
-        $this->em->persist($property);
-        return $property;
-    }
-    
     /**
      * Build an AU for the content item.
      *
@@ -62,53 +51,19 @@ class AuBuilder
     public function fromContent(Content $content)
     {
         $au = new Au();
+        $au->setAuid($content->generateAuid());
+        $au->addContent($content);        
         $provider = $content->getDeposit()->getContentProvider();
-        $owner = $provider->getContentOwner();
 
         $au->setContentprovider($provider);
         $au->setPln($provider->getPln());
         $au->setPlugin($provider->getPlugin());
-
-        $root = $this->buildProperty($au, 'lockssomatic' . uniqid('', true));
-        $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journalTitle'), $root);
-        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
-        $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
-
-        foreach ($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
-            $grouping = $this->buildProperty($au, 'param.d.' . ($index+1), null, $root);
-            $this->buildProperty($au, 'key', $property, $grouping);
-            $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
-        }
-        foreach ($au->getPlugin()->getNonDefinitionalProperties() as $index => $property) {
-            $grouping = $this->buildProperty($au, 'param.n.' . ($index+1), null, $root);
-            $this->buildProperty($au, 'key', $property, $grouping);
-            if($property === 'manifest_url') {
-                $url = $this->router->generate(
-                    'configs_manifest', 
-                    array(
-                        'plnId' => $au->getPln()->getId(),
-                        'ownerId' => $owner->getId(),
-                        'providerId' => $provider->getId(),
-                        'filename' => "titledb.xml",
-                    ), 
-                    Router::ABSOLUTE_URL
-                );
-                $this->buildProperty($au, 'value', $url, $grouping);
-            } else {
-                $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
-            }
-        }
-
-        $permissionGroup = $this->buildProperty($au, 'param.permission', null, $root);
-        $this->buildProperty($au, 'key', 'permission_url', $permissionGroup);
-        $this->buildProperty($au, 'value', $provider->getPermissionurl(), $permissionGroup);
-
-        foreach ($content->getContentProperties() as $property) {
-            $this->buildProperty($au, "attributes.pkppln." . $property->getPropertyKey(), $property->getPropertyValue(), $root);
-        }
+        
         $this->em->persist($au);
         $this->em->flush();
-        $this->em->refresh($au);
+        
+        $this->generator->generateProperties($au);
+        
         return $au;
     }
 }

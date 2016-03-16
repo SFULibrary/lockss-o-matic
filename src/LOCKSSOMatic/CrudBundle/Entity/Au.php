@@ -42,14 +42,6 @@ class Au implements GetPlnInterface
     private $auid;
 
     /**
-     * The generated name of the AU.
-     *
-     * @var type
-     * @ORM\Column(name="au_name", type="string", length=512, nullable=false)
-     */
-    private $auName;
-
-    /**
      * LOCKSSOMatic comment for this au. Its specific to LOCKSSOMatic.
      * @var string
      *
@@ -197,16 +189,6 @@ class Au implements GetPlnInterface
             $properties[] = $p;
         }
         return $properties;
-    }
-
-    /**
-     * Get the properties which are definitional, according to the plugin's
-     * XML description.
-     * @return AuProperty[]
-     */
-    public function getDefinitionalProperties()
-    {
-        return $this->getPlugin()->getDefinitionalProperties();
     }
 
     /**
@@ -464,29 +446,5 @@ class Au implements GetPlnInterface
     public function __toString()
     {
         return "AU #" . $this->id;
-    }
-
-
-    /**
-     * Set auName
-     *
-     * @param string $auName
-     * @return Au
-     */
-    public function setAuName($auName)
-    {
-        $this->auName = $auName;
-
-        return $this;
-    }
-
-    /**
-     * Get auName
-     *
-     * @return string
-     */
-    public function getAuName()
-    {
-        return $this->auName;
     }
 }
