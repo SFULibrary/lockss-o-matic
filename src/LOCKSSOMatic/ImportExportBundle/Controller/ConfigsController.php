@@ -72,7 +72,7 @@ class ConfigsController extends Controller
     }
     
     /**
-     * @Route("/{plnId}/titledbs/{ownerId}/{providerId}/{filename}", name="configs_titledb")
+     * @Route("/{plnId}/titledbs/{ownerId}/titledb_{providerId}.xml", name="configs_titledb")
      */
     public function titleDbAction(Request $request, $plnId, $ownerId, $providerId, $filename) {
         $this->logger->notice("titledb - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$filename}");
@@ -91,7 +91,7 @@ class ConfigsController extends Controller
     /**
      * @Route("/{plnId}/manifests/{ownerId}/{providerId}/manifest_{auId}.html", name="configs_manifest")
      */
-    public function manifestAction(Request $request, $ownerId, $plnId, $providerId, $filename) {
+    public function manifestAction(Request $request, $ownerId, $plnId, $providerId, $auId) {
         $this->logger->notice("manifest - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$filename}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);

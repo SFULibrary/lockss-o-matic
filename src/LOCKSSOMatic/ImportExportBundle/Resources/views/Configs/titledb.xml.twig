@@ -16,6 +16,15 @@
 {% import _self as macros %}
 
 <lockss-config>
+
+	<property name="org.lockss.titleSet">
+		<property name="PKP PLN Archives">
+			<property name="name" value="All PK PPLN AUs" />
+			<property name="class" value="xpath" />
+			<property name="xpath" value="[attributes/plugin='ca.sfu.lib.plugin.pkppln']" />
+		</property>
+	</property>
+
     <property name="org.lockss.title">
         {% for au in aus %}
             {{ macros.au_props(au.getRootPluginProperties()) }}

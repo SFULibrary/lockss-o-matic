@@ -95,12 +95,38 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 
     public function execute(InputInterface $input, OutputInterface $output) {
         $plnIds = $input->getArgument('pln');
-        foreach($this->getPlns($plnIds) as $pln) {
+        foreach($this->getPlns($plnIds) as $pln) {			
 			$this->exportPlugins($pln);
 			$this->exportManifests($pln);
-			$this->exportAus($pln);
+			$auUrls = $this->exportAus($pln);
+			$this->exportLockssXml($pln, $auUrls);
         }
     }
+	
+	public function exportLockssXml(Pln $pln, $auUrls) {
+		$boxes = $pln->getBoxes();
+		$boxList = array();
+		foreach($boxes as $box) {
+			$boxList[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
+		}
+		$boxProp = $pln->getProperty('id.initialV3PeerList');
+		if( ! $boxProp) {
+            throw new Exception("Cannot find id.initialV3PeerList in PLN properties.");
+        }
+		$boxProp->setPropertyValue($boxList);
+		$titleProp = $pln->getProperty('titleDbs');
+		$titleProp->setPropertyValue($auUrls);
+		$this->em->flush();
+		$twig = $this->getContainer()->get('templating');
+		$xml = $twig->render(
+			'LOCKSSOMaticImportExportBundle:Configs:lockss.xml.twig', 
+			array(
+				'pln' => $pln
+			)
+		);
+		$path = $this->fp->getLockssXmlFile($pln);
+		$this->fs->dumpFile($path);
+	}
 	
 	public function exportPlugins(Pln $pln) {
 		$path = $this->fp->getPluginsExportDir($pln);
@@ -123,7 +149,13 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 			if(! $this->fs->exists($manifestDir)) {
 				$this->fs->mkdir($manifestDir);
 			}
-			$manifestFile = $this->fp->getManifestPath($au);
+			$manifestUrl = $this->router->generate('configs_manifest', array(
+				'plnId' => $pln->getId(),
+				'ownerId' => $au->getContentprovider()->getContentOwner()->getId(),
+				'providerId' => $au->getContentprovider()->getId(),
+				'auId' => $au->getId(),
+			));			
+			$manifestFile = $manifestDir . '/' . basename($manifestUrl);
 			$html = $this->twig->render('LOCKSSOMaticImportExportBundle:Configs:manifest.html.twig', array(
 				'content' => $au->getContent()
 			));
@@ -131,44 +163,26 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 		}
 	}
 	
-	/**
-	 * This should really be called from execute() as updateAu($au) or something.
-	 */
-	private function buildManifestProp(Au $au) {
-		$auBuilder = $this->getContainer()->get('crud.builder.au');
-		$manifestFile = $this->fp->getManifestPath($au);
-		$url = $this->router->generate('configs_manifest', array(
-			'plnId' => $au->getPln(),
-			'ownerId' => $au->getContentprovider()->getContentOwner()->getId(),
-			'providerId' => $au->getContentprovider()->getId(),
-			'filename' => basename($manifestFile),
-		));
-		$root = $au->getRootPluginProperties();
-		$manifestProp = $auBuilder->buildProperty($au, 'manifest_url', null, $root[0]);
-		$auBuilder->buildProperty($au, 'key', 'manifest_url', $manifestProp);
-		$auBuilder->buildProperty($au, 'value', $url, $manifestProp);
-		$this->em->flush();
-	}
-	
 	public function exportAus(Pln $pln) {
+		$auUrls = array();
 		foreach($pln->getContentProviders() as $provider) {
 			$titleDir = $this->fp->getTitleDbDir($pln, $provider);
 			if(! $this->fs->exists($titleDir)) {
 				$this->fs->mkdir($titleDir);
 			}
+			$auUrl = $this->router->generate('configs_titledb', array(
+				'plnId' => $pln->getId(),
+				'ownerId' => $provider->getContentOwner()->getId(),
+				'providerId' => $provider->getId(),
+			), Router::ABSOLUTE_URL);
+			$auUrls[] = $auUrl;
+			$auFile = $titleDir . '/' . basename($auUrl);
 			
-			$aus = $provider->getAus();
-			foreach($aus as $au) {
-				$this->logger->critical('mu: ' . $au->getAuPropertyValue('manifest_url'));
-				if(! $au->getAuPropertyValue('manifest_url')) {
-					$this->buildManifestProp($au);
-				}				
-				$this->logger->critical('mu: ' . $au->getAuPropertyValue('manifest_url'));
-				$xml = $this->twig->render('LOCKSSOMaticImportExportBundle:Configs:titledb.xml.twig', array(
-					'aus' => array($au)
-				));
-				$this->fs->dumpFile("{$titleDir}/{$au->getId()}.xml", $xml);
-			}
+			$xml = $this->twig->render('LOCKSSOMaticImportExportBundle:Configs:titledb.xml.twig', array(
+				'aus' => $provider->getAus(),
+			));
+			$this->fs->dumpFile($auFile, $xml);
 		}
+		return $auUrls;
 	}
 }

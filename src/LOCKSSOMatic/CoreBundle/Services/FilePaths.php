@@ -88,6 +88,15 @@ class FilePaths {
 		return $path;
 	}
 	
+	public function getLockssXmlFile(Pln $pln) {
+		$path = implode('/', array(
+			$this->getConfigsDir(),
+			'properties',
+			'lockss.xml'
+		));
+		return $path;
+	}
+	
 	public function getPluginsExportDir(Pln $pln) {
 		$path = implode('/', array(
 			$this->getConfigsDir($pln),
