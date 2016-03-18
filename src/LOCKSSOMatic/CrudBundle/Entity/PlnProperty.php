@@ -2,8 +2,6 @@
 
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -28,7 +26,7 @@ class PlnProperty implements GetPlnInterface
      *
      * @var string
      *
-     * @ORM\Column(name="property_key", type="string", length=255, nullable=false)
+     * @ORM\Column(name="property_key", type="string", length=512, nullable=false)
      */
     private $propertyKey;
 
@@ -38,29 +36,9 @@ class PlnProperty implements GetPlnInterface
      *
      * @var string|array
      *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
+     * @ORM\Column(name="property_value", type="array", nullable=false)
      */
     private $propertyValue;
-
-    /**
-     * True if the property value is a list/array.
-     * @var boolean
-     *
-     * @ORM\Column(name="is_list", type="boolean", nullable=false)
-     */
-    private $isList;
-
-    /**
-     * The parent of this property.
-     *
-     * @var PlnProperty
-     *
-     * @ORM\ManyToOne(targetEntity="PlnProperty", inversedBy="children")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
-     * })
-     */
-    private $parent;
 
     /**
      * The PLN for the property
@@ -74,18 +52,9 @@ class PlnProperty implements GetPlnInterface
      */
     private $pln;
 
-    /**
-     * The children of the property.
-     *
-     * @ORM\OneToMany(targetEntity="PlnProperty", mappedBy="parent")
-     * @var ArrayCollection
-     */
-    private $children;
-
     public function __construct()
     {
-        $this->children = new ArrayCollection();
-        $this->isList = false;
+		$this->propertyValue = array();
     }
 
     /**
@@ -129,16 +98,18 @@ class PlnProperty implements GetPlnInterface
      */
     public function setPropertyValue($propertyValue)
     {
-        if (is_array($propertyValue)) {
-            $this->isList = true;
-            $this->propertyValue = serialize($propertyValue);
-        } else {
-            $this->isList = false;
-            $this->propertyValue = $propertyValue;
-        }
-
+		if(is_string($propertyValue)) {
+			$this->propertyValue = array($propertyValue);
+		} else {
+			$this->propertyValue = $propertyValue;
+		}
         return $this;
     }
+	
+	public function addPropertyValue($propertyValue) {
+		$this->propertyValue[] = $propertyValue;
+		return $this;
+	}
 
     /**
      * Get propertyValue
@@ -147,10 +118,10 @@ class PlnProperty implements GetPlnInterface
      */
     public function getPropertyValue()
     {
-        if ($this->isList) {
-            return unserialize($this->propertyValue);
-        }
-        return $this->propertyValue;
+		if( ! $this->isList()) {
+			return $this->propertyValue[0];
+		}
+		return $this->propertyValue;
     }
 
     /**
@@ -160,43 +131,7 @@ class PlnProperty implements GetPlnInterface
      */
     public function isList()
     {
-        return $this->isList;
-    }
-
-    /**
-     * Set parent
-     *
-     * @param PlnProperty $parent
-     * @return PlnProperty
-     */
-    public function setParent(PlnProperty $parent = null)
-    {
-        $this->parent = $parent;
-        if ($parent !== null) {
-            $parent->addChild($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get parent
-     *
-     * @return PlnProperty
-     */
-    public function getParent()
-    {
-        return $this->parent;
-    }
-
-    /**
-     * Return true if the property has a parent.
-     *
-     * @return boolean
-     */
-    public function hasParent()
-    {
-        return $this->parent !== null;
+        return count($this->propertyValue) > 1;
     }
 
     /**
@@ -223,46 +158,4 @@ class PlnProperty implements GetPlnInterface
         return $this->pln;
     }
 
-    /**
-     * Add children
-     *
-     * @param PlnProperty $children
-     * @return PlnProperty
-     */
-    public function addChild(PlnProperty $children)
-    {
-        $this->children[] = $children;
-
-        return $this;
-    }
-
-    /**
-     * Remove children
-     *
-     * @param PlnProperty $children
-     */
-    public function removeChild(PlnProperty $children)
-    {
-        $this->children->removeElement($children);
-    }
-
-    /**
-     * Get children
-     *
-     * @return Collection
-     */
-    public function getChildren()
-    {
-        return $this->children;
-    }
-
-    /**
-     * Return true if the property has children.
-     *
-     * @return boolean
-     */
-    public function hasChildren()
-    {
-        return $this->children->count() > 0;
-    }
 }

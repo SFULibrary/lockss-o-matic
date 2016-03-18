@@ -4,6 +4,7 @@ namespace LOCKSSOMatic\ImportExportBundle\Command;
 
 use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
+use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Entity\PlnProperty;
@@ -63,77 +64,52 @@ class PLNImportCommand extends ContainerAwareCommand
                 'Local file path to the lockss.xml file'
             );
     }
-
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+	
+	public function execute(InputInterface $input, OutputInterface $output) {
         $activityLog = $this->getContainer()->get('activity_log');
         $activityLog->disable();
-
-        /** @var Pln $pln */
+		
         $id = $input->getArgument('id');
         $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
         if ($pln === null) {
-            $this->logger->critical("Cannot find PLN {$id}");
-            exit;
+			throw new Exception("Cannot find pln {$id}");
         }
-        $this->output = $output;
+		
+		$xml = simplexml_load_file($input->getArgument('file'));
+		$this->importProperties($pln, $xml);
+		
+		$this->em->flush();		
+		$activityLog->enable();
+	}
+	
+	public function importProperties(Pln $pln, SimpleXMLElement $xml, $prefix = '') {
+		foreach($xml->children() as $node) {
+			switch($node->getName()) {
+				case 'property':
+					$name = $node['name'];
+					if($node['value']) {
+						$property = new PlnProperty();
+						$property->setPln($pln);
+						$this->em->persist($property);
+						$property->setPropertyKey("{$prefix}{$name}");
+						$property->setPropertyValue((string)$node['value']);
+					} else {
+						$this->importProperties($pln, $node, "{$prefix}{$name}.");
+					}
+					break;
+				case 'list':
+					$property = new PlnProperty();
+					$property->setPln($pln);
+					$this->em->persist($property);
+					$property->setPropertyKey(rtrim($prefix, '.'));
+					foreach($node->children() as $value) {
+						$property->addPropertyValue((string)$value);
+					}
+					break;
+				default:
+					$this->importProperties($pln, $node, $prefix);
+			}
+		}
+	}
 
-        $xml = simplexml_load_file($input->getArgument('file'));
-        $root = $xml->xpath('/lockss-config/property');
-        $this->importProperties($pln, $root[0]);
-        $this->em->flush();
-        $this->em->clear();
-        $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);        $this->importBoxes($pln);
-
-        $this->em->flush();
-        $activityLog->enable();
-    }
-    
-    private function importBoxes(Pln $pln) {
-        $boxDefs = $pln->getProperty('id.initialV3PeerList');
-        foreach ($boxDefs->getPropertyValue() as $def) {
-            $matches = array();
-            preg_match('/^(\w+):\[(\d+\.\d+\.\d+\.\d+)\]:(\d+)$/', $def, $matches);
-            $box = new Box();
-            $box->setProtocol($matches[1]);
-            $box->setIpAddress($matches[2]);
-            $box->setPort($matches[3]);
-            $box->setPln($pln);
-            $box->setHostname(gethostbyaddr($box->getIpAddress()));
-            $this->em->persist($box);
-        }
-    }
-
-    private function getList(SimpleXMLElement $node)
-    {
-        $valueNodes = $node->xpath('value');
-        $values = array();
-        foreach ($valueNodes as $n) {
-            $values[] = (string)$n;
-        }
-        return $values;
-    }
-
-    private function importProperties(Pln $pln, SimpleXMLElement $node, PlnProperty $parent = null)
-    {
-        $property = new PlnProperty();
-        $property->setPropertyKey($node['name']);
-        $property->setParent($parent);
-        $property->setPln($pln);
-        $property->setPropertyValue($node['value']);
-        $this->em->persist($property);
-
-        foreach ($node->children() as $child) {
-            switch ($child->getName()) {
-                case 'property':
-                    $this->importProperties($pln, $child, $property);
-                    break;
-                case 'list':
-                    $property->setPropertyValue($this->getList($child));
-                    break;
-                default:
-                    $this->logger->notice("(probably harmless): Unknown node name: {$child->getName()}");
-            }
-        }
-    }
 }

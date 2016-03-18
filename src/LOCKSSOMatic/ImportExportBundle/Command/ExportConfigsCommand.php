@@ -95,28 +95,44 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 
     public function execute(InputInterface $input, OutputInterface $output) {
         $plnIds = $input->getArgument('pln');
-        foreach($this->getPlns($plnIds) as $pln) {			
+        foreach($this->getPlns($plnIds) as $pln) {
 			$this->exportPlugins($pln);
 			$this->exportManifests($pln);
 			$auUrls = $this->exportAus($pln);
-			$this->exportLockssXml($pln, $auUrls);
+			
+			$this->updatePeerList($pln);
+			$this->updateTitleDbs($pln, $auUrls);
+			$this->updatePluginRegistries($pln);
+			//$this->em->flush();
+
+			$this->exportLockssXml($pln);
         }
     }
 	
-	public function exportLockssXml(Pln $pln, $auUrls) {
+	public function updatePeerList(Pln $pln) {
 		$boxes = $pln->getBoxes();
-		$boxList = array();
+		$peerList = $pln->getProperty('org.lockss.id.initialV3PeerList');
+		$peerList->setPropertyValue(array()); // empty the property.
 		foreach($boxes as $box) {
-			$boxList[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
+			$peerList->addPropertyValue("{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}");
 		}
-		$boxProp = $pln->getProperty('id.initialV3PeerList');
-		if( ! $boxProp) {
-            throw new Exception("Cannot find id.initialV3PeerList in PLN properties.");
-        }
-		$boxProp->setPropertyValue($boxList);
-		$titleProp = $pln->getProperty('titleDbs');
-		$titleProp->setPropertyValue($auUrls);
-		$this->em->flush();
+	}
+	
+	public function updateTitleDbs(Pln $pln, $auUrls) {
+		$titleDbs = $pln->getProperty('org.lockss.titleDbs');
+		$titleDbs->setPropertyValue($auUrls);
+	}
+	
+	public function updatePluginRegistries(Pln $pln) {
+		$pluginRegistries = $pln->getProperty('org.lockss.plugin.registries');
+		$pluginRegistries->setPropertyValue($this->router->generate(
+				'configs_plugin_list', 
+				array('plnId' => $pln->getId()), 
+				Router::ABSOLUTE_URL)
+		);
+	}
+	
+	public function exportLockssXml(Pln $pln) {
 		$twig = $this->getContainer()->get('templating');
 		$xml = $twig->render(
 			'LOCKSSOMaticImportExportBundle:Configs:lockss.xml.twig', 

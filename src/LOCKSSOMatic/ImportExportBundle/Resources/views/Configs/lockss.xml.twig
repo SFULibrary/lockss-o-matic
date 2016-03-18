@@ -1,25 +1,15 @@
-{% macro pln_props(props) %}
-    {% import _self as macros %}
-    {% for prop in props %}
-        {% if prop.hasChildren() %}
-            <property name="{{prop.propertyKey}}">
-                {{ macros.pln_props(prop.children) }}
-            </property>
-        {% elseif prop.propertyValue is not iterable %}
-            <property name="{{prop.propertyKey}}" value="{{prop.propertyValue}}"/>
-        {% else %}
-            <property name="{{prop.propertyKey}}">
-                <list>
-                {% for v in prop.propertyValue %}
-                    <value>{{ v }}</value>
-                    {% endfor %}
-                </list>
-            </property>
-        {% endif %}
-    {% endfor %}
-{% endmacro %}
-
 <lockss-config>
-    {% import _self as macros %}
-    {{ macros.pln_props(pln.getRootPluginProperties()) }}
+{% for prop in pln.plnProperties %}
+	{%- if prop.isList() -%}
+	<property name="{{ prop.propertyKey }}">
+		<list>
+		{% for value in prop.getPropertyValue() -%}
+			<value>{{ value }}</value>
+		{% endfor -%}
+		</list>
+	</property>
+	{%- else -%}
+	<property name="{{ prop.propertyKey }}" value="{{ prop.getPropertyValue() }}"/>
+	{% endif -%}
+{% endfor -%}
 </lockss-config>
