@@ -90,7 +90,7 @@ class FilePaths {
 	
 	public function getLockssXmlFile(Pln $pln) {
 		$path = implode('/', array(
-			$this->getConfigsDir(),
+			$this->getConfigsDir($pln),
 			'properties',
 			'lockss.xml'
 		));

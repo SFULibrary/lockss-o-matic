@@ -125,7 +125,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 			)
 		);
 		$path = $this->fp->getLockssXmlFile($pln);
-		$this->fs->dumpFile($path);
+		$this->fs->dumpFile($path, $xml);
 	}
 	
 	public function exportPlugins(Pln $pln) {
