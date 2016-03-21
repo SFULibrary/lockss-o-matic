@@ -103,7 +103,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 			$this->updatePeerList($pln);
 			$this->updateTitleDbs($pln, $auUrls);
 			$this->updatePluginRegistries($pln);
-			//$this->em->flush();
+			$this->em->flush();
 
 			$this->exportLockssXml($pln);
         }
@@ -190,6 +190,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 				'plnId' => $pln->getId(),
 				'ownerId' => $provider->getContentOwner()->getId(),
 				'providerId' => $provider->getId(),
+				'filename' => "titledb_{$provider->getId()}.xml"
 			), Router::ABSOLUTE_URL);
 			$auUrls[] = $auUrl;
 			$auFile = $titleDir . '/' . basename($auUrl);

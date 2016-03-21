@@ -2,6 +2,7 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Controller;
 
+use LOCKSSOMatic\CoreBundle\Services\FilePaths;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use Monolog\Logger;
@@ -24,10 +25,16 @@ class ConfigsController extends Controller
      */
     private $logger;
     
+	/**
+	 * @var FilePaths
+	 */
+	private $fp;
+	
     public function setContainer(ContainerInterface $container = null)
     {
         parent::setContainer($container);
         $this->logger = $this->get('monolog.logger.lockss');
+		$this->fp = $container->get('lom.filepaths');
     }
     
 	private function checkIp(Request $request, Pln $pln) {
@@ -60,9 +67,8 @@ class ConfigsController extends Controller
 		$this->logger->notice("lockss.xml - {$plnId} - {$request->getClientIp()}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
-        $this->checkIp($request, $pln);
-        $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
-        $lockssPath = "{$webPath}/{$plnId}/lockss.xml";
+        $this->checkIp($request, $pln);		
+		$lockssPath = $this->fp->getLockssXmlFile($pln);
         if(! file_exists($lockssPath)) {
             throw new NotFoundHttpException("The requested file does not exist.");
         }
@@ -72,20 +78,21 @@ class ConfigsController extends Controller
     }
     
     /**
-     * @Route("/{plnId}/titledbs/{ownerId}/titledb_{providerId}.xml", name="configs_titledb")
+     * @Route("/{plnId}/titledbs/{ownerId}/{providerId}/{filename}", name="configs_titledb")
      */
     public function titleDbAction(Request $request, $plnId, $ownerId, $providerId, $filename) {
         $this->logger->notice("titledb - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$filename}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         $this->checkIp($request, $pln);
-        
-        $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
-        $titleDbPath = "{$webPath}/{$plnId}/titledbs/{$ownerId}/{$providerId}/{$filename}";
-        if(! file_exists($titleDbPath)) {
+
+		$provider = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($providerId);
+		$titleDbDir = $this->fp->getTitleDbDir($pln, $provider);
+		$titleDbFile = $titleDbDir . '/' . $filename;
+        if(! file_exists($titleDbFile)) {
             throw new NotFoundHttpException("The requested file {$filename} does not exist.");
         }
-        return new BinaryFileResponse($titleDbPath);
+        return new BinaryFileResponse($titleDbFile);
     }
     
     /**

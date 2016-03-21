@@ -12,7 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PlnProperty implements GetPlnInterface
 {
-    /**
+	
+	static $LIST_REQUIRED = array(
+		'org.lockss.id.initialV3PeerList',
+		'org.lockss.titleDbs',
+		'org.lockss.plugin.registries'
+	);
+
+
+	/**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
@@ -131,6 +139,9 @@ class PlnProperty implements GetPlnInterface
      */
     public function isList()
     {
+		if(in_array($this->propertyKey, self::$LIST_REQUIRED)) {
+			return true;
+		}
         return count($this->propertyValue) > 1;
     }
 

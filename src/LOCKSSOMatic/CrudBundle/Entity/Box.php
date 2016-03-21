@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="boxes")
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
  */
 class Box implements GetPlnInterface
 {
@@ -315,9 +314,6 @@ class Box implements GetPlnInterface
      * when saving the box via doctrine.
      *
      * @param boolean $force force the update, even if the ip is already known.
-     *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
      */
     public function resolveHostname($force = false)
     {
