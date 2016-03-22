@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>PlnProperty List</h1>
+    <p class="count">
+        Displaying all properties for {{ pln.name }}.
+    </p>
+{% endblock %}
+
+{% block body -%}
+
+    <div class="btn-toolbar pull-right">
+        <div class="btn-group">
+            <a href="" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</a>
+        </div>
+    </div>
+    <table class="table table-striped table-condensed table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Property key</th>
+                <th>Property value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td>{{ entity.propertyKey }}</td>
+                    <td>
+                        {% if entity.isList() %}
+                            <ol>
+                                {% for value in entity.getPropertyValue() %}
+                                    <li>{{ value }}</li>
+                                    {% endfor %}
+                            </ol>
+                        {% else %}
+                            {{ entity.getPropertyValue() }}
+                        {% endif %}
+                        </li>
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

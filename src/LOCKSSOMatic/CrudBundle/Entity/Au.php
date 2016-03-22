@@ -203,7 +203,7 @@ class Au implements GetPlnInterface
         $value = '';
         foreach($property->getChildren() as $prop) {
             if($prop->getPropertyKey() === 'value') {
-                $value = $prop->getPropertyValue();
+                $value = $prop->getValue();
             }
         }
         if ($encoded === false) {

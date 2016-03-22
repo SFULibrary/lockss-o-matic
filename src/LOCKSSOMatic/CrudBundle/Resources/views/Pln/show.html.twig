@@ -38,14 +38,14 @@
             <tr>
                 <th>Prop Config URL</th>
                 <td><a href="{{ url('configs_lockss', {'plnId': entity.id, '_format': 'xml' }) }}">
-                    {{ url('configs_lockss', {'plnId': entity.id, '_format': 'xml' }) }}
+                        {{ url('configs_lockss', {'plnId': entity.id, '_format': 'xml' }) }}
                     </a>
                 </td>
             </tr>
-			<tr>
-				<th>SWORD SD-IRI</th>
-				<td>{{ url('sword_service') }}</td>
-			</tr>
+            <tr>
+                <th>SWORD SD-IRI</th>
+                <td>{{ url('sword_service') }}</td>
+            </tr>
         </tbody>
     </table>
 
@@ -72,21 +72,21 @@
     </table>
 
     <h2>All Properties</h2>
-<ul>
-{% for prop in entity.plnProperties %}
-	<li>
-		{{ prop.propertyKey }}:
-	{% if prop.isList() %}
-	<ul>
-		{% for value in prop.getPropertyValue() %}
-			<li>{{ value }}</li>
-		{% endfor %}
-	</ul>
-	{% else %}
-	{{ prop.getPropertyValue() }}
-	{% endif %}
-	</li>
-{% endfor %}
-</ul>
+    <ul>
+        {% for prop in entity.plnProperties %}
+            <li>
+                {{ prop.propertyKey }}:
+                {% if prop.isList() %}
+                    <ul>
+                        {% for value in prop.getPropertyValue() %}
+                            <li>{{ value }}</li>
+                            {% endfor %}
+                    </ul>
+                {% else %}
+                    {{ prop.getValue() }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}

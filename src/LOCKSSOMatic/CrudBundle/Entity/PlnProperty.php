@@ -124,12 +124,16 @@ class PlnProperty implements GetPlnInterface
      *
      * @return mixed
      */
-    public function getPropertyValue()
+    public function getValue()
     {
 		if(! $this->isList()) {
 			return $this->propertyValue[0];
 		}
 		return $this->propertyValue;
+    }
+    
+    public function getPropertyValue() {
+        return $this->propertyValue;
     }
 
     /**

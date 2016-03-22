@@ -49,7 +49,7 @@ class PlnTest extends AbstractTestCase
         $prop = $this->pln->getProperty('autumn');
         $this->assertNotNull($prop);
         $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\PlnProperty', $prop);
-        $this->assertEquals('lots of leaves', $prop->getPropertyValue());
+        $this->assertEquals('lots of leaves', $prop->getValue());
     }
 
     public function testGetRootPluginProperties()
@@ -64,6 +64,6 @@ class PlnTest extends AbstractTestCase
         $prop->setPropertyValue('very snowy.');
         $this->em->flush();
         $altered = $this->pln->getProperty('winter');
-        $this->assertEquals('very snowy.', $altered->getPropertyValue());
+        $this->assertEquals('very snowy.', $altered->getValue());
     }
 }

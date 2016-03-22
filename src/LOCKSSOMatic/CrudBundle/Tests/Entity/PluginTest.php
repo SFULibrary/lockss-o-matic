@@ -47,9 +47,9 @@ class PluginTest extends AbstractTestCase
         $props = $this->plugin->getPluginConfigParams();
         $this->assertEquals(2, count($props));
         $this->assertEquals($props[0]->getPropertyKey(), 'configparamdescr');
-        $this->assertNull($props[0]->getPropertyValue());
+        $this->assertNull($props[0]->getValue());
         $this->assertEquals($props[1]->getPropertyKey(), 'configparamdescr');
-        $this->assertNull($props[1]->getPropertyValue());
+        $this->assertNull($props[1]->getValue());
     }
 
     public function testGetDefinitionalProperties()
