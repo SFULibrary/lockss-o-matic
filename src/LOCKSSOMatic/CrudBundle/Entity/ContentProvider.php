@@ -13,7 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="content_providers")
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
  */
 class ContentProvider implements GetPlnInterface
 {
@@ -457,18 +456,5 @@ class ContentProvider implements GetPlnInterface
     public function __toString()
     {
         return $this->name;
-    }
-
-    /**
-     * Generate a UUID for the provider, if it needs one. Called automatically
-     * by doctrine.
-     *
-     * @ORM\PrePersist
-     */
-    public function generateUuid()
-    {
-        if ($this->uuid === null) {
-            $this->uuid = \J20\Uuid\Uuid::v4();
-        }
     }
 }

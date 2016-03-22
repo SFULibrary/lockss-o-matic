@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="content")
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
  */
 class Content implements GetPlnInterface
 {
@@ -351,9 +350,6 @@ class Content implements GetPlnInterface
         return $this->au;
     }
 
-    /**
-     * @ORM\PrePersist
-     */
     public function setDepositDate()
     {
         if ($this->dateDeposited === null) {

@@ -1,17 +1,17 @@
 <?php
 
-namespace LOCKSSOMatic\UserBundle\Entity;
-
 use DateTime;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
-use Doctrine\ORM\Mapping\PrePersist;
+use LOCKSSOMatic\UserBundle\Entity\Message;
+use LOCKSSOMatic\UserBundle\Entity\MessageRepository;
+use LOCKSSOMatic\UserBundle\Entity\User;
+use Symfony\Component\Security\Core\User\User as User2;
+
+namespace LOCKSSOMatic\UserBundle\Entity;
 
 /**
  * Message
  *
  * @ORM\Table()
- * @HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="MessageRepository")
  */
 class Message
@@ -26,11 +26,11 @@ class Message
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="messages")
+     * @ORM\ManyToOne(targetEntity="User2", inversedBy="messages")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      * })
-     * @var User
+     * @var User2
      */
     private $user;
 
@@ -55,6 +55,7 @@ class Message
     public function __construct()
     {
         $this->seen = false;
+        $this->created = new DateTime();
     }
 
     /**
@@ -114,15 +115,6 @@ class Message
     }
 
     /**
-     * Set created
-     * @PrePersist
-     */
-    public function setCreated()
-    {
-        $this->created = new DateTime();
-    }
-
-    /**
      * Get created
      *
      * @return DateTime
@@ -135,10 +127,10 @@ class Message
     /**
      * Set user
      *
-     * @param \LOCKSSOMatic\UserBundle\Entity\User $user
+     * @param User $user
      * @return Message
      */
-    public function setUser(\LOCKSSOMatic\UserBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
@@ -148,7 +140,7 @@ class Message
     /**
      * Get user
      *
-     * @return \LOCKSSOMatic\UserBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {

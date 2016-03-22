@@ -4,7 +4,6 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use LOCKSSOMatic\UserBundle\Entity\User;
 
@@ -13,7 +12,6 @@ use LOCKSSOMatic\UserBundle\Entity\User;
  *
  * @ORM\Table(name="deposits")
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
  */
 class Deposit implements GetPlnInterface
 {
@@ -262,12 +260,6 @@ class Deposit implements GetPlnInterface
         return $this->content;
     }
 
-    /**
-     * Set the date of the deposit. Called automatically, and set to the current
-     * timestamp.
-     *
-     * @ORM\PrePersist
-     */
     public function setDepositDate()
     {
         if ($this->dateDeposited === null) {

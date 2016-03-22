@@ -12,7 +12,6 @@ use Exception;
  *
  * @ORM\Table(name="aus")
  * @ORM\Entity(repositoryClass="AuRepository")
- * @ORM\HasLifecycleCallbacks()
  */
 class Au implements GetPlnInterface
 {

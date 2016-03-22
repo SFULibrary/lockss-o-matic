@@ -62,6 +62,7 @@ class DepositBuilder
 
         $deposit->setTitle((string) $title);
         $deposit->setUuid($id);
+        $deposit->setDepositDate();
 
         if ($this->em !== null) {
             $this->em->persist($deposit);
@@ -73,12 +74,12 @@ class DepositBuilder
     public function fromForm(Form $form, ContentProvider $provider)
     {
         $data = $form->getData();
-        $plugin = $provider->getPlugin();
         
         $deposit = new Deposit();
         $deposit->setTitle($data['title']);
         $deposit->setSummary($data['summary']);
         $deposit->setContentProvider($provider);
+        $deposit->setDepositDate();
 
         if ($data['uuid'] !== null && $data['uuid'] !== '') {
             $deposit->setUuid($data['uuid']);

@@ -81,6 +81,7 @@ class ContentBuilder
         $content->setChecksumValue($xml->attributes()->checksumValue);
         $content->setUrl(trim((string) $xml));
         $content->setRecrawl(true);
+        $content->setDepositDate();
 		$this->buildProperty($content, 'journalTitle', $xml->attributes('pkp', true)->journalTitle);
         $content->setTitle($xml->attributes('pkp', true)->journalTitle);
         if ($this->em !== null) {
@@ -102,7 +103,13 @@ class ContentBuilder
         $content->setChecksumValue($record['checksum value']);
         $content->setUrl($record['url']);
         $content->setRecrawl(true);
-        $content->setTitle("Generated Title");
+        if(array_key_exists('title', $record)) {
+            $content->setTitle($record['title']);
+        } else {
+            $content->setTitle("Generated Title");
+        }
+        $content->setDepositDate();
+
         if ($this->em !== null) {
             $this->em->persist($content);
         }
