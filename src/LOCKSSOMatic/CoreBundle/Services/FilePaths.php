@@ -134,7 +134,7 @@ class FilePaths {
 	public function getManifestPath(Au $au) {
 		$path = implode('/', array(
 			$this->getManifestDir($au->getPln(), $au->getContentprovider()),
-			$au->getId() . '.html'
+			'manifest_' . $au->getId() . '.html'
 		));
 		return $path;
 	}

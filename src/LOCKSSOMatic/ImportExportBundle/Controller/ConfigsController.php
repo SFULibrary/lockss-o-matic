@@ -98,16 +98,16 @@ class ConfigsController extends Controller
     /**
      * @Route("/{plnId}/manifests/{ownerId}/{providerId}/manifest_{auId}.html", name="configs_manifest")
      */
-    public function manifestAction(Request $request, $ownerId, $plnId, $providerId, $auId) {
-        $this->logger->notice("manifest - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$filename}");
+    public function manifestAction(Request $request, $plnId, $ownerId, $providerId, $auId) {
+        $this->logger->notice("manifest - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$auId}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         $this->checkIp($request, $pln);
         
-        $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
-        $manifestPath = "{$webPath}/{$plnId}/manifests/{$ownerId}/{$providerId}/{$filename}";
+		$au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->find($auId);
+        $manifestPath = $this->fp->getManifestPath($au);
         if(! file_exists($manifestPath)) {
-            throw new NotFoundHttpException("The requested file {$filename} does not exist.");
+            throw new NotFoundHttpException("The requested AU manifest $manifestPath does not exist.");
         }
         return new BinaryFileResponse($manifestPath);
     }

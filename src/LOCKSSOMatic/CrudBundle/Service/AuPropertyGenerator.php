@@ -141,7 +141,7 @@ class AuPropertyGenerator
 			if($property === 'manifest_url') {
 				$value = $this->router->generate('configs_manifest', array(
 					'plnId' => $au->getPln()->getId(),
-					'ownerId' => $au->getContentprovider()->getId(),
+					'ownerId' => $au->getContentprovider()->getContentOwner()->getId(),
 					'providerId' => $au->getContentprovider()->getId(),
 					'auId' => $au->getId(),
 				), Router::ABSOLUTE_URL);
