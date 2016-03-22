@@ -66,8 +66,8 @@ class PLNImportCommand extends ContainerAwareCommand
     }
 	
 	public function execute(InputInterface $input, OutputInterface $output) {
-        $activityLog = $this->getContainer()->get('activity_log');
-        $activityLog->disable();
+//        $activityLog = $this->getContainer()->get('activity_log');
+//        $activityLog->disable();
 		
         $id = $input->getArgument('id');
         $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
@@ -79,7 +79,7 @@ class PLNImportCommand extends ContainerAwareCommand
 		$this->importProperties($pln, $xml);
 		
 		$this->em->flush();		
-		$activityLog->enable();
+//		$activityLog->enable();
 	}
 	
 	public function importProperties(Pln $pln, SimpleXMLElement $xml, $prefix = '') {
