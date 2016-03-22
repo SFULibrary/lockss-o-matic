@@ -126,10 +126,10 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 	public function updatePluginRegistries(Pln $pln) {
 		$pluginRegistries = $pln->getProperty('org.lockss.plugin.registries');
 		$pluginRegistries->setPropertyValue($this->router->generate(
-				'configs_plugin_list', 
-				array('plnId' => $pln->getId()), 
-				Router::ABSOLUTE_URL)
-		);
+            'configs_plugin_list', 
+            array('plnId' => $pln->getId()), 
+            Router::ABSOLUTE_URL
+        ));
 	}
 	
 	public function exportLockssXml(Pln $pln) {

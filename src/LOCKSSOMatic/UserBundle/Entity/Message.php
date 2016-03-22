@@ -1,12 +1,12 @@
 <?php
 
+namespace LOCKSSOMatic\UserBundle\Entity;
+
 use DateTime;
 use LOCKSSOMatic\UserBundle\Entity\Message;
 use LOCKSSOMatic\UserBundle\Entity\MessageRepository;
 use LOCKSSOMatic\UserBundle\Entity\User;
-use Symfony\Component\Security\Core\User\User as User2;
-
-namespace LOCKSSOMatic\UserBundle\Entity;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Message
@@ -26,7 +26,7 @@ class Message
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User2", inversedBy="messages")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="messages")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      * })

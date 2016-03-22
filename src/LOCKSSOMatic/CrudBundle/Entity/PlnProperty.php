@@ -126,7 +126,7 @@ class PlnProperty implements GetPlnInterface
      */
     public function getPropertyValue()
     {
-		if( ! $this->isList()) {
+		if(! $this->isList()) {
 			return $this->propertyValue[0];
 		}
 		return $this->propertyValue;
@@ -168,5 +168,4 @@ class PlnProperty implements GetPlnInterface
     {
         return $this->pln;
     }
-
 }
