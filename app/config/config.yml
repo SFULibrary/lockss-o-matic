@@ -39,7 +39,7 @@ twig:
     form:
         resources: ['bootstrap_3_horizontal_layout.html.twig']
     form_themes:
-        - 'LOCKSSOMaticCrudBundle:Form:fields.html.twig'
+        - ':Form:fields.html.twig'
     globals:
         lom_access: "@lom.access"
         lom_sitename: "%site_name%"

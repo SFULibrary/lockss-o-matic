@@ -88,23 +88,17 @@ class PLNImportCommand extends ContainerAwareCommand
 				case 'property':
 					$name = $node['name'];
 					if($node['value']) {
-						$property = new PlnProperty();
-						$property->setPln($pln);
-						$this->em->persist($property);
-						$property->setPropertyKey("{$prefix}{$name}");
-						$property->setPropertyValue((string)$node['value']);
+						$pln->setProperty("{$prefix}{$name}", (string)$node['value']);
 					} else {
 						$this->importProperties($pln, $node, "{$prefix}{$name}.");
 					}
 					break;
 				case 'list':
-					$property = new PlnProperty();
-					$property->setPln($pln);
-					$this->em->persist($property);
-					$property->setPropertyKey(rtrim($prefix, '.'));
+					$v = array();
 					foreach($node->children() as $value) {
-						$property->addPropertyValue((string)$value);
+						$v[] = (string)$value;
 					}
+					$pln->setProperty(rtrim($prefix, '.'), $v);
 					break;
 				default:
 					$this->importProperties($pln, $node, $prefix);

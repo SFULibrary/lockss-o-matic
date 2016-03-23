@@ -156,7 +156,6 @@ class AuPropertyGenerator
         $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journalTitle'), $root);
         $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
-		
         foreach ($content->getContentProperties() as $property) {
             $this->buildProperty($au, "attributes.pkppln." . $property->getPropertyKey(), $property->getPropertyValue(), $root);
         }

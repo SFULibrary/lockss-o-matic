@@ -15,324 +15,289 @@ use Doctrine\ORM\Mapping as ORM;
  * TODO: Add plugin.registries (list of URLs)
  * TODO: add plugin.titleDbs
  */
-class Pln
-{
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
+class Pln {
 
-    /**
-     * Name of the PLN.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
-     */
-    private $name;
+	private static $LIST_REQUIRED = array(
+		'org.lockss.id.initialV3PeerList',
+		'org.lockss.titleDbs',
+		'org.lockss.plugin.registries'
+	);
 
-    /**
-     * Description of the PLN
-     * 
-     * @var string
-     * @ORM\Column(name="description", type="text", nullable=true)
-     */
-    private $description;
-    
-    /**
-     * A list of all AUs in the PLN. Probably very large.
-     *
-     * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
-     * @var ArrayCollection|Au[]
-     */
-    private $aus;
+	/**
+	 * @var integer
+	 *
+	 * @ORM\Column(name="id", type="integer")
+	 * @ORM\Id
+	 * @ORM\GeneratedValue(strategy="IDENTITY")
+	 */
+	private $id;
 
-    /**
-     * List of boxes in the PLN.
-     *
-     * @ORM\OneToMany(targetEntity="Box", mappedBy="pln");
-     * @var Box[]
-     */
-    private $boxes;
+	/**
+	 * Name of the PLN.
+	 *
+	 * @var string
+	 *
+	 * @ORM\Column(name="name", type="string", length=255, nullable=false)
+	 */
+	private $name;
 
-    /**
-     * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
-     *
-     * @ORM\OneToMany(targetEntity="PlnProperty", mappedBy="pln");
-     * @var PlnProperty[]
-     */
-    private $plnProperties;
+	/**
+	 * Description of the PLN
+	 * 
+	 * @var string
+	 * @ORM\Column(name="description", type="text", nullable=true)
+	 */
+	private $description;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
-     * @var Pln[]
-     */
-    private $contentProviders;
+	/**
+	 * A list of all AUs in the PLN. Probably very large.
+	 *
+	 * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
+	 * @var ArrayCollection|Au[]
+	 */
+	private $aus;
 
-    public function __construct()
-    {
-        $this->aus = new ArrayCollection();
-        $this->boxes = new ArrayCollection();
-        $this->plnProperties = new ArrayCollection();
-        $this->contentProviders = new ArrayCollection();
-        $this->plugins = new ArrayCollection(); // $this->plugins is not defined here.
-    }
+	/**
+	 * List of boxes in the PLN.
+	 *
+	 * @ORM\OneToMany(targetEntity="Box", mappedBy="pln");
+	 * @var Box[]
+	 */
+	private $boxes;
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+	/**
+	 * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
+	 *
+	 * @ORM\Column(name="property", type="array", nullable=true);
+	 * @var array
+	 */
+	private $properties;
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return Pln
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
+	/**
+	 * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
+	 * @var Pln[]
+	 */
+	private $contentProviders;
 
-        return $this;
-    }
+	public function __construct() {
+		$this->aus = new ArrayCollection();
+		$this->boxes = new ArrayCollection();
+		$this->properties = array();
+		$this->contentProviders = new ArrayCollection();
+		$this->plugins = new ArrayCollection(); // $this->plugins is not defined here.
+	}
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
+	/**
+	 * Get id
+	 *
+	 * @return integer
+	 */
+	public function getId() {
+		return $this->id;
+	}
 
-    public function __toString()
-    {
-        return $this->name;
-    }
+	/**
+	 * Set name
+	 *
+	 * @param string $name
+	 * @return Pln
+	 */
+	public function setName($name) {
+		$this->name = $name;
 
-    /**
-     * Add aus
-     *
-     * @param Au $aus
-     * @return Pln
-     */
-    public function addAus(Au $aus)
-    {
-        $this->aus[] = $aus;
+		return $this;
+	}
 
-        return $this;
-    }
+	/**
+	 * Get name
+	 *
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
 
-    /**
-     * Remove aus
-     *
-     * @param Au $aus
-     */
-    public function removeAus(Au $aus)
-    {
-        $this->aus->removeElement($aus);
-    }
+	public function __toString() {
+		return $this->name;
+	}
 
-    /**
-     * Get aus
-     *
-     * @return ArrayCollection
-     */
-    public function getAus()
-    {
-        return $this->aus;
-    }
-    
-    public function countAus() {
-        return $this->aus->count();
-    }
+	/**
+	 * Add aus
+	 *
+	 * @param Au $aus
+	 * @return Pln
+	 */
+	public function addAus(Au $aus) {
+		$this->aus[] = $aus;
 
-    /**
-     * Add boxes
-     *
-     * @param Box $boxes
-     * @return Pln
-     */
-    public function addBox(Box $boxes)
-    {
-        $this->boxes[] = $boxes;
+		return $this;
+	}
 
-        return $this;
-    }
+	/**
+	 * Remove aus
+	 *
+	 * @param Au $aus
+	 */
+	public function removeAus(Au $aus) {
+		$this->aus->removeElement($aus);
+	}
 
-    /**
-     * Remove boxes
-     *
-     * @param Box $boxes
-     */
-    public function removeBox(Box $boxes)
-    {
-        $this->boxes->removeElement($boxes);
-    }
+	/**
+	 * Get aus
+	 *
+	 * @return ArrayCollection
+	 */
+	public function getAus() {
+		return $this->aus;
+	}
 
-    /**
-     * Get boxes
-     *
-     * @return ArrayCollection|Box[]
-     */
-    public function getBoxes()
-    {
-        return $this->boxes;
-    }
+	public function countAus() {
+		return $this->aus->count();
+	}
 
-    /**
-     * Add plnProperties
-     *
-     * @param PlnProperty $plnProperties
-     * @return Pln
-     */
-    public function addPlnProperty(PlnProperty $plnProperties)
-    {
-        $this->plnProperties[] = $plnProperties;
+	/**
+	 * Add boxes
+	 *
+	 * @param Box $boxes
+	 * @return Pln
+	 */
+	public function addBox(Box $boxes) {
+		$this->boxes[] = $boxes;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Remove plnProperties
-     *
-     * @param PlnProperty $plnProperties
-     */
-    public function removePlnProperty(PlnProperty $plnProperties)
-    {
-        $this->plnProperties->removeElement($plnProperties);
-    }
+	/**
+	 * Remove boxes
+	 *
+	 * @param Box $boxes
+	 */
+	public function removeBox(Box $boxes) {
+		$this->boxes->removeElement($boxes);
+	}
 
-    /**
-     * Get plnProperties
-     *
-     * @return PlnProperty[]
-     */
-    public function getPlnProperties()
-    {
-        return $this->plnProperties;
-    }
+	/**
+	 * Get boxes
+	 *
+	 * @return ArrayCollection|Box[]
+	 */
+	public function getBoxes() {
+		return $this->boxes;
+	}
 
-    /**
-     * PLN Properties are hierarchial, so get just the top-most properties.
-     *
-     * @return PlnProperty[]
-     */
-    public function getRootPluginProperties()
-    {
-        $properties = array();
-        foreach ($this->plnProperties as $p) {
-            if ($p->hasParent()) {
-                continue;
-            }
-            $properties[] = $p;
-        }
-        return $properties;
-    }
+	/**
+	 * Add plnProperties
+	 *
+	 * @param string $key
+	 * @param string $value
+	 * @return Pln
+	 */
+	public function setProperty($key, $value) {
+		$this->properties[$key] = $value;
+		return $this;
+	}
 
-    /**
-     * Find the property with the given name. If there are multiple properties
-     * with the same name, only the first is returned.
-     *
-     * @param type $name
-     * @return PlnProperty
-     */
-    public function getProperty($name, $asList = false)
-    {
-        $properties = array();
+	/**
+	 * Remove property
+	 *
+	 * @param string $key
+	 * @return Pln
+	 */
+	public function deleteProperty($key) {
+		unset($this->properties[$key]);
+		return $this;
+	}
 
-        foreach ($this->getPlnProperties() as $prop) {
-            if ($prop->getPropertyKey() === $name) {
-                $properties[] = $prop;
-            }
-        }
-        if($asList) {
-            return $properties;
-        }
-        if(count($properties) > 0) {
-            return $properties[0];
-        }
-        return null;
-    }
+	public function getPropertyKeys() {
+		return array_keys($this->properties);
+	}
 
-    /**
-     * Add contentProviders
-     *
-     * @param ContentProvider $contentProviders
-     * @return Pln
-     */
-    public function addContentProvider(ContentProvider $contentProviders)
-    {
-        $this->contentProviders[] = $contentProviders;
+	/**
+	 * Get plnProperties
+	 * @param string $key
+	 * @return string|array
+	 */
+	public function getProperty($key) {
+		if ( ! array_key_exists($key, $this->properties)) {
+			return null;
+		}
+		if(in_array($key, self::$LIST_REQUIRED) && !is_array($this->properties[$key])) {
+			return array($this->properties[$key]);
+		}
+		return $this->properties[$key];
+	}
+	
+	public function getProperties() {
+		return $this->properties;
+	}
+	
+	public function setProperties($properties) {
+		$this->properties = $properties;
+	}
 
-        return $this;
-    }
+	/**
+	 * Add contentProviders
+	 *
+	 * @param ContentProvider $contentProviders
+	 * @return Pln
+	 */
+	public function addContentProvider(ContentProvider $contentProviders) {
+		$this->contentProviders[] = $contentProviders;
 
-    /**
-     * Remove contentProviders
-     *
-     * @param ContentProvider $contentProviders
-     */
-    public function removeContentProvider(ContentProvider $contentProviders)
-    {
-        $this->contentProviders->removeElement($contentProviders);
-    }
+		return $this;
+	}
 
-    /**
-     * Get contentProviders
-     *
-     * @return ContentProvider[]
-     */
-    public function getContentProviders()
-    {
-        return $this->contentProviders;
-    }
+	/**
+	 * Remove contentProviders
+	 *
+	 * @param ContentProvider $contentProviders
+	 */
+	public function removeContentProvider(ContentProvider $contentProviders) {
+		$this->contentProviders->removeElement($contentProviders);
+	}
 
-    /**
-     * Get plugins
-     *
-     * @return Collection|Plugin[] 
-     */
-    public function getPlugins()
-    {
-        $plugins = array();
-        foreach($this->getContentProviders() as $provider) {
-            $plugin = $provider->getPlugin();
-            $plugins[$plugin->getIdentifier()] = $plugin;
-        }
-        return $plugins;
-    }
+	/**
+	 * Get contentProviders
+	 *
+	 * @return ContentProvider[]
+	 */
+	public function getContentProviders() {
+		return $this->contentProviders;
+	}
 
-    /**
-     * Set description
-     *
-     * @param string $description
-     * @return Pln
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
+	/**
+	 * Get plugins
+	 *
+	 * @return Collection|Plugin[] 
+	 */
+	public function getPlugins() {
+		$plugins = array();
+		foreach ($this->getContentProviders() as $provider) {
+			$plugin = $provider->getPlugin();
+			$plugins[$plugin->getIdentifier()] = $plugin;
+		}
+		return $plugins;
+	}
 
-        return $this;
-    }
+	/**
+	 * Set description
+	 *
+	 * @param string $description
+	 * @return Pln
+	 */
+	public function setDescription($description) {
+		$this->description = $description;
 
-    /**
-     * Get description
-     *
-     * @return string 
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
+		return $this;
+	}
+
+	/**
+	 * Get description
+	 *
+	 * @return string 
+	 */
+	public function getDescription() {
+		return $this->description;
+	}
+
 }

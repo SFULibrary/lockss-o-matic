@@ -177,17 +177,14 @@ class PlnController extends Controller
      */
     private function createEditForm(Pln $entity)
     {
-        $form = $this->createForm(
-            new PlnType(),
-            $entity,
+        $form = $this->createForm(new PlnType($entity), $entity,
             array(
-            'action' => $this->generateUrl(
+				'action' => $this->generateUrl(
                 'pln_update',
                 array('id' => $entity->getId())
             ),
             'method' => 'PUT',
-            )
-        );
+		));
 
         $form->add('submit', 'submit', array('label' => 'Update'));
 

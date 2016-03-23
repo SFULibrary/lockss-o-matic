@@ -73,18 +73,19 @@
 
     <h2>All Properties</h2>
     <ul>
-        {% for prop in entity.plnProperties %}
+        {% for key in entity.getPropertyKeys %}
             <li>
-                {{ prop.propertyKey }}:
-                {% if prop.isList() %}
-                    <ul>
-                        {% for value in prop.getPropertyValue() %}
-                            <li>{{ value }}</li>
-                            {% endfor %}
-                    </ul>
-                {% else %}
-                    {{ prop.getValue() }}
-                {% endif %}
+                {{ key }}:
+				{% set value = entity.getProperty(key) %}
+				{% if value is iterable %}
+					<ul>
+						{% for v in value %}
+							<li>{{ v }}</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					{{ value }}
+				{% endif %}
             </li>
         {% endfor %}
     </ul>
