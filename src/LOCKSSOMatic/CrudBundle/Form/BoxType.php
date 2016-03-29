@@ -25,8 +25,13 @@ class BoxType extends AbstractType
                 )
             ))
             ->add('port')
-            ->add('username')
-            ->add('password', 'password')
+            ->add('pln')
+            ->add('username', 'text', array(
+                'required' => false,
+            ))
+            ->add('password', 'password', array(
+                'required' => false,
+            ))
         ;
     }
     
