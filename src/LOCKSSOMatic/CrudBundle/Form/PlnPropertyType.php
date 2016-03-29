@@ -4,7 +4,6 @@ namespace LOCKSSOMatic\CrudBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PlnPropertyType extends AbstractType
 {
@@ -15,8 +14,8 @@ class PlnPropertyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('propertyKey')
-            ->add('propertyValue', 'collection', array(
+            ->add('key', 'text')
+            ->add('value', 'collection', array(
                 'type' => 'text',
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -26,16 +25,6 @@ class PlnPropertyType extends AbstractType
         ;
     }
     
-    /**
-     * @param OptionsResolverInterface $resolver
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\PlnProperty'
-        ));
-    }
-
     /**
      * @return string
      */

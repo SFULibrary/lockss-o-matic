@@ -217,11 +217,14 @@ class Pln {
 	 * @param string $key
 	 * @return string|array
 	 */
-	public function getProperty($key) {
+	public function getProperty($key, $forceArray = false) {
 		if ( ! array_key_exists($key, $this->properties)) {
 			return null;
 		}
-		if(in_array($key, self::$LIST_REQUIRED) && !is_array($this->properties[$key])) {
+		if(is_array($this->properties[$key])) {
+			return $this->properties[$key];
+		}
+		if(in_array($key, self::$LIST_REQUIRED) || $forceArray) {
 			return array($this->properties[$key]);
 		}
 		return $this->properties[$key];

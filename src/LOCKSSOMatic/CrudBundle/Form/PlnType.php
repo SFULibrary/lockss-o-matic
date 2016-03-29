@@ -37,7 +37,7 @@ class PlnType extends AbstractType
 				'required' => false,
 				'mapped' => false,
 				'label' => $key,
-				'data' => $this->pln->getProperty($key),
+				'data' => $this->pln->getProperty($key, true),
 			));
 		}
     }
