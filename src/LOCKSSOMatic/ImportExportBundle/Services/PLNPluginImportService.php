@@ -224,7 +224,6 @@ class PLNPluginImportService
 
     private static $importPropStrings = array(
         'au_name',
-		'au_start_url',
 		'au_permission_url',
 		'plugin_crawl_type',
         'plugin_identifier',
@@ -238,6 +237,7 @@ class PLNPluginImportService
 	
 	private static $importPropLists = array(
 		'au_crawlrules',
+		'au_start_url',
 	);
 
     /**

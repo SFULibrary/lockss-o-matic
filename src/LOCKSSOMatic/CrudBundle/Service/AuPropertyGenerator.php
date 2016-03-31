@@ -8,6 +8,7 @@ use Doctrine\Common\Util\Debug;
 use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
+use LOCKSSOMatic\CrudBundle\Entity\PluginProperty;
 use Monolog\Logger;
 use Symfony\Component\Routing\Router;
 
@@ -53,21 +54,9 @@ class AuPropertyGenerator
         $this->em->persist($property);
         return $property;
     }
-    
-    public function generateSymbol(Au $au, $name) {
-        $plugin = $au->getPlugin();
-        if (!$plugin) {
-            throw new Exception("Au requires plugin to generate $name.");
-        }
-        $property = $plugin->getProperty($name);
-        if ($property === null) {
-			$this->logger->error("{$plugin->getName()} is missing parameter {$name}.");
-			return null;
-        }
-		
-        $formatStr = null;
-        $matches = array();
-        $propertyValue = $property->getPropertyValue();
+	
+	private function generate(AU $au, $name, $propertyValue) {
+		$matches = array();
         if (preg_match('/^"([^"]*)"/', $propertyValue, $matches)) {
             $formatStr = $matches[1];
         } else {
@@ -85,6 +74,26 @@ class AuPropertyGenerator
                 $parts), true));
         }
         return vsprintf($formatStr, $values);
+	}
+    
+    public function generateSymbol(Au $au, $name) {
+        $plugin = $au->getPlugin();
+        if (!$plugin) {
+            throw new Exception("Au requires plugin to generate $name.");
+        }
+        $property = $plugin->getProperty($name);
+        if ($property === null) {
+			$this->logger->error("{$plugin->getName()} is missing parameter {$name}.");
+			return null;
+        }
+		if( ! $property->isList()) {
+			return $this->generate($au, $name, $property->getPropertyValue());
+		}
+		$values = array();
+		foreach($property->getPropertyValue() as $v) {
+			$values[] = $this->generate($au, $name, $v);
+		}
+		return $values;
     }
     
     /**

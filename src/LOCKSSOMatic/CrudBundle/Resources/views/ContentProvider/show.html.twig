@@ -56,7 +56,7 @@
             <tr>
                 <th>LOCKSS Plugin</th>
                 <td>
-					{% if entity.plugin %}
+					{% if entity.plugin is defined %}
 						<a href="{{ path('plugin_show', {'id': entity.plugin.id}) }}">{{ entity.plugin.name }}</a>
 					{% endif %}
 				</td>

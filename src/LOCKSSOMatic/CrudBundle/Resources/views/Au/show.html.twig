@@ -78,7 +78,14 @@
 						<dt>au_name</dt>
 						<dd>{{ prop_generator.generateSymbol(entity, 'au_name') }}</dd>
 						<dt>au_start_url</dt>
-						<dd>{{ prop_generator.generateSymbol(entity, 'au_start_url') }}</dd>
+							{% set symbol = prop_generator.generateSymbol(entity, 'au_start_url') %}
+							{% if symbol is iterable %}
+								{% for s in symbol %}
+									<dd><a href="{{s}}">{{ s }}</a></dd>
+								{% endfor %}
+							{% else %}
+								<dd><a href="{{symbol}}">{{symbol}}</a></dd>
+							{% endif %}
 					</dl>
 				</td>
             </tr>
