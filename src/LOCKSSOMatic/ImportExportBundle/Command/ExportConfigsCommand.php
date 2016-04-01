@@ -111,21 +111,19 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 	
 	public function updatePeerList(Pln $pln) {
 		$boxes = $pln->getBoxes();
-		$peerList = $pln->getProperty('org.lockss.id.initialV3PeerList');
-		$peerList->setPropertyValue(array()); // empty the property.
+		$list = array();
 		foreach($boxes as $box) {
-			$peerList->addPropertyValue("{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}");
+			$list[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
 		}
+		$pln->setProperty('org.lockss.id.initialV3PeerList', $list);
 	}
 	
 	public function updateTitleDbs(Pln $pln, $auUrls) {
-		$titleDbs = $pln->getProperty('org.lockss.titleDbs');
-		$titleDbs->setPropertyValue($auUrls);
+		$pln->setProperty('org.lockss.titleDbs', $auUrls);
 	}
 	
 	public function updatePluginRegistries(Pln $pln) {
-		$pluginRegistries = $pln->getProperty('org.lockss.plugin.registries');
-		$pluginRegistries->setPropertyValue($this->router->generate(
+		$pln->setProperty('org.lockss.plugin.registries', $this->router->generate(
             'configs_plugin_list', 
             array('plnId' => $pln->getId()), 
             Router::ABSOLUTE_URL

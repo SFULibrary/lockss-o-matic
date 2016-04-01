@@ -218,7 +218,7 @@ class Pln {
 	 * @return string|array
 	 */
 	public function getProperty($key, $forceArray = false) {
-		if ( ! array_key_exists($key, $this->properties)) {
+		if (! array_key_exists($key, $this->properties)) {
 			return null;
 		}
 		if(is_array($this->properties[$key])) {
@@ -302,5 +302,4 @@ class Pln {
 	public function getDescription() {
 		return $this->description;
 	}
-
 }

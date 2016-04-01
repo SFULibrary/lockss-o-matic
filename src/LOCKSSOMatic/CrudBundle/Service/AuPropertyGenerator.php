@@ -86,7 +86,7 @@ class AuPropertyGenerator
 			$this->logger->error("{$plugin->getName()} is missing parameter {$name}.");
 			return null;
         }
-		if( ! $property->isList()) {
+		if(! $property->isList()) {
 			return $this->generate($au, $name, $property->getPropertyValue());
 		}
 		$values = array();
@@ -140,12 +140,14 @@ class AuPropertyGenerator
         $root = $this->buildProperty($au, $rootName);
         
 		// config params are used to build other properties. So set them first.
+		$offset = 0;
         foreach ($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
             $grouping = $this->buildProperty($au, 'param.' . ($index+1), null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
             $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
+			$offset++;
         }
-        
+		
         foreach ($au->getPlugin()->getNonDefinitionalProperties() as $index => $property) {
 			if($property === 'manifest_url') {
 				$value = $this->router->generate('configs_manifest', array(
@@ -157,7 +159,7 @@ class AuPropertyGenerator
 			} else {
 				$value = $content->getContentPropertyValue($property);
 			}
-            $grouping = $this->buildProperty($au, 'param.' . ($index+1), null, $root);
+            $grouping = $this->buildProperty($au, 'param.' . ($index+1+$offset), null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
             $this->buildProperty($au, 'value', $value, $grouping);
         }

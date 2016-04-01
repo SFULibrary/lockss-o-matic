@@ -83,6 +83,7 @@ class ContentBuilder
         $content->setRecrawl(true);
         $content->setDepositDate();
 		$this->buildProperty($content, 'journalTitle', $xml->attributes('pkp', true)->journalTitle);
+		$this->buildProperty($content, 'publisher', $xml->attributes('pkp', true)->publisher);
         $content->setTitle($xml->attributes('pkp', true)->journalTitle);
         if ($this->em !== null) {
             $this->em->persist($content);

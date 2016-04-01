@@ -1,15 +1,16 @@
 <lockss-config>
-{% for prop in pln.plnProperties %}
-	{%- if prop.isList() -%}
-	<property name="{{ prop.propertyKey }}">
+{% for key in pln.getPropertyKeys %}	
+	{% set value = pln.getProperty(key) %}
+	{%- if value is iterable -%}
+	<property name="{{ key }}">
 		<list>
-		{% for value in prop.getPropertyValue() -%}
-			<value>{{ value }}</value>
+		{% for v in value -%}
+			<value>{{ v }}</value>
 		{% endfor -%}
 		</list>
 	</property>
 	{%- else -%}
-	<property name="{{ prop.propertyKey }}" value="{{ prop.getPropertyValue() }}"/>
+	<property name="{{ key }}" value="{{ value }}"/>
 	{% endif -%}
 {% endfor -%}
 </lockss-config>
