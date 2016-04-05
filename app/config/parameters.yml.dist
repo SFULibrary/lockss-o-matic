@@ -39,3 +39,9 @@ parameters:
     router.request_context.host: lom.dv
     router.request_context.scheme: http
     router.request_context.base_url: /web/app_dev.php
+
+    # Allow these ips to access lockss.xml, titles.xml, etc. even if they aren't
+    # known lockss boxes.
+    lockss_allowed_ips:
+        - 142.58.130.229/24
+

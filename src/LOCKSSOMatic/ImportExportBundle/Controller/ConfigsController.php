@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -45,9 +46,13 @@ class ConfigsController extends Controller
         if ($env === 'dev' || $env === 'test') {
             $allowed[] = '127.0.0.1';
         }
-        if(! in_array($ip, $allowed)) {
+        $allowed = array_merge($allowed, $this->container->getParameter('lockss_allowed_ips'));
+        IpUtils::checkIp($ip, $allowed);
+        if(! IpUtils::checkIp($ip, $allowed)) {
 			$logger->critical("Client IP {$ip} is not authorized for {$pln->getName()}({$pln->getId()}).");
             throw new AccessDeniedHttpException("Client IP {$ip} is not authorized for this PLN.");
+        } else {
+            $logger->notice("LOCKSS - {$ip} allowed for {$pln->getName()}({$pln->getId()}).");        
         }
     }
     
