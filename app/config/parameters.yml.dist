@@ -41,7 +41,7 @@ parameters:
     router.request_context.base_url: /web/app_dev.php
 
     # Allow these ips to access lockss.xml, titles.xml, etc. even if they aren't
-    # known lockss boxes.
+    # known lockss boxes. Either IP addresses or CIDRs.
     lockss_allowed_ips:
-        - 142.58.130.229/24
+        - 127.0.0.1
 

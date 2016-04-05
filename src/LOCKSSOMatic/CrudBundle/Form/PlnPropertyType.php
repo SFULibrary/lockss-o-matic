@@ -26,7 +26,7 @@ class PlnPropertyType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $data = array();
+        $data = array('');
         if($this->pln !== null && $this->id !== null) {
             $data = $this->pln->getProperty($this->id);
             if( ! is_array($data)) {
