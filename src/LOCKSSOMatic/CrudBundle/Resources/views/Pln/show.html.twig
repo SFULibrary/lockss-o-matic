@@ -76,16 +76,16 @@
         {% for key in entity.getPropertyKeys %}
             <li>
                 {{ key }}:
-				{% set value = entity.getProperty(key) %}
-				{% if value is iterable %}
-					<ul>
-						{% for v in value %}
-							<li>{{ v }}</li>
-						{% endfor %}
-					</ul>
-				{% else %}
-					{{ value }}
-				{% endif %}
+                {% set value = entity.getProperty(key) %}
+                {% if value is iterable %}
+                    <ul>
+                        {% for v in value %}
+                            <li>{{ v }}</li>
+                            {% endfor %}
+                    </ul>
+                {% else %}
+                    {{ value }}
+                {% endif %}
             </li>
         {% endfor %}
     </ul>

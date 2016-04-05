@@ -75,7 +75,7 @@ class BoxController extends ProtectedController
         if ($form->isValid()) {
             $entity->setPln($pln);
             $em = $this->getDoctrine()->getManager();
-			$entity->resolveHostname(true);
+			$entity->resolveHostname();
             $em->persist($entity);
             $em->flush();
 

@@ -1,0 +1,10 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>{{ status_code }} {{ status_text }}</h1>
+{% endblock %}
+
+{% block body -%}
+	<p>{{ status_code }} - {{ status_text }}. {% if exception is defined %}{{ exception.message }}{% endif %}</p>
+{% endblock %}

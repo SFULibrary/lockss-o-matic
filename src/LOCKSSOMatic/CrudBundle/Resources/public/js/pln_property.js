@@ -4,7 +4,7 @@
     function addValueForm($container, count) {
         var prototype = $container.data('prototype');
         var index = $container.data('count');
-        var $form = $(prototype.replace(/__name(?:__label)__/g, index));
+        var $form = $(prototype.replace(/__name__/g, index).replace(/label__/g, ''));
         $form.find('label').append(" <a href='#' class='delItem'>Remove</a>");
         $container.append($form);
         $('.delItem').click(function(e){

@@ -2,251 +2,215 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use LOCKSSOMatic\CrudBundle\Entity\PlnProperty;
+use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Form\PlnPropertyType;
 use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
- * PlnProperty controller.
- *
- * @Route("/pln/{plnId}/properties")
+ * PlnProperty Controller.
+ * 
+ * @Route("/pln/{plnId}/property")
  */
-class PlnPropertyController extends ProtectedController
+class PlnPropertyController extends Controller
 {
-
     /**
-     * Lists all PlnProperty entities.
-     *
-     * @Route("/", name="pln_properties")
+     * List all PLN properties.
+     * 
+     * @Route("/", name="plnproperty")
      * @Method("GET")
      * @Template()
      */
-    public function indexAction(Request $request, $plnId)
-    {
-        $pln = $this->get('doctrine')->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
-        if($pln === null) {
-            throw new BadRequestException("You must select a PLN.");
-        }
-        $this->requireAccess('MONITOR', $pln);
-
+    public function indexAction($plnId) {
         $em = $this->getDoctrine()->getManager();
-        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:PlnProperty e';
-        $query = $em->createQuery($dql);
-        $entities = $query->execute(); 
-        
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
         return array(
-            'pln' => $pln,
-            'entities' => $entities,
+            'pln' => $pln
         );
     }
-//    
-//    /**
-//     * Creates a new PlnProperty entity.
-//     *
-//     * @Route("/", name="plnproperty_create")
-//     * @Method("POST")
-//     * @Template("LOCKSSOMaticCrudBundle:PlnProperty:new.html.twig")
-//     */
-//    public function createAction(Request $request)
-//    {
-//        $entity = new PlnProperty();
-//        $form = $this->createCreateForm($entity);
-//        $form->handleRequest($request);
-//
-//        if ($form->isValid()) {
-//            $em = $this->getDoctrine()->getManager();
-//            $em->persist($entity);
-//            $em->flush();
-//
-//            return $this->redirect($this->generateUrl('plnproperty_show', array('id' => $entity->getId())));
-//        }
-//
-//        return array(
-//            'entity' => $entity,
-//            'form'   => $form->createView(),
-//        );
-//    }
-//
-//    /**
-//     * Creates a form to create a PlnProperty entity.
-//     *
-//     * @param PlnProperty $entity The entity
-//     *
-//     * @return \Symfony\Component\Form\Form The form
-//     */
-//    private function createCreateForm(PlnProperty $entity)
-//    {
-//        $form = $this->createForm(new PlnPropertyType(), $entity, array(
-//            'action' => $this->generateUrl('plnproperty_create'),
-//            'method' => 'POST',
-//        ));
-//
-//        $form->add('submit', 'submit', array('label' => 'Create'));
-//
-//        return $form;
-//    }
-//
-//    /**
-//     * Displays a form to create a new PlnProperty entity.
-//     *
-//     * @Route("/new", name="plnproperty_new")
-//     * @Method("GET")
-//     * @Template()
-//     */
-//    public function newAction()
-//    {
-//        $entity = new PlnProperty();
-//        $form   = $this->createCreateForm($entity);
-//
-//        return array(
-//            'entity' => $entity,
-//            'form'   => $form->createView(),
-//        );
-//    }
-//
-//    /**
-//     * Finds and displays a PlnProperty entity.
-//     *
-//     * @Route("/{id}", name="plnproperty_show")
-//     * @Method("GET")
-//     * @Template()
-//     */
-//    public function showAction($id)
-//    {
-//        $em = $this->getDoctrine()->getManager();
-//
-//        $entity = $em->getRepository('LOCKSSOMaticCrudBundle:PlnProperty')->find($id);
-//
-//        if (!$entity) {
-//            throw $this->createNotFoundException('Unable to find PlnProperty entity.');
-//        }
-//
-//        $deleteForm = $this->createDeleteForm($id);
-//
-//        return array(
-//            'entity'      => $entity,
-//            'delete_form' => $deleteForm->createView(),
-//        );
-//    }
-//
+    
     /**
-     * Displays a form to edit an existing PlnProperty entity.
-     *
+     * Create a new property.
+     * 
+     * @param Request $request
+     * @param int $plnId
+     * @Route("/", name="plnproperty_create")
+     * @Method("POST")
+     * @Template()
+     */
+    public function createAction(Request $request, $plnId) {
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $form = $this->createCreateForm($pln);
+        $form->handleRequest($request);
+        if($form->isValid()) {
+            $data = $form->getData();
+            $pln->setProperty($data['name'], $data['value']);
+            $this->addFlash('success', 'The property has been added.');
+            $em->flush();
+            return $this->redirect($this->generateUrl('plnproperty', array(
+                'plnId' => $pln->getId(),
+            )));
+        }
+        return array(
+           'pln' => $pln,
+           'form' => $form->createView(),
+        );
+   }
+    
+    /**
+     * Creates a form to create a new property for the Pln entity.
+     * 
+     * @param Pln $pln
+     * @return Form the form
+     */
+    private function createCreateForm(Pln $pln) {
+        $form = $this->createForm(
+            new PlnPropertyType($pln),
+            null,
+            array(
+                'action' => $this->generateUrl('plnproperty_create', array(
+                    'plnId' => $pln->getId(),
+                    'method' => 'POST'
+                ))
+            )
+        );
+        $form->add('submit', 'submit', array('label' => 'Create'));
+        return $form;
+    }
+    
+    /**
+     * Creates a form to create a box entity for the Pln entity.
+     * 
+     * @Route("/new", name="plnproperty_new")
+     * @Method("GET")
+     * @Template()
+     */
+    public function newAction($plnId) {
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $form = $this->createCreateForm($pln);
+        return array(
+            'pln' => $pln,
+            'form' => $form->createView(),
+        );
+    }
+    
+    /**
+     * Displays a form to edit an existing Pln Property.
+     * 
+     * @param int $plnId
+     * @param string $id
      * @Route("/{id}/edit", name="plnproperty_edit")
      * @Method("GET")
      * @Template()
      */
-    public function editAction($plnId, $id)
-    {
+    public function editAction($plnId, $id) {
         $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('LOCKSSOMaticCrudBundle:PlnProperty')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find PlnProperty entity.');
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        if ($pln === null) {
+            throw new BadRequestException();
         }
-
-        $editForm = $this->createEditForm($entity, $plnId);
-
+        $editForm = $this->createEditForm($pln, $id);
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $pln,
+            'edit_form' => $editForm->createView(),
         );
     }
-
+    
     /**
-    * Creates a form to edit a PlnProperty entity.
-    *
-    * @param PlnProperty $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createEditForm(PlnProperty $entity, $plnId)
-    {
-        $form = $this->createForm(new PlnPropertyType(), $entity, array(
-            'action' => $this->generateUrl('plnproperty_update', array(
-                'id' => $entity->getId(),
-                'plnId' => $plnId,
-            )),
-            'method' => 'PUT',
-        ));
-
+     * Creates a form to edit a property.
+     * 
+     * @param Pln $pln
+     * @param string $id
+     * @return Form the form
+     */
+    private function createEditForm(Pln $pln, $id) {
+        $form = $this->createForm(
+            new PlnPropertyType($pln, $id),
+            null,
+            array(
+                'action' => $this->generateUrl('plnproperty_update', array(
+                    'plnId' => $pln->getId(),
+                    'id' => $id
+                )),
+                'method' => 'PUT',
+            )
+        );        
         $form->add('submit', 'submit', array('label' => 'Update'));
-
-        return $form;
+        return $form;            
     }
-
+    
     /**
-     * Edits an existing PlnProperty entity.
-     *
+     * Edits a PLN property.
+     * 
+     * @param Request $request
+     * @param int $plnId
+     * @param string $id
      * @Route("/{id}", name="plnproperty_update")
      * @Method("PUT")
      * @Template("LOCKSSOMaticCrudBundle:PlnProperty:edit.html.twig")
      */
-    public function updateAction(Request $request, $plnId, $id)
-    {
+    public function updateAction(Request $request, $plnId, $id) {
         $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('LOCKSSOMaticCrudBundle:PlnProperty')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find PlnProperty entity.');
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        if ($pln === null) {
+            throw new BadRequestException();
         }
-
-        $editForm = $this->createEditForm($entity, $plnId);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isValid()) {
+        $form = $this->createEditForm($pln, $id);
+        $form->handleRequest($request);
+        $data = $form->getData();
+        if($form->isValid()) {
+            $data = $form->getData();
+            if(count($data['value']) > 1) {
+                $pln->setProperty($data['name'], $data['value']);
+            } else {
+                $pln->setProperty($data['name'], $data['value'][0]);
+            }
+            $this->addFlash('success', 'The property has been updated.');
             $em->flush();
-
-            return $this->redirect($this->generateUrl('plnproperty_edit', array('plnId' => $plnId, 'id' => $id)));
+            return $this->redirect($this->generateUrl('plnproperty', array(
+                'plnId' => $pln->getId(),
+            )));
         }
-
+        $this->addFlash('failure', 'The form was not valid.');
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $pln,
+            'edit_form' => $form->createView(),
         );
     }
     
-//    /**
-//     * Deletes a PlnProperty entity.
-//     *
-//     * @Route("/{id}/delete", name="plnproperty_delete")
-//     */
-//    public function deleteAction(Request $request, $id)
-//    {
-//            $em = $this->getDoctrine()->getManager();
-//            $entity = $em->getRepository('LOCKSSOMaticCrudBundle:PlnProperty')->find($id);
-//
-//            if (!$entity) {
-//                throw $this->createNotFoundException('Unable to find PlnProperty entity.');
-//            }
-//
-//            $em->remove($entity);
-//            $em->flush();
-//
-//        return $this->redirect($this->generateUrl('plnproperty'));
-//    }
-//
-//    /**
-//     * Creates a form to delete a PlnProperty entity by id.
-//     *
-//     * @param mixed $id The entity id
-//     *
-//     * @return \Symfony\Component\Form\Form The form
-//     */
-//    private function createDeleteForm($id)
-//    {
-//        return $this->createFormBuilder()
-//            ->setAction($this->generateUrl('plnproperty_delete', array('id' => $id)))
-//            ->setMethod('DELETE')
-//            ->add('submit', 'submit', array('label' => 'Delete'))
-//            ->getForm()
-//        ;
-//    }
+    /**
+     * Deletes a Pln Property
+     * @Route("/{id}/delete", name="plnproperty_delete")
+     */
+    public function deleteAction(Request $request, $plnId, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        if ($pln === null) {
+            throw new BadRequestException();
+        }
+        $pln->deleteProperty($id);
+        $em->flush();
+        $this->addFlash('success', 'The property has been removed.');
+        return $this->redirect($this->generateUrl('plnproperty', array(
+            'plnId' => $pln->getId(),
+        )));
+    }
+    
 }
