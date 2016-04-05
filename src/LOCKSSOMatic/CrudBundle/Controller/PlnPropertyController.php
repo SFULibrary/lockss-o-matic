@@ -57,7 +57,11 @@ class PlnPropertyController extends Controller
         $form->handleRequest($request);
         if($form->isValid()) {
             $data = $form->getData();
-            $pln->setProperty($data['name'], $data['value']);
+            if(count($data['value']) > 1) {
+                $pln->setProperty($data['name'], $data['value']);
+            } else {
+                $pln->setProperty($data['name'], $data['value'][0]);
+            }
             $this->addFlash('success', 'The property has been added.');
             $em->flush();
             return $this->redirect($this->generateUrl('plnproperty', array(
