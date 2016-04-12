@@ -216,5 +216,4 @@ class PlnPropertyController extends Controller
             'plnId' => $pln->getId(),
         )));
     }
-    
 }

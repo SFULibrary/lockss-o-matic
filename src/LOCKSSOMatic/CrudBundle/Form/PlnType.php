@@ -8,7 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PlnType extends AbstractType
-{	
+{
+	
     /**
      * @param FormBuilderInterface $builder
      * @param array $options

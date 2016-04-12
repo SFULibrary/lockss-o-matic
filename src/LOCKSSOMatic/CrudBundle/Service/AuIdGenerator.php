@@ -54,5 +54,4 @@ class AuIdGenerator {
 		}
 		return $this->fromContent($content);
 	}
-
 }

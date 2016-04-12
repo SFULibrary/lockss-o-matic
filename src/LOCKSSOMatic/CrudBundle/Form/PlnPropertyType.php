@@ -29,7 +29,7 @@ class PlnPropertyType extends AbstractType
         $data = array('');
         if($this->pln !== null && $this->id !== null) {
             $data = $this->pln->getProperty($this->id);
-            if( ! is_array($data)) {
+            if(! is_array($data)) {
                 $data = array($data);
             }
         }
@@ -56,5 +56,4 @@ class PlnPropertyType extends AbstractType
     {
         return 'lockssomatic_crudbundle_plnproperty';
     }
-
 }
