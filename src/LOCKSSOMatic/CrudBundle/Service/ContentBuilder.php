@@ -51,6 +51,11 @@ class ContentBuilder {
 	 */
 	private $router;
 
+    /**
+     * @var AuIdGenerator
+     */
+    private $idGenerator;
+    
 	public function setLogger(Logger $logger) {
 		$this->logger = $logger;
 	}
@@ -62,6 +67,10 @@ class ContentBuilder {
 	public function setRouter(Router $router) {
 		$this->router = $router;
 	}
+
+    public function setAuIdGenerator(AuIdGenerator $idGenerator) {
+        $this->idGenerator = $idGenerator;
+    }
 
 	protected function buildProperty(Content $content, $key, $value) {
 		$contentProperty = new ContentProperty();

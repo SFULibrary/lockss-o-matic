@@ -26,7 +26,12 @@ class AuBuilder
     /**
      * @var AuPropertyGenerator
      */
-    private $generator;
+    private $propGenerator;
+    
+    /**
+     * @var AuIdGenerator
+     */
+    private $idGenerator;
     
     public function setLogger(Logger $logger)
     {
@@ -38,8 +43,12 @@ class AuBuilder
         $this->em = $registry->getManager();
     }
     
-    public function setPropertyGenerator(AuPropertyGenerator $generator) {
-        $this->generator = $generator;
+    public function setPropertyGenerator(AuPropertyGenerator $propGenerator) {
+        $this->propGenerator = $propGenerator;
+    }
+
+    public function setAuIdGenerator(AuIdGenerator $idGenerator) {
+        $this->idGenerator = $idGenerator;
     }
 
     /**
@@ -51,8 +60,8 @@ class AuBuilder
     public function fromContent(Content $content)
     {
         $au = new Au();
-        $au->addContent($content);        
-        $au->setAuid($content->generateAuid());
+        $au->addContent($content);
+        $au->setAuid($this->idGenerator->fromContent($content, false));
         $provider = $content->getDeposit()->getContentProvider();
 
         $au->setContentprovider($provider);
@@ -62,7 +71,7 @@ class AuBuilder
         $this->em->persist($au);
         $this->em->flush();
         
-        $this->generator->generateProperties($au);
+        $this->propGenerator->generateProperties($au);
         
         return $au;
     }

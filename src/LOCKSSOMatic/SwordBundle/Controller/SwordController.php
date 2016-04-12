@@ -173,7 +173,15 @@ class SwordController extends Controller
 
     private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin)
     {
-        foreach ($plugin->getDefinitionalProperties() as $property) {
+        $pluginId = $plugin->getPluginIdentifier();
+        $nondefinitionalCPDs = $this->container->getParameter('lom_nondefinitional_cpds');
+
+        foreach ($plugin->getDefinitionalProperties() as $property) {            
+            if(array_key_exists($pluginId, $nondefinitionalCPDs) &&
+                in_array($property, $nondefinitionalCPDs[$pluginId])) {
+                continue;
+            }
+            
             $nodes = $content->xpath("lom:property[@name='$property']");
             if (count($nodes) === 0) {
                 throw new BadRequestException("{$property} is a required property.");
@@ -250,13 +258,15 @@ class SwordController extends Controller
 
         $depositBuilder = $this->container->get('crud.builder.deposit');
         $contentBuilder = $this->container->get('crud.builder.content');
+        $idGenerator = $this->container->get('crud.au.idgenerator');
         $deposit = $depositBuilder->fromSimpleXML($atomEntry, $em);
         $deposit->setContentProvider($provider);
         foreach ($atomEntry->xpath('lom:content') as $node) {
             /** @var Content $content */
             $content = $contentBuilder->fromSimpleXML($node, $em);
             $content->setDeposit($deposit);
-            $auid = $content->generateAuid();
+            $auid = $idGenerator->fromContent($content, false);
+            
             $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
                 'auid' => $auid
             ));

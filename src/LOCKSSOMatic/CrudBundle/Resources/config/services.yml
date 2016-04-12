@@ -13,6 +13,7 @@ services:
         calls:
             - [ setLogger, ["@logger"] ]
             - [ setRegistry, ["@doctrine"] ]
+            - [ setAuIdGenerator, ["@crud.au.idgenerator"]]
 
     crud.builder.au:
         class: LOCKSSOMatic\CrudBundle\Service\AuBuilder
@@ -20,6 +21,7 @@ services:
             - [ setLogger, ["@logger"] ]
             - [ setRegistry, ["@doctrine"] ]
             - [ setPropertyGenerator, ["@crud.propertygenerator"]]
+            - [ setAuIdGenerator, ["@crud.au.idgenerator"]]
     
     crud.propertygenerator:
         class: LOCKSSOMatic\CrudBundle\Service\AuPropertyGenerator
@@ -33,4 +35,5 @@ services:
         calls:
             - [ setLogger, ["@logger"] ]
             - [ setRouter, ["@router"]]
+            - [ setNondefinitionalCPDs, ["%lom_nondefinitional_cpds%"]]
         

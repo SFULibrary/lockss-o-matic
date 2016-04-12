@@ -83,13 +83,14 @@ class SwordErrorListener
         if(! $this->controller[0] instanceof SwordController) {
             return;
         }
-
+        
+        $this->logger->critical($exception);
+        
         if ($exception instanceof ApiException) {
             $response = new Response();
             $response->headers->add($exception->getHeaders());
             $response->headers->set('Content-Type', 'text/xml');
             $response->setStatusCode($exception->getStatusCode());
-            $statusCode = $exception->getStatusCode();
             $response->setContent($this->templating->render(
                 'LOCKSSOMaticSwordBundle:Sword:exceptionDocument.xml.twig',
                 array(
