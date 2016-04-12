@@ -28,3 +28,9 @@ services:
             - [ setRegistry, ["@doctrine"] ]
             - [ setRouter, ["@router"]]
         
+    crud.au.idgenerator:
+        class: LOCKSSOMatic\CrudBundle\Service\AuIdGenerator
+        calls:
+            - [ setLogger, ["@logger"] ]
+            - [ setRouter, ["@router"]]
+        

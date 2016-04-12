@@ -415,32 +415,6 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Generate the AUid that this piece of content belongs in.
-     *
-     * @return string
-     */
-    public function generateAuid()
-    {
-        $plugin = $this->getDeposit()->getContentProvider()->getPlugin();
-        if ($plugin === null) {
-            return null;
-        }
-        $pluginKey = str_replace('.', '|', $plugin->getPluginIdentifier());
-        $auKey = '';
-        $propNames = $plugin->getDefinitionalProperties();
-        sort($propNames);
-
-        foreach ($propNames as $name) {
-            $auKey .= '&' . $name . '~' . $this->getContentPropertyValue(
-                $name,
-                true
-            );
-        }
-        $this->auid = $pluginKey . $auKey;
-        return $this->auid;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getPln()

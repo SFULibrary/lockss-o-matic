@@ -141,14 +141,13 @@ class AuPropertyGenerator
         
 		// config params are used to build other properties. So set them first.
 		$offset = 0;
-        foreach ($au->getPlugin()->getDefinitionalProperties() as $index => $property) {
-            $grouping = $this->buildProperty($au, 'param.' . ($index+1), null, $root);
-            $this->buildProperty($au, 'key', $property, $grouping);
-            $this->buildProperty($au, 'value', $content->getContentPropertyValue($property), $grouping);
-			$offset++;
-        }
 		
-        foreach ($au->getPlugin()->getNonDefinitionalProperties() as $index => $property) {
+		$properties = array_merge(
+			$au->getPlugin()->getDefinitionalProperties(), 
+			$au->getPlugin()->getNonDefinitionalProperties()
+		);
+		
+        foreach ($properties as $index => $property) {
 			if($property === 'manifest_url') {
 				$value = $this->router->generate('configs_manifest', array(
 					'plnId' => $au->getPln()->getId(),
@@ -167,6 +166,7 @@ class AuPropertyGenerator
         $this->buildProperty($au, 'journalTitle', $content->getContentPropertyValue('journalTitle'), $root);
         $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
+		$this->buildProperty($au, 'publisher', $content->getContentPropertyValue('publisher'), $root);
         foreach ($content->getContentProperties() as $property) {
             $this->buildProperty($au, "attributes.pkppln." . $property->getPropertyKey(), $property->getPropertyValue(), $root);
         }

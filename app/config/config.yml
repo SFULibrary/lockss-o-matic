@@ -44,6 +44,7 @@ twig:
         lom_access: "@lom.access"
         lom_sitename: "%site_name%"
         prop_generator: "@crud.propertygenerator"
+        auid_generator: "@crud.au.idgenerator"
 
 # Assetic Configuration
 assetic:

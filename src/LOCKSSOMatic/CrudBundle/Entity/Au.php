@@ -420,7 +420,7 @@ class Au implements GetPlnInterface
     /**
      * Get content
      *
-     * @return Collection
+     * @return Collection|Content[]
      */
     public function getContent()
     {

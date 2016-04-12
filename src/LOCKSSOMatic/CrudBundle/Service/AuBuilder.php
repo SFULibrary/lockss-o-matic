@@ -51,8 +51,8 @@ class AuBuilder
     public function fromContent(Content $content)
     {
         $au = new Au();
-        $au->setAuid($content->generateAuid());
         $au->addContent($content);        
+        $au->setAuid($content->generateAuid());
         $provider = $content->getDeposit()->getContentProvider();
 
         $au->setContentprovider($provider);
