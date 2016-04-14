@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
 use Doctrine\ORM\EntityManager;
+use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class DepositStatusCommand extends ContainerAwareCommand {
+class AuStatusCommand extends ContainerAwareCommand {
 
 	/**
 	 * @var EntityManager
@@ -45,8 +46,8 @@ class DepositStatusCommand extends ContainerAwareCommand {
 	private $idGenerator;
 
 	public function configure() {
-		$this->setName('lom:deposit:status');
-		$this->setDescription('Check that the deposits in LOCKSS have the same checksum.');
+		$this->setName('lom:au:status');
+		$this->setDescription('Check the status of the LOCKSS AUs');
 		$this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
 	}
 
@@ -78,16 +79,11 @@ class DepositStatusCommand extends ContainerAwareCommand {
 		}
 	}
 
-	protected function checkContent(Content $content) {
-		$this->logger->info("Checking content #{$content->getId()}");
-		$auid = $this->idGenerator->fromContent($content);
-		$checksumValue = $content->getChecksumValue();
-		$checksumType = $content->getChecksumType();
-
-		$checksumMatches = 0;
+	protected function checkAu(Au $au) {
+		$auid = $this->idGenerator->fromAu($au);
 		foreach ($this->boxes as $box) {
-			$url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/HasherService?wsdl";
-			$hasherClient = new SoapClient($url, array(
+			$url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl";
+			$statusClient = new SoapClient($url, array(
 				'soap_version' => SOAP_1_1,
 				'login' => $box->getUsername(),
 				'password' => $box->getPassword(),
@@ -95,29 +91,11 @@ class DepositStatusCommand extends ContainerAwareCommand {
 				'exceptions' => true,
 				'cache' => WSDL_CACHE_NONE,
 			));
-			$hashResponse = $hasherClient->hash(array(
-				'hasherParams' => array(
-					'recordFilterStream' => true,
-					'hashType' => 'V3File',
-					'algorithm' => $checksumType,
-					'url' => $content->getUrl(),
-					'auId' => $auid,
-			)));
-			if (property_exists($hashResponse->return, 'blockFileDataHandler')) {
-				$matches = array();
-				if (preg_match("/^([a-fA-F0-9]+)\s+http/m", $hashResponse->return->blockFileDataHandler, $matches)) {
-					$checksumValue = $matches[1];
-					if(strtoupper($checksumValue) === strtoupper($content->getChecksumValue())) {
-						$checksumMatches++;
-					} else {
-						$this->logger->warning("  box {$box->getId()} Checksum mismatch. Expected {$content->getChecksumValue()} Got {$checksumValue}");
-					}
-				}
-			} else {
-				$this->logger->error("Error from {$url}: {$hashResponse->return->errorMessage}");
-			}
+			$statusResponse = $statusClient->getAuStatus(array(
+				'auId' => $auid,
+			));
+			print_r(get_object_vars($statusResponse->return));
 		}
-		return $checksumMatches;
 	}
 
 	protected function checkDeposit(Deposit $deposit) {
@@ -138,21 +116,10 @@ class DepositStatusCommand extends ContainerAwareCommand {
 	}
 
 	public function execute(InputInterface $input, OutputInterface $output) {
-		$pln = $this->getPlns();
+		$pln = $this->getPlns();		
 		$this->loadBoxes($pln);
-		foreach($pln->getContentProviders() as $provider) {
-			foreach($provider->getDeposits() as $deposit) {
-				if($deposit->getAgreement() == 1) {
-					continue;
-				}
-				$agreement = $this->checkDeposit($deposit);
-				$deposit->setAgreement($agreement);
-				$output->writeln("deposit: {$deposit->getId()} - {$agreement}");
-				if($input->getOption('dry-run')) {
-					continue;
-				}
-				$this->em->flush();				
-			}
+		foreach($pln->getAus() as $au) {
+			$this->checkAu($au);
 		}
 	}
 }

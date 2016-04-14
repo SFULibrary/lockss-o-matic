@@ -47,6 +47,15 @@ class Box implements GetPlnInterface
      * @ORM\Column(name="port", type="integer", nullable=false)
      */
     private $port;
+	
+	/**
+	 * The port to use for webservice requests - usually :80, but may be 
+	 * different for testing.
+	 *
+	 * @var integer
+	 * @ORM\Column(name="ws_port", type="integer", nullable=false) 
+	 */
+	private $webServicePort;
 
     /**
      * The box's IP address. The class will resolve it automatically from the
@@ -102,6 +111,7 @@ class Box implements GetPlnInterface
         $this->status = new ArrayCollection();
         $this->protocol = 'TCP';
         $this->port = 9729;
+		$this->webServicePort = 80;
     }
 
     /**
@@ -323,5 +333,28 @@ class Box implements GetPlnInterface
                 $this->ipAddress = $ip;
             }
         }
+    }
+
+    /**
+     * Set webServicePort
+     *
+     * @param integer $webServicePort
+     * @return Box
+     */
+    public function setWebServicePort($webServicePort)
+    {
+        $this->webServicePort = $webServicePort;
+
+        return $this;
+    }
+
+    /**
+     * Get webServicePort
+     *
+     * @return integer 
+     */
+    public function getWebServicePort()
+    {
+        return $this->webServicePort;
     }
 }

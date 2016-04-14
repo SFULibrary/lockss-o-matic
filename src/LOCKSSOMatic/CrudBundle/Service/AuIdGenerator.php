@@ -55,15 +55,16 @@ class AuIdGenerator {
             if( ! $lockssAuid && 
                 array_key_exists($pluginId, $this->nondefinitionalCPDs) &&
                 in_array($name, $this->nondefinitionalCPDs[$pluginId])) {
+				$this->logger->critical("Skipping {$name}");
                 continue;
             }
-            $auKey .= '&' . $name . '~' . $content->getContentPropertyValue(
-                $name,
-                true
-            );
+			$value = $content->getContentPropertyValue($name, true);
+			if( ! $value && $lockssAuid) {
+				$value = $content->getAu()->getAuPropertyValue($name, true);
+			}
+            $auKey .= '&' . $name . '~' . $value;
         }
         $id = $pluginKey . $auKey;
-        $this->logger->critical('winnder: ' . $id);
         return $id;
 	}
 	

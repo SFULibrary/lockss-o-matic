@@ -24,6 +24,10 @@
                 <th>Title</th>
                 <td>{{ entity.title }}</td>
             </tr>
+			<tr>
+				<th>Agreement</th>
+				<td>{{ "%2.1f"|format(entity.agreement * 100) }}%</td>
+			</tr>
             <tr>
                 <th>Summary</th>
                 <td>{{ entity.summary }}</td>

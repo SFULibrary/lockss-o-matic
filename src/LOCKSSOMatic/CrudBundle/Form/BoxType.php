@@ -29,6 +29,7 @@ class BoxType extends AbstractType
                 )
             ))
             ->add('port')
+			->add('webServicePort')
             ->add('pln')
             ->add('username', 'text', array(
                 'required' => false,

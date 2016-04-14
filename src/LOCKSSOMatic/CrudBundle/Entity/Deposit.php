@@ -41,6 +41,15 @@ class Deposit implements GetPlnInterface
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
      */
     private $title;
+	
+	/**
+	 * The agreement for the deposit's content URLs in the lockss boxes.
+	 *
+	 * @var double
+	 * 
+	 * @ORM\Column(name="agreement", type="float", nullable=true)
+	 */
+	private $agreement;
 
     /**
      * A summary/description of the deposit.
@@ -297,5 +306,28 @@ class Deposit implements GetPlnInterface
     public function getPln()
     {
         return $this->getContentProvider()->getPln();
+    }
+
+    /**
+     * Set agreement
+     *
+     * @param string $agreement
+     * @return Deposit
+     */
+    public function setAgreement($agreement)
+    {
+        $this->agreement = $agreement;
+
+        return $this;
+    }
+
+    /**
+     * Get agreement
+     *
+     * @return string 
+     */
+    public function getAgreement()
+    {
+        return $this->agreement;
     }
 }
