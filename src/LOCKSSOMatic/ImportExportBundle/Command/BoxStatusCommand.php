@@ -2,10 +2,8 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
-use DateTime;
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
-use LOCKSSOMatic\CrudBundle\Entity\AuStatus;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
@@ -38,6 +36,11 @@ class AuStatusCommand extends ContainerAwareCommand {
 	private $boxes;
 
 	/**
+	 * @var int
+	 */
+	private $boxCount;
+	
+	/**
 	 * @var AuIdGenerator
 	 */
 	private $idGenerator;
@@ -57,6 +60,7 @@ class AuStatusCommand extends ContainerAwareCommand {
 
 	protected function loadBoxes(Pln $pln) {
 		$boxes = $pln->getBoxes();
+		$this->boxCount = count($boxes);
 		foreach ($boxes as $box) {
 			$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
 				'soap_version' => SOAP_1_1,
@@ -77,7 +81,6 @@ class AuStatusCommand extends ContainerAwareCommand {
 
 	protected function checkAu(Au $au) {
 		$auid = $this->idGenerator->fromAu($au);
-		$statuses = array();
 		foreach ($this->boxes as $box) {
 			$url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl";
 			$statusClient = new SoapClient($url, array(
@@ -91,16 +94,18 @@ class AuStatusCommand extends ContainerAwareCommand {
 			$statusResponse = $statusClient->getAuStatus(array(
 				'auId' => $auid,
 			));
-			$auStatus = new AuStatus();
-			$auStatus->setAu($au);
-			$auStatus->setBox($box);
-			$auStatus->setQueryDate(new DateTime());
-			$auStatus->setStatus(get_object_vars($statusResponse->return));
-			$statuses[] = $auStatus;
+			print_r(get_object_vars($statusResponse->return));
 		}
-		return $statuses;
 	}
 
+	protected function checkDeposit(Deposit $deposit) {
+		$matches = 0;
+		foreach ($deposit->getContent() as $content) {
+			$matches += $this->checkContent($content);
+		}
+		return $matches / (count($deposit->getContent()) * count($this->boxes));
+	}
+	
 	/**
 	 * @return Pln
 	 * @param array|null $plnIds
@@ -114,11 +119,7 @@ class AuStatusCommand extends ContainerAwareCommand {
 		$pln = $this->getPlns();		
 		$this->loadBoxes($pln);
 		foreach($pln->getAus() as $au) {
-			$statuses = $this->checkAu($au);
-			foreach($statuses as $status) {
-				$this->em->persist($status);
-			}
-			$this->em->flush();
+			$this->checkAu($au);
 		}
 	}
 }

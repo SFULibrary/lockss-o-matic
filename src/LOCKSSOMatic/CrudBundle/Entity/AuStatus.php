@@ -11,189 +11,189 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="au_status")
  * @ORM\Entity
  */
-class AuStatus implements GetPlnInterface
-{
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
+class AuStatus implements GetPlnInterface {
 
-    /**
-     * TODO - why isn't this a reference to the Box class?
-     * @var string
-     *
-     * @ORM\Column(name="box_hostname", type="string", length=255, nullable=false)
-     */
-    private $boxHostname;
+	/**
+	 * @var integer
+	 *
+	 * @ORM\Column(name="id", type="integer")
+	 * @ORM\Id
+	 * @ORM\GeneratedValue(strategy="IDENTITY")
+	 */
+	private $id;
 
-    /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=false)
-     */
-    private $queryDate;
+	/**
+	 * @var Box
+	 *
+	 * @ORM\ManyToOne(targetEntity="Box")
+	 * @ORM\JoinColumns({
+	 *   @ORM\JoinColumn(name="box_id", referencedColumnName="id")
+	 * })
+	 */
+	private $box;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="property_key", type="string", length=255, nullable=false)
-     */
-    private $propertyKey;
+	/**
+	 * @var DateTime
+	 *
+	 * @ORM\Column(name="query_date", type="datetime", nullable=false)
+	 */
+	private $queryDate;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
-     */
-    private $propertyValue;
+	/**
+	 * @var string
+	 *
+	 * @ORM\Column(name="status", type="array", nullable=true)
+	 */
+	private $status;
 
-    /**
-     * @var Au
-     *
-     * @ORM\ManyToOne(targetEntity="Au", inversedBy="auStatus")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", onDelete="CASCADE")
-     * })
-     */
-    private $au;
+	/**
+	 * @var Au
+	 *
+	 * @ORM\ManyToOne(targetEntity="Au", inversedBy="auStatus")
+	 * @ORM\JoinColumns({
+	 *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", onDelete="CASCADE")
+	 * })
+	 */
+	private $au;
 
+	/**
+	 * Get id
+	 *
+	 * @return integer
+	 */
+	public function getId() {
+		return $this->id;
+	}
 
+	/**
+	 * Set queryDate
+	 *
+	 * @param DateTime $queryDate
+	 * @return AuStatus
+	 */
+	public function setQueryDate($queryDate) {
+		$this->queryDate = $queryDate;
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+		return $this;
+	}
 
-    /**
-     * Set boxHostname
-     *
-     * @param string $boxHostname
-     * @return AuStatus
-     */
-    public function setBoxHostname($boxHostname)
-    {
-        $this->boxHostname = $boxHostname;
+	/**
+	 * Get queryDate
+	 *
+	 * @return DateTime
+	 */
+	public function getQueryDate() {
+		return $this->queryDate;
+	}
 
-        return $this;
-    }
+	/**
+	 * Set propertyValue
+	 *
+	 * @param string $status
+	 * @return AuStatus
+	 */
+	public function setStatus($status) {
+		$this->status = $status;
 
-    /**
-     * Get boxHostname
-     *
-     * @return string
-     */
-    public function getBoxHostname()
-    {
-        return $this->boxHostname;
-    }
+		return $this;
+	}
 
-    /**
-     * Set queryDate
-     *
-     * @param DateTime $queryDate
-     * @return AuStatus
-     */
-    public function setQueryDate($queryDate)
-    {
-        $this->queryDate = $queryDate;
+	/**
+	 * Get propertyValue
+	 *
+	 * @return string
+	 */
+	public function getStatus() {
+		return $this->status;
+	}
 
-        return $this;
-    }
+	/**
+	 * Set au
+	 *
+	 * @param Au $au
+	 * @return AuStatus
+	 */
+	public function setAu(Au $au = null) {
+		$this->au = $au;
+		$au->addAuStatus($this);
 
-    /**
-     * Get queryDate
-     *
-     * @return DateTime
-     */
-    public function getQueryDate()
-    {
-        return $this->queryDate;
-    }
+		return $this;
+	}
 
-    /**
-     * Set propertyKey
-     *
-     * @param string $propertyKey
-     * @return AuStatus
-     */
-    public function setPropertyKey($propertyKey)
-    {
-        $this->propertyKey = $propertyKey;
+	/**
+	 * Get au
+	 *
+	 * @return Au
+	 */
+	public function getAu() {
+		return $this->au;
+	}
 
-        return $this;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getPln() {
+		return $this->getAu()->getPln();
+	}
 
-    /**
-     * Get propertyKey
-     *
-     * @return string
-     */
-    public function getPropertyKey()
-    {
-        return $this->propertyKey;
-    }
+	/**
+	 * Set box
+	 *
+	 * @param Box $box
+	 * @return AuStatus
+	 */
+	public function setBox(Box $box = null) {
+		$this->box = $box;
 
-    /**
-     * Set propertyValue
-     *
-     * @param string $propertyValue
-     * @return AuStatus
-     */
-    public function setPropertyValue($propertyValue)
-    {
-        $this->propertyValue = $propertyValue;
+		return $this;
+	}
 
-        return $this;
-    }
+	/**
+	 * Get box
+	 *
+	 * @return Box 
+	 */
+	public function getBox() {
+		return $this->box;
+	}
 
-    /**
-     * Get propertyValue
-     *
-     * @return string
-     */
-    public function getPropertyValue()
-    {
-        return $this->propertyValue;
-    }
+	/**
+	 * @param string $name
+	 * @return string|null
+	 */
+	private function getStatusValue($name) {
+		if (!array_key_exists($name, $this->status)) {
+			return null;
+		}
+		return $this->status[$name];
+	}
 
-    /**
-     * Set au
-     *
-     * @param Au $au
-     * @return AuStatus
-     */
-    public function setAu(Au $au = null)
-    {
-        $this->au = $au;
-        $au->addAuStatus($this);
+	public function getContentSize() {
+		return $this->getStatusValue('contentSize');
+	}
 
-        return $this;
-    }
+	public function getDiskUsage() {
+		return $this->getStatusValue('diskUsage');
+	}
 
-    /**
-     * Get au
-     *
-     * @return Au
-     */
-    public function getAu()
-    {
-        return $this->au;
-    }
+	public function getLastCrawl() {
+		return $this->getStatusValue('lastCompletedCrawl');
+	}
+	
+	public function getLastCrawlResult() {
+		return $this->getStatusValue('lastCrawlResult');
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getPln()
-    {
-        return $this->getAu()->getPln();
-    }
+	public function getLastPoll() {
+		return $this->getStatusValue('lastPoll');
+	}
+
+	public function getLastPollResult() {
+		return $this->getStatusValue('lastPollResult');
+	}
+
+	public function getAuStatus() {
+		return $this->getStatusValue('status');
+	}
+
 }
