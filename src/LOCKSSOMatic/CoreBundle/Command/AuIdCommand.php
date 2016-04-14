@@ -66,7 +66,7 @@ class AuIdCommand extends ContainerAwareCommand
 		$idGenerator = $this->getContainer()->get('crud.au.idgenerator');
 		$propGenerator = $this->getContainer()->get('crud.propertygenerator');
 		
-		if( !$auids || count($auids) === 0) {
+		if(!$auids || count($auids) === 0) {
 			return;
 		}
 		

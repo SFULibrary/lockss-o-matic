@@ -52,14 +52,14 @@ class AuIdGenerator {
         sort($propNames);
 
         foreach ($propNames as $name) {
-            if( ! $lockssAuid && 
+            if(! $lockssAuid && 
                 array_key_exists($pluginId, $this->nondefinitionalCPDs) &&
                 in_array($name, $this->nondefinitionalCPDs[$pluginId])) {
 				$this->logger->critical("Skipping {$name}");
                 continue;
             }
 			$value = $content->getContentPropertyValue($name, true);
-			if( ! $value && $lockssAuid) {
+			if(! $value && $lockssAuid) {
 				$value = $content->getAu()->getAuPropertyValue($name, true);
 			}
             $auKey .= '&' . $name . '~' . $value;

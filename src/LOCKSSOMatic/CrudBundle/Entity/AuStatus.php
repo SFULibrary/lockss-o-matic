@@ -195,5 +195,4 @@ class AuStatus implements GetPlnInterface {
 	public function getAuStatus() {
 		return $this->getStatusValue('status');
 	}
-
 }

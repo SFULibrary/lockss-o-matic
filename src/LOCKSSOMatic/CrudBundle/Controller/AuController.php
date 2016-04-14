@@ -37,7 +37,9 @@ class AuController extends ProtectedController {
 		));
 		$paginator = $this->get('knp_paginator');
 		$entities = $paginator->paginate(
-				$query, $request->query->getInt('page', 1), 25
+            $query,
+            $request->query->getInt('page', 1),
+            25
 		);
 
 
@@ -86,5 +88,4 @@ class AuController extends ProtectedController {
 		$au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->find($id);
 		return array('entity' => $au);
 	}
-
 }

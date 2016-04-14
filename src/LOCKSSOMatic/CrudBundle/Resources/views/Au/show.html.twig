@@ -1,6 +1,28 @@
 {% extends '::base.html.twig' %}
 
 
+{% macro bytesToSize(bytes) %}
+	{% spaceless %}
+		{% set kilobyte = 1024 %}
+		{% set megabyte = kilobyte * 1024 %}
+		{% set gigabyte = megabyte * 1024 %}
+		{% set terabyte = gigabyte * 1024 %}
+
+		{% if bytes < kilobyte %}
+			{{ bytes ~ ' B' }}
+		{% elseif bytes < megabyte %}
+			{{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
+		{% elseif bytes < gigabyte %}
+			{{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
+		{% elseif bytes < terabyte %}
+			{{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
+		{% else %}
+			{{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
+		{% endif %}
+	{% endspaceless %}
+{% endmacro %}
+{% import _self as self %}
+
 {% block pageheader %}
     <h1>Au</h1>
 {% endblock %}
@@ -17,7 +39,7 @@
                         <ul>
                             {% for v in prop.propertyValue %}
                                 <li>{{ v }} </li>
-                            {% endfor %}
+								{% endfor %}
                         </ul>
                     {% else %}
                         {{ prop.propertyValue }}
@@ -47,14 +69,25 @@
                 <th>Au Name</th>
                 <td>{{ prop_generator.generateSymbol(entity, 'au_name') }}</td>
             </tr>
+			<tr>
+				<th>Recent Status</th>
+				<td>
+					{% set status = entity.auStatus.last() %}
+					<a href="{{ path('au_status', {id: entity.id }) }}">{{ status.getAuStatus() }}</a>
+				</td>
+			</tr>
             <tr>
                 <th>Managed</th>
                 <td>{{ entity.managed }}</td>
             </tr>
             <tr>
-                <th>Auid</th>
-                <td>{{ entity.auid }}</td>
+                <th>LOCKSSOMatic Auid</th>
+                <td>{{ entity.auid|preg_replace('/([~&])/', '$1&#8203;')|raw }}</td>
             </tr>
+			<tr>
+				<th>LOCKSS Auid</th>
+				<td>{{ auid_generator.fromAu(entity)|preg_replace('/([~&])/', '$1&#8203;')|raw }}</td>
+			</tr>
             <tr>
                 <th>Size (kB)</th>
                 <td>{{ entity.contentSize }}</td>
@@ -78,13 +111,13 @@
 						<dt>au_name</dt>
 						<dd>{{ prop_generator.generateSymbol(entity, 'au_name') }}</dd>
 						<dt>au_start_url</dt>
-							{% set symbol = prop_generator.generateSymbol(entity, 'au_start_url') %}
-							{% if symbol is iterable %}
-								{% for s in symbol %}
-									<dd><a href="{{s}}">{{ s }}</a></dd>
+						{% set symbol = prop_generator.generateSymbol(entity, 'au_start_url') %}
+						{% if symbol is iterable %}
+							{% for s in symbol %}
+								<dd><a href="{{s}}">{{ s }}</a></dd>
 								{% endfor %}
 							{% else %}
-								<dd><a href="{{symbol}}">{{symbol}}</a></dd>
+							<dd><a href="{{symbol}}">{{symbol}}</a></dd>
 							{% endif %}
 					</dl>
 				</td>
@@ -129,15 +162,21 @@
 
 	<h2>Recent Status</h2>
 	{% set status = entity.auStatus.last() %}
-	
+
 	<dl class="dl-horizontal">
 		<dt>Date Checked</dt><dd>{{ status.queryDate|date }}</dd>
 		<dt>Box</dt><dd>{{status.box.ipaddress}}/{{status.box.hostname }}</dd>
-		{% set details = status.status %}
-		{% for key in details|keys|sort %}
-			<dt>{{ key }}</dt>
-			<dd>{{ details[key] }}</dd>
-		{% endfor %}
+		<dt>Status</dt>
+		<dd>{{ status.getAuStatus() }}</dd>
+		<dt>Content Size</dt>
+		<dd>{{ self.bytesToSize(status.getContentSize()) }}</dd>
+		<dt>Disk Usage</dt>
+		<dd>{{ self.bytesToSize(status.getDiskUsage()) }}</dd>
+		<dt>Most Recent Crawl</dt>
+		<dd>{{ status.getLastCrawl()|date }} - {{ status.getLastCrawlResult() }}</dd>
+		<dt>Most Recent Poll</dt>
+		<dd>{{ status.getLastPoll()|date }} - {{ status.getLastPollResult() }}</dd>
+		<p class='text-right'><a href="{{ path('au_status', {'id': entity.id}) }}">Details</a></p>
 	</dl>
-	
+
 {% endblock %}
