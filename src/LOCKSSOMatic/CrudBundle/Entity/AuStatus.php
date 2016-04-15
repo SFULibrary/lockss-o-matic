@@ -177,19 +177,33 @@ class AuStatus implements GetPlnInterface {
 	}
 
 	public function getLastCrawl() {
-		return $this->getStatusValue('lastCompletedCrawl');
+		$poll = $this->getStatusValue('lastPoll');
+		if( ! $poll) {
+			return 0;
+		}
+		return $poll;
 	}
 	
 	public function getLastCrawlResult() {
-		return $this->getStatusValue('lastCrawlResult');
+		$result = $this->getStatusValue('lastCrawlResult');
+		if( ! $result) {
+			return "Never crawled";
+		}
 	}
 
 	public function getLastPoll() {
-		return $this->getStatusValue('lastPoll');
+		$poll = $this->getStatusValue('lastPoll');
+		if( ! $poll) {
+			return 0;
+		}
+		return $poll;
 	}
 
 	public function getLastPollResult() {
-		return $this->getStatusValue('lastPollResult');
+		$result = $this->getStatusValue('lastPollResult');
+		if( ! $result) {
+			return "Never polled";
+		}
 	}
 
 	public function getAuStatus() {

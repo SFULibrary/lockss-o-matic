@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
 use Doctrine\ORM\EntityManager;
+use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
@@ -38,7 +39,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
 	 * @var int
 	 */
 	private $boxCount;
-	
+
 	/**
 	 * @var AuIdGenerator
 	 */
@@ -61,19 +62,24 @@ class DepositStatusCommand extends ContainerAwareCommand {
 		$boxes = $pln->getBoxes();
 		$this->boxCount = count($boxes);
 		foreach ($boxes as $box) {
-			$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
-				'soap_version' => SOAP_1_1,
-				'login' => 'lockss-u',
-				'password' => 'lockss-p',
-				'trace' => true,
-				'exceptions' => true,
-				'cache' => WSDL_CACHE_NONE,
-			));
-			$readyResponse = $statusClient->isDaemonReady();
-			if($readyResponse) {
-				$this->boxes[] = $box;
-			} else {
-				$this->logger->error("Box {$box->getId()} is not ready.");
+			try {
+				$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
+					'soap_version' => SOAP_1_1,
+					'login' => 'lockss-u',
+					'password' => 'lockss-p',
+					'trace' => false,
+					'exceptions' => true,
+					'cache' => WSDL_CACHE_NONE,
+				));
+				$readyResponse = $statusClient->isDaemonReady();
+				if ($readyResponse) {
+					$this->boxes[] = $box;
+				} else {
+					$this->logger->error("Box {$box->getId()} is not ready.");
+				}
+			} catch (Exception $e) {
+				$this->logger->error($box->getHostname() . '/' . $box->getIpAddress() . ' - ' . $e->getMessage());
+				continue;
 			}
 		}
 	}
@@ -87,34 +93,37 @@ class DepositStatusCommand extends ContainerAwareCommand {
 		$checksumMatches = 0;
 		foreach ($this->boxes as $box) {
 			$url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/HasherService?wsdl";
-			$hasherClient = new SoapClient($url, array(
-				'soap_version' => SOAP_1_1,
-				'login' => $box->getUsername(),
-				'password' => $box->getPassword(),
-				'trace' => true,
-				'exceptions' => true,
-				'cache' => WSDL_CACHE_NONE,
-			));
-			$hashResponse = $hasherClient->hash(array(
-				'hasherParams' => array(
-					'recordFilterStream' => true,
-					'hashType' => 'V3File',
-					'algorithm' => $checksumType,
-					'url' => $content->getUrl(),
-					'auId' => $auid,
-			)));
-			if (property_exists($hashResponse->return, 'blockFileDataHandler')) {
-				$matches = array();
-				if (preg_match("/^([a-fA-F0-9]+)\s+http/m", $hashResponse->return->blockFileDataHandler, $matches)) {
-					$checksumValue = $matches[1];
-					if(strtoupper($checksumValue) === strtoupper($content->getChecksumValue())) {
-						$checksumMatches++;
-					} else {
-						$this->logger->warning("  box {$box->getId()} Checksum mismatch. Expected {$content->getChecksumValue()} Got {$checksumValue}");
+			try {
+				$hasherClient = new SoapClient($url, array(
+					'soap_version' => SOAP_1_1,
+					'login' => $box->getUsername(),
+					'password' => $box->getPassword(),
+					'exceptions' => true,
+					'cache' => WSDL_CACHE_NONE,
+				));
+				$hashResponse = $hasherClient->hash(array(
+					'hasherParams' => array(
+						'recordFilterStream' => true,
+						'hashType' => 'V3File',
+						'algorithm' => $checksumType,
+						'url' => $content->getUrl(),
+						'auId' => $auid,
+				)));
+				if (property_exists($hashResponse->return, 'blockFileDataHandler')) {
+					$matches = array();
+					if (preg_match("/^([a-fA-F0-9]+)\s+http/m", $hashResponse->return->blockFileDataHandler, $matches)) {
+						$checksumValue = $matches[1];
+						if (strtoupper($checksumValue) === strtoupper($content->getChecksumValue())) {
+							$checksumMatches++;
+						} else {
+							$this->logger->warning("  box {$box->getId()} Checksum mismatch. Expected {$content->getChecksumValue()} Got {$checksumValue}");
+						}
 					}
+				} else {
+					$this->logger->warning("Error from {$url}: {$hashResponse->return->errorMessage}");
 				}
-			} else {
-				$this->logger->error("Error from {$url}: {$hashResponse->return->errorMessage}");
+			} catch (Exception $e) {
+				$this->logger->error($box->getHostname() . '/' . $box->getIpAddress() . ' - ' . $e->getMessage());
 			}
 		}
 		return $checksumMatches;
@@ -127,7 +136,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
 		}
 		return $matches / (count($deposit->getContent()) * count($this->boxes));
 	}
-	
+
 	/**
 	 * @return Pln
 	 * @param array|null $plnIds
@@ -140,18 +149,23 @@ class DepositStatusCommand extends ContainerAwareCommand {
 	public function execute(InputInterface $input, OutputInterface $output) {
 		$pln = $this->getPlns();
 		$this->loadBoxes($pln);
-		foreach($pln->getContentProviders() as $provider) {
-			foreach($provider->getDeposits() as $deposit) {
-				if($deposit->getAgreement() == 1) {
+		if (count($this->boxes) === 0) {
+			$this->logger->critical("No boxes available to check deposit status.");
+			return;
+		}
+		foreach ($pln->getContentProviders() as $provider) {
+			foreach ($provider->getDeposits() as $deposit) {
+				if ($deposit->getAgreement() == 1) {
 					continue;
 				}
 				$agreement = $this->checkDeposit($deposit);
 				$deposit->setAgreement($agreement);
-				if($input->getOption('dry-run')) {
+				if ($input->getOption('dry-run')) {
 					continue;
 				}
-				$this->em->flush();				
+				$this->em->flush();
 			}
 		}
 	}
+
 }

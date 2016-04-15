@@ -59,6 +59,30 @@ class BoxStatusCommand extends ContainerAwareCommand {
 	protected function loadBoxes(Pln $pln) {
 		$boxes = $pln->getBoxes();
 		foreach ($boxes as $box) {
+			try {
+				$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
+					'soap_version' => SOAP_1_1,
+					'login' => 'lockss-u',
+					'password' => 'lockss-p',
+					'trace' => false,
+					'exceptions' => true,
+					'cache' => WSDL_CACHE_NONE,
+				));
+				$readyResponse = $statusClient->isDaemonReady();
+				if ($readyResponse) {
+					$this->boxes[] = $box;
+				} else {
+					$this->logger->error("Box {$box->getId()} is not ready.");
+				}
+			} catch (Exception $e) {
+				$this->logger->error($box->getHostname() . '/' . $box->getIpAddress() . ' - ' . $e->getMessage());
+				continue;
+			}
+		}
+	}
+
+	protected function checkBox(Box $box) {
+		try {
 			$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
 				'soap_version' => SOAP_1_1,
 				'login' => 'lockss-u',
@@ -67,29 +91,10 @@ class BoxStatusCommand extends ContainerAwareCommand {
 				'exceptions' => true,
 				'cache' => WSDL_CACHE_NONE,
 			));
-			$readyResponse = $statusClient->isDaemonReady();
-			if ($readyResponse) {
-				$this->boxes[] = $box;
-			} else {
-				$this->logger->error("Box {$box->getId()} is not ready.");
-			}
-		}
-	}
-
-	protected function checkBox(Box $box) {
-		$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
-			'soap_version' => SOAP_1_1,
-			'login' => 'lockss-u',
-			'password' => 'lockss-p',
-			'trace' => true,
-			'exceptions' => true,
-			'cache' => WSDL_CACHE_NONE,
-		));
-		try {
 			$spacesResponse = $statusClient->queryRepositorySpaces(array('repositorySpaceQuery' => 'SELECT *'));
 			return get_object_vars($spacesResponse->return);
 		} catch (Exception $e) {
-			print $e->getMessage();
+			$this->logger->error($box->getHostname() . '/' . $box->getIpAddress() . ' - ' . $e->getMessage());
 		}
 	}
 
@@ -105,13 +110,17 @@ class BoxStatusCommand extends ContainerAwareCommand {
 	public function execute(InputInterface $input, OutputInterface $output) {
 		$pln = $this->getPlns();
 		$this->loadBoxes($pln);
+		if (count($this->boxes) === 0) {
+			$this->logger->critical("No boxes available to check box status.");
+			return;
+		}
 		foreach ($pln->getBoxes() as $box) {
 			$status = $this->checkBox($box);
 			$boxStatus = new BoxStatus();
 			$boxStatus->setBox($box);
 			$boxStatus->setQueryDate(new DateTime());
 			$boxStatus->setStatus($status);
-			if($input->getOption('dry-run')) {
+			if ($input->getOption('dry-run')) {
 				continue;
 			}
 			$this->em->persist($boxStatus);

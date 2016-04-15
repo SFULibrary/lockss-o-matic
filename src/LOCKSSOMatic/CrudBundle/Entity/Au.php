@@ -443,7 +443,10 @@ class Au implements GetPlnInterface
     }
 	
 	public function status() {
-		return $this->auStatus->last()->getAuStatus();
+		if(count($this->auStatus) > 0) {
+			return $this->auStatus->last()->getAuStatus();
+		}
+		return null;
 	}
 
     public function __toString()
