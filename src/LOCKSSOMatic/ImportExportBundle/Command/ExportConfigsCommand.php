@@ -96,12 +96,14 @@ class ExportConfigsCommand extends ContainerAwareCommand {
     public function execute(InputInterface $input, OutputInterface $output) {
         $plnIds = $input->getArgument('pln');
         foreach($this->getPlns($plnIds) as $pln) {
+			$this->exportKeystore($pln);
 			$this->exportPlugins($pln);
 			$this->exportManifests($pln);
 			$auUrls = $this->exportAus($pln);
 			
 			$this->updatePeerList($pln);
 			$this->updateTitleDbs($pln, $auUrls);
+			$this->updateKeystoreLocation($pln);
 			$this->updatePluginRegistries($pln);
 			$this->em->flush();
 
@@ -130,6 +132,18 @@ class ExportConfigsCommand extends ContainerAwareCommand {
         ));
 	}
 	
+	public function updateKeystoreLocation(Pln $pln) {
+		if($pln->getKeystore()) {
+			$pln->setProperty('org.lockss.plugin.keystore.location', $this->router->generate(
+					'configs_plugin_keystore',
+					array('plnId' => $pln->getId()),
+					Router::ABSOLUTE_URL			
+				));
+		} else {
+			$pln->deleteProperty('org.lockss.plugin.keystore.location');
+		}
+	}
+	
 	public function exportLockssXml(Pln $pln) {
 		$twig = $this->getContainer()->get('templating');
 		$xml = $twig->render(
@@ -140,6 +154,18 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 		);
 		$path = $this->fp->getLockssXmlFile($pln);
 		$this->fs->dumpFile($path, $xml);
+	}
+	
+	public function exportKeystore(Pln $pln) {
+		$keystore = $pln->getKeystore();
+		if( ! $keystore) {
+			return;
+		}
+		$path = $this->fp->getPluginsExportDir($pln);
+		if(! $this->fs->exists($path)) {
+			$this->fs->mkdir($path);
+		}
+		$this->fs->copy($keystore->getPath(), "{$path}/lockss.keystore");
 	}
 	
 	public function exportPlugins(Pln $pln) {

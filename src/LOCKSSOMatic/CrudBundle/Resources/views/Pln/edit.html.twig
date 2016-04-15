@@ -6,6 +6,11 @@
 {% endblock %}
 
 {% block body -%}
+	
+	<p>The keystore for the plugin can only be changed on the 
+		<a href="{{ path('pln_keystore', {'id': entity.id}) }}">keystore 
+			page</a>.
+	</p>
 
     {{ form(edit_form) }}
 

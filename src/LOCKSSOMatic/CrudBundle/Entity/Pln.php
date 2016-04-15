@@ -64,6 +64,13 @@ class Pln {
 	 * @var Box[]
 	 */
 	private $boxes;
+	
+	/**
+	 * @var Keystore
+	 * @ORM\OneToOne(targetEntity="Keystore", inversedBy="pln")
+	 * @ORM\JoinColumn(name="keystore_id", referencedColumnName="id")
+	 */
+	private $keystore;
 
 	/**
 	 * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
@@ -302,4 +309,27 @@ class Pln {
 	public function getDescription() {
 		return $this->description;
 	}
+
+    /**
+     * Set keystore
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\Keystore $keystore
+     * @return Pln
+     */
+    public function setKeystore(\LOCKSSOMatic\CrudBundle\Entity\Keystore $keystore = null)
+    {
+        $this->keystore = $keystore;
+
+        return $this;
+    }
+
+    /**
+     * Get keystore
+     *
+     * @return \LOCKSSOMatic\CrudBundle\Entity\Keystore 
+     */
+    public function getKeystore()
+    {
+        return $this->keystore;
+    }
 }

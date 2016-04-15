@@ -6,6 +6,7 @@ use LOCKSSOMatic\CoreBundle\Services\FilePaths;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use Monolog\Logger;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -116,11 +117,37 @@ class ConfigsController extends Controller
         }
         return new BinaryFileResponse($manifestPath);
     }
+	
+	/**
+	 * @Route("/{plnId}/plugins/lockss.keystore", name="configs_plugin_keystore")
+	 * @Method("GET")
+	 * 
+	 * @param Request $request
+	 * @param type $plnId
+	 */
+	public function keystoreAction(Request $request, $plnId) {
+        $this->logger->notice("keystore - {$plnId} - {$request->getClientIp()}");
+        $em = $this->getDoctrine()->getManager();
+        $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        $this->checkIp($request, $pln);
+		$keystore = $pln->getKeystore();
+		if( ! $keystore) {
+            throw new NotFoundHttpException("The requested keystore does not exist.");
+		}
+        $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
+		$pluginsDir = $webPath . '/' . $plnId . '/plugins';
+		$keystorePath = $pluginsDir . '/lockss.keystore';
+		if( ! file_exists($keystorePath)) {
+            throw new NotFoundHttpException("The requested keystore does not exist.");
+		}
+		return new BinaryFileResponse($keystorePath);
+	}
     
     /**
      * @Route("/{plnId}/plugins/index.html", name="configs_plugin_list")
      * @Route("/{plnId}/plugins/")
      * @Route("/{plnId}/plugins")
+	 * @Method("GET")
      * @Template()
      * 
      * @param Request $request
@@ -138,6 +165,7 @@ class ConfigsController extends Controller
     
     /**
      * @Route("/{plnId}/plugins/{filename}", name="configs_plugin")
+	 * @Method("GET")
      * @param Request $request
      * @param $plnId
      * @param $filename
