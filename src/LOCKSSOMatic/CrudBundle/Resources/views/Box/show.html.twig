@@ -1,5 +1,26 @@
 {% extends '::base.html.twig' %}
 
+{% macro bytesToSize(bytes) %}
+	{% spaceless %}
+		{% set kilobyte = 1024 %}
+		{% set megabyte = kilobyte * 1024 %}
+		{% set gigabyte = megabyte * 1024 %}
+		{% set terabyte = gigabyte * 1024 %}
+
+		{% if bytes < kilobyte %}
+			{{ bytes ~ ' B' }}
+		{% elseif bytes < megabyte %}
+			{{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
+		{% elseif bytes < gigabyte %}
+			{{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
+		{% elseif bytes < terabyte %}
+			{{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
+		{% else %}
+			{{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
+		{% endif %}
+	{% endspaceless %}
+{% endmacro %}
+{% import _self as self %}
 
 {% block pageheader %}
     <h1>Box</h1>
@@ -52,4 +73,17 @@
             </tr>
         </tbody>
     </table>
+
+	<h2>Recent Status</h2>
+	{% set status = entity.status.last() %}
+	
+	<dl class="dl-horizontal">
+		<dt>Date Checked</dt><dd>{{ status.queryDate|date }}</dd>
+		<dt>Active AUs</dt><dd>{{ status.getActiveCount() }}</dd>
+		<dt>Disk space</dt><dd>{{ self.bytesToSize(status.getSize()) }}</dd>
+		<dt>Free space</dt><dd>{{ self.bytesToSize(status.getFree()) }}</dd>
+		<dt>Used space</dt><dd>{{ self.bytesToSize(status.getUsed()) }}</dd>
+	</dl>
+	<p class='text-right'><a href="{{ path('box_status', {'id': entity.id}) }}">Details</a></p>
+
 {% endblock %}

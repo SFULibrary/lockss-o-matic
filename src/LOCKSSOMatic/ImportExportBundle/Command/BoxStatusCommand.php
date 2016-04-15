@@ -2,9 +2,12 @@
 
 namespace LOCKSSOMatic\ImportExportBundle\Command;
 
+use DateTime;
 use Doctrine\ORM\EntityManager;
+use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
+use LOCKSSOMatic\CrudBundle\Entity\BoxStatus;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
@@ -18,7 +21,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class AuStatusCommand extends ContainerAwareCommand {
+class BoxStatusCommand extends ContainerAwareCommand {
 
 	/**
 	 * @var EntityManager
@@ -36,17 +39,12 @@ class AuStatusCommand extends ContainerAwareCommand {
 	private $boxes;
 
 	/**
-	 * @var int
-	 */
-	private $boxCount;
-	
-	/**
 	 * @var AuIdGenerator
 	 */
 	private $idGenerator;
 
 	public function configure() {
-		$this->setName('lom:au:status');
+		$this->setName('lom:box:status');
 		$this->setDescription('Check the status of the LOCKSS AUs');
 		$this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
 	}
@@ -60,7 +58,6 @@ class AuStatusCommand extends ContainerAwareCommand {
 
 	protected function loadBoxes(Pln $pln) {
 		$boxes = $pln->getBoxes();
-		$this->boxCount = count($boxes);
 		foreach ($boxes as $box) {
 			$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
 				'soap_version' => SOAP_1_1,
@@ -71,7 +68,7 @@ class AuStatusCommand extends ContainerAwareCommand {
 				'cache' => WSDL_CACHE_NONE,
 			));
 			$readyResponse = $statusClient->isDaemonReady();
-			if($readyResponse) {
+			if ($readyResponse) {
 				$this->boxes[] = $box;
 			} else {
 				$this->logger->error("Box {$box->getId()} is not ready.");
@@ -79,33 +76,23 @@ class AuStatusCommand extends ContainerAwareCommand {
 		}
 	}
 
-	protected function checkAu(Au $au) {
-		$auid = $this->idGenerator->fromAu($au);
-		foreach ($this->boxes as $box) {
-			$url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl";
-			$statusClient = new SoapClient($url, array(
-				'soap_version' => SOAP_1_1,
-				'login' => $box->getUsername(),
-				'password' => $box->getPassword(),
-				'trace' => true,
-				'exceptions' => true,
-				'cache' => WSDL_CACHE_NONE,
-			));
-			$statusResponse = $statusClient->getAuStatus(array(
-				'auId' => $auid,
-			));
-			print_r(get_object_vars($statusResponse->return));
+	protected function checkBox(Box $box) {
+		$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
+			'soap_version' => SOAP_1_1,
+			'login' => 'lockss-u',
+			'password' => 'lockss-p',
+			'trace' => true,
+			'exceptions' => true,
+			'cache' => WSDL_CACHE_NONE,
+		));
+		try {
+			$spacesResponse = $statusClient->queryRepositorySpaces(array('repositorySpaceQuery' => 'SELECT *'));
+			return get_object_vars($spacesResponse->return);
+		} catch (Exception $e) {
+			print $e->getMessage();
 		}
 	}
 
-	protected function checkDeposit(Deposit $deposit) {
-		$matches = 0;
-		foreach ($deposit->getContent() as $content) {
-			$matches += $this->checkContent($content);
-		}
-		return $matches / (count($deposit->getContent()) * count($this->boxes));
-	}
-	
 	/**
 	 * @return Pln
 	 * @param array|null $plnIds
@@ -116,10 +103,20 @@ class AuStatusCommand extends ContainerAwareCommand {
 	}
 
 	public function execute(InputInterface $input, OutputInterface $output) {
-		$pln = $this->getPlns();		
+		$pln = $this->getPlns();
 		$this->loadBoxes($pln);
-		foreach($pln->getAus() as $au) {
-			$this->checkAu($au);
+		foreach ($pln->getBoxes() as $box) {
+			$status = $this->checkBox($box);
+			$boxStatus = new BoxStatus();
+			$boxStatus->setBox($box);
+			$boxStatus->setQueryDate(new DateTime());
+			$boxStatus->setStatus($status);
+			if($input->getOption('dry-run')) {
+				continue;
+			}
+			$this->em->persist($boxStatus);
+			$this->em->flush();
 		}
 	}
+
 }

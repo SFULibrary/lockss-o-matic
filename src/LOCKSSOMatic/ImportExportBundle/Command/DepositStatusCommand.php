@@ -147,7 +147,6 @@ class DepositStatusCommand extends ContainerAwareCommand {
 				}
 				$agreement = $this->checkDeposit($deposit);
 				$deposit->setAgreement($agreement);
-				$output->writeln("deposit: {$deposit->getId()} - {$agreement}");
 				if($input->getOption('dry-run')) {
 					continue;
 				}

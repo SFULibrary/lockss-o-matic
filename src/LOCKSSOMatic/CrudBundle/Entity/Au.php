@@ -441,6 +441,10 @@ class Au implements GetPlnInterface
         }
         return $size;
     }
+	
+	public function status() {
+		return $this->auStatus->last()->getAuStatus();
+	}
 
     public function __toString()
     {

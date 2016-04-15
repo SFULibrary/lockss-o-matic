@@ -1,0 +1,74 @@
+{% extends '::base.html.twig' %}
+
+{% macro bytesToSize(bytes) %}
+	{% spaceless %}
+		{% set kilobyte = 1024 %}
+		{% set megabyte = kilobyte * 1024 %}
+		{% set gigabyte = megabyte * 1024 %}
+		{% set terabyte = gigabyte * 1024 %}
+
+		{% if bytes < kilobyte %}
+			{{ bytes ~ ' B' }}
+		{% elseif bytes < megabyte %}
+			{{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
+		{% elseif bytes < gigabyte %}
+			{{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
+		{% elseif bytes < terabyte %}
+			{{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
+		{% else %}
+			{{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
+		{% endif %}
+	{% endspaceless %}
+{% endmacro %}
+{% import _self as self %}
+
+{% block pageheader %}
+    <h1>Box Status</h1>
+	<p>Displaying status queries for <a href="{{ path('box_show', {'id': entity.id}) }}">{{ entity.hostname }}/{{entity.ipAddress}}:{{entity.webServicePort}}</a></p>
+{% endblock %}
+
+{% block body -%}
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('au') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+        </div>
+    </div>
+
+	{% for status in entity.status|reverse %}
+		<h2>{{ status.queryDate|date }}</h2>
+
+	
+	<dl class="dl-horizontal">
+		<dt>Date Checked</dt><dd>{{ status.queryDate|date }}</dd>
+		<dt>Active AUs</dt><dd>{{ status.getActiveCount() }}</dd>
+		<dt>Disk space</dt><dd>{{ self.bytesToSize(status.getSize()) }}</dd>
+		<dt>Free space</dt><dd>{{ self.bytesToSize(status.getFree()) }}</dd>
+		<dt>Used space</dt><dd>{{ self.bytesToSize(status.getUsed()) }}</dd>
+	</dl>
+		
+		<p class='text-right'><a href="#" class="details-toggle" data-autoggle="status_{{ status.id}}">Details</a></p>
+		
+		<dl id="status_{{ status.id}}" class="status-details dl-horizontal" data-box="{{ status.box.ipaddress }}">
+			{% set details = status.status %}
+			{% for key in details|keys|sort %}
+				<dt>{{ key }}</dt>
+				<dd>{{ details[key] }}</dd>
+			{% endfor %}
+		</dl>		
+	{% endfor %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts '@LOCKSSOMaticCrudBundle/Resources/public/js/box_status.js' %}
+      <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block stylesheets %}
+	{% stylesheets '@LOCKSSOMaticCrudBundle/Resources/public/css/box_status.css' %}
+	<link rel='stylesheet' href='{{ asset_url }}'>
+	{% endstylesheets %}
+{% endblock %}

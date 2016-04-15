@@ -329,4 +329,18 @@ class BoxController extends ProtectedController
                 ->getForm()
         ;
     }
+
+	/**
+	 * Displays status entites for an AU.
+	 * 
+	 * @param int $id
+	 * @Route("/{id}/status", name="box_status")
+	 * @Method("GET")
+	 * @Template()
+	 */
+	public function statusAction($id) {
+		$em = $this->getDoctrine()->getManager();
+		$au = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
+		return array('entity' => $au);
+	}
 }
