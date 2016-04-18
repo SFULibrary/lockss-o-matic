@@ -1,8 +1,9 @@
 {% extends '::base.html.twig' %}
 
 {% macro bytesToSize(bytes) %}
+	{# LOCKSS reports box status in 1Kb units, not in bytes. #}
 	{% spaceless %}
-		{% set kilobyte = 1024 %}
+		{% set kilobyte = 1 %}
 		{% set megabyte = kilobyte * 1024 %}
 		{% set gigabyte = megabyte * 1024 %}
 		{% set terabyte = gigabyte * 1024 %}
