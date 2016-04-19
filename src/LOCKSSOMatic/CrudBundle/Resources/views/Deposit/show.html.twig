@@ -24,16 +24,24 @@
                 <th>Title</th>
                 <td>{{ entity.title }}</td>
             </tr>
-			<tr>
-				<th>Agreement</th>
-				<td>{{ "%2.1f"|format(entity.agreement * 100) }}%</td>
-			</tr>
+            <tr>
+                <th>Agreement</th>
+                <td>{{ "%2.1f"|format(entity.agreement * 100) }}%</td>
+            </tr>
             <tr>
                 <th>Summary</th>
                 <td>{{ entity.summary }}</td>
             </tr>
             <tr>
-                <th>Datedeposited</th>
+                <th>Deposit reciept</th>
+                <td><a href="{{ url('sword_reciept', {'depositUuid': entity.uuid, 'providerUuid': entity.contentProvider.uuid}) }}">{{ url('sword_reciept', {'depositUuid': entity.uuid, 'providerUuid': entity.contentProvider.uuid}) }}</a></td>
+            </tr>
+            <tr>
+                <th>Deposit Statement</th>
+                <td><a href="{{ url('sword_statement', {'depositUuid': entity.uuid, 'providerUuid': entity.contentProvider.uuid}) }}">{{ url('sword_statement', {'depositUuid': entity.uuid, 'providerUuid': entity.contentProvider.uuid}) }}</a></td>
+            </tr>
+            <tr>
+                <th>Date deposited</th>
                 <td>{{ entity.dateDeposited|date('Y-m-d H:i:s') }}</td>
             </tr>
         </tbody>

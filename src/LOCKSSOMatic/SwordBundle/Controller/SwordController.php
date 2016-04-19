@@ -116,8 +116,8 @@ class SwordController extends Controller
     {
         if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
             throw new BadRequestException(
-                'Deposit or Content Provider incorrect. The '
-                . 'requested deposit does not belong to the requested content provider.'
+            'Deposit or Content Provider incorrect. The '
+            . 'requested deposit does not belong to the requested content provider.'
             );
         }
     }
@@ -135,7 +135,7 @@ class SwordController extends Controller
             ->findOneBy(array(
             'url'     => $url,
             'deposit' => $deposit,
-            ));
+        ));
         if ($content === null) {
             throw new BadRequestException('Content item not in database: ' . $url);
         }
@@ -176,12 +176,12 @@ class SwordController extends Controller
         $pluginId = $plugin->getPluginIdentifier();
         $nondefinitionalCPDs = $this->container->getParameter('lom_nondefinitional_cpds');
 
-        foreach ($plugin->getDefinitionalProperties() as $property) {            
-            if(array_key_exists($pluginId, $nondefinitionalCPDs) &&
+        foreach ($plugin->getDefinitionalProperties() as $property) {
+            if (array_key_exists($pluginId, $nondefinitionalCPDs) &&
                 in_array($property, $nondefinitionalCPDs[$pluginId])) {
                 continue;
             }
-            
+
             $nodes = $content->xpath("lom:property[@name='$property']");
             if (count($nodes) === 0) {
                 throw new BadRequestException("{$property} is a required property.");
@@ -266,7 +266,7 @@ class SwordController extends Controller
             $content = $contentBuilder->fromSimpleXML($node, $em);
             $content->setDeposit($deposit);
             $auid = $idGenerator->fromContent($content, false);
-            
+
             $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
                 'auid' => $auid
             ));
@@ -286,8 +286,7 @@ class SwordController extends Controller
             array(
             'providerUuid' => $provider->getUuid(),
             'depositUuid'  => $deposit->getUuid()
-            ),
-            true
+            ), true
         );
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(Response::HTTP_CREATED);
@@ -314,28 +313,24 @@ class SwordController extends Controller
         if ($provider->getPln()) {
             $boxes = $provider->getPln()->getBoxes();
         }
-        $content = $deposit->getContent();
 
-        $status = array();
-        foreach ($content as $item) {
-            foreach ($boxes as $box) {
-                $status[$item->getId()][$box->getId()] = 'unknown';
-                // TODO get the items status from the box via http request
-                // OR get it from the database if we do that.
-            }
+        if ($deposit->getAgreement() == 1) {
+            $state = 'agreement';
+            $stateDescription = 'LOCKSS boxes have harvested the content and agree on the checksum.';
+        } else {
+            $state = 'inProgress';
+            $stateDescription = 'LOCKSS boxes have not completed harvesting the content.';
         }
+
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
         return $this->render(
-            'LOCKSSOMaticSwordBundle:Sword:statement.xml.twig',
-            array(
-                'contentProvider' => $provider,
-                'boxes'           => $boxes,
-                'deposit'         => $deposit,
-                'content'         => $content,
-                'status'          => $status,
-                ),
-            $response
+                'LOCKSSOMaticSwordBundle:Sword:statement.xml.twig',
+                array(
+                'state'            => $state,
+                'stateDescription' => $stateDescription,
+                'deposit'          => $deposit,
+                ), $response
         );
     }
 
@@ -396,8 +391,7 @@ class SwordController extends Controller
             array(
             'providerUuid' => $provider->getUuid(),
             'depositUuid'  => $deposit->getUuid()
-            ),
-            true
+            ), true
         );
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(Response::HTTP_OK);
@@ -421,12 +415,12 @@ class SwordController extends Controller
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
         return $this->render(
-            'LOCKSSOMaticSwordBundle:Sword:depositView.xml.twig',
-            array(
+                'LOCKSSOMaticSwordBundle:Sword:depositView.xml.twig',
+                array(
                 'contentProvider' => $provider,
                 'deposit'         => $deposit,
-                ),
-            $response
+                ), $response
         );
     }
+
 }

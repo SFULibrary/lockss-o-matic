@@ -145,12 +145,12 @@ monolog:
     channels: ['sword', 'lockss']
     handlers:
         sword:
-            type: stream
+            type: rotating_file
             channels: ['sword']
             path: "%kernel.logs_dir%/sword.log"
             level: notice
         lockss:
-            type: stream
+            type: rotating_file
             channels: ['lockss']
             path: "%kernel.logs_dir%/lockss.log"
             level: notice

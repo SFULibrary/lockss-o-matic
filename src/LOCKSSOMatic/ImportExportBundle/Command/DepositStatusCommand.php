@@ -11,8 +11,8 @@ use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
 use Monolog\Logger;
 use SoapClient;
-use SoapFault;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -48,7 +48,10 @@ class DepositStatusCommand extends ContainerAwareCommand {
 	public function configure() {
 		$this->setName('lom:deposit:status');
 		$this->setDescription('Check that the deposits in LOCKSS have the same checksum.');
+        $this->addArgument('plns', InputArgument::IS_ARRAY, 'Database IDs of the PLNs to check.');
+        $this->addOption('all', '-a', InputOption::VALUE_NONE, 'Process all deposits.');
 		$this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
+        $this->addOption('no-clean', null, InputOption::VALUE_NONE, 'Do not remove deposits that have 100% agreement.');
 	}
 
 	public function setContainer(ContainerInterface $container = null) {
@@ -60,6 +63,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
 
 	protected function loadBoxes(Pln $pln) {
 		$boxes = $pln->getBoxes();
+        $this->boxes = array();
 		$this->boxCount = count($boxes);
 		foreach ($boxes as $box) {
 			try {
@@ -90,7 +94,9 @@ class DepositStatusCommand extends ContainerAwareCommand {
 		$checksumValue = $content->getChecksumValue();
 		$checksumType = $content->getChecksumType();
 
+        $status = 'agreement';
 		$checksumMatches = 0;
+        
 		foreach ($this->boxes as $box) {
 			$url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/HasherService?wsdl";
 			try {
@@ -142,30 +148,46 @@ class DepositStatusCommand extends ContainerAwareCommand {
 	 * @param array|null $plnIds
 	 */
 	protected function getPlns($plnIds = null) {
-		$pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find(1);
-		return $pln;
+        if($plnIds === null || !is_array($plnIds) || count($plnIds) === 0) {
+            return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
+        }
+		return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findBy(
+            array('id' => $plnIds)
+        );
 	}
-
-	public function execute(InputInterface $input, OutputInterface $output) {
-		$pln = $this->getPlns();
-		$this->loadBoxes($pln);
+    
+    protected function processDeposit(Deposit $deposit, $dryRun) {
+        $agreement = $this->checkDeposit($deposit);
+        $deposit->setAgreement($agreement);
+        if ($dryRun) {
+            return;
+        }
+        $this->em->flush();
+    }
+    
+    protected function processPln(Pln $pln, $allDeposits, $dryRun) {
+		$this->loadBoxes($pln);        
 		if (count($this->boxes) === 0) {
-			$this->logger->critical("No boxes available to check deposit status.");
+            $this->logger->critical("No boxes available to check deposit status in {$pln->getName()}");
 			return;
 		}
+        
 		foreach ($pln->getContentProviders() as $provider) {
 			foreach ($provider->getDeposits() as $deposit) {
-				if ($deposit->getAgreement() == 1) {
+				if ($deposit->getAgreement() == 1 && (! $allDeposits)) {
 					continue;
 				}
-				$agreement = $this->checkDeposit($deposit);
-				$deposit->setAgreement($agreement);
-				if ($input->getOption('dry-run')) {
-					continue;
-				}
-				$this->em->flush();
+                $this->processDeposit($deposit, $dryRun);
 			}
 		}
-	}
+        
+    }
 
+	public function execute(InputInterface $input, OutputInterface $output) {
+        $allDeposits = $input->getOption('all');
+        $dryRun = $input->getOption('dry-run');
+		foreach($this->getPlns($input->getArgument('plns')) as $pln) {
+            $this->processPln($pln, $allDeposits, $dryRun);
+    	}
+    }
 }

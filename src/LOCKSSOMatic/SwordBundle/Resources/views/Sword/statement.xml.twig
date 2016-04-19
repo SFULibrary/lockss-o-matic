@@ -1,28 +1,21 @@
-<atom:feed xmlns:sword="http://purl.org/net/sword/"
+<atom:feed xmlns:sword="http://purl.org/net/sword/terms/"
            xmlns:atom="http://www.w3.org/2005/Atom"
            xmlns:lom="http://lockssomatic.info/SWORD2">
-  <atom:entry>
-    <atom:category scheme="http://purl.org/net/sword/terms/"
-                   term="http://purl.org/net/sword/terms/originalDeposit" 
-                   label="Orignal Deposit"/>
-    
-    <atom:category scheme="http://purl.org/net/sword/terms/state" term="{{ deposit.state }}" label="PLN State">
-        The deposit is in an unknown state.
+
+    <atom:category scheme="http://purl.org/net/sword/terms/state"
+                   term="{{ state }}"
+                   label="State">
+        {{ stateDescription }}
     </atom:category>
 
-    {% for item in content %}
-        <lom:content id="{{ item.url }}" recrawl="{{ item.recrawl }}">
-            <lom:serverlist>
-                {% for box in boxes %}
-                    <lom:server id="{{ box.id }}" 
-                                state=" {{ status[item.id][box.id] }}"
-                                src="http://{{ box.hostname }}:port/ServeContent?url={{ item.url }}"
-                                checksumType="{{ item.checksumType }}"
-                                checksumValue="{{ item.checksumValue }}" />
-                {% endfor %}
-            </lom:serverlist>
-        </lom:content>
-    {% endfor %}
+    <atom:entry>
 
-  </atom:entry>
+        <atom:category scheme="http://purl.org/net/sword/terms"
+                       term="http://purl.org/net/sword/terms/originalDeposit"
+                       label="Original Deposit"/>
+
+        <sword:depositedOn>{{ deposit.dateDeposited|date }}</sword:depositedOn>
+        <lom:agreement>{{ deposit.agreement }}</lom:agreement>
+
+    </atom:entry>
 </atom:feed>
