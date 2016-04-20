@@ -105,6 +105,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 			$this->updateTitleDbs($pln, $auUrls);
 			$this->updateKeystoreLocation($pln);
 			$this->updatePluginRegistries($pln);
+            $this->updateAuthentication($pln);
 			$this->em->flush();
 
 			$this->exportLockssXml($pln);
@@ -143,6 +144,14 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 			$pln->deleteProperty('org.lockss.plugin.keystore.location');
 		}
 	}
+    
+    public function updateAuthentication(Pln $pln) {
+        $prefix = 'org.lockss.ui.users.lomauth';
+        $hash = hash('SHA256', $pln->getPassword());
+        $pln->setProperty("{$prefix}.user", $pln->getUsername());
+        $pln->setProperty("{$prefix}.password", "SHA-256:$hash");
+        $pln->setProperty("{$prefix}.roles", "debugRole");
+    }
 	
 	public function exportLockssXml(Pln $pln) {
 		$twig = $this->getContainer()->get('templating');

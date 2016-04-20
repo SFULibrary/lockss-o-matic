@@ -23,7 +23,6 @@
                 <th>Port</th>
                 <th>Pln</th>
                 <th>Ipaddress</th>
-                <th>Username</th>
             </tr>
         </thead>
         <tbody>
@@ -34,7 +33,6 @@
                     <td>{{ entity.port }}</td>
                     <td><a href="{{ path('pln_show', {'id': entity.pln.id }) }}">{{ entity.pln.name }}</a></td>
                     <td>{{ entity.ipAddress }}</td>
-                    <td>{{ entity.username }}</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -1,25 +1,25 @@
 {% extends '::base.html.twig' %}
 
 {% macro bytesToSize(bytes) %}
-	{# LOCKSS reports box status in 1Kb units, not in bytes. #}
-	{% spaceless %}
-		{% set kilobyte = 1 %}
-		{% set megabyte = kilobyte * 1024 %}
-		{% set gigabyte = megabyte * 1024 %}
-		{% set terabyte = gigabyte * 1024 %}
+    {# LOCKSS reports box status in 1Kb units, not in bytes. #}
+    {% spaceless %}
+        {% set kilobyte = 1 %}
+        {% set megabyte = kilobyte * 1024 %}
+        {% set gigabyte = megabyte * 1024 %}
+        {% set terabyte = gigabyte * 1024 %}
 
-		{% if bytes < kilobyte %}
-			{{ bytes ~ ' B' }}
-		{% elseif bytes < megabyte %}
-			{{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
-		{% elseif bytes < gigabyte %}
-			{{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
-		{% elseif bytes < terabyte %}
-			{{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
-		{% else %}
-			{{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
-		{% endif %}
-	{% endspaceless %}
+        {% if bytes < kilobyte %}
+            {{ bytes ~ ' B' }}
+        {% elseif bytes < megabyte %}
+            {{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
+        {% elseif bytes < gigabyte %}
+            {{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
+        {% elseif bytes < terabyte %}
+            {{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
+        {% else %}
+            {{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
+        {% endif %}
+    {% endspaceless %}
 {% endmacro %}
 {% import _self as self %}
 
@@ -56,17 +56,13 @@
                 <th>Port</th>
                 <td>{{ entity.port }}</td>
             </tr>
-			<tr>
-				<th>Web Service Port</th>
-				<td>{{ entity.webServicePort }}</td>
-			</tr>
+            <tr>
+                <th>Web Service Port</th>
+                <td>{{ entity.webServicePort }}</td>
+            </tr>
             <tr>
                 <th>Ipaddress</th>
                 <td>{{ entity.ipAddress }}</td>
-            </tr>
-            <tr>
-                <th>Username</th>
-                <td>{{ entity.username }}</td>
             </tr>
             <tr>
                 <th>Pln</th>
@@ -75,21 +71,21 @@
         </tbody>
     </table>
 
-	<h2>Recent Status</h2>
-	{% if entity.status | length > 0 %}
-		{% set status = entity.status.last() %}
+    <h2>Recent Status</h2>
+    {% if entity.status | length > 0 %}
+        {% set status = entity.status.last() %}
 
-		<dl class="dl-horizontal">
-			<dt>Date Checked</dt><dd>{{ status.queryDate|date }}</dd>
-			<dt>Active AUs</dt><dd>{{ status.getActiveCount() }}</dd>
-			<dt>Disk space</dt><dd>{{ self.bytesToSize(status.getSize()) }}</dd>
-			<dt>Free space</dt><dd>{{ self.bytesToSize(status.getFree()) }}</dd>
-			<dt>Used space</dt><dd>{{ self.bytesToSize(status.getUsed()) }}</dd>
-		</dl>
-		<p class='text-right'><a href="{{ path('box_status', {'id': entity.id}) }}">Details</a></p>
-	{% else %}
-		<p>No statuses yet.</p>
-	{% endif %}
+        <dl class="dl-horizontal">
+            <dt>Date Checked</dt><dd>{{ status.queryDate|date }}</dd>
+            <dt>Active AUs</dt><dd>{{ status.getActiveCount() }}</dd>
+            <dt>Disk space</dt><dd>{{ self.bytesToSize(status.getSize()) }}</dd>
+            <dt>Free space</dt><dd>{{ self.bytesToSize(status.getFree()) }}</dd>
+            <dt>Used space</dt><dd>{{ self.bytesToSize(status.getUsed()) }}</dd>
+        </dl>
+        <p class='text-right'><a href="{{ path('box_status', {'id': entity.id}) }}">Details</a></p>
+    {% else %}
+        <p>No statuses yet.</p>
+    {% endif %}
 
 
 {% endblock %}

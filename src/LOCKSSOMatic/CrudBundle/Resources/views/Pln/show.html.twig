@@ -39,6 +39,14 @@
                 <td>{{ entity.description|nl2br }}</td>
             </tr>
             <tr>
+                <th>Username</th>
+                <td>{{ entity.username }}</td>
+            </tr>
+            <tr>
+                <th>Password</th>
+                <td>(not shown)</td>
+            </tr>
+            <tr>
                 <th>Key store</th>
                 <td><a href="{{ url('configs_plugin_keystore', {'plnId': entity.id}) }}">{{ url('configs_plugin_keystore', {'plnId': entity.id}) }}</a></td>
             </tr>
@@ -66,8 +74,6 @@
             <tr>
                 <th>Hostname</th>
                 <th>Ipaddress</th>
-                <th>Username</th>
-                <th>Password</th>
             </tr>
         </thead>
         <tbody>
@@ -75,8 +81,6 @@
                 <tr>
                     <td><a href="{{ path('box_show', { 'id': box.id }) }}">{{ box.hostname }}</a></td>
                     <td>{{ box.ipAddress }}</td>
-                    <td>{{ box.username }}</td>
-                    <td>{{ box.password }}</td>
                 </tr>
             {% endfor %}
         </tbody>

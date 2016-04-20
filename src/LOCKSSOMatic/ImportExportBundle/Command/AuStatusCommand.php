@@ -57,10 +57,10 @@ class AuStatusCommand extends ContainerAwareCommand {
 		$boxes = $pln->getBoxes();
 		foreach ($boxes as $box) {
 			try {
-				$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
+				$statusClient = new SoapClient("http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl", array(
 					'soap_version' => SOAP_1_1,
-					'login' => 'lockss-u',
-					'password' => 'lockss-p',
+					'login' => $pln->getUsername(),
+					'password' => $pln->getPassword(),
 					'trace' => false,
 					'exceptions' => true,
 					'cache' => WSDL_CACHE_NONE,
@@ -78,7 +78,7 @@ class AuStatusCommand extends ContainerAwareCommand {
 		}
 	}
 
-	protected function checkAu(Au $au) {
+	protected function checkAu(Pln $pln, Au $au) {
 		$auid = $this->idGenerator->fromAu($au);
 		$statuses = array();
 		foreach ($this->boxes as $box) {
@@ -86,8 +86,8 @@ class AuStatusCommand extends ContainerAwareCommand {
 				$url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl";
 				$statusClient = new SoapClient($url, array(
 					'soap_version' => SOAP_1_1,
-					'login' => $box->getUsername(),
-					'password' => $box->getPassword(),
+					'login' => $pln->getUsername(),
+					'password' => $pln->getPassword(),
 					'trace' => true,
 					'exceptions' => true,
 					'cache' => WSDL_CACHE_NONE,
@@ -125,7 +125,7 @@ class AuStatusCommand extends ContainerAwareCommand {
 			return;
 		}
 		foreach ($pln->getAus() as $au) {
-			$statuses = $this->checkAu($au);
+			$statuses = $this->checkAu($pln, $au);
 			foreach ($statuses as $status) {
 				$this->em->persist($status);
 			}
