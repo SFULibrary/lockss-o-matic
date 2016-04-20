@@ -45,3 +45,7 @@ parameters:
     lockss_allowed_ips:
         - 127.0.0.1
 
+    # LOCKSSOMatic considers these plugin config params to be non-definitional
+    # even though LOCKSS thinks otherwise.
+    lom_nondefinitional_cpds:
+        ca.sfu.lib.plugin.pkppln.PkpPlnPlugin: [ manifest_url, permission_url ]
