@@ -127,5 +127,4 @@ class BoxStatusCommand extends ContainerAwareCommand {
 			$this->em->flush();
 		}
 	}
-
 }

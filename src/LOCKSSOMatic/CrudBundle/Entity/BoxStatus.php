@@ -152,5 +152,4 @@ class BoxStatus implements GetPlnInterface {
 	public function getUsed() {
 		return $this->getStatusValue('used');
 	}
-
 }

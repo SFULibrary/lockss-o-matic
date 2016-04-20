@@ -39,5 +39,4 @@ class PlnType extends AbstractType
     {
         return 'lockssomatic_crudbundle_pln';
     }
-
 }

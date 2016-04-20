@@ -116,8 +116,8 @@ class SwordController extends Controller
     {
         if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
             throw new BadRequestException(
-            'Deposit or Content Provider incorrect. The '
-            . 'requested deposit does not belong to the requested content provider.'
+                'Deposit or Content Provider incorrect. The '
+                . 'requested deposit does not belong to the requested content provider.'
             );
         }
     }
@@ -286,7 +286,8 @@ class SwordController extends Controller
             array(
             'providerUuid' => $provider->getUuid(),
             'depositUuid'  => $deposit->getUuid()
-            ), true
+            ),
+            true
         );
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(Response::HTTP_CREATED);
@@ -325,12 +326,13 @@ class SwordController extends Controller
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
         return $this->render(
-                'LOCKSSOMaticSwordBundle:Sword:statement.xml.twig',
-                array(
+            'LOCKSSOMaticSwordBundle:Sword:statement.xml.twig',
+            array(
                 'state'            => $state,
                 'stateDescription' => $stateDescription,
                 'deposit'          => $deposit,
-                ), $response
+                ),
+            $response
         );
     }
 
@@ -391,7 +393,8 @@ class SwordController extends Controller
             array(
             'providerUuid' => $provider->getUuid(),
             'depositUuid'  => $deposit->getUuid()
-            ), true
+            ),
+            true
         );
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(Response::HTTP_OK);
@@ -415,12 +418,12 @@ class SwordController extends Controller
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
         return $this->render(
-                'LOCKSSOMaticSwordBundle:Sword:depositView.xml.twig',
-                array(
+            'LOCKSSOMaticSwordBundle:Sword:depositView.xml.twig',
+            array(
                 'contentProvider' => $provider,
                 'deposit'         => $deposit,
-                ), $response
+                ),
+            $response
         );
     }
-
 }

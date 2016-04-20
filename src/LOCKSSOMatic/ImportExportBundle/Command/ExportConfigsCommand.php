@@ -136,10 +136,10 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 	public function updateKeystoreLocation(Pln $pln) {
 		if($pln->getKeystore()) {
 			$pln->setProperty('org.lockss.plugin.keystore.location', $this->router->generate(
-					'configs_plugin_keystore',
-					array('plnId' => $pln->getId()),
-					Router::ABSOLUTE_URL			
-				));
+                'configs_plugin_keystore',
+                array('plnId' => $pln->getId()),
+                Router::ABSOLUTE_URL			
+            ));
 		} else {
 			$pln->deleteProperty('org.lockss.plugin.keystore.location');
 		}
@@ -167,7 +167,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 	
 	public function exportKeystore(Pln $pln) {
 		$keystore = $pln->getKeystore();
-		if( ! $keystore) {
+		if(! $keystore) {
 			return;
 		}
 		$path = $this->fp->getPluginsExportDir($pln);

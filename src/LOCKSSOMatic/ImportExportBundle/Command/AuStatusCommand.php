@@ -132,5 +132,4 @@ class AuStatusCommand extends ContainerAwareCommand {
 			$this->em->flush();
 		}
 	}
-
 }

@@ -131,13 +131,13 @@ class ConfigsController extends Controller
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         $this->checkIp($request, $pln);
 		$keystore = $pln->getKeystore();
-		if( ! $keystore) {
+		if(! $keystore) {
             throw new NotFoundHttpException("The requested keystore does not exist.");
 		}
         $webPath =  $this->container->get('kernel')->getRootDir() . '/../data/plnconfigs';
 		$pluginsDir = $webPath . '/' . $plnId . '/plugins';
 		$keystorePath = $pluginsDir . '/lockss.keystore';
-		if( ! file_exists($keystorePath)) {
+		if(! file_exists($keystorePath)) {
             throw new NotFoundHttpException("The requested keystore does not exist.");
 		}
 		return new BinaryFileResponse($keystorePath);

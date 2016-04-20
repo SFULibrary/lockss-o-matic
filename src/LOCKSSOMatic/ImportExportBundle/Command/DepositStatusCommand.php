@@ -51,7 +51,6 @@ class DepositStatusCommand extends ContainerAwareCommand {
         $this->addArgument('plns', InputArgument::IS_ARRAY, 'Database IDs of the PLNs to check.');
         $this->addOption('all', '-a', InputOption::VALUE_NONE, 'Process all deposits.');
 		$this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
-        $this->addOption('no-clean', null, InputOption::VALUE_NONE, 'Do not remove deposits that have 100% agreement.');
 	}
 
 	public function setContainer(ContainerInterface $container = null) {
@@ -89,7 +88,6 @@ class DepositStatusCommand extends ContainerAwareCommand {
 	}
 
 	protected function checkContent(Pln $pln, Content $content) {
-		$this->logger->info("Checking content #{$content->getId()}");
 		$auid = $this->idGenerator->fromContent($content);
 		$checksumValue = $content->getChecksumValue();
 		$checksumType = $content->getChecksumType();
@@ -140,7 +138,9 @@ class DepositStatusCommand extends ContainerAwareCommand {
 		foreach ($deposit->getContent() as $content) {
 			$matches += $this->checkContent($pln, $content);
 		}
-		return $matches / (count($deposit->getContent()) * count($this->boxes));
+        $agreement = $matches / (count($deposit->getContent()) * count($this->boxes));
+        $this->logger->info("Deposit {$deposit->getId()}: " . sprintf("%3.2f%%", ($agreement * 100)));
+        return $agreement;
 	}
 
 	/**
