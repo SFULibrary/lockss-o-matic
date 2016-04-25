@@ -35,7 +35,9 @@ class PlnController extends Controller {
 		$query = $em->createQuery($dql);
 		$paginator = $this->get('knp_paginator');
 		$entities = $paginator->paginate(
-				$query, $request->query->getInt('page', 1), 25
+            $query,
+            $request->query->getInt('page', 1),
+            25
 		);
 
 
@@ -62,7 +64,8 @@ class PlnController extends Controller {
 			$em->flush();
 
 			return $this->redirect($this->generateUrl(
-									'pln_show', array('id' => $entity->getId())
+                'pln_show',
+                array('id' => $entity->getId())
 			));
 		}
 
@@ -81,7 +84,9 @@ class PlnController extends Controller {
 	 */
 	private function createCreateForm(Pln $entity) {
 		$form = $this->createForm(
-				new PlnType(), $entity, array(
+            new PlnType(),
+            $entity,
+            array(
 			'action' => $this->generateUrl('pln_create'),
 			'method' => 'POST',
 				)
@@ -168,9 +173,12 @@ class PlnController extends Controller {
 	 */
 	private function createEditForm(Pln $entity) {
 		$form = $this->createForm(
-				new PlnType($entity), $entity, array(
+            new PlnType($entity),
+            $entity,
+            array(
 			'action' => $this->generateUrl(
-					'pln_update', array('id' => $entity->getId())
+                'pln_update',
+                array('id' => $entity->getId())
 			),
 			'method' => 'PUT',
 				)
@@ -205,7 +213,8 @@ class PlnController extends Controller {
 			$em->flush();
 
 			return $this->redirect($this->generateUrl(
-									'pln_edit', array('id' => $id)
+                'pln_edit',
+                array('id' => $id)
 			));
 		}
 
@@ -277,7 +286,8 @@ class PlnController extends Controller {
 		$options = array(
 			'method' => 'POST',
 			'action' => $this->generateUrl(
-					'pln_access_update', array('id' => $pln->getId())
+                'pln_access_update',
+                array('id' => $pln->getId())
 			)
 		);
 		$builder = $this->createFormBuilder($defaultData, $options);
@@ -286,7 +296,9 @@ class PlnController extends Controller {
 				continue; // skip admins - they can do anything.
 			}
 			$builder->add(
-					'user_' . $user->getId(), 'choice', array(
+                'user_' . $user->getId(),
+                'choice',
+                array(
 				'label' => $user->getFullname(),
 				'choices' => $levels,
 				'empty_value' => 'No access',
@@ -349,12 +361,14 @@ class PlnController extends Controller {
 			$this->updateAccess($request, $pln);
 			$this->addFlash('success', "The form was saved.");
 			return $this->redirect($this->generateUrl(
-									'pln_access', array('id' => $id)
+                'pln_access',
+                array('id' => $id)
 			));
 		} else {
 			$this->addFlash('error', "The form was not saved.");
 			return $this->redirect($this->generateUrl(
-									'pln_access_edit', array('id' => $id)
+                'pln_access_edit',
+                array('id' => $id)
 			));
 		}
 	}
@@ -454,7 +468,7 @@ class PlnController extends Controller {
 		$em = $this->getDoctrine()->getManager();
 		$pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
 		$keystore = $pln->getKeystore();
-		if( ! $keystore) {
+		if(! $keystore) {
 			$keystore = new Keystore();
 			$keystore->setPln($pln);
 		}
@@ -494,5 +508,4 @@ class PlnController extends Controller {
 			'form' => $form->createView(),
 		);
 	}
-
 }

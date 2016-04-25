@@ -60,10 +60,10 @@ class BoxStatusCommand extends ContainerAwareCommand {
 		$boxes = $pln->getBoxes();
 		foreach ($boxes as $box) {
 			try {
-				$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
+                $statusClient = new SoapClient("http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl", array(
 					'soap_version' => SOAP_1_1,
-					'login' => 'lockss-u',
-					'password' => 'lockss-p',
+					'login' => $pln->getUsername(),
+					'password' => $pln->getPassword(),
 					'trace' => false,
 					'exceptions' => true,
 					'cache' => WSDL_CACHE_NONE,
@@ -81,12 +81,12 @@ class BoxStatusCommand extends ContainerAwareCommand {
 		}
 	}
 
-	protected function checkBox(Box $box) {
+	protected function checkBox(Pln $pln, Box $box) {
 		try {
-			$statusClient = new SoapClient("http://{$box->getIpAddress()}:8081/ws/DaemonStatusService?wsdl", array(
+            $statusClient = new SoapClient("http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl", array(
 				'soap_version' => SOAP_1_1,
-				'login' => 'lockss-u',
-				'password' => 'lockss-p',
+                'login' => $pln->getUsername(),
+                'password' => $pln->getPassword(),
 				'trace' => true,
 				'exceptions' => true,
 				'cache' => WSDL_CACHE_NONE,
@@ -114,8 +114,8 @@ class BoxStatusCommand extends ContainerAwareCommand {
 			$this->logger->critical("No boxes available to check box status.");
 			return;
 		}
-		foreach ($pln->getBoxes() as $box) {
-			$status = $this->checkBox($box);
+		foreach ($this->boxes as $box) {
+			$status = $this->checkBox($pln, $box);
 			$boxStatus = new BoxStatus();
 			$boxStatus->setBox($box);
 			$boxStatus->setQueryDate(new DateTime());
@@ -127,5 +127,4 @@ class BoxStatusCommand extends ContainerAwareCommand {
 			$this->em->flush();
 		}
 	}
-
 }

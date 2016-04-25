@@ -45,6 +45,10 @@ class BoxStatus implements GetPlnInterface {
 	 * @ORM\Column(name="status", type="array", nullable=true)
 	 */
 	private $status;
+    
+    public function __construct() {
+        $this->status = array();
+    }
 
 	public function getPln() {
 		return $this->box->getPln();
@@ -148,5 +152,4 @@ class BoxStatus implements GetPlnInterface {
 	public function getUsed() {
 		return $this->getStatusValue('used');
 	}
-
 }

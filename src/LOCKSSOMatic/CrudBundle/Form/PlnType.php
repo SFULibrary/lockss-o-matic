@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PlnType extends AbstractType
 {
-	
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -17,9 +17,11 @@ class PlnType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name');
-		$builder->add('description');		
+        $builder->add('description');
+        $builder->add('username', 'text');
+        $builder->add('password', 'password');
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */

@@ -178,7 +178,7 @@ class AuStatus implements GetPlnInterface {
 
 	public function getLastCrawl() {
 		$poll = $this->getStatusValue('lastPoll');
-		if( ! $poll) {
+		if(! $poll) {
 			return 0;
 		}
 		return $poll;
@@ -186,14 +186,14 @@ class AuStatus implements GetPlnInterface {
 	
 	public function getLastCrawlResult() {
 		$result = $this->getStatusValue('lastCrawlResult');
-		if( ! $result) {
+		if(! $result) {
 			return "Never crawled";
 		}
 	}
 
 	public function getLastPoll() {
 		$poll = $this->getStatusValue('lastPoll');
-		if( ! $poll) {
+		if(! $poll) {
 			return 0;
 		}
 		return $poll;
@@ -201,7 +201,7 @@ class AuStatus implements GetPlnInterface {
 
 	public function getLastPollResult() {
 		$result = $this->getStatusValue('lastPollResult');
-		if( ! $result) {
+		if(! $result) {
 			return "Never polled";
 		}
 	}

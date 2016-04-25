@@ -68,25 +68,6 @@ class Box implements GetPlnInterface
     private $ipAddress;
 
     /**
-     * The username for LOCKSSOMatic to communicate with the box. Not in the
-     * lockss.xml file.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="username", type="string", length=64, nullable=true)
-     */
-    private $username;
-
-    /**
-     * The password for LOCKSSOMatic to communicate with the box.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=64, nullable=true)
-     */
-    private $password;
-
-    /**
      * The PLN this box is a part of.
      *
      * @var Pln
@@ -168,52 +149,6 @@ class Box implements GetPlnInterface
     public function getIpAddress()
     {
         return $this->ipAddress;
-    }
-
-    /**
-     * Set username
-     *
-     * @param string $username
-     * @return Box
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    /**
-     * Get username
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     * @return Box
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
     }
 
     /**
