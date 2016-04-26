@@ -11,6 +11,9 @@
             <a href="{{ path('deposit') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-arrow-left"></span> Back
             </a>
+            <a href="{{ path('depositstatus', { 'depositId': entity.id }) }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-tasks"></span> Status
+            </a>
         </div>
     </div>
 

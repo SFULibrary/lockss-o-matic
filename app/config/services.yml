@@ -8,6 +8,12 @@ services:
         class: Jasny\Twig\PcreExtension
         tags:
             - { name: twig.extension }
+            
+    twig.extension.text:
+        class: Twig_Extensions_Extension_Text
+        tags:
+            - { name: twig.extension }
+
 
     # http://www.petethompson.net/blog/symfony/2015/03/15/symfony-logging-client-ip/
     monolog.processor.web:

@@ -43,8 +43,12 @@ class BoxStatusCommand extends ContainerAwareCommand
     {
         $this->setName('lom:box:status');
         $this->setDescription('Check the status of the LOCKSS AUs');
-        $this->addOption('dry-run', '-d', InputOption::VALUE_NONE,
-            'Export only, do not update any internal configs.');
+        $this->addOption(
+            'dry-run',
+            '-d',
+            InputOption::VALUE_NONE,
+            'Export only, do not update any internal configs.'
+        );
     }
 
     public function setContainer(ContainerInterface $container = null)
@@ -57,7 +61,8 @@ class BoxStatusCommand extends ContainerAwareCommand
 
     protected function checkBox(Pln $pln, Box $box)
     {
-        $statusClient = new SoapClient("http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl",
+        $statusClient = new SoapClient(
+            "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl",
             array(
             'soap_version' => SOAP_1_1,
             'login'        => $pln->getUsername(),
@@ -65,7 +70,8 @@ class BoxStatusCommand extends ContainerAwareCommand
             'trace'        => true,
             'exceptions'   => true,
             'cache'        => WSDL_CACHE_NONE,
-        ));
+            )
+        );
         $spacesResponse = $statusClient->queryRepositorySpaces(array('repositorySpaceQuery' => 'SELECT *'));
         return get_object_vars($spacesResponse->return);
     }
@@ -108,5 +114,4 @@ class BoxStatusCommand extends ContainerAwareCommand
             }
         }
     }
-
 }
