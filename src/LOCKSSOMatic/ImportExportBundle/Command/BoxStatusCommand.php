@@ -85,6 +85,7 @@ class BoxStatusCommand extends ContainerAwareCommand
         $plns = $this->getPlns();
         foreach ($plns as $pln) {
             foreach ($pln->getBoxes() as $box) {
+                $this->logger->notice("Checking {$box->getHostname()}");
                 $boxStatus = new BoxStatus();
                 $boxStatus->setBox($box);
                 $boxStatus->setQueryDate(new DateTime());
@@ -93,6 +94,7 @@ class BoxStatusCommand extends ContainerAwareCommand
                     $boxStatus->setStatus($status);
                     $boxStatus->setSuccess(true);
                 } catch (Exception $e) {
+                    $this->logger->error("Cannot get status of {$box->getHostname()}: {$e->getMessage()}");
                     $boxStatus->setSuccess(false);
                     $boxStatus->setStatus(array(
                         'error' => $e->getMessage(),
