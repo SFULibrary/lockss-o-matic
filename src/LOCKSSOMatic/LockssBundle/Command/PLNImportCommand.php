@@ -1,6 +1,6 @@
 <?php
 
-namespace LOCKSSOMatic\ImportExportBundle\Command;
+namespace LOCKSSOMatic\LockssBundle\Command;
 
 use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
@@ -8,7 +8,7 @@ use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Entity\PlnProperty;
-use LOCKSSOMatic\ImportExportBundle\Services\PLNPluginImportService;
+use LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService;
 use Monolog\Logger;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;

@@ -1,6 +1,6 @@
 <?php
 
-namespace LOCKSSOMatic\ImportExportBundle\Command;
+namespace LOCKSSOMatic\LockssBundle\Command;
 
 use DateTime;
 use Doctrine\ORM\EntityManager;

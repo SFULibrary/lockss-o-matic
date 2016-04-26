@@ -1,6 +1,6 @@
 <?php
 
-namespace LOCKSSOMatic\ImportExportBundle\DependencyInjection;
+namespace LOCKSSOMatic\LockssBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

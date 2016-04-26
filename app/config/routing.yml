@@ -9,7 +9,7 @@ locksso_matic_sword:
     prefix:   /
 
 locksso_matic_import_export:
-    resource: "@LOCKSSOMaticImportExportBundle/Controller/"
+    resource: "@LOCKSSOMaticLockssBundle/Controller/"
     type:     annotation
     prefix:   /
 
