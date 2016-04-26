@@ -122,6 +122,7 @@ class DepositStatusCommand extends ContainerAwareCommand
         $checksumType = $content->getChecksumType();
 
         $url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/HasherService?wsdl";
+        $this->logger->notice("Checking content {$content->getId()} on box {$box->getId()}");
         $hasherClient = new SoapClient(
             $url,
             array(
@@ -162,6 +163,7 @@ class DepositStatusCommand extends ContainerAwareCommand
         $matches = 0;
         $status = array();
         $pln = $deposit->getPln();
+        $this->logger->notice("Checking deposit {$deposit->getId()}");
         foreach ($pln->getBoxes() as $box) {
             $status[$box->getId()] = array();
             foreach ($deposit->getContent() as $content) {
@@ -220,7 +222,7 @@ class DepositStatusCommand extends ContainerAwareCommand
                 ->getResult();
         }
 
-        $this->logger->notice("Checking status of " . count($deposits) . " deposits.");
+        $this->logger->notice("Found " . count($deposits) . " deposits to check.");
         foreach ($deposits as $deposit) {
             if ($deposit->getAgreement() == 1 && (!$allDeposits)) {
                 continue;
