@@ -38,6 +38,12 @@ class BoxStatus implements GetPlnInterface {
 	 * @ORM\Column(name="query_date", type="datetime", nullable=false)
 	 */
 	private $queryDate;
+    
+    /**
+     * @var boolean
+     * @ORM\Column(name="success", type="boolean")
+     */
+    private $success;
 
 	/**
 	 * @var string
@@ -48,6 +54,7 @@ class BoxStatus implements GetPlnInterface {
     
     public function __construct() {
         $this->status = array();
+        $this->success = false;
     }
 
 	public function getPln() {
@@ -152,4 +159,28 @@ class BoxStatus implements GetPlnInterface {
 	public function getUsed() {
 		return $this->getStatusValue('used');
 	}
+
+    /**
+     * Set success
+     *
+     * @param boolean $success
+     *
+     * @return BoxStatus
+     */
+    public function setSuccess($success)
+    {
+        $this->success = $success;
+
+        return $this;
+    }
+
+    /**
+     * Get success
+     *
+     * @return boolean
+     */
+    public function getSuccess()
+    {
+        return $this->success;
+    }
 }

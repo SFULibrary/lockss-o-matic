@@ -83,7 +83,7 @@ class Box implements GetPlnInterface
      * Timestamped list of box status query results.
      *
      * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="box")
-     * @var BoxStatus[]
+     * @var Collection|BoxStatus
      */
     private $status;
     
@@ -197,11 +197,18 @@ class Box implements GetPlnInterface
     {
         $this->status->removeElement($status);
     }
+    
+    /**
+     * @return BoxStatus
+     */
+    public function getCurrentStatus() {
+        return $this->status->last();
+    }
 
     /**
      * Get status
      *
-     * @return Collection
+     * @return Collection|BoxStatus
      */
     public function getStatus()
     {

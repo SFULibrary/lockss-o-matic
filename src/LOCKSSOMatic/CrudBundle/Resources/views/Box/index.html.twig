@@ -23,6 +23,8 @@
                 <th>Port</th>
                 <th>Pln</th>
                 <th>Ipaddress</th>
+                <th>Status check</th>
+                <th>Status result</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +35,8 @@
                     <td>{{ entity.port }}</td>
                     <td><a href="{{ path('pln_show', {'id': entity.pln.id }) }}">{{ entity.pln.name }}</a></td>
                     <td>{{ entity.ipAddress }}</td>
+                    <td>{{ entity.currentStatus.queryDate|date('c') }}</td>
+                    <td>{% if entity.currentStatus.success %}Success{% else %}Failed{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>
