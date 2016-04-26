@@ -1,6 +1,6 @@
 <?php
 
-namespace LOCKSSOMatic\ImportExportBundle\Services;
+namespace LOCKSSOMatic\LockssBundle\Services;
 
 use Doctrine\ORM\EntityManager;
 use Exception;

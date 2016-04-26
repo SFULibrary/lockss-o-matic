@@ -1,11 +1,11 @@
 <?php
 
-namespace LOCKSSOMatic\ImportExportBundle\Tests\Command;
+namespace LOCKSSOMatic\LockssBundle\Tests\Command;
 
 use Exception;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
-use LOCKSSOMatic\ImportExportBundle\Command\TitledbImportCommand;
+use LOCKSSOMatic\LockssBundle\Command\TitledbImportCommand;
 use SimpleXMLElement;
 
 /**
@@ -76,7 +76,7 @@ ENDXML;
     }
 
     /**
-     * @covers LOCKSSOMatic\ImportExportBundle\Command\PLNTitledbImportCommand::getContentOwner
+     * @covers LOCKSSOMatic\LockssBundle\Command\PLNTitledbImportCommand::getContentOwner
      * @todo   Implement testGetContentOwner().
      */
     public function testGetContentOwner()
@@ -95,7 +95,7 @@ ENDXML;
     }
 
     /**
-     * @covers LOCKSSOMatic\ImportExportBundle\Command\PLNTitledbImportCommand::addAu
+     * @covers LOCKSSOMatic\LockssBundle\Command\PLNTitledbImportCommand::addAu
      * @todo   Implement testAddAu().
      */
     public function testAddAu()

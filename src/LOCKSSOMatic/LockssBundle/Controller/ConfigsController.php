@@ -1,6 +1,6 @@
 <?php
 
-namespace LOCKSSOMatic\ImportExportBundle\Controller;
+namespace LOCKSSOMatic\LockssBundle\Controller;
 
 use LOCKSSOMatic\CoreBundle\Services\FilePaths;
 use LOCKSSOMatic\CrudBundle\Entity\Box;

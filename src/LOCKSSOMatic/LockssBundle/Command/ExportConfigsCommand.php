@@ -1,6 +1,6 @@
 <?php
 
-namespace LOCKSSOMatic\ImportExportBundle\Command;
+namespace LOCKSSOMatic\LockssBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -156,7 +156,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 	public function exportLockssXml(Pln $pln) {
 		$twig = $this->getContainer()->get('templating');
 		$xml = $twig->render(
-			'LOCKSSOMaticImportExportBundle:Configs:lockss.xml.twig', 
+			'LOCKSSOMaticLockssBundle:Configs:lockss.xml.twig', 
 			array(
 				'pln' => $pln
 			)
@@ -186,7 +186,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 		foreach($plugins as $plugin) {
 			$this->fs->copy($plugin->getPath(), $this->fp->getPluginsExportFile($pln, $plugin));
 		}
-		$html = $this->twig->render('LOCKSSOMaticImportExportBundle:Configs:pluginList.html.twig', array(
+		$html = $this->twig->render('LOCKSSOMaticLockssBundle:Configs:pluginList.html.twig', array(
 			'pln' => $pln,
 		));
 		$this->fs->dumpFile($this->fp->getPluginsManifestFile($pln), $html);
@@ -205,7 +205,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 				'auId' => $au->getId(),
 			));			
 			$manifestFile = $manifestDir . '/' . basename($manifestUrl);
-			$html = $this->twig->render('LOCKSSOMaticImportExportBundle:Configs:manifest.html.twig', array(
+			$html = $this->twig->render('LOCKSSOMaticLockssBundle:Configs:manifest.html.twig', array(
 				'content' => $au->getContent()
 			));
 			$this->fs->dumpFile($manifestFile, $html);
@@ -228,7 +228,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
 			$auUrls[] = $auUrl;
 			$auFile = $titleDir . '/' . basename($auUrl);
 			
-			$xml = $this->twig->render('LOCKSSOMaticImportExportBundle:Configs:titledb.xml.twig', array(
+			$xml = $this->twig->render('LOCKSSOMaticLockssBundle:Configs:titledb.xml.twig', array(
 				'aus' => $provider->getAus(),
 			));
 			$this->fs->dumpFile($auFile, $xml);
