@@ -101,7 +101,7 @@ class AuStatus implements GetPlnInterface {
 	/**
 	 * Get propertyValue
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function getStatus() {
 		return $this->status;
@@ -133,6 +133,9 @@ class AuStatus implements GetPlnInterface {
 	 * {@inheritDoc}
 	 */
 	public function getPln() {
+        if($this->au === null) {
+            return null;
+        }
 		return $this->getAu()->getPln();
 	}
 
@@ -161,9 +164,9 @@ class AuStatus implements GetPlnInterface {
 	 * @param string $name
 	 * @return string|null
 	 */
-	private function getStatusValue($name) {
-		if (!array_key_exists($name, $this->status)) {
-			return null;
+	private function getStatusValue($name, $default = null) {
+        if($this->status === null || !array_key_exists($name, $this->status)) {
+			return $default;
 		}
 		return $this->status[$name];
 	}
@@ -177,33 +180,19 @@ class AuStatus implements GetPlnInterface {
 	}
 
 	public function getLastCrawl() {
-		$poll = $this->getStatusValue('lastPoll');
-		if(! $poll) {
-			return 0;
-		}
-		return $poll;
+		return $this->getStatusValue('lastPoll', 0);
 	}
 	
 	public function getLastCrawlResult() {
-		$result = $this->getStatusValue('lastCrawlResult');
-		if(! $result) {
-			return "Never crawled";
-		}
+		return $this->getStatusValue('lastCrawlResult', 'Never crawled');
 	}
 
 	public function getLastPoll() {
-		$poll = $this->getStatusValue('lastPoll');
-		if(! $poll) {
-			return 0;
-		}
-		return $poll;
+		return $this->getStatusValue('lastPoll', 0);
 	}
 
 	public function getLastPollResult() {
-		$result = $this->getStatusValue('lastPollResult');
-		if(! $result) {
-			return "Never polled";
-		}
+		return $this->getStatusValue('lastPollResult', 'Never polled');
 	}
 
 	public function getAuStatus() {

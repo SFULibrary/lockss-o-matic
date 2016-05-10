@@ -6,26 +6,26 @@ use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 
-/**
- * Description of LoadPln
- *
- * @author mjoyce
- */
-class LoadPln extends AbstractDataFixture 
-{
-    protected function doLoad(ObjectManager $manager)
-    {
+class LoadPln extends AbstractDataFixture {
+    public function getOrder() {
+        return 1;
+    }
+    
+    protected function doLoad(ObjectManager $manager) {
         $pln = new Pln();
-        $pln->setName('T1');
+        $pln->setDescription("Test PLN for testing.");
+        $pln->setName("TestPln");
+        $pln->setPassword('abc123');
+        $pln->setUsername('testuser');
+        $pln->setProperty("ca.sfu.test.list", array("item 1", "item 2", "item 3"));
+        $pln->setProperty("ca.sfu.test.value", "single value");
         $manager->persist($pln);
         $manager->flush();
-        $this->referenceRepository->addReference('pln', $pln);
+        $this->referenceRepository->setReference('pln', $pln);        
     }
 
-    protected function getEnvironments()
-    {
+    protected function getEnvironments() {
         return array('test');
     }
 
-//put your code here
 }

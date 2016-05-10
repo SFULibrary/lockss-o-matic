@@ -7,6 +7,9 @@ use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 class AuTest extends AbstractTestCase
 {
 
+    /**
+     * @var Au
+     */
     protected $au;
 
     public function setUp()
@@ -19,6 +22,7 @@ class AuTest extends AbstractTestCase
     {
         return array(
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAu',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAuProperty',
         );
     }
 
@@ -68,4 +72,14 @@ class AuTest extends AbstractTestCase
         $prop = $au->getAuProperty('cheeses');
         $this->assertEquals(null, $prop);
     }    
+    
+    public function testGetContentSizeNull() {
+        // see AuContentTest for tests with content - they require more data 
+        // fixutres.
+        $this->assertEquals(0, $this->au->getContentSize());
+    }
+    
+    public function testStatusNull() {
+        $this->assertNull($this->au->status());
+    }
 }
