@@ -26,5 +26,4 @@ class LoadDeposit extends AbstractDataFixture {
     protected function getEnvironments() {
         return array('test');
     }
-
 }

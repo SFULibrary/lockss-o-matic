@@ -39,5 +39,4 @@ class LoadAu extends AbstractDataFixture
     {
         return array('test');
     }
-
 }

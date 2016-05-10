@@ -90,5 +90,4 @@ class AuStatusTest extends AbstractTestCase {
     public function testGetAuStatus() {
         $this->assertEquals('ok', $this->auStatus->getAuStatus());
     }
-
 }

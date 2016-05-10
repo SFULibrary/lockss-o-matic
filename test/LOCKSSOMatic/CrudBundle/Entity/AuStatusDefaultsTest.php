@@ -56,5 +56,4 @@ class AuStatusDefaultsTest extends AbstractTestCase {
     public function testGetAuStatus() {
         $this->assertNull($this->auStatus->getAuStatus());
     }
-
 }

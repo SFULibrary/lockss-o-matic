@@ -3,9 +3,8 @@
   <description>The coding standard for the PKP PLN</description>
 
   <file>src</file>
+  <file>test</file>
 
-  <exclude-pattern>*/Tests/*</exclude-pattern>
-  
   <arg value="s" />
   <arg name='tab-width' value='4'/>
   <arg name='standard' value='PSR2'/>

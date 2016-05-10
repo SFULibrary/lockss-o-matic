@@ -49,5 +49,4 @@ class BoxStatusTest extends AbstractTestCase
     public function testGetUsed() {
         $this->assertEquals(309, $this->boxStatus->getUsed());
     }
-    
 }

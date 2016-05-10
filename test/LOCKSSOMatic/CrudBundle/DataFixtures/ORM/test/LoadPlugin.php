@@ -26,5 +26,4 @@ class LoadPlugin extends AbstractDataFixture {
     protected function getEnvironments() {
         return array('test');
     }
-
 }

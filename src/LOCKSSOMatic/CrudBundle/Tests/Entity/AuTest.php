@@ -82,5 +82,4 @@ class AuTest extends AbstractTestCase
     {
         $this->assertEquals('ca|sfu|test&base_url~http%3A%2F%2Fexample%2Ecom', $this->au->getAuid());
     }
-
 }

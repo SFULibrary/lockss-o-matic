@@ -30,5 +30,4 @@ class LoadContentProvider extends AbstractDataFixture {
     protected function getEnvironments() {
         return array('test');
     }
-
 }

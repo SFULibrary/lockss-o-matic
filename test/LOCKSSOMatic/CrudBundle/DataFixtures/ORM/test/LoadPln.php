@@ -27,5 +27,4 @@ class LoadPln extends AbstractDataFixture {
     protected function getEnvironments() {
         return array('test');
     }
-
 }

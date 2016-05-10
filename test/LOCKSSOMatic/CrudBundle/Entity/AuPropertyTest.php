@@ -26,5 +26,4 @@ class AuPropertyTest extends AbstractTestCase {
         $child = new AuProperty();
         $this->assertFalse($child->hasParent());
     }
-    
 }

@@ -35,5 +35,4 @@ class AuContentTest extends AbstractTestCase {
     public function testContentSize() {
         $this->assertEquals(346, $this->au->getContentSize());
     }
-    
 }

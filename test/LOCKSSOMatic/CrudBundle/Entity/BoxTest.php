@@ -44,5 +44,4 @@ class BoxTest extends AbstractTestCase
         $this->box->resolveHostname();
         $this->assertEquals(null, $this->box->getIpAddress());
     }
-
 }
