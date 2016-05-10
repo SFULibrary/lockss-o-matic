@@ -22,7 +22,11 @@ class AuTest extends AbstractTestCase
     {
         return array(
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAu',
-            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAuProperty',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAuProperty',            
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadContentOwner',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadContentProvider',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPlugin',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPln',
         );
     }
 

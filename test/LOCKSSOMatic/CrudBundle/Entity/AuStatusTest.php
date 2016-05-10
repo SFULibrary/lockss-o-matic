@@ -4,7 +4,7 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 
-class AuTest extends AbstractTestCase {
+class AuStatusTest extends AbstractTestCase {
 
     protected $auStatus;
     
