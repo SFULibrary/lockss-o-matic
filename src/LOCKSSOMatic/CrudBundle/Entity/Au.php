@@ -199,8 +199,11 @@ class Au implements GetPlnInterface
      */
     public function getAuPropertyValue($name, $encoded = false)
     {
-        $property = $this->getAuProperty($name);
         $value = '';
+        $property = $this->getAuProperty($name);
+        if( $property === null) {
+            return '';
+        }
         foreach($property->getChildren() as $prop) {
             if($prop->getPropertyKey() === 'value') {
                 $value = $prop->getPropertyValue();
