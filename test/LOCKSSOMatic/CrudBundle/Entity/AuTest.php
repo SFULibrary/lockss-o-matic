@@ -48,7 +48,7 @@ class AuTest extends AbstractTestCase
     public function testGetAuPropertyValue()
     {
         $au = $this->references->getReference('au');
-        $this->assertEquals('2007', $au->getAuPropertyValue('year'));
+        $this->assertEquals('2007', $au->getAuPropertyValue('year'));   
     }
 
     public function testGetAuPropertyValueEncoded()
