@@ -62,7 +62,7 @@ class BoxStatusCommand extends ContainerAwareCommand
     {
         $pln = $box->getPln();
         $statusClient = new SoapClient(
-            "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl",
+            "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl",
             array(
             'soap_version' => SOAP_1_1,
             'login'        => $pln->getUsername(),
