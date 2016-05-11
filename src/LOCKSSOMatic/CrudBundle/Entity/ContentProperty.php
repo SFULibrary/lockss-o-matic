@@ -176,7 +176,7 @@ class ContentProperty implements GetPlnInterface
 
     /**
      * Set isList
-     *
+     * @todo why is this settable?
      * @param boolean $isList
      * @return ContentProperty
      */

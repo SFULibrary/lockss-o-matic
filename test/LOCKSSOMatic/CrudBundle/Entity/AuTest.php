@@ -6,7 +6,9 @@ use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 
 class AuTest extends AbstractTestCase
 {
-
+    /**
+     * @var Au
+     */
     protected $au;
 
     public function setUp()
@@ -19,6 +21,11 @@ class AuTest extends AbstractTestCase
     {
         return array(
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAu',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadAuProperty',            
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadContentOwner',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadContentProvider',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPlugin',
+            'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPln',
         );
     }
 
@@ -41,6 +48,7 @@ class AuTest extends AbstractTestCase
     {
         $au = $this->references->getReference('au');
         $this->assertEquals('2007', $au->getAuPropertyValue('year'));
+        $this->assertEquals('2007', $au->getAuPropertyValue('year'));   
     }
 
     public function testGetAuPropertyValueEncoded()
@@ -68,4 +76,14 @@ class AuTest extends AbstractTestCase
         $prop = $au->getAuProperty('cheeses');
         $this->assertEquals(null, $prop);
     }    
+    
+    public function testGetContentSizeNull() {
+        // see AuContentTest for tests with content - they require more data 
+        // fixutres.
+        $this->assertEquals(0, $this->au->getContentSize());
+    }
+    
+    public function testStatusNull() {
+        $this->assertNull($this->au->status());
+    }
 }
