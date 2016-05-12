@@ -332,10 +332,10 @@ class Pln {
     /**
      * Set keystore
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Keystore $keystore
+     * @param Keystore $keystore
      * @return Pln
      */
-    public function setKeystore(\LOCKSSOMatic\CrudBundle\Entity\Keystore $keystore = null)
+    public function setKeystore(Keystore $keystore = null)
     {
         $this->keystore = $keystore;
 
@@ -345,7 +345,7 @@ class Pln {
     /**
      * Get keystore
      *
-     * @return \LOCKSSOMatic\CrudBundle\Entity\Keystore 
+     * @return Keystore 
      */
     public function getKeystore()
     {

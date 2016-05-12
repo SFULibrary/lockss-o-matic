@@ -29,10 +29,10 @@ class AuContentTest extends AbstractTestCase {
     }
     
     public function testCount() {
-        $this->assertCount(2, $this->au->getContent());
+        $this->assertCount(3, $this->au->getContent());
     }    
     
     public function testContentSize() {
-        $this->assertEquals(346, $this->au->getContentSize());
+        $this->assertEquals(679, $this->au->getContentSize());
     }
 }

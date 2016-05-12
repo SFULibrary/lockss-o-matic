@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 
+
 class LoadPln extends AbstractDataFixture {
     public function getOrder() {
         return 1;

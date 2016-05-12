@@ -29,7 +29,7 @@ class LoadContent extends AbstractDataFixture
         $c1->setAu($this->referenceRepository->getReference('au'));
         $c1->setChecksumType('SHA1');
         $c1->setChecksumValue('abc123');
-        $c1->setDeposit($this->referenceRepository->getReference('deposit'));
+        $c1->setDeposit($this->referenceRepository->getReference('deposit.1'));
         $c1->setSize(123);
         $c1->setTitle("Issue 1");
         $c1->setUrl("http://example.com/path/file-1");
@@ -42,7 +42,7 @@ class LoadContent extends AbstractDataFixture
         $c2->setAu($this->referenceRepository->getReference('au'));
         $c2->setChecksumType('SHA1');
         $c2->setChecksumValue('abc223');
-        $c2->setDeposit($this->referenceRepository->getReference('deposit'));
+        $c2->setDeposit($this->referenceRepository->getReference('deposit.1'));
         $c2->setSize(223);
         $c2->setTitle("Issue 2");
         $c2->setUrl("http://example.com/path/file-2");
@@ -50,6 +50,20 @@ class LoadContent extends AbstractDataFixture
         $c2->setRecrawl(false);
         $manager->persist($c2);
         $this->referenceRepository->addReference('content.2', $c2);        
+
+        $c3 = new Content();
+        $c3->setAu($this->referenceRepository->getReference('au'));
+        $c3->setChecksumType('SHA1');
+        $c3->setChecksumValue('abc333');
+        $c3->setDeposit($this->referenceRepository->getReference('deposit.2'));
+        $c3->setSize(333);
+        $c3->setTitle("Issue 3");
+        $c3->setUrl("http://example.com/path/file-3");
+        $c3->setDepositDate();
+        $c3->setRecrawl(false);
+        $manager->persist($c3);
+        $this->referenceRepository->addReference('content.3', $c3);        
+
         $manager->flush();        
     }
 
