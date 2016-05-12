@@ -68,18 +68,18 @@ class ContentTest extends AbstractTestCase
     }
     
     public function testGetContentPropertyValue() {
-        $this->assertEquals('http://example.com', $this->content->getContentPropertyValue('prop1'));
+        $this->assertEquals('http://example.com/path/htap', $this->content->getContentPropertyValue('base_url'));
     }
     
     public function testGetContentPropertyValueEncoded() {
-        $this->assertEquals('http%3A%2F%2Fexample%2Ecom', $this->content->getContentPropertyValue('prop1', true));
+        $this->assertEquals('http%3A%2F%2Fexample%2Ecom%2Fpath%2Fhtap', $this->content->getContentPropertyValue('base_url', true));
     }
     
     public function testGetContentPropertyValueList() {
-        $this->assertEquals(array('abc/', 'pdq'), $this->content->getContentPropertyValue('prop2'));
+        $this->assertEquals(array('foo', 'bar/'), $this->content->getContentPropertyValue('sillyprop'));
     }
     
     public function testGetContentPropertyValueListEncoded() {
-        $this->assertEquals(array('abc%2F', 'pdq'), $this->content->getContentPropertyValue('prop2', true));
+        $this->assertEquals(array('foo', 'bar%2F'), $this->content->getContentPropertyValue('sillyprop', true));
     }
 }

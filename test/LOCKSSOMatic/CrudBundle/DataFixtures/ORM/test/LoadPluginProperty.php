@@ -77,6 +77,37 @@ class LoadPluginProperty extends AbstractDataFixture {
         $p9->setPropertyValue('false');
         $manager->persist($p9);
         $this->referenceRepository->setReference('pluginproperty.9', $p9);        
+
+        $p10 = new PluginProperty();
+        $p10->setPlugin($this->referenceRepository->getReference('plugin'));
+        $p10->setParent($p2);
+        $p10->setPropertyKey('configparamdescr');
+        $manager->persist($p10);
+        $this->referenceRepository->setReference('pluginproperty.10', $p10);        
+ 
+        $p11 = new PluginProperty();
+        $p11->setPlugin($this->referenceRepository->getReference('plugin'));
+        $p11->setParent($p10);
+        $p11->setPropertyKey('key');
+        $p11->setPropertyValue('lockss_only');
+        $manager->persist($p11);
+        $this->referenceRepository->setReference('pluginproperty.11', $p11);        
+
+        $p12 = new PluginProperty();
+        $p12->setPlugin($this->referenceRepository->getReference('plugin'));
+        $p12->setParent($p10);
+        $p12->setPropertyKey('definitional');
+        $p12->setPropertyValue('true');
+        $manager->persist($p12);
+        $this->referenceRepository->setReference('pluginproperty.12', $p12);  
+        
+        $p13 = new PluginProperty();
+        $p13->setPlugin($this->referenceRepository->getReference('plugin'));
+        $p13->setPropertyKey('au_name');
+        $p13->setPropertyValue('"AU %s %s", base_url, year');
+        $manager->persist($p13);
+        $this->referenceRepository->setReference('pluginproperty.13', $p13);
+
         $manager->flush();
     }
 

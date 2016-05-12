@@ -36,7 +36,7 @@ class PluginTest extends AbstractTestCase
     
     public function testGetRootPluginProperties() {
         $props = $this->plugin->getRootPluginProperties();
-        $this->assertCount(3, $props);
+        $this->assertCount(4, $props);
         $this->assertEquals('plugin_identifier', $props[0]->getPropertyKey());
         $this->assertEquals('plugin_config_props', $props[1]->getPropertyKey());
     }
@@ -47,7 +47,7 @@ class PluginTest extends AbstractTestCase
 
     public function testGetPluginConfigParams() {
         $props = $this->plugin->getPluginConfigParams();
-        $this->assertCount(2, $props);
+        $this->assertCount(3, $props);
         $this->assertEquals('configparamdescr', $props[0]->getPropertyKey());
     }
     
@@ -65,7 +65,7 @@ class PluginTest extends AbstractTestCase
     public function testGetDefinitionalProperties() {
         $this->em->clear();
         $props = $this->plugin->getDefinitionalProperties();
-        $this->assertCount(1, $props);
+        $this->assertCount(2, $props);
         $this->assertEquals('base_url', $props[0]);
     }
     

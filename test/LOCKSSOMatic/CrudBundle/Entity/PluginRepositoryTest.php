@@ -54,5 +54,4 @@ class PluginRepositoryTest extends AbstractTestCase
         $this->assertCount(1, $results);
         $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\Plugin', $results[0]);
     }
-    
 }

@@ -4,6 +4,7 @@ namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
+use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProperty;
 
 class LoadContentProperty extends AbstractDataFixture {
@@ -11,20 +12,31 @@ class LoadContentProperty extends AbstractDataFixture {
         return 5;
     }
     
+    protected function buildProperty(ObjectManager $manager, Content $content, $key, $value, $name = null) {
+        $p = new ContentProperty();
+        $p->setContent($content);
+        $p->setPropertyKey($key);
+        $p->setPropertyValue($value);
+        if($name !== null) {
+            $this->referenceRepository->setReference($name, $p);
+        }
+        $manager->persist($p);
+    }
+    
     protected function doLoad(ObjectManager $manager) {
-        $p1 = new ContentProperty();
-        $p1->setContent($this->referenceRepository->getReference('content.1'));
-        $p1->setPropertyKey('prop1');
-        $p1->setPropertyValue('http://example.com');
-        $manager->persist($p1);        
-        $this->referenceRepository->setReference('contentproperty.1', $p1);        
+        $c1 = $this->referenceRepository->getReference('content.1');
+        $this->buildProperty($manager, $c1, 'base_url', 'http://example.com/path/htap');
+        $this->buildProperty($manager, $c1, 'lockss_only', 'pdq');
+        $this->buildProperty($manager, $c1, 'sillyprop', array('foo', 'bar/'));
         
-        $p2 = new ContentProperty();
-        $p2->setContent($this->referenceRepository->getReference('content.1'));
-        $p2->setPropertyKey('prop2');
-        $p2->setPropertyValue(array('abc/', 'pdq'));
-        $manager->persist($p2);        
-        $this->referenceRepository->setReference('contentproperty.2', $p2);        
+        $c2 = $this->referenceRepository->getReference('content.2');
+        $this->buildProperty($manager, $c2, 'base_url', 'http://example.com/path/htap');
+        $this->buildProperty($manager, $c2, 'lockss_only', 'pdq');
+
+        $c3 = $this->referenceRepository->getReference('content.3');
+        $this->buildProperty($manager, $c3, 'base_url', 'http://example.com/path/htap');
+        $this->buildProperty($manager, $c3, 'lockss_only', 'pdq');
+
         $manager->flush();
     }
 

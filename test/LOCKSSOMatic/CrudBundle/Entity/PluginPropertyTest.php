@@ -39,5 +39,4 @@ class PluginPropertyTest extends AbstractTestCase
     public function testGetPropertyValueNull() {
         $this->assertNull($this->pluginProperty->getPropertyValue('foooo'));
     }
-
 }

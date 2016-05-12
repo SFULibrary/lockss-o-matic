@@ -5,10 +5,8 @@ namespace LOCKSSOMatic\CrudBundle\Service;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
-use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use Monolog\Logger;
-use Symfony\Component\Routing\Router;
 
 class AuBuilder
 {
