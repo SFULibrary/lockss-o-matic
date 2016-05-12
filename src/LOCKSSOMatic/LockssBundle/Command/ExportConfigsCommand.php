@@ -65,7 +65,7 @@ class ExportConfigsCommand extends ContainerAwareCommand {
         $this->addArgument(
             'pln', 
             InputArgument::IS_ARRAY, 
-            'List of PLN ids to export.'
+            'Optional list of PLN ids to export.'
         );
 		$this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
     }
