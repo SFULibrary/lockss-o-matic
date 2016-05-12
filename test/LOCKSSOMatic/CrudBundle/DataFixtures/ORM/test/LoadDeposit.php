@@ -12,15 +12,25 @@ class LoadDeposit extends AbstractDataFixture {
     }
     
     protected function doLoad(ObjectManager $manager) {
-        $deposit = new Deposit();
-        $deposit->setContentProvider($this->referenceRepository->getReference('contentprovider'));
-        $deposit->setSummary('Test deposits');
-        $deposit->setTitle('Tests');
-        $deposit->setUuid('F4768EB8-ABFD-429E-9757-F069A11702EE');
-        $deposit->setDepositDate();
-        $manager->persist($deposit);
+        $d1 = new Deposit();
+        $d1->setContentProvider($this->referenceRepository->getReference('contentprovider'));
+        $d1->setSummary('Test deposits');
+        $d1->setTitle('Tests');
+        $d1->setUuid('F4768EB8-ABFD-429E-9757-F069A11702EE');
+        $d1->setDepositDate();
+        $manager->persist($d1);
+        $this->referenceRepository->setReference('deposit.1', $d1);        
+
+        $d2 = new Deposit();
+        $d2->setContentProvider($this->referenceRepository->getReference('contentprovider'));
+        $d2->setSummary('Test deposit 2');
+        $d2->setTitle('Tests More');
+        $d2->setUuid('F89C2A08-96A8-478C-8944-92D8403E76C2');
+        $d2->setDepositDate();
+        $manager->persist($d2);
+        $this->referenceRepository->setReference('deposit.2', $d2);        
+        
         $manager->flush();
-        $this->referenceRepository->setReference('deposit', $deposit);        
     }
 
     protected function getEnvironments() {

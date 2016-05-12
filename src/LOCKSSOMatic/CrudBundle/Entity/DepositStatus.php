@@ -145,11 +145,11 @@ class DepositStatus implements GetPlnInterface {
     /**
      * Set deposit
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Deposit $deposit
+     * @param Deposit $deposit
      *
      * @return DepositStatus
      */
-    public function setDeposit(\LOCKSSOMatic\CrudBundle\Entity\Deposit $deposit = null)
+    public function setDeposit(Deposit $deposit = null)
     {
         $this->deposit = $deposit;
 
@@ -159,7 +159,7 @@ class DepositStatus implements GetPlnInterface {
     /**
      * Get deposit
      *
-     * @return \LOCKSSOMatic\CrudBundle\Entity\Deposit
+     * @return Deposit
      */
     public function getDeposit()
     {
