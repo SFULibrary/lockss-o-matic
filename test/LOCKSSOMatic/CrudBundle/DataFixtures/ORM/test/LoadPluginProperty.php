@@ -41,7 +41,7 @@ class LoadPluginProperty extends AbstractDataFixture {
 
         $p5 = new PluginProperty();
         $p5->setPlugin($this->referenceRepository->getReference('plugin'));
-        $p5->setParent($p2);
+        $p5->setParent($p3);
         $p5->setPropertyKey('key');
         $p5->setPropertyValue('base_url');
         $manager->persist($p5);
@@ -49,12 +49,34 @@ class LoadPluginProperty extends AbstractDataFixture {
 
         $p6 = new PluginProperty();
         $p6->setPlugin($this->referenceRepository->getReference('plugin'));
-        $p6->setParent($p5);
+        $p6->setParent($p3);
         $p6->setPropertyKey('definitional');
         $p6->setPropertyValue('true');
         $manager->persist($p6);
         $this->referenceRepository->setReference('pluginproperty.6', $p6);        
 
+        $p7 = new PluginProperty();
+        $p7->setPlugin($this->referenceRepository->getReference('plugin'));
+        $p7->setParent($p2);
+        $p7->setPropertyKey('configparamdescr');
+        $manager->persist($p7);
+        $this->referenceRepository->setReference('pluginproperty.7', $p7);        
+ 
+        $p8 = new PluginProperty();
+        $p8->setPlugin($this->referenceRepository->getReference('plugin'));
+        $p8->setParent($p7);
+        $p8->setPropertyKey('key');
+        $p8->setPropertyValue('year');
+        $manager->persist($p8);
+        $this->referenceRepository->setReference('pluginproperty.8', $p8);        
+
+        $p9 = new PluginProperty();
+        $p9->setPlugin($this->referenceRepository->getReference('plugin'));
+        $p9->setParent($p7);
+        $p9->setPropertyKey('definitional');
+        $p9->setPropertyValue('false');
+        $manager->persist($p9);
+        $this->referenceRepository->setReference('pluginproperty.9', $p9);        
         $manager->flush();
     }
 

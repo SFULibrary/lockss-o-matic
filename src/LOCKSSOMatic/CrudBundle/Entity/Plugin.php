@@ -346,11 +346,9 @@ class Plugin
         $properties = array();
 
         foreach ($this->getPluginConfigParams() as $prop) {
-            dump($prop);
             $key = '';
             $definitional = false;
             foreach ($prop->getChildren() as $child) {
-                dump($child);
                 if ($child->getPropertyKey() === 'key') {
                     $key = $child->getPropertyValue();
                 }
