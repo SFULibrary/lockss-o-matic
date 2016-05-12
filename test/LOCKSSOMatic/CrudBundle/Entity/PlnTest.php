@@ -15,8 +15,7 @@ use PHPUnit_Framework_TestCase;
  *
  * @author mjoyce
  */
-class PlnTest extends PHPUnit_Framework_TestCase 
-{
+class PlnTest extends PHPUnit_Framework_TestCase{
     protected $pln;
     
     public function setUp() {

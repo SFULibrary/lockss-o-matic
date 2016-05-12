@@ -13,8 +13,7 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
  *
  * @author mjoyce
  */
-class ContentProviderTest extends \PHPUnit_Framework_TestCase 
-{
+class ContentProviderTest extends \PHPUnit_Framework_TestCase{
     protected $provider;
     
     public function setUp() {

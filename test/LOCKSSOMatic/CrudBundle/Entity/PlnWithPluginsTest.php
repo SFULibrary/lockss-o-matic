@@ -43,6 +43,4 @@ class PlnWithPluginsTest extends AbstractTestCase
         $this->assertArrayHasKey('ca.sfu.plugin.test', $plugins);
         $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\Plugin', $plugins['ca.sfu.plugin.test']);
     }
-
-
 }

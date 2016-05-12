@@ -40,6 +40,5 @@ class ContentProviderWithContentTest extends AbstractTestCase
         $content = $this->provider->getContent();
         $this->assertCount(3, $content);
     }
-    
 }
 
