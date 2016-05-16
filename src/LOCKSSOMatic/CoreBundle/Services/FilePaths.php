@@ -3,7 +3,6 @@
 namespace LOCKSSOMatic\CoreBundle\Services;
 
 use LOCKSSOMatic\CrudBundle\Entity\Au;
-use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
