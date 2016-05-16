@@ -28,10 +28,8 @@ namespace LOCKSSOMatic\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Default controller, handles requests that don't fit into any of the larger
@@ -48,23 +46,6 @@ class DefaultController extends Controller
     public function indexAction()
     {
         return array();
-    }
-
-    /**
-     * Resolve a domain name into an IP address, return a JSON
-     * response. Useful for AJAX requests.
-     *
-     * @Route("/api/resolve", name="resolve_host")
-     * @Method({"GET"})
-     * @param Request $request
-     */
-    public function resolveHostNameAction(Request $request)
-    {
-        $hostname = $request->query->get('hostname');
-        $ip = gethostbyname($hostname);
-        $response = new Response(json_encode(array('hostname' => $hostname, 'address' => $ip)));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
     }
 
     /**

@@ -11,7 +11,6 @@ namespace LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test;
 use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
-use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 
 /**
  * Description of LoadAu

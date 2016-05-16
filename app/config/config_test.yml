@@ -30,7 +30,6 @@ doctrine:
 security:
     firewalls:
         main:
-            pattern: ^/
             http_basic: ~
     encoders:
         FOS\UserBundle\Model\UserInterface: plaintext
