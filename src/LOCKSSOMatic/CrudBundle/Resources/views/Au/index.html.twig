@@ -23,7 +23,7 @@
         <tbody>
             {% for entity in entities %}
                 <tr>
-                    <td><a href="{{ path('au_show', {'id': entity.id}) }}">{{ prop_generator.generateSymbol(entity, 'au_name') }}</a></td>
+                    <td><a href="{{ path('au_show', {'id': entity.id, 'plnId': pln.id}) }}">{{ prop_generator.generateSymbol(entity, 'au_name') }}</a></td>
                     <td>{% if entity.managed %} Yes {% else %} No {% endif %}</td>
 					<td>{{ entity.status() }}</td>
                     <td>{{ entity.comment }}</td>

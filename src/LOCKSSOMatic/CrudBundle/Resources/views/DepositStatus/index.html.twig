@@ -2,7 +2,7 @@
 
 
 {% block pageheader %}
-    <h1>DepositStatus List</h1>
+    <h1>Deposit status List</h1>
 {% endblock %}
 
 {% block body -%}
@@ -16,18 +16,14 @@
             </tr>
         </thead>
         <tbody>
-        {% for entity in entities %}
+        {% for entity in deposit.status %}
             <tr>
-                <td><a href="{{ path('depositstatus_show', { 'id': entity.id, 'depositId': depositId }) }}">{{ entity.deposit.uuid }}</a></td>
+                <td><a href="{{ path('depositstatus_show', { 'id': entity.id, 'depositId': deposit.id, 'plnId': pln.id }) }}">{{ deposit.uuid }}</a></td>
                 <td>{{ entity.agreement }}</td>
                 <td>{% if entity.queryDate %}{{ entity.queryDate|date('Y-m-d H:i:s') }}{% endif %}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
-    <div class="navigation">
-        {{ knp_pagination_render(entities) }}
-    </div>
 
 {% endblock %}

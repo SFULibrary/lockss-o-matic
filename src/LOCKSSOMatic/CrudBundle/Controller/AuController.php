@@ -11,10 +11,18 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Au controller.
  *
- * @Route("/au")
+ * @Route("/pln/{plnId}/au")
  */
 class AuController extends ProtectedController {
 
+    protected function getPln($plnId) {
+        $pln = $this->getDoctrine()->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+		if ($pln === null) {
+			throw new BadRequestException("Unknown PLN.");
+		}
+        return $pln;
+    }
+    
 	/**
 	 * Lists all Au entities.
 	 *
@@ -22,11 +30,8 @@ class AuController extends ProtectedController {
 	 * @Method("GET")
 	 * @Template()
 	 */
-	public function indexAction(Request $request) {
-		$pln = $this->currentPln();
-		if ($pln === null) {
-			throw new BadRequestException("You must select a PLN.");
-		}
+	public function indexAction(Request $request, $plnId) {
+		$pln = $this->getPln($plnId);
 		$this->requireAccess('MONITOR', $pln);
 
 		$em = $this->getDoctrine()->getManager();
@@ -44,6 +49,7 @@ class AuController extends ProtectedController {
 
 
 		return array(
+            'pln' => $pln,
 			'entities' => $entities,
 		);
 	}
@@ -55,22 +61,24 @@ class AuController extends ProtectedController {
 	 * @Method("GET")
 	 * @Template()
 	 */
-	public function showAction($id) {
+	public function showAction($plnId, $id) {
 		$em = $this->getDoctrine()->getManager();
 		$au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->find($id);
-
-		$pln = $au->getPln();
-		$this->requireAccess('MONITOR', $pln);
-
-		if ($pln !== $this->currentPln()) {
-			$this->addFlash('warning', "This AU is part of the {$pln->getName()} PLN, but you have selected {$this->currentPln()} to work with.");
-		}
 
 		if (!$au) {
 			throw $this->createNotFoundException('Unable to find Au entity.');
 		}
 
+		$pln = $this->getPln($plnId);
+		$this->requireAccess('MONITOR', $pln);
+
+		if ($pln->getId() !== $au->getPln()->getId()) {
+			$this->addFlash('warning', "The PLN does not contain the requested AU.");
+            $this->redirect('home');
+		}
+
 		return array(
+            'pln' => $pln,
 			'entity' => $au,
 		);
 	}
@@ -83,9 +91,25 @@ class AuController extends ProtectedController {
 	 * @Method("GET")
 	 * @Template()
 	 */
-	public function statusAction($id) {
+	public function statusAction($plnId, $id) {
 		$em = $this->getDoctrine()->getManager();
 		$au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->find($id);
-		return array('entity' => $au);
+
+		if (!$au) {
+			throw $this->createNotFoundException('Unable to find Au entity.');
+		}
+
+		$pln = $this->getPln($plnId);
+		$this->requireAccess('MONITOR', $pln);
+
+		if ($pln->getId() !== $au->getPln()->getId()) {
+			$this->addFlash('warning', "The PLN does not contain the requested AU.");
+            $this->redirect('home');
+		}
+
+		return array(
+            'pln' => $pln,
+            'entity' => $au
+        );
 	}
 }

@@ -8,10 +8,10 @@
 {% block body -%}
     <div class="btn-toolbar">
         <div class="btn-group pull-right">
-            <a href="{{ path('deposit') }}" class="btn btn-default">
+            <a href="{{ path('deposit', {'plnId': pln.id}) }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-arrow-left"></span> Back
             </a>
-            <a href="{{ path('depositstatus', { 'depositId': entity.id }) }}" class="btn btn-default">
+            <a href="{{ path('depositstatus', { 'depositId': entity.id, 'plnId': pln.id }) }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-tasks"></span> Status
             </a>
         </div>
@@ -65,7 +65,7 @@
         <tbody>
             {% for content in entity.content %}
                 <tr>
-                    <td><a href="{{ path('content_show', { 'id': content.id }) }}">{{ content.id }}</a></td>
+                    <td><a href="{{ path('content_show', { 'id': content.id, 'plnId': pln.id }) }}">{{ content.id }}</a></td>
                     <td>{{ content.url }}</td>
                     <td>{{ content.title }}</td>
                     <td>{{ content.size }}</td>

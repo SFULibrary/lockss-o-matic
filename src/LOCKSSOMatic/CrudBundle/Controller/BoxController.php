@@ -14,11 +14,19 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Box controller.
  *
- * @Route("/box")
+ * @Route("/pln/{plnId}/box")
  */
 class BoxController extends ProtectedController
 {
 
+    protected function getPln($plnId) {
+        $pln = $this->getDoctrine()->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+		if ($pln === null) {
+			throw new BadRequestException("Unknown PLN.");
+		}
+        return $pln;
+    }
+    
     /**
      * Lists all Box entities.
      *
@@ -26,13 +34,10 @@ class BoxController extends ProtectedController
      * @Method("GET")
      * @Template()
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, $plnId)
     {
-        $pln = $this->currentPln();
-        if ($pln === null) {
-            throw new BadRequestException();
-        }
-        $this->requireAccess('MONITOR', $pln);
+		$pln = $this->getPln($plnId);
+		$this->requireAccess('MONITOR', $pln);
 
         $em = $this->getDoctrine()->getManager();
         $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Box e WHERE e.pln = :pln';
@@ -49,6 +54,7 @@ class BoxController extends ProtectedController
 
 
         return array(
+            'pln' => $pln,
             'entities' => $entities,
         );
     }
@@ -147,13 +153,10 @@ class BoxController extends ProtectedController
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id)
+    public function showAction($plnId, $id)
     {
-        $pln = $this->currentPln();
-        if ($pln === null) {
-            throw new BadRequestException();
-        }
-        $this->requireAccess('PLNADMIN', $pln);
+		$pln = $this->getPln($plnId);
+		$this->requireAccess('MONITOR', $pln);
 
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);

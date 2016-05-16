@@ -16,17 +16,17 @@
                 <th>Uuid</th>
                 <th>Title</th>
                 <th>Summary</th>
-				<th>Agreement</th>
+                <th>Agreement</th>
                 <th>Datedeposited</th>
             </tr>
         </thead>
         <tbody>
             {% for entity in entities %}
                 <tr>
-                    <td><a href="{{ path('deposit_show', { 'id': entity.id }) }}">{{ entity.uuid }}</a></td>
+                    <td><a href="{{ path('deposit_show', { 'id': entity.id, 'plnId': pln.id }) }}">{{ entity.uuid }}</a></td>
                     <td>{{ entity.title }}</td>
                     <td>{{ entity.summary }}</td>
-					<td>{{ "%2.1f"|format(entity.agreement * 100) }}%</td>
+                    <td>{{ "%2.1f"|format(entity.agreement * 100) }}%</td>
                     <td>{% if entity.dateDeposited %}{{ entity.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
                 </tr>
             {% endfor %}

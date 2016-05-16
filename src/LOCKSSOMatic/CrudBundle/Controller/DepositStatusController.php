@@ -12,11 +12,19 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * DepositStatus controller.
  *
- * @Route("/deposit/{depositId}/status")
+ * @Route("pln/{plnId}/deposit/{depositId}/status")
  */
-class DepositStatusController extends Controller
+class DepositStatusController extends ProtectedController
 {
 
+    protected function getPln($plnId) {
+        $pln = $this->getDoctrine()->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+		if ($pln === null) {
+			throw new BadRequestException("Unknown PLN.");
+		}
+        return $pln;
+    }
+    
     /**
      * Lists all DepositStatus entities.
      *
@@ -24,25 +32,23 @@ class DepositStatusController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function indexAction(Request $request, $depositId)
+    public function indexAction(Request $request, $plnId, $depositId)
     {
+		$pln = $this->getPln($plnId);
+		$this->requireAccess('MONITOR', $pln);
+                
         $em = $this->getDoctrine()->getManager();
-        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:DepositStatus e where e.deposit = :depositId';
-        $query = $em->createQuery($dql);
-        $query->setParameters(array(
-            'depositId' => $depositId,
-        ));
-        $paginator = $this->get('knp_paginator');
-        $entities = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            25
-        );
-
+        $deposit = $em->getRepository('LOCKSSOMaticCrudBundle:Deposit')->find($depositId);
+        if($deposit === null) {
+            throw $this->createNotFoundException('Unable to find Deposit entity.');
+        }
+        if($deposit->getContentProvider()->getPln()->getId() !== $pln->getId()) {
+            throw $this->createNotFoundException('The deposit does not exist in this PLN.');
+        }
 
         return array(
-            'depositId' => $depositId,
-            'entities' => $entities,
+            'pln' => $pln,
+            'deposit' => $deposit,
         );
     }
 
@@ -53,10 +59,20 @@ class DepositStatusController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id, $depositId)
+    public function showAction($plnId, $id, $depositId)
     {
+		$pln = $this->getPln($plnId);
+		$this->requireAccess('MONITOR', $pln);
         $em = $this->getDoctrine()->getManager();
 
+        $deposit = $em->getRepository('LOCKSSOMaticCrudBundle:Deposit')->find($depositId);
+        if($deposit === null) {
+            throw $this->createNotFoundException('Unable to find Deposit entity.');
+        }
+        if($deposit->getContentProvider()->getPln()->getId() !== $pln->getId()) {
+            throw $this->createNotFoundException('The deposit does not exist in this PLN.');
+        }
+        
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:DepositStatus')->find($id);
 
         if (!$entity) {
@@ -73,7 +89,8 @@ class DepositStatusController extends Controller
         }
 
         return array(
-            'depositId'   => $depositId,
+            'pln' => $pln,
+            'deposit'   => $deposit,
             'entity'      => $entity,
             'boxes'       => $boxes,
             'content'     => $content,

@@ -8,7 +8,7 @@
 {% block body -%}
     <div class="btn-toolbar">
         <div class="btn-group pull-right">
-            <a href="{{ path('content') }}" class="btn btn-default">
+            <a href="{{ path('content', {'plnId': pln.id}) }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-arrow-left"></span> Back
             </a>
         </div>
@@ -46,13 +46,13 @@
             </tr>
             <tr>
                 <th>Deposit</th>
-                <td><a href="{{ path('deposit_show', {'id': entity.deposit.id}) }}">{{ entity.deposit.title }}</a></td>
+                <td><a href="{{ path('deposit_show', {'id': entity.deposit.id, 'plnId': pln.id}) }}">{{ entity.deposit.title }}</a></td>
             </tr>
             <tr>
                 <th>Au</th>
                 <td>
                     {% if entity.au %}
-                        <a href="{{path('au_show', {'id': entity.au.id}) }}">{{ entity.au }}</a>
+                        <a href="{{path('au_show', {'id': entity.au.id, 'plnId': pln.id}) }}">{{ entity.au }}</a>
                     {% else %}
                         (none)
                     {% endif %}

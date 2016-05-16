@@ -2,13 +2,13 @@
 
 
 {% block pageheader %}
-    <h1>DepositStatus</h1>
+    <h1>Deposit Status</h1>
 {% endblock %}
 
 {% block body -%}
     <div class="btn-toolbar">
         <div class="btn-group pull-right">
-            <a href="{{ path('depositstatus', { 'depositId': depositId }) }}" class="btn btn-default">
+            <a href="{{ path('depositstatus', { 'depositId': deposit.id, 'plnId': pln.id }) }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-arrow-left"></span> Back
             </a>
         </div>
@@ -18,7 +18,7 @@
         <tbody>
             <tr>
                 <th>Deposit</th>
-                <td><a href="{{ path('deposit', { 'id': entity.id }) }}">{{ entity.deposit.uuid }}</a></td>
+                <td><a href="{{ path('deposit_show', { 'id': entity.id, 'plnId': pln.id }) }}">{{ entity.deposit.uuid }}</a></td>
             <tr>
                 <th>Agreement</th>
                 <td>{{ entity.agreement }}</td>
@@ -41,21 +41,21 @@
                         <tr>
                             <td></td>
                             {% for key in entity.status|first|keys %}
-                                <th>{{ content[key].url|truncate(20, false, '...') }}</th>
+                                <th>{{ content[key].url }}</th>
                                 {% endfor %}
                         </tr>
                         {% for key in entity.status|keys %}
                             <tr>
                                 <th>{{ boxes[key].hostname }}</th>
                                     {% for k in entity.status[key] %}
-                                    <td>{{ k|truncate(20, false, '...') }}</td>
+                                    <td>{{ k }}</td>
                                 {% endfor %}
                             </tr>
                         {% endfor %}
                         <tr>
                             <th>Expected</th>
                                 {% for key in entity.status|first|keys %}
-                                <td>{{ content[key].checksumValue|truncate(20, false, '...') }}</td>
+                                <td>{{ content[key].checksumValue }}</td>
                             {% endfor %}
                         </tr>
                     </table>

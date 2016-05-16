@@ -99,10 +99,19 @@ class Deposit implements GetPlnInterface
      * @ORM\OneToMany(targetEntity="Content", mappedBy="deposit")
      */
     private $content;
+    
+    /**
+     * The statuses from LOCKSS for the deposit.
+     * @var DepositStatus
+     * 
+     * @ORM\OneToMany(targetEntity="DepositStatus", mappedBy="deposit")
+     */
+    private $status;
 
     public function __construct()
     {
         $this->content = new ArrayCollection();
+        $this->status = new ArrayCollection();
     }
 
 
@@ -329,5 +338,39 @@ class Deposit implements GetPlnInterface
     public function getAgreement()
     {
         return $this->agreement;
+    }
+
+    /**
+     * Add status
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\DepositStatus $status
+     *
+     * @return Deposit
+     */
+    public function addStatus(\LOCKSSOMatic\CrudBundle\Entity\DepositStatus $status)
+    {
+        $this->status[] = $status;
+
+        return $this;
+    }
+
+    /**
+     * Remove status
+     *
+     * @param \LOCKSSOMatic\CrudBundle\Entity\DepositStatus $status
+     */
+    public function removeStatus(\LOCKSSOMatic\CrudBundle\Entity\DepositStatus $status)
+    {
+        $this->status->removeElement($status);
+    }
+
+    /**
+     * Get status
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }
