@@ -84,12 +84,10 @@
             <dt>Free space</dt><dd>{{ self.bytesToSize(status.getFree()) }}</dd>
             <dt>Used space</dt><dd>{{ self.bytesToSize(status.getUsed()) }}</dd>
         </dl>
-        <p class='text-right'><a href="{{ path('box_status', {'id': entity.id}) }}">Details</a></p>
         {% else %}
-
-            <p>Status check failed: {{ status.status.error }}</p>
-            
-        {% endif %}
+            <p>Status check failed: {{ status.status.error }}</p>            
+        {% endif %}        
+        <p class='text-right'><a href="{{ path('box_status', {'id': entity.id}) }}">Details</a></p>
     {% else %}
         <p>No statuses yet.</p>
     {% endif %}
