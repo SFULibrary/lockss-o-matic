@@ -5,12 +5,10 @@ namespace LOCKSSOMatic\LockssBundle\Command;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\BoxStatus;
-use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
+use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
-use SoapClient;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -57,25 +55,7 @@ class BoxStatusCommand extends ContainerAwareCommand
         $this->em = $container->get('doctrine')->getManager();
         $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
     }
-
-    protected function checkBox(Box $box)
-    {
-        $pln = $box->getPln();
-        $statusClient = new SoapClient(
-            "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl",
-            array(
-            'soap_version' => SOAP_1_1,
-            'login'        => $pln->getUsername(),
-            'password'     => $pln->getPassword(),
-            'trace'        => true,
-            'exceptions'   => true,
-            'cache'        => WSDL_CACHE_NONE,
-            )
-        );
-        $spacesResponse = $statusClient->queryRepositorySpaces(array('repositorySpaceQuery' => 'SELECT *'));
-        return get_object_vars($spacesResponse->return);
-    }
-
+    
     protected function getBoxes($boxIds = null)
     {
         if ($boxIds === null || count($boxIds) === 0) {
@@ -88,20 +68,26 @@ class BoxStatusCommand extends ContainerAwareCommand
     {
         $boxIds = $input->getArgument('boxes');
         foreach ($this->getBoxes($boxIds) as $box) {
-            $this->logger->notice("Checking {$box->getHostname()}");
+            $wsdl = "http://{$box->getHostname()}:{$box->getWebservicePort()}/ws/DaemonStatusService?wsdl";
+            $this->logger->notice($wsdl);
+            $client = new LockssSoapClient();
+            $client->setWsdl($wsdl);
+            $client->setOption('login', $box->getPln()->getUsername());
+            $client->setOption('password', $box->getPln()->getPassword());
+            $status = $client->call('queryRepositorySpaces',
+                array(
+                'repositorySpaceQuery' => 'SELECT *'
+            ));
             $boxStatus = new BoxStatus();
             $boxStatus->setBox($box);
             $boxStatus->setQueryDate(new DateTime());
-            try {
-                $status = $this->checkBox($box);
-                $boxStatus->setStatus($status);
+            if ($status) {
                 $boxStatus->setSuccess(true);
-            } catch (Exception $e) {
-                $this->logger->error("Cannot get status of {$box->getHostname()}: {$e->getMessage()}");
+                $boxStatus->setStatus($status);
+            } else {
+                $this->logger->warning("{$wsdl} failed.");
                 $boxStatus->setSuccess(false);
-                $boxStatus->setStatus(array(
-                    'error' => $e->getMessage(),
-                ));
+                $boxStatus->setStatus($client->getErrors());
             }
             if ($input->getOption('dry-run')) {
                 continue;

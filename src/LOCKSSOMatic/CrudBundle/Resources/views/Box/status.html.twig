@@ -62,14 +62,13 @@
 
         {% else %}
 
-            <p>Status check failed: {{ status.status.error }}</p>
-            <dl class="dl-horizontal">
+            <p>Status check failed.</p>
+            <ul>
                 {% set details = status.status %}
-                {% for key in details|keys|sort %}
-                    <dt>{{ key }}</dt>
-                    <dd>{{ details[key] }}</dd>
+                {% for message in details %}
+                    <li>{{ message|nl2br }}</li>
                 {% endfor %}
-            </dl>		
+            </ul>		
             
         {% endif %}
 
