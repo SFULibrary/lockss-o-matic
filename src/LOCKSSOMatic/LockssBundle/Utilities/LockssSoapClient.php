@@ -84,6 +84,12 @@ class LockssSoapClient
                 $this->errors[] = strstr($this->client->__getLastResponseHeaders(), "\n", true);
             }
             $this->errors[] = $error;
+            
+            // Symfony is particularly aggressive about handling errors.
+            // Make it calm down a little.
+            set_error_handler('var_dump', 0); // turn off all error handling.
+            @trigger_error(""); // clear any errors
+            restore_error_handler();
         } catch (Exception $e) {
             $this->errors[] = "PHP Exception: {$e->getMessage()}";
         }
