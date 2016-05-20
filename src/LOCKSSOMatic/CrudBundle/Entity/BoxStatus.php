@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,7 +26,7 @@ class BoxStatus implements GetPlnInterface {
 	/**
 	 * @var Box
 	 *
-	 * @ORM\ManyToOne(targetEntity="Box")
+	 * @ORM\ManyToOne(targetEntity="Box", inversedBy="status")
 	 * @ORM\JoinColumns({
 	 *   @ORM\JoinColumn(name="box_id", referencedColumnName="id")
 	 * })
@@ -45,16 +46,23 @@ class BoxStatus implements GetPlnInterface {
      */
     private $success;
 
-	/**
-	 * @var string
-	 *
-	 * @ORM\Column(name="status", type="array", nullable=true)
-	 */
-	private $status;
+    /**
+     * @var Collection|CacheStatus
+     * 
+     * @ORM\OneToMany(targetEntity="CacheStatus", mappedBy="boxStatus", cascade={"persist"})
+     */
+    private $caches;
+    
+    /**
+     * @var String
+     * 
+     * @ORM\Column(name="errors", type="text", nullable=true)
+     */
+    private $errors;
     
     public function __construct() {
-        $this->status = array();
         $this->success = false;
+        $this->caches = array();
     }
 
 	public function getPln() {
@@ -92,27 +100,6 @@ class BoxStatus implements GetPlnInterface {
 	}
 
 	/**
-	 * Set status
-	 *
-	 * @param array $status
-	 * @return BoxStatus
-	 */
-	public function setStatus($status) {
-		$this->status = $status;
-
-		return $this;
-	}
-
-	/**
-	 * Get status
-	 *
-	 * @return array 
-	 */
-	public function getStatus() {
-		return $this->status;
-	}
-
-	/**
 	 * Set box
 	 *
 	 * @param Box $box
@@ -131,33 +118,6 @@ class BoxStatus implements GetPlnInterface {
 	 */
 	public function getBox() {
 		return $this->box;
-	}
-
-	/**
-	 * @param string $name
-	 * @return string|null
-	 */
-	private function getStatusValue($name) {
-		if (!array_key_exists($name, $this->status)) {
-			return null;
-		}
-		return $this->status[$name];
-	}
-	
-	public function getActiveCount() {
-		return $this->getStatusValue('activeCount');
-	}
-	
-	public function getFree() {
-		return $this->getStatusValue('free');
-	}
-	
-	public function getSize() {
-		return $this->getStatusValue('size');
-	}
-	
-	public function getUsed() {
-		return $this->getStatusValue('used');
 	}
 
     /**
@@ -182,5 +142,63 @@ class BoxStatus implements GetPlnInterface {
     public function getSuccess()
     {
         return $this->success;
+    }
+
+    /**
+     * Add cach
+     *
+     * @param CacheStatus $cach
+     *
+     * @return BoxStatus
+     */
+    public function addCache(CacheStatus $cache)
+    {
+        $this->caches[] = $cache;
+
+        return $this;
+    }
+
+    /**
+     * Remove cach
+     *
+     * @param CacheStatus $cache
+     */
+    public function removeCache(CacheStatus $cache)
+    {
+        $this->caches->removeElement($cache);
+    }
+
+    /**
+     * Get caches
+     *
+     * @return Collection
+     */
+    public function getCaches()
+    {
+        return $this->caches;
+    }
+
+    /**
+     * Set errors
+     *
+     * @param string $errors
+     *
+     * @return BoxStatus
+     */
+    public function setErrors($errors)
+    {
+        $this->errors = $errors;
+
+        return $this;
+    }
+
+    /**
+     * Get errors
+     *
+     * @return string
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 }

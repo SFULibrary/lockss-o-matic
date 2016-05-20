@@ -52,7 +52,7 @@ class LockssSoapClient
 
     public function getErrors()
     {
-        return $this->errors;
+        return implode("\n", $this->errors);
     }
     
     public function hasErrors() {
@@ -90,7 +90,7 @@ class LockssSoapClient
         set_error_handler($oldErrorHandler);
         set_error_handler($oldExceptionHandler);
         if($response !== null) {
-            return get_object_vars($response->return);
+            return $response;
         } else {
             return null;
         }

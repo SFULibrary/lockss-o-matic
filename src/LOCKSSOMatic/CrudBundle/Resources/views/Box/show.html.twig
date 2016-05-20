@@ -76,17 +76,24 @@
         {% set status = entity.status.last() %}
 
         {% if status.success %}        
-        
-        <dl class="dl-horizontal">
-            <dt>Date Checked</dt><dd>{{ status.queryDate|date }}</dd>
-            <dt>Active AUs</dt><dd>{{ status.getActiveCount() }}</dd>
-            <dt>Disk space</dt><dd>{{ self.bytesToSize(status.getSize()) }}</dd>
-            <dt>Free space</dt><dd>{{ self.bytesToSize(status.getFree()) }}</dd>
-            <dt>Used space</dt><dd>{{ self.bytesToSize(status.getUsed()) }}</dd>
-        </dl>
+
+            <p>Checked {{ status.queryDate|date }}</p>
+            <ul>
+            {% for cache in status.getCaches() %}
+                <li>cache: {{ cache.getStatusValue('repositorySpaceId') }}
+                    <dl class="dl-horizontal">
+                        <dt>Active AUs</dt><dd>{{ cache.getActiveCount() }}</dd>
+                        <dt>Disk space</dt><dd>{{ self.bytesToSize(cache.getSize()) }}</dd>
+                        <dt>Free space</dt><dd>{{ self.bytesToSize(cache.getFree()) }}</dd>
+                        <dt>Used space</dt><dd>{{ self.bytesToSize(cache.getUsed()) }}</dd>
+                    </dl>
+                </li>
+            {% endfor %}
+            </ul>
         {% else %}
-            <p>Status check failed: {{ status.status.error }}</p>            
-        {% endif %}        
+            <p>Status check failed.</p>   
+            <p>{{ status.errors|nl2br }}</p>
+        {% endif %}
         <p class='text-right'><a href="{{ path('box_status', {'id': entity.id}) }}">Details</a></p>
     {% else %}
         <p>No statuses yet.</p>

@@ -6,6 +6,7 @@ use DateTime;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\BoxStatus;
+use LOCKSSOMatic\CrudBundle\Entity\CacheStatus;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
 use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
@@ -39,11 +40,14 @@ class BoxStatusCommand extends ContainerAwareCommand
         $this->setName('lom:box:status');
         $this->setDescription('Check the status of the LOCKSS AUs');
         $this->addArgument(
-            'boxes', InputArgument::IS_ARRAY,
+            'boxes',
+            InputArgument::IS_ARRAY,
             'Optional list of box ids to check.'
         );
         $this->addOption(
-            'dry-run', '-d', InputOption::VALUE_NONE,
+            'dry-run',
+            '-d',
+            InputOption::VALUE_NONE,
             'Do not update box status, just report results to console.'
         );
     }
@@ -69,25 +73,35 @@ class BoxStatusCommand extends ContainerAwareCommand
         $boxIds = $input->getArgument('boxes');
         foreach ($this->getBoxes($boxIds) as $box) {
             $wsdl = "http://{$box->getHostname()}:{$box->getWebservicePort()}/ws/DaemonStatusService?wsdl";
-            $this->logger->notice($wsdl);
+            $this->logger->notice("checking {$wsdl}");
             $client = new LockssSoapClient();
             $client->setWsdl($wsdl);
             $client->setOption('login', $box->getPln()->getUsername());
             $client->setOption('password', $box->getPln()->getPassword());
-            $status = $client->call('queryRepositorySpaces',
-                array(
-                'repositorySpaceQuery' => 'SELECT *'
-            ));
             $boxStatus = new BoxStatus();
             $boxStatus->setBox($box);
             $boxStatus->setQueryDate(new DateTime());
-            if ($status) {
+            $status = $client->call(
+                'queryRepositorySpaces',
+                array(
+                'repositorySpaceQuery' => 'SELECT *'
+                )
+            );
+            if ($status !== null) {
+                if(! is_array($status)) {
+                    $status = array($status);
+                }
+                foreach($status as $c) {
+                    $cache = new CacheStatus();
+                    $cache->setBoxStatus($boxStatus);
+                    $cache->setResponse(get_object_vars($c->return));
+                    $boxStatus->addCache($cache);
+                }
                 $boxStatus->setSuccess(true);
-                $boxStatus->setStatus($status);
             } else {
                 $this->logger->warning("{$wsdl} failed.");
                 $boxStatus->setSuccess(false);
-                $boxStatus->setStatus($client->getErrors());
+                $boxStatus->setErrors($client->getErrors());
             }
             if ($input->getOption('dry-run')) {
                 continue;
@@ -96,5 +110,4 @@ class BoxStatusCommand extends ContainerAwareCommand
             $this->em->flush();
         }
     }
-
 }
