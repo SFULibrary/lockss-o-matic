@@ -40,14 +40,11 @@ class BoxStatusCommand extends ContainerAwareCommand
         $this->setName('lom:box:status');
         $this->setDescription('Check the status of the LOCKSS AUs');
         $this->addArgument(
-            'boxes',
-            InputArgument::IS_ARRAY,
+            'boxes', InputArgument::IS_ARRAY,
             'Optional list of box ids to check.'
         );
         $this->addOption(
-            'dry-run',
-            '-d',
-            InputOption::VALUE_NONE,
+            'dry-run', '-d', InputOption::VALUE_NONE,
             'Do not update box status, just report results to console.'
         );
     }
@@ -59,7 +56,7 @@ class BoxStatusCommand extends ContainerAwareCommand
         $this->em = $container->get('doctrine')->getManager();
         $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
     }
-    
+
     protected function getBoxes($boxIds = null)
     {
         if ($boxIds === null || count($boxIds) === 0) {
@@ -78,36 +75,41 @@ class BoxStatusCommand extends ContainerAwareCommand
             $client->setWsdl($wsdl);
             $client->setOption('login', $box->getPln()->getUsername());
             $client->setOption('password', $box->getPln()->getPassword());
+
             $boxStatus = new BoxStatus();
+            $this->em->persist($boxStatus);
+
             $boxStatus->setBox($box);
             $boxStatus->setQueryDate(new DateTime());
-            $status = $client->call(
-                'queryRepositorySpaces',
+            $status = $client->call('queryRepositorySpaces',
                 array(
-                'repositorySpaceQuery' => 'SELECT *'
+                    'repositorySpaceQuery' => 'SELECT *'
                 )
             );
-            if ($status !== null) {
-                if(! is_array($status)) {
-                    $status = array($status);
-                }
-                foreach($status as $c) {
-                    $cache = new CacheStatus();
-                    $cache->setBoxStatus($boxStatus);
-                    $cache->setResponse(get_object_vars($c->return));
-                    $boxStatus->addCache($cache);
-                }
-                $boxStatus->setSuccess(true);
-            } else {
+
+            if ($status === null) {
                 $this->logger->warning("{$wsdl} failed.");
                 $boxStatus->setSuccess(false);
                 $boxStatus->setErrors($client->getErrors());
-            }
-            if ($input->getOption('dry-run')) {
                 continue;
             }
-            $this->em->persist($boxStatus);
-            $this->em->flush();
+            $r = $status->return;
+            if (!is_array($r)) {
+                $r = array($r);
+            }
+            foreach ($r as $c) {
+                $cache = new CacheStatus();
+                $cache->setBoxStatus($boxStatus);
+                $cache->setResponse(get_object_vars($c));
+                $boxStatus->addCache($cache);
+                $boxStatus->setSuccess(true);
+            }
         }
+        if ($input->getOption('dry-run')) {
+            return;
+        }
+        $this->em->persist($boxStatus);
+        $this->em->flush();
     }
+
 }

@@ -99,7 +99,6 @@ class LockssSoapClient
         }
         set_error_handler($oldErrorHandler);
         set_exception_handler($oldExceptionHandler);
-        print_r($response);
         return $response;
     }
 }
