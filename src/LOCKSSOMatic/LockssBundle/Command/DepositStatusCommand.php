@@ -208,16 +208,16 @@ class DepositStatusCommand extends ContainerAwareCommand
         $dryRun = $input->getOption('dry-run');
         $limit = $input->getOption('limit');
         $depositRepository = $this->em->getRepository('LOCKSSOMaticCrudBundle:Deposit');
-        $count = 0;
 
         if ($input->getOption('all')) {
             $this->logger->notice("Getting all deposits.");
             $deposits = $depositRepository->findAll();
         } else {
-            $this->logger->notice("Getting unagreed deposits.");
             $deposits = $depositRepository->createQueryBuilder('d')
                 ->where('d.agreement <> 1')
                 ->orWhere('d.agreement is null')
+                ->orderBy('d.id')
+                ->setMaxResults($limit)
                 ->getQuery()
                 ->getResult();
         }
@@ -234,10 +234,6 @@ class DepositStatusCommand extends ContainerAwareCommand
             }
             $this->em->persist($status);
             $this->em->flush();
-            $count++;
-            if ($limit && $count >= $limit) {
-                break;
-            }
         }
     }
 }

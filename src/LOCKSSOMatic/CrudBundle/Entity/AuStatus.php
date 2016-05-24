@@ -23,16 +23,6 @@ class AuStatus implements GetPlnInterface {
 	private $id;
 
 	/**
-	 * @var Box
-	 *
-	 * @ORM\ManyToOne(targetEntity="Box")
-	 * @ORM\JoinColumns({
-	 *   @ORM\JoinColumn(name="box_id", referencedColumnName="id")
-	 * })
-	 */
-	private $box;
-
-	/**
 	 * @var DateTime
 	 *
 	 * @ORM\Column(name="query_date", type="datetime", nullable=false)
@@ -42,10 +32,23 @@ class AuStatus implements GetPlnInterface {
 	/**
 	 * @var string
 	 *
-	 * @ORM\Column(name="status", type="array", nullable=true)
+	 * @ORM\Column(name="status", type="array")
 	 */
 	private $status;
-
+    
+    /**
+     * @var String
+     * 
+     * @ORM\Column(name="errors", type="array")
+     */
+    private $errors;
+    
+    public function __construct()
+    {
+        $this->status = array();
+        $this->errors = array();
+    }
+    
 	/**
 	 * @var Au
 	 *
@@ -101,7 +104,7 @@ class AuStatus implements GetPlnInterface {
 	/**
 	 * Get propertyValue
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function getStatus() {
 		return $this->status;
@@ -136,77 +139,27 @@ class AuStatus implements GetPlnInterface {
 		return $this->getAu()->getPln();
 	}
 
-	/**
-	 * Set box
-	 *
-	 * @param Box $box
-	 * @return AuStatus
-	 */
-	public function setBox(Box $box = null) {
-		$this->box = $box;
+    /**
+     * Set errors
+     *
+     * @param string $errors
+     *
+     * @return AuStatus
+     */
+    public function setErrors($errors)
+    {
+        $this->errors = $errors;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Get box
-	 *
-	 * @return Box 
-	 */
-	public function getBox() {
-		return $this->box;
-	}
-
-	/**
-	 * @param string $name
-	 * @return string|null
-	 */
-	private function getStatusValue($name) {
-		if (!array_key_exists($name, $this->status)) {
-			return null;
-		}
-		return $this->status[$name];
-	}
-
-	public function getContentSize() {
-		return $this->getStatusValue('contentSize');
-	}
-
-	public function getDiskUsage() {
-		return $this->getStatusValue('diskUsage');
-	}
-
-	public function getLastCrawl() {
-		$poll = $this->getStatusValue('lastPoll');
-		if(! $poll) {
-			return 0;
-		}
-		return $poll;
-	}
-	
-	public function getLastCrawlResult() {
-		$result = $this->getStatusValue('lastCrawlResult');
-		if(! $result) {
-			return "Never crawled";
-		}
-	}
-
-	public function getLastPoll() {
-		$poll = $this->getStatusValue('lastPoll');
-		if(! $poll) {
-			return 0;
-		}
-		return $poll;
-	}
-
-	public function getLastPollResult() {
-		$result = $this->getStatusValue('lastPollResult');
-		if(! $result) {
-			return "Never polled";
-		}
-	}
-
-	public function getAuStatus() {
-		return $this->getStatusValue('status');
-	}
+    /**
+     * Get errors
+     *
+     * @return string
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
 }

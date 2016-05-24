@@ -88,7 +88,7 @@ class LockssSoapClient
             if($this->client) {
                 $this->errors[] = strstr($this->client->__getLastResponseHeaders(), "\n", true);
             }
-            $this->errors[] = $error;
+            $this->errors[] = $e->getMessage();
             
             // Symfony is particularily aggressive about getting at this error.
             set_error_handler('var_dump', 0); // Never called because of empty mask.
