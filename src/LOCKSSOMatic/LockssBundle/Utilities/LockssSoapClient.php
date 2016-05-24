@@ -68,6 +68,11 @@ class LockssSoapClient
         $this->errors[] = "Soap Exception: {$e->getMessage()}";
     }
 
+    /**
+     * @param string $method
+     * @param array $params
+     * @return stdClass|stdClass[]
+     */
     public function call($method, $params = array())
     {
         $oldErrorHandler = set_error_handler(array($this, 'soapErrorHandler'));
@@ -85,20 +90,16 @@ class LockssSoapClient
             }
             $this->errors[] = $error;
             
-            // Symfony is particularly aggressive about handling errors.
-            // Make it calm down a little.
-            set_error_handler('var_dump', 0); // turn off all error handling.
-            @trigger_error(""); // clear any errors
+            // Symfony is particularily aggressive about getting at this error.
+            set_error_handler('var_dump', 0); // Never called because of empty mask.
+            @trigger_error("");
             restore_error_handler();
         } catch (Exception $e) {
             $this->errors[] = "PHP Exception: {$e->getMessage()}";
         }
         set_error_handler($oldErrorHandler);
-        set_error_handler($oldExceptionHandler);
-        if($response !== null) {
-            return $response;
-        } else {
-            return null;
-        }
+        set_exception_handler($oldExceptionHandler);
+        print_r($response);
+        return $response;
     }
 }
