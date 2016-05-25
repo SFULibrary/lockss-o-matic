@@ -74,7 +74,7 @@
 				<td>
 					{% if entity.auStatus|length > 0 %}
 						{% set status = entity.auStatus.last() %}
-						<a href="{{ path('au_status', {id: entity.id, 'plnId': pln.id }) }}">{{ status.getAuStatus() }}</a>
+                                                <a href="{{ path('au_status', {id: entity.id, 'plnId': pln.id }) }}">{{ status.summary()|nl2br }}</a>
 					{% else %}
 						<a href="{{ path('au_status', {id: entity.id, 'plnId': pln.id }) }}">Not checked yet</a>
 					{% endif %}
@@ -163,28 +163,5 @@
     <h2>All Properties</h2>
     {% import _self as macros %}
     {{ macros.plugin_props(entity.getRootPluginProperties()) }}
-
-	<h2>Recent Status</h2>
-	{% if entity.auStatus|length > 0 %}
-		{% set status = entity.auStatus.last() %}
-
-		<dl class="dl-horizontal">
-			<dt>Date Checked</dt><dd>{{ status.queryDate|date }}</dd>
-			<dt>Box</dt><dd>{{status.box.ipaddress}}/{{status.box.hostname }}</dd>
-			<dt>Status</dt>
-			<dd>{{ status.getAuStatus() }}</dd>
-			<dt>Content Size</dt>
-			<dd>{{ self.bytesToSize(status.getContentSize()) }}</dd>
-			<dt>Disk Usage</dt>
-			<dd>{{ self.bytesToSize(status.getDiskUsage()) }}</dd>
-			<dt>Most Recent Crawl</dt>
-			<dd>{{ status.getLastCrawl()|date }} - {{ status.getLastCrawlResult() }}</dd>
-			<dt>Most Recent Poll</dt>
-			<dd>{{ status.getLastPoll()|date }} - {{ status.getLastPollResult() }}</dd>
-			<p class='text-right'><a href="{{ path('au_status', {'id': entity.id}) }}">Details</a></p>
-		</dl>
-	{% else %}
-		<p>Not checked yet.</p>
-	{% endif %}
 
 {% endblock %}

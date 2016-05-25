@@ -24,13 +24,13 @@
 
 {% block pageheader %}
     <h1>Au Status</h1>
-    <p>Displaying status queries for <a href="{{ path('au_show', {'id': entity.id}) }}">{{ prop_generator.generateSymbol(entity, 'au_name') }}</a></p>
+    <p>Displaying status queries for <a href="{{ path('au_show', {'id': entity.id, 'plnId': pln.id}) }}">{{ prop_generator.generateSymbol(entity, 'au_name') }}</a></p>
     {% endblock %}
 
 {% block body -%}
     <div class="btn-toolbar">
         <div class="btn-group pull-right">
-            <a href="{{ path('au') }}" class="btn btn-default">
+            <a href="{{ path('au', {'plnId': pln.id}) }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-arrow-left"></span> Back
             </a>
         </div>
@@ -38,7 +38,7 @@
 
     {% for status in entity.auStatus|reverse %}
         <h2>{{ status.queryDate|date }}</h2>
-
+        <p>Summary: {{ status.summary() }}</p>
         <table class="table table-condensed table-stripped">
             <thead>
                 <tr>

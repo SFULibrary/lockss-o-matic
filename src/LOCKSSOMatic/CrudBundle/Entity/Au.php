@@ -444,7 +444,7 @@ class Au implements GetPlnInterface
 	
 	public function status() {
 		if(count($this->auStatus) > 0) {
-			return $this->auStatus->last()->getAuStatus();
+			return "";
 		}
 		return null;
 	}

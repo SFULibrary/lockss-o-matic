@@ -93,7 +93,7 @@
             <p>Status check failed.</p>   
             <p>{{ status.errors|nl2br }}</p>
         {% endif %}
-        <p class='text-right'><a href="{{ path('box_status', {'id': entity.id}) }}">Details</a></p>
+        <p class='text-right'><a href="{{ path('box_status', {'id': entity.id, 'plnId': pln.id}) }}">Details</a></p>
     {% else %}
         <p>No statuses yet.</p>
     {% endif %}

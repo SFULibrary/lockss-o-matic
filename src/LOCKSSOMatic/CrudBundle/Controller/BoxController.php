@@ -19,14 +19,15 @@ use Symfony\Component\HttpFoundation\Request;
 class BoxController extends ProtectedController
 {
 
-    protected function getPln($plnId) {
+    protected function getPln($plnId)
+    {
         $pln = $this->getDoctrine()->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
-		if ($pln === null) {
-			throw new BadRequestException("Unknown PLN.");
-		}
+        if ($pln === null) {
+            throw new BadRequestException("Unknown PLN.");
+        }
         return $pln;
     }
-    
+
     /**
      * Lists all Box entities.
      *
@@ -36,8 +37,8 @@ class BoxController extends ProtectedController
      */
     public function indexAction(Request $request, $plnId)
     {
-		$pln = $this->getPln($plnId);
-		$this->requireAccess('MONITOR', $pln);
+        $pln = $this->getPln($plnId);
+        $this->requireAccess('MONITOR', $pln);
 
         $em = $this->getDoctrine()->getManager();
         $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Box e WHERE e.pln = :pln';
@@ -47,14 +48,12 @@ class BoxController extends ProtectedController
         ));
         $paginator = $this->get('knp_paginator');
         $entities = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            25
+            $query, $request->query->getInt('page', 1), 25
         );
 
 
         return array(
-            'pln' => $pln,
+            'pln'      => $pln,
             'entities' => $entities,
         );
     }
@@ -66,7 +65,7 @@ class BoxController extends ProtectedController
      * @Method("POST")
      * @Template("LOCKSSOMaticCrudBundle:Box:new.html.twig")
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, $plnId)
     {
         $pln = $this->currentPln();
         if ($pln === null) {
@@ -81,15 +80,17 @@ class BoxController extends ProtectedController
         if ($form->isValid()) {
             $entity->setPln($pln);
             $em = $this->getDoctrine()->getManager();
-			$entity->resolveHostname();
+            $entity->resolveHostname();
             $em->persist($entity);
             $em->flush();
 
             $this->addFlash('success', "The box has been added to {$pln->getName()}.");
 
             return $this->redirect($this->generateUrl(
-                'box_show',
-                array('id' => $entity->getId())
+                        'box_show', array(
+                        'plnId' => $plnId,
+                        'id'    => $entity->getId()
+                        )
             ));
         }
 
@@ -109,9 +110,7 @@ class BoxController extends ProtectedController
     private function createCreateForm(Box $entity)
     {
         $form = $this->createForm(
-            new BoxType(),
-            $entity,
-            array(
+            new BoxType(), $entity, array(
             'action' => $this->generateUrl('box_create'),
             'method' => 'POST',
             )
@@ -155,8 +154,8 @@ class BoxController extends ProtectedController
      */
     public function showAction($plnId, $id)
     {
-		$pln = $this->getPln($plnId);
-		$this->requireAccess('MONITOR', $pln);
+        $pln = $this->getPln($plnId);
+        $this->requireAccess('MONITOR', $pln);
 
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
@@ -165,13 +164,14 @@ class BoxController extends ProtectedController
         }
         $this->requireAccess('MONITOR', $entity->getPln());
 
-        if($entity->getPln() !== $pln) {
+        if ($entity->getPln() !== $pln) {
             $this->addFlash('warning', "This box is part of the {$entity->getPln()->getName()} network, but you have selected the {$pln->getName()} network.");
         }
 
-        $deleteForm = $this->createDeleteForm($id);
+        $deleteForm = $this->createDeleteForm($id, $plnId);
 
         return array(
+            'pln'         => $pln,
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
@@ -184,12 +184,9 @@ class BoxController extends ProtectedController
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id)
+    public function editAction($plnId, $id)
     {
-        $pln = $this->currentPln();
-        if ($pln === null) {
-            throw new BadRequestException();
-        }
+        $pln = $this->getPln($plnId);
         $this->requireAccess('PLNADMIN', $pln);
 
         $em = $this->getDoctrine()->getManager();
@@ -197,13 +194,13 @@ class BoxController extends ProtectedController
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Box entity.');
         }
-        if($entity->getPln() !== $pln) {
+        if ($entity->getPln() !== $pln) {
             $this->addFlash('danger', "This box is part of the {$entity->getPln()->getName()} network, but you have selected the {$pln->getName()} network.");
-            return $this->redirect($this->generateUrl('box', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('box', array('id' => $entity->getId(), 'plnId' => $plnId)));
         }
 
-        $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $editForm = $this->createEditForm($entity, $plnId);
+        $deleteForm = $this->createDeleteForm($id, $plnId);
 
         return array(
             'entity'      => $entity,
@@ -219,15 +216,16 @@ class BoxController extends ProtectedController
      *
      * @return Form The form
      */
-    private function createEditForm(Box $entity)
+    private function createEditForm(Box $entity, $plnId)
     {
         $form = $this->createForm(
-            new BoxType(),
-            $entity,
+            new BoxType(), $entity,
             array(
             'action' => $this->generateUrl(
-                'box_update',
-                array('id' => $entity->getId())
+                'box_update', array(
+                'id' => $entity->getId(),
+                    'plnId' => $plnId
+                )
             ),
             'method' => 'PUT',
             )
@@ -245,12 +243,9 @@ class BoxController extends ProtectedController
      * @Method("PUT")
      * @Template("LOCKSSOMaticCrudBundle:Box:edit.html.twig")
      */
-    public function updateAction(Request $request, $id)
+    public function updateAction(Request $request, $plnId, $id)
     {
-        $pln = $this->currentPln();
-        if ($pln === null) {
-            throw new BadRequestException();
-        }
+        $pln = $this->getPln($plnId);
         $this->requireAccess('PLNADMIN', $pln);
 
         $em = $this->getDoctrine()->getManager();
@@ -258,13 +253,13 @@ class BoxController extends ProtectedController
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Box entity.');
         }
-        if($entity->getPln() !== $pln) {
+        if ($entity->getPln() !== $pln) {
             $this->addFlash('danger', "This box is part of the {$entity->getPln()->getName()} network, but you have selected the {$pln->getName()} network.");
             return $this->redirect($this->generateUrl('box', array('id' => $entity->getId())));
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
+        $deleteForm = $this->createDeleteForm($id, $plnId);
+        $editForm = $this->createEditForm($entity, $plnId);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
@@ -272,10 +267,10 @@ class BoxController extends ProtectedController
             $em->flush();
 
             $this->addFlash('success', "The box has been updated.");
-            return $this->redirect($this->generateUrl(
-                'box_show',
-                array('id' => $id)
-            ));
+            return $this->redirect($this->generateUrl('box_show', array(
+                        'plnId' => $plnId,
+                        'id'    => $id
+            )));
         }
 
         return array(
@@ -290,20 +285,18 @@ class BoxController extends ProtectedController
      *
      * @Route("/{id}/delete", name="box_delete")
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction(Request $request, $plnId, $id)
     {
-        $pln = $this->currentPln();
-        if ($pln === null) {
-            throw new BadRequestException();
-        }
+        $pln = $this->getPln($plnId);
         $this->requireAccess('PLNADMIN', $pln);
-        
+        $this->requireAccess('PLNADMIN', $pln);
+
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
 
-        if($entity->getPln() !== $pln) {
+        if ($entity->getPln() !== $pln) {
             $this->addFlash('danger', "This box is part of the {$entity->getPln()->getName()} network, but you have selected the {$pln->getName()} network.");
-            return $this->redirect($this->generateUrl('box', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('box', array('id' => $entity->getId(), 'plnId' => $plnId)));
         }
 
         if (!$entity) {
@@ -313,7 +306,7 @@ class BoxController extends ProtectedController
         $em->remove($entity);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('box'));
+        return $this->redirect($this->generateUrl('box', array('plnId' => $plnId)));
     }
 
     /**
@@ -323,27 +316,32 @@ class BoxController extends ProtectedController
      *
      * @return Form The form
      */
-    private function createDeleteForm($id)
+    private function createDeleteForm($id, $plnId)
     {
         return $this->createFormBuilder()
-                ->setAction($this->generateUrl('box_delete', array('id' => $id)))
+                ->setAction($this->generateUrl('box_delete', array(
+                        'id'    => $id,
+                        'plnId' => $plnId,
+                )))
                 ->setMethod('DELETE')
                 ->add('submit', 'submit', array('label' => 'Delete'))
                 ->getForm()
         ;
     }
 
-	/**
-	 * Displays status entites for an AU.
-	 * 
-	 * @param int $id
-	 * @Route("/{id}/status", name="box_status")
-	 * @Method("GET")
-	 * @Template()
-	 */
-	public function statusAction($id) {
-		$em = $this->getDoctrine()->getManager();
-		$au = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
-		return array('entity' => $au);
-	}
+    /**
+     * Displays status entites for an AU.
+     * 
+     * @param int $id
+     * @Route("/{id}/status", name="box_status")
+     * @Method("GET")
+     * @Template()
+     */
+    public function statusAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $au = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
+        return array('entity' => $au);
+    }
+
 }

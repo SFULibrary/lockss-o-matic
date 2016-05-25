@@ -162,4 +162,20 @@ class AuStatus implements GetPlnInterface {
     {
         return $this->errors;
     }
+    
+    public function summary() {
+        $statuses = array();
+        foreach($this->status as $host => $response) {
+            $state = $response['status'];
+            if( ! array_key_exists($state, $statuses)) {
+                $statuses[$state] = 0;
+            }
+            $statuses[$state]++;
+        }
+        $status = "";
+        foreach($statuses as $state => $count) {
+            $status = "{$state}: {$count}\n";
+        }
+        return $status;
+    }
 }
