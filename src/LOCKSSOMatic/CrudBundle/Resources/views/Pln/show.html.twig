@@ -79,7 +79,7 @@
         <tbody>
             {% for box in entity.boxes %}
                 <tr>
-                    <td><a href="{{ path('box_show', { 'id': box.id }) }}">{{ box.hostname }}</a></td>
+                    <td><a href="{{ path('box_show', { 'id': box.id, 'plnId': entity.id }) }}">{{ box.hostname }}</a></td>
                     <td>{{ box.ipAddress }}</td>
                 </tr>
             {% endfor %}
