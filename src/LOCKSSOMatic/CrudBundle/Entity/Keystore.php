@@ -26,7 +26,7 @@ class Keystore
      *
      * @var Pln
      *
-     * @ORM\OneToOne(targetEntity="Pln", inversedBy="keystore")
+     * @ORM\OneToOne(targetEntity="Pln", mappedBy="keystore")
      */
     private $pln;
 

@@ -25,7 +25,7 @@ class BoxStatus implements GetPlnInterface {
 	/**
 	 * @var Box
 	 *
-	 * @ORM\ManyToOne(targetEntity="Box")
+	 * @ORM\ManyToOne(targetEntity="Box", inversedBy="status")
 	 * @ORM\JoinColumns({
 	 *   @ORM\JoinColumn(name="box_id", referencedColumnName="id")
 	 * })

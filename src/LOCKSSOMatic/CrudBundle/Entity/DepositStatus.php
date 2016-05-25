@@ -25,7 +25,7 @@ class DepositStatus implements GetPlnInterface {
 	/**
 	 * @var Deposit
 	 *
-	 * @ORM\ManyToOne(targetEntity="Deposit")
+	 * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="status")
 	 * @ORM\JoinColumns({
 	 *   @ORM\JoinColumn(name="deposit_id", referencedColumnName="id")
 	 * })
