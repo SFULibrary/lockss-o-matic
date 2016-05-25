@@ -11,6 +11,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\CrudBundle\Entity\DepositStatus;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
+use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
 use SoapClient;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -121,19 +122,14 @@ class DepositStatusCommand extends ContainerAwareCommand
         $auid = $this->idGenerator->fromContent($content);
         $checksumType = $content->getChecksumType();
 
-        $url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/HasherService?wsdl";
+        $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/HasherService?wsdl";
         $this->logger->notice("Checking content {$content->getId()} on box {$box->getId()}");
-        $hasherClient = new SoapClient(
-            $url,
-            array(
-            'soap_version' => SOAP_1_1,
-            'login'        => $box->getPln()->getUsername(),
-            'password'     => $box->getPln()->getPassword(),
-            'exceptions'   => true,
-            'cache'        => WSDL_CACHE_NONE,
-            )
-        );
-        $hashResponse = $hasherClient->hash(array(
+        $client = new LockssSoapClient();
+        $client->setWsdl($wsdl);
+        $client->setOption('login', $box->getPln()->getUsername());
+        $client->setOption('password', $box->getPln()->getPassword());
+        
+        $response = $client->call('hash', array(
             'hasherParams' => array(
                 'recordFilterStream' => true,
                 'hashType'           => 'V3File',
@@ -141,11 +137,18 @@ class DepositStatusCommand extends ContainerAwareCommand
                 'url'                => $content->getUrl(),
                 'auId'               => $auid,
         )));
-        if (property_exists($hashResponse->return, 'blockFileDataHandler')) {
+        if($response === null) {
+            $this->logger->warning("{$wsdl} failed.");
+            $this->logger->warning($client->getErrors());            
+            // do error stuff
+            return '*';
+        }
+        
+        if (property_exists($response->return, 'blockFileDataHandler')) {
             $matches = array();
             if (preg_match(
                 "/^([a-fA-F0-9]+)\s+http/m",
-                $hashResponse->return->blockFileDataHandler,
+                $response->return->blockFileDataHandler,
                 $matches
             )) {
                 $checksumValue = $matches[1];
@@ -154,7 +157,7 @@ class DepositStatusCommand extends ContainerAwareCommand
                 return '-';
             }
         } else {
-            return $hashResponse->return->errorMessage;
+            return $response->return->errorMessage;
         }
     }
 
@@ -167,12 +170,8 @@ class DepositStatusCommand extends ContainerAwareCommand
         foreach ($pln->getBoxes() as $box) {
             $status[$box->getId()] = array();
             foreach ($deposit->getContent() as $content) {
-                try {
-                    $checksum = $this->checkContent($box, $content);
-                    $status[$box->getId()][$content->getId()] = $checksum;
-                } catch (Exception $e) {
-                    $status[$box->getId()][$content->getId()] = '*';
-                }
+                $checksum = $this->checkContent($box, $content);
+                $status[$box->getId()][$content->getId()] = $checksum;
                 if ($checksum === $content->getChecksumValue()) {
                     $matches++;
                 }
@@ -188,45 +187,27 @@ class DepositStatusCommand extends ContainerAwareCommand
         return $depositStatus;
     }
 
-    /**
-     * @return Pln
-     * @param array|null $plnIds
-     */
-    protected function getPlns($plnIds = null)
-    {
-        if ($plnIds === null || !is_array($plnIds) || count($plnIds) === 0) {
-            return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
-        }
-        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findBy(
-            array('id' => $plnIds)
-        );
-    }
-
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $allDeposits = $input->getOption('all');
         $dryRun = $input->getOption('dry-run');
         $limit = $input->getOption('limit');
         $depositRepository = $this->em->getRepository('LOCKSSOMaticCrudBundle:Deposit');
-        $count = 0;
 
         if ($input->getOption('all')) {
             $this->logger->notice("Getting all deposits.");
             $deposits = $depositRepository->findAll();
         } else {
-            $this->logger->notice("Getting unagreed deposits.");
             $deposits = $depositRepository->createQueryBuilder('d')
                 ->where('d.agreement <> 1')
                 ->orWhere('d.agreement is null')
+                ->orderBy('d.id')
+                ->setMaxResults($limit)
                 ->getQuery()
                 ->getResult();
         }
 
         $this->logger->notice("Found " . count($deposits) . " deposits to check.");
         foreach ($deposits as $deposit) {
-            if ($deposit->getAgreement() == 1 && (!$allDeposits)) {
-                continue;
-            }
             $status = $this->checkDeposit($deposit);
             $deposit->setAgreement($status->getAgreement());
             if ($dryRun) {
@@ -234,10 +215,6 @@ class DepositStatusCommand extends ContainerAwareCommand
             }
             $this->em->persist($status);
             $this->em->flush();
-            $count++;
-            if ($limit && $count >= $limit) {
-                break;
-            }
         }
     }
 }

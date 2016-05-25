@@ -1,31 +1,31 @@
 {% extends '::base.html.twig' %}
 
 {% macro bytesToSize(bytes) %}
-	{% spaceless %}
-		{% set kilobyte = 1024 %}
-		{% set megabyte = kilobyte * 1024 %}
-		{% set gigabyte = megabyte * 1024 %}
-		{% set terabyte = gigabyte * 1024 %}
+    {% spaceless %}
+        {% set kilobyte = 1024 %}
+        {% set megabyte = kilobyte * 1024 %}
+        {% set gigabyte = megabyte * 1024 %}
+        {% set terabyte = gigabyte * 1024 %}
 
-		{% if bytes < kilobyte %}
-			{{ bytes ~ ' B' }}
-		{% elseif bytes < megabyte %}
-			{{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
-		{% elseif bytes < gigabyte %}
-			{{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
-		{% elseif bytes < terabyte %}
-			{{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
-		{% else %}
-			{{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
-		{% endif %}
-	{% endspaceless %}
+        {% if bytes < kilobyte %}
+            {{ bytes ~ ' B' }}
+        {% elseif bytes < megabyte %}
+            {{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
+        {% elseif bytes < gigabyte %}
+            {{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
+        {% elseif bytes < terabyte %}
+            {{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
+        {% else %}
+            {{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
+        {% endif %}
+    {% endspaceless %}
 {% endmacro %}
 {% import _self as self %}
 
 {% block pageheader %}
     <h1>Au Status</h1>
-	<p>Displaying status queries for <a href="{{ path('au_show', {'id': entity.id}) }}">{{ prop_generator.generateSymbol(entity, 'au_name') }}</a></p>
-{% endblock %}
+    <p>Displaying status queries for <a href="{{ path('au_show', {'id': entity.id}) }}">{{ prop_generator.generateSymbol(entity, 'au_name') }}</a></p>
+    {% endblock %}
 
 {% block body -%}
     <div class="btn-toolbar">
@@ -36,43 +36,54 @@
         </div>
     </div>
 
-	{% for status in entity.auStatus|reverse %}
-		<h2>{{ status.queryDate|date }} - {{status.box.ipaddress}}/{{status.box.hostname }}:{{ status.box.webServicePort}}</h2>
+    {% for status in entity.auStatus|reverse %}
+        <h2>{{ status.queryDate|date }}</h2>
 
-		<dl class="dl-horizontal">
-			<dt>Status</dt>
-			<dd>{{ status.getAuStatus() }}</dd>
-			<dt>Content Size</dt>
-			<dd>{{ self.bytesToSize(status.getContentSize()) }}</dd>
-			<dt>Disk Usage</dt>
-			<dd>{{ self.bytesToSize(status.getDiskUsage()) }}</dd>
-			<dt>Most Recent Crawl</dt>
-			<dd>{{ status.getLastCrawl()|date }} - {{ status.getLastCrawlResult() }}</dd>
-			<dt>Most Recent Poll</dt>
-			<dd>{{ status.getLastPoll()|date }} - {{ status.getLastPollResult() }}</dd>
-		</dl>
-		
-		<p class='text-right'><a href="#" class="details-toggle" data-autoggle="status_{{ status.id}}">Details</a></p>
-		
-		<dl id="status_{{ status.id}}" class="status-details dl-horizontal" data-box="{{ status.box.ipaddress }}">
-			{% set details = status.status %}
-			{% for key in details|keys|sort %}
-				<dt>{{ key }}</dt>
-				<dd>{{ details[key] }}</dd>
-			{% endfor %}
-		</dl>		
-	{% endfor %}
+        <table class="table table-condensed table-stripped">
+            <thead>
+                <tr>
+                    <th></th>
+                        {% for hostname in status.status|keys|sort %}
+                        <th>{{hostname}}</th>
+                        {% endfor %}
+                </tr>                        
+            </thead>
+            <tbody>
+                {% set protohost = status.status|keys|sort|first %}
+                {% for key in status.status[protohost]|keys|sort %}
+                    <tr>
+                        <th scope="row">{{key}}</th>
+                            {% for hostname in status.status|keys|sort %}
+                            <td>{% if status.status[hostname][key] is defined %}{{status.status[hostname][key]}}{% endif %}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if status.errors|length > 0 %}
+            <h3>Errors</h3>
+
+            <ul>
+                {% for hostname in status.errors|keys|sort %}
+                    <li><b>{{ hostname }}</b><br/>
+                        {{ status.errors[hostname]|nl2br }}                    
+                    </li>
+                {% endfor %}
+            </ul>
+            
+        {% endif %}
+    {% endfor %}
 
 {% endblock %}
 
 {% block javascripts %}
     {% javascripts '@LOCKSSOMaticCrudBundle/Resources/public/js/au_status.js' %}
-      <script src="{{ asset_url }}"></script>
+    <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 {% endblock %}
 
 {% block stylesheets %}
-	{% stylesheets '@LOCKSSOMaticCrudBundle/Resources/public/css/au_status.css' %}
-	<link rel='stylesheet' href='{{ asset_url }}'>
-	{% endstylesheets %}
+    {% stylesheets '@LOCKSSOMaticCrudBundle/Resources/public/css/au_status.css' %}
+    <link rel='stylesheet' href='{{ asset_url }}'>
+    {% endstylesheets %}
 {% endblock %}

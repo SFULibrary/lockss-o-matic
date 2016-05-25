@@ -42,27 +42,36 @@
 
         {% if status.success %}
 
-            <dl class="dl-horizontal">
-                <dt>Date Checked</dt><dd>{{ status.queryDate|date }}</dd>
-                <dt>Active AUs</dt><dd>{{ status.getActiveCount() }}</dd>
-                <dt>Disk space</dt><dd>{{ self.bytesToSize(status.getSize()) }}</dd>
-                <dt>Free space</dt><dd>{{ self.bytesToSize(status.getFree()) }}</dd>
-                <dt>Used space</dt><dd>{{ self.bytesToSize(status.getUsed()) }}</dd>
-            </dl>
+            <ul>
+            {% for cache in status.getCaches() %}
+                <li>cache: {{ cache.getStatusValue('repositorySpaceId') }}
+                    <dl class="dl-horizontal">
+                        <dt>Active AUs</dt><dd>{{ cache.getActiveCount() }}</dd>
+                        <dt>Disk space</dt><dd>{{ self.bytesToSize(cache.getSize()) }}</dd>
+                        <dt>Free space</dt><dd>{{ self.bytesToSize(cache.getFree()) }}</dd>
+                        <dt>Used space</dt><dd>{{ self.bytesToSize(cache.getUsed()) }}</dd>
+                    </dl>
+                </li>
+            {% endfor %}
+            </ul>
 
             <p class='text-right'><a href="#" class="details-toggle" data-autoggle="status_{{ status.id}}">Details</a></p>
 
-            <dl id="status_{{ status.id}}" class="status-details dl-horizontal" data-box="{{ status.box.ipaddress }}">
-                {% set details = status.status %}
-                {% for key in details|keys|sort %}
-                    <dt>{{ key }}</dt>
-                    <dd>{{ details[key] }}</dd>
+            <div id="status_{{ status.id}}" class="status-details" data-box="{{ status.box.ipaddress }}">
+            {% for cache in status.getCaches() %}
+                <h3>{{ cache.getStatusValue('repositorySpaceId') }}</h3>
+                <ul>
+                {% for key in cache.getStatusKeys() %}
+                    <li><strong>{{ key }}</strong>: {{ cache.getStatusValue(key) }}</li>
                 {% endfor %}
-            </dl>		
+                </ul>
+                {% endfor %}
+            </div>		
 
         {% else %}
 
-            <p>Status check failed: {{ status.status.error }}</p>
+            <h3>Status check failed.</h3>   
+            <p>{{ status.errors|nl2br }}</p>
             
         {% endif %}
 

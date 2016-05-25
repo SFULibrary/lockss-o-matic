@@ -4,15 +4,14 @@ namespace LOCKSSOMatic\LockssBundle\Command;
 
 use DateTime;
 use Doctrine\ORM\EntityManager;
-use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\AuStatus;
-use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
+use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
-use SoapClient;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,11 +30,6 @@ class AuStatusCommand extends ContainerAwareCommand {
 	private $logger;
 
 	/**
-	 * @var Box[]
-	 */
-	private $boxes;
-
-	/**
 	 * @var AuIdGenerator
 	 */
 	private $idGenerator;
@@ -43,6 +37,7 @@ class AuStatusCommand extends ContainerAwareCommand {
 	public function configure() {
 		$this->setName('lom:au:status');
 		$this->setDescription('Check the status of the LOCKSS AUs');
+        $this->addArgument('aus', InputArgument::IS_ARRAY, "Optional list of AU database Iids to check.");
 		$this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
 	}
 
@@ -52,83 +47,55 @@ class AuStatusCommand extends ContainerAwareCommand {
 		$this->em = $container->get('doctrine')->getManager();
 		$this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
 	}
+    
 
-	protected function loadBoxes(Pln $pln) {
-		$boxes = $pln->getBoxes();
-		foreach ($boxes as $box) {
-			try {
-				$statusClient = new SoapClient("http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl", array(
-					'soap_version' => SOAP_1_1,
-					'login' => $pln->getUsername(),
-					'password' => $pln->getPassword(),
-					'trace' => false,
-					'exceptions' => true,
-					'cache' => WSDL_CACHE_NONE,
-				));
-				$readyResponse = $statusClient->isDaemonReady();
-				if ($readyResponse) {
-					$this->boxes[] = $box;
-				} else {
-					$this->logger->error("Box {$box->getId()} is not ready.");
-				}
-			} catch (Exception $e) {
-				$this->logger->error($box->getHostname() . '/' . $box->getIpAddress() . ' - ' . $e->getMessage());
-				continue;
-			}
-		}
-	}
-
-	protected function checkAu(Pln $pln, Au $au) {
+	protected function checkAu(Au $au) {
 		$auid = $this->idGenerator->fromAu($au);
+        $pln = $au->getPln();
+        $boxes = $pln->getBoxes();
 		$statuses = array();
-		foreach ($this->boxes as $box) {
-			try {
-				$url = "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl";
-				$statusClient = new SoapClient($url, array(
-					'soap_version' => SOAP_1_1,
-					'login' => $pln->getUsername(),
-					'password' => $pln->getPassword(),
-					'trace' => true,
-					'exceptions' => true,
-					'cache' => WSDL_CACHE_NONE,
-				));
-				$statusResponse = $statusClient->getAuStatus(array(
-					'auId' => $auid,
-				));
-				$auStatus = new AuStatus();
-				$auStatus->setAu($au);
-				$auStatus->setBox($box);
-				$auStatus->setQueryDate(new DateTime());
-				$auStatus->setStatus(get_object_vars($statusResponse->return));
-				$statuses[] = $auStatus;
-			} catch (Exception $e) {
-				$this->logger->warning($box->getHostname() . '/' . $box->getIpAddress() . ' - ' . $e->getMessage());
-			}						
+        $errors = array();
+		foreach ($boxes as $box) {
+            $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl";
+            $this->logger->notice("checking {$wsdl}");
+            $client = new LockssSoapClient();
+            $client->setWsdl($wsdl);
+            $client->setOption('login', $pln->getUsername());
+            $client->setOption('password', $pln->getPassword());
+            $status = $client->call('getAuStatus', array(
+                'auId' => $auid,
+            ));
+            if($status === null) {
+                $this->logger->warning("{$wsdl} failed.");
+                $errors[$box->getHostname()] = $client->getErrors();
+            } else {
+                $statuses[$box->getHostname()] = get_object_vars($status->return);
+            }
 		}
-		return $statuses;
+		return array($statuses, $errors);
 	}
 
-	/**
-	 * @return Pln
-	 * @param array|null $plnIds
-	 */
-	protected function getPlns($plnIds = null) {
-		$pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find(1);
-		return $pln;
-	}
-
+    protected function getAus($auIds) {
+        if($auIds === null || count($auIds) === 0) {
+            return $this->em->getRepository('LOCKSSOMaticCrudBundle:Au')->findAll();
+        } else {
+            return $this->em->getRepository('LOCKSSOMaticCrudBUndle:Au')->findById($auIds);
+        }
+    }
+    
 	public function execute(InputInterface $input, OutputInterface $output) {
-		$pln = $this->getPlns();
-		$this->loadBoxes($pln);
-		if (count($this->boxes) === 0) {
-			$this->logger->critical("No boxes available to check AU status.");
-			return;
-		}
-		foreach ($pln->getAus() as $au) {
-			$statuses = $this->checkAu($pln, $au);
-			foreach ($statuses as $status) {
-				$this->em->persist($status);
-			}
+		$aus = $this->getAus($input->getArgument('aus'));
+		foreach ($aus as $au) {
+            $auStatus = new AuStatus();
+            $auStatus->setAu($au);
+            $auStatus->setQueryDate(new DateTime());
+			list($status, $errors) = $this->checkAu($au);
+            $auStatus->setErrors($errors);
+            $auStatus->setStatus($status);
+            if($input->getOption('dry-run')) {
+                continue;
+            }
+            $this->em->persist($auStatus);
 			$this->em->flush();
 		}
 	}
