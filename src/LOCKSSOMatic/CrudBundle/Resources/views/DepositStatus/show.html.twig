@@ -21,7 +21,7 @@
                 <td><a href="{{ path('deposit_show', { 'id': entity.id, 'plnId': pln.id }) }}">{{ entity.deposit.uuid }}</a></td>
             <tr>
                 <th>Agreement</th>
-                <td>{{ entity.agreement }}</td>
+                <td>{{ "%2.1f"|format(entity.agreement * 100) }}%</td>
             </tr>
             <tr>
                 <th>Querydate</th>
@@ -30,35 +30,20 @@
             <tr>
                 <th>Status</th>
                 <td>
-
-                    <table class="record_properties table table-striped table-bordered table-hover">
-                        <caption style="caption-side: bottom">
-                            <ul class="text-muted list-unstyled">
-                                <li><strong>*</strong> The box was not reachable</li>
-                                <li><strong>-</strong> The box has not harvested the content yet.</li>
-                            </ul>
-                        </caption>
-                        <tr>
-                            <td></td>
-                            {% for key in entity.status|first|keys %}
-                                <th>{{ content[key].url }}</th>
-                                {% endfor %}
-                        </tr>
-                        {% for key in entity.status|keys %}
-                            <tr>
-                                <th>{{ boxes[key].hostname }}</th>
-                                    {% for k in entity.status[key] %}
-                                    <td>{{ k }}</td>
-                                {% endfor %}
-                            </tr>
-                        {% endfor %}
-                        <tr>
-                            <th>Expected</th>
-                                {% for key in entity.status|first|keys %}
-                                <td>{{ content[key].checksumValue }}</td>
+                    {% for id,result in entity.status %}
+                        {% set c = content[id] %}
+                        <a href="{{ c.url }}"><b>{{ c.url }}</b></a>
+                        <dl class="dl-horizontal">
+                            {% for host,checksum in result %}
+                                <dt>{{ host }}</dt>
+                                <dd>{{ checksum|upper }}</dd>  
                             {% endfor %}
-                        </tr>
-                    </table>
+                        </dl>
+                    {% endfor %}
+                    <ul class="text-muted list-unstyled">
+                        <li><strong>*</strong> The box was not reachable</li>
+                        <li><strong>-</strong> The box has not harvested the content yet.</li>
+                    </ul>
                 </td>
             </tr>
         </tbody>

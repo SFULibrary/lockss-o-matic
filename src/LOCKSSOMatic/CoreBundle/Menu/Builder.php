@@ -45,7 +45,9 @@ class Builder implements ContainerAwareInterface
 
         $menu->addChild('Home', array('route' => 'home'));
 
-        $menu->addChild('LOCKSS', array('uri' => '#'));
+        $menu->addChild('LOCKSS', array('uri' => '#', 'label' => 'LOCKSS'));
+        $menu['LOCKSS']->setAttribute('dropdown', true);
+        $menu['LOCKSS']->setAttribute('class', 'dropdown');
         $menu['LOCKSS']->setLinkAttribute('class', 'dropdown-toggle');
         $menu['LOCKSS']->setLinkAttribute('data-toggle', 'dropdown');
         $menu['LOCKSS']->setChildrenAttribute('class', 'dropdown-menu');

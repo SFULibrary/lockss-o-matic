@@ -23,7 +23,7 @@ class LockssSoapClient
             'soap_version' => SOAP_1_1,
             'trace'        => true,
             'exceptions'   => true,
-            'cache'        => WSDL_CACHE_NONE,
+            'cache'        => WSDL_CACHE_BOTH,
         );
     }
 

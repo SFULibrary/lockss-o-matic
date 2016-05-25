@@ -4,18 +4,14 @@ namespace LOCKSSOMatic\LockssBundle\Command;
 
 use DateTime;
 use Doctrine\ORM\EntityManager;
-use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\CrudBundle\Entity\DepositStatus;
-use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
 use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
-use SoapClient;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -48,16 +44,13 @@ class DepositStatusCommand extends ContainerAwareCommand
      * @var AuIdGenerator
      */
     private $idGenerator;
+    
+    private $SKIP_BOXES = array(3, 7);
 
     public function configure()
     {
         $this->setName('lom:deposit:status');
         $this->setDescription('Check that the deposits in LOCKSS have the same checksum.');
-        $this->addArgument(
-            'plns',
-            InputArgument::IS_ARRAY,
-            'Database IDs of the PLNs to check.'
-        );
         $this->addOption(
             'all',
             '-a',
@@ -69,6 +62,11 @@ class DepositStatusCommand extends ContainerAwareCommand
             '-d',
             InputOption::VALUE_NONE,
             'Export only, do not update any internal configs.'
+        );
+        $this->addOption(
+            'box', 
+            '-b', 
+            InputOption::VALUE_OPTIONAL
         );
         $this->addOption(
             'limit',
@@ -85,45 +83,12 @@ class DepositStatusCommand extends ContainerAwareCommand
         $this->em = $container->get('doctrine')->getManager();
         $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
     }
-
-    protected function loadBoxes(Pln $pln)
-    {
-        $boxes = $pln->getBoxes();
-        $this->boxes = array();
-        $this->boxCount = count($boxes);
-        foreach ($boxes as $box) {
-            try {
-                $statusClient = new SoapClient(
-                    "http://{$box->getIpAddress()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl",
-                    array(
-                    'soap_version' => SOAP_1_1,
-                    'login'        => $pln->getUsername(),
-                    'password'     => $pln->getPassword(),
-                    'trace'        => false,
-                    'exceptions'   => true,
-                    'cache'        => WSDL_CACHE_NONE,
-                    )
-                );
-                $readyResponse = $statusClient->isDaemonReady();
-                if ($readyResponse) {
-                    $this->boxes[] = $box;
-                } else {
-                    $this->logger->error("Box {$box->getId()} is not ready.");
-                }
-            } catch (Exception $e) {
-                $this->logger->error($box->getHostname() . '/' . $box->getIpAddress() . ' - ' . $e->getMessage());
-                continue;
-            }
-        }
-    }
-
-    protected function checkContent(Box $box, Content $content)
-    {
+    
+    protected function getBoxChecksum(Box $box, Content $content) {
         $auid = $this->idGenerator->fromContent($content);
         $checksumType = $content->getChecksumType();
 
         $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/HasherService?wsdl";
-        $this->logger->notice("Checking content {$content->getId()} on box {$box->getId()}");
         $client = new LockssSoapClient();
         $client->setWsdl($wsdl);
         $client->setOption('login', $box->getPln()->getUsername());
@@ -139,82 +104,103 @@ class DepositStatusCommand extends ContainerAwareCommand
         )));
         if($response === null) {
             $this->logger->warning("{$wsdl} failed.");
-            $this->logger->warning($client->getErrors());            
-            // do error stuff
+            $this->logger->warning($client->getErrors());
             return '*';
         }
-        
         if (property_exists($response->return, 'blockFileDataHandler')) {
             $matches = array();
-            if (preg_match(
-                "/^([a-fA-F0-9]+)\s+http/m",
-                $response->return->blockFileDataHandler,
-                $matches
-            )) {
-                $checksumValue = $matches[1];
-                return strtoupper($checksumValue);
+            if (preg_match("/^([a-fA-F0-9]+)\s+http/m", $response->return->blockFileDataHandler, $matches)) {
+                return $matches[1];
             } else {
                 return '-';
             }
         } else {
-            return $response->return->errorMessage;
+            $this->logger->warning("{$wsdl} returned error.");
+            $this->logger->warning($response->return->errorMessage);
+            return '*';
         }
     }
 
-    protected function checkDeposit(Deposit $deposit)
-    {
-        $matches = 0;
-        $status = array();
-        $pln = $deposit->getPln();
-        $this->logger->notice("Checking deposit {$deposit->getId()}");
-        foreach ($pln->getBoxes() as $box) {
-            $status[$box->getId()] = array();
-            foreach ($deposit->getContent() as $content) {
-                $checksum = $this->checkContent($box, $content);
-                $status[$box->getId()][$content->getId()] = $checksum;
-                if ($checksum === $content->getChecksumValue()) {
-                    $matches++;
-                }
-            }
+    /**
+     * 
+     * @param type $all
+     * @param type $limit
+     * @return Deposit[]
+     */
+    protected function getDeposits($all, $limit) {
+        $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Deposit');
+        if($all) {
+            return $repo->findAll();
         }
-        $agreement = $matches / (count($deposit->getContent()) * count($pln->getBoxes()));
-        $depositStatus = new DepositStatus();
-        $depositStatus->setDeposit($deposit);
-        $depositStatus->setQueryDate(new DateTime());
-        $depositStatus->setAgreement($agreement);
-        $depositStatus->setStatus($status);
-        $this->logger->info("Deposit {$deposit->getId()}: " . sprintf("%3.2f%%", ($agreement * 100)));
-        return $depositStatus;
-    }
-
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
-        $dryRun = $input->getOption('dry-run');
-        $limit = $input->getOption('limit');
-        $depositRepository = $this->em->getRepository('LOCKSSOMaticCrudBundle:Deposit');
-
-        if ($input->getOption('all')) {
-            $this->logger->notice("Getting all deposits.");
-            $deposits = $depositRepository->findAll();
-        } else {
-            $deposits = $depositRepository->createQueryBuilder('d')
+        return $repo->createQueryBuilder('d')
                 ->where('d.agreement <> 1')
                 ->orWhere('d.agreement is null')
                 ->orderBy('d.id')
                 ->setMaxResults($limit)
                 ->getQuery()
                 ->getResult();
+    }
+    
+    protected function queryDeposit(Deposit $deposit) {
+        $pln = $deposit->getPln();
+        $boxes = $pln->getBoxes();
+        $contents = $deposit->getContent();
+        
+        $total = count($boxes) * count($contents); // total number of checksums needed to match.
+        $matches = 0;
+        $result = array();
+        $agreement = 0;
+        
+        foreach($contents as $content) {            
+            $result[$content->getId()] = array();
+            $result[$content->getId()]['expected'] = $content->getChecksumValue();
+            foreach($boxes as $box) {
+                if(in_array($box->getId(), $this->SKIP_BOXES)) {
+                    $result[$content->getId()][$box->getHostname()] = '*';
+                    continue;
+                }
+                $checksum = $this->getBoxChecksum($box, $content);
+                if(strtoupper($content->getChecksumValue()) === strtoupper($checksum)) {
+                    $matches++;
+                }
+                $result[$content->getId()][$box->getHostname()] = $checksum;
+            }
         }
-
-        $this->logger->notice("Found " . count($deposits) . " deposits to check.");
-        foreach ($deposits as $deposit) {
-            $status = $this->checkDeposit($deposit);
-            $deposit->setAgreement($status->getAgreement());
-            if ($dryRun) {
+        if($matches === $total) {
+            $agreement = 1; // avoid rounding issues.
+        } else {
+            $agreement = $matches / $total;
+        }
+        return array($agreement, $result);
+    }
+    
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
+        $all = $input->getOption('all');
+        $dryRun = $input->getOption('dry-run');
+        $box = $input->getOption('box');
+        $limit = $input->getOption('limit');
+        
+        $deposits = $this->getDeposits($all, $limit);
+        $this->logger->notice("Checking deposit status for " . count($deposits) . " deposits.");
+        
+        foreach($deposits as $deposit) {
+            $result = $this->queryDeposit($deposit);
+            $this->logger->notice("{$result[0]} - {$deposit->getUUid()}");
+            if($dryRun) {
                 continue;
             }
+            
+            $deposit->setAgreement($result[0]);
+            $status = new DepositStatus();
+            $status->setDeposit($deposit);
+            $status->setQueryDate(new DateTime());
+            $status->setAgreement($result[0]);
+            $status->setStatus($result[1]);
+            
             $this->em->persist($status);
             $this->em->flush();
         }
     }
+
 }
