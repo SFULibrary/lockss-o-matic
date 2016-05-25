@@ -40,11 +40,14 @@ class BoxStatusCommand extends ContainerAwareCommand
         $this->setName('lom:box:status');
         $this->setDescription('Check the status of the LOCKSS AUs');
         $this->addArgument(
-            'boxes', InputArgument::IS_ARRAY,
+            'boxes',
+            InputArgument::IS_ARRAY,
             'Optional list of box ids to check.'
         );
         $this->addOption(
-            'dry-run', '-d', InputOption::VALUE_NONE,
+            'dry-run',
+            '-d',
+            InputOption::VALUE_NONE,
             'Do not update box status, just report results to console.'
         );
     }
@@ -81,7 +84,8 @@ class BoxStatusCommand extends ContainerAwareCommand
 
             $boxStatus->setBox($box);
             $boxStatus->setQueryDate(new DateTime());
-            $status = $client->call('queryRepositorySpaces',
+            $status = $client->call(
+                'queryRepositorySpaces',
                 array(
                     'repositorySpaceQuery' => 'SELECT *'
                 )
@@ -111,5 +115,4 @@ class BoxStatusCommand extends ContainerAwareCommand
         $this->em->persist($boxStatus);
         $this->em->flush();
     }
-
 }
