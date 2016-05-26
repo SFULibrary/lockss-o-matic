@@ -10,7 +10,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Builder implements ContainerAwareInterface
 {
-
     /**
      *
      * @var ContainerInterface
@@ -47,7 +46,6 @@ class Builder implements ContainerAwareInterface
 
         $menu->addChild('LOCKSS', array('uri' => '#', 'label' => 'LOCKSS'));
         $menu['LOCKSS']->setAttribute('dropdown', true);
-        $menu['LOCKSS']->setAttribute('class', 'dropdown');
         $menu['LOCKSS']->setLinkAttribute('class', 'dropdown-toggle');
         $menu['LOCKSS']->setLinkAttribute('data-toggle', 'dropdown');
         $menu['LOCKSS']->setChildrenAttribute('class', 'dropdown-menu');
@@ -58,6 +56,7 @@ class Builder implements ContainerAwareInterface
         $menu['LOCKSS']->addChild('Plugins', array('route' => 'plugin'));
 
         $menu->addChild('networks', array('uri' => '#', 'label' => 'Networks'));
+        $menu['networks']->setAttribute('dropdown', true);
         $menu['networks']->setLinkAttribute('class', 'dropdown-toggle');
         $menu['networks']->setLinkAttribute('data-toggle', 'dropdown');
         $menu['networks']->setChildrenAttribute('class', 'dropdown-menu');
@@ -85,6 +84,7 @@ class Builder implements ContainerAwareInterface
         }
         if($access->hasAccess('ROLE_ADMIN')) {
             $menu->addChild('admin', array('uri' => '#', 'label' => 'Admin'));
+            $menu['admin']->setAttribute('dropdown', true);
             $menu['admin']->setLinkAttribute('class', 'dropdown-toggle');
             $menu['admin']->setLinkAttribute('data-toggle', 'dropdown');
             $menu['admin']->setChildrenAttribute('class', 'dropdown-menu');
@@ -103,6 +103,7 @@ class Builder implements ContainerAwareInterface
         $menu->setChildrenAttribute('class', 'nav navbar-nav navbar-right');
 
         $menu->addChild('user', array('uri' => '#', 'label' => $user->getEmail()));
+        $menu['user']->setAttribute('dropdown', true);
         $menu['user']->setLinkAttribute('class', 'dropdown-toggle');
         $menu['user']->setLinkAttribute('data-toggle', 'dropdown');
         $menu['user']->setChildrenAttribute('class', 'dropdown-menu');
@@ -110,7 +111,6 @@ class Builder implements ContainerAwareInterface
         $menu['user']->addChild('Profile', array('route' => 'fos_user_profile_show'));
         $menu['user']->addChild('Change password', array('route' => 'fos_user_change_password'));
         $menu['user']->addChild('Logout', array('route' => 'fos_user_security_logout'));
-
 
         return $menu;
     }

@@ -141,6 +141,12 @@ knp_paginator:
         pagination: KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig     # sliding pagination controls template
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
         
+knp_menu:
+    twig:
+        template: lom_menu.html.twig
+    templating: false
+    default_renderer: twig
+        
 monolog:
     channels: ['sword', 'lockss']
     handlers:
