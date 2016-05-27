@@ -61,6 +61,8 @@ class Builder implements ContainerAwareInterface
         $menu['networks']->setLinkAttribute('data-toggle', 'dropdown');
         $menu['networks']->setChildrenAttribute('class', 'dropdown-menu');
 
+        $menu['networks']->addChild('All networks', array('route' => 'pln'))->setAttribute('divider_append', true);
+        
         $access = $this->container->get('lom.access');
         $em = $this->container->get('doctrine')->getManager();
         $networks = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
@@ -70,17 +72,17 @@ class Builder implements ContainerAwareInterface
                 continue;
             }
             $mid = 'network_' . $pln->getId(); // only for grouping.
-            $menu['networks']->addChild($mid, array('uri' => '#', 'label' => 'PKP PLN'));
+            $menu['networks']->addChild($mid, array('uri' => '#', 'label' => $pln->getName()));
             $menu['networks'][$mid]->setAttribute('class', 'dropdown-submenu');
             $menu['networks'][$mid]->setChildrenAttribute('class', 'dropdown-menu');
             $menu['networks'][$mid]->setLinkAttribute('data-toggle', 'dropdown');
             $menu['networks'][$mid]->setLinkAttribute('class', 'dropdown-toggle');
 
-            $menu['networks'][$mid]->addChild('PKP PLN', array('route' => 'pln_show', 'routeParameters' => array('id' => 1)));
-            $menu['networks'][$mid]->addChild('Archival Units', array('route' => 'au', 'routeParameters' => array('plnId' => 1)));
-            $menu['networks'][$mid]->addChild('Boxes', array('route' => 'box', 'routeParameters' => array('plnId' => 1)));
-            $menu['networks'][$mid]->addChild('Content', array('route' => 'content', 'routeParameters' => array('plnId' => 1)));
-            $menu['networks'][$mid]->addChild('Deposits', array('route' => 'deposit', 'routeParameters' => array('plnId' => 1)));
+            $menu['networks'][$mid]->addChild($pln->getName(), array('route' => 'pln_show', 'routeParameters' => array('id' => $pln->getId())));
+            $menu['networks'][$mid]->addChild('Archival Units', array('route' => 'au', 'routeParameters' => array('plnId' => $pln->getId())));
+            $menu['networks'][$mid]->addChild('Boxes', array('route' => 'box', 'routeParameters' => array('plnId' => $pln->getId())));
+            $menu['networks'][$mid]->addChild('Content', array('route' => 'content', 'routeParameters' => array('plnId' => $pln->getId())));
+            $menu['networks'][$mid]->addChild('Deposits', array('route' => 'deposit', 'routeParameters' => array('plnId' => $pln->getId())));
         }
         if($access->hasAccess('ROLE_ADMIN')) {
             $menu->addChild('admin', array('uri' => '#', 'label' => 'Admin'));
