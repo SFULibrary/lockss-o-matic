@@ -65,6 +65,7 @@ class FilePaths {
 	public function getLockssDir() {
 		$path = implode('/', array(
 			$this->getRootPath(),
+            'data',
 			'lockss',
 		));
 		return $path;

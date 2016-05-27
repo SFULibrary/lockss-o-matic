@@ -94,6 +94,9 @@ class ExportConfigsCommand extends ContainerAwareCommand {
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
+        if( !file_exists($this->fp->getLockssDir())) {
+            $this->fs->mkdir($this->fp->getLockssDir());
+        }
         $plnIds = $input->getArgument('pln');
         foreach($this->getPlns($plnIds) as $pln) {
 			$this->exportKeystore($pln);

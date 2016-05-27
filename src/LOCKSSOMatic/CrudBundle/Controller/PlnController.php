@@ -486,7 +486,6 @@ class PlnController extends Controller {
 		$form->handleRequest($request);
 		if ($form->isValid()) {
 			$pluginDir = $this->getPluginDir();			
-			$this->addFlash("success", "plugin dir is {$pluginDir}");			
 			if ($pluginDir) {
 				$file = $form['filename']->getData();
 				$file->move($pluginDir, "pln_{$pln->getId()}.keystore");
