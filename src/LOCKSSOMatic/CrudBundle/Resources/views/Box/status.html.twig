@@ -25,13 +25,13 @@
 
 {% block pageheader %}
     <h1>Box Status</h1>
-    <p>Displaying status queries for <a href="{{ path('box_show', {'id': entity.id}) }}">{{ entity.hostname }}/{{entity.ipAddress}}:{{entity.webServicePort}}</a></p>
+    <p>Displaying status queries for <a href="{{ path('box_show', {'id': entity.id, 'plnId': entity.pln.id}) }}">{{ entity.hostname }}/{{entity.ipAddress}}:{{entity.webServicePort}}</a></p>
 {% endblock %}
 
 {% block body -%}
     <div class="btn-toolbar">
         <div class="btn-group pull-right">
-            <a href="{{ path('au') }}" class="btn btn-default">
+            <a href="{{ path('box_show', {'id': entity.id, 'plnId': entity.pln.id}) }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-arrow-left"></span> Back
             </a>
         </div>

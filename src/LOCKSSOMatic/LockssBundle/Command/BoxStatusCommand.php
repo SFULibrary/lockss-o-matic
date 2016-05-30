@@ -101,10 +101,14 @@ class BoxStatusCommand extends ContainerAwareCommand
             if (!is_array($r)) {
                 $r = array($r);
             }
-            foreach ($r as $c) {
+            foreach ($r as $c) {                
                 $cache = new CacheStatus();
                 $cache->setBoxStatus($boxStatus);
                 $cache->setResponse(get_object_vars($c));
+                if($c->percentageFull > 0.90) {
+                    $this->logger->warning("{$box->getHostname()} has cache {$c->repositorySpaceId} which is more than 90% full.");
+                }
+                $this->em->persist($cache);
                 $boxStatus->addCache($cache);
                 $boxStatus->setSuccess(true);
             }
@@ -112,7 +116,6 @@ class BoxStatusCommand extends ContainerAwareCommand
         if ($input->getOption('dry-run')) {
             return;
         }
-        $this->em->persist($boxStatus);
         $this->em->flush();
     }
 }
