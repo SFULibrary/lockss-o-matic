@@ -55,7 +55,6 @@ class AuIdGenerator {
             if(! $lockssAuid && 
                 array_key_exists($pluginId, $this->nondefinitionalCPDs) &&
                 in_array($name, $this->nondefinitionalCPDs[$pluginId])) {
-				$this->logger->critical("Skipping {$name}");
                 continue;
             }
 			$value = $content->getContentPropertyValue($name, true);

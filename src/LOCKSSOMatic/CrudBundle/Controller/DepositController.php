@@ -70,12 +70,12 @@ class DepositController extends ProtectedController
         
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Deposit')->find($id);
-        if($entity->getContentProvider()->getPln()->getId() !== $pln->getId()) {
-            throw $this->createNotFoundException('The deposit does not exist in this PLN.');
-        }
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Deposit entity.');
+        }
+
+        if($entity->getContentProvider()->getPln()->getId() !== $pln->getId()) {
+            throw $this->createNotFoundException('The deposit does not exist in this PLN.');
         }
 
         return array(
