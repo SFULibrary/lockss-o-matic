@@ -99,6 +99,11 @@ class ExportConfigsCommand extends ContainerAwareCommand {
         }
         $plnIds = $input->getArgument('pln');
         foreach($this->getPlns($plnIds) as $pln) {
+            $plnDir = $this->fp->getConfigsDir($pln);
+            if( !file_exists($plnDir)) {
+                $this->logger->warning("Creating {$plnDir}");
+                $this->fs->mkdir($plnDir);
+            }
 			$this->exportKeystore($pln);
 			$this->exportPlugins($pln);
 			$this->exportManifests($pln);

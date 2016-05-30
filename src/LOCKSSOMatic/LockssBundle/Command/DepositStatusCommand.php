@@ -51,29 +51,10 @@ class DepositStatusCommand extends ContainerAwareCommand
     {
         $this->setName('lom:deposit:status');
         $this->setDescription('Check that the deposits in LOCKSS have the same checksum.');
-        $this->addOption(
-            'all',
-            '-a',
-            InputOption::VALUE_NONE,
-            'Process all deposits.'
-        );
-        $this->addOption(
-            'dry-run',
-            '-d',
-            InputOption::VALUE_NONE,
-            'Export only, do not update any internal configs.'
-        );
-        $this->addOption(
-            'box', 
-            '-b', 
-            InputOption::VALUE_OPTIONAL
-        );
-        $this->addOption(
-            'limit',
-            '-l',
-            InputOption::VALUE_OPTIONAL,
-            'Limit the number of deposits checked.'
-        );
+        $this->addOption('all', '-a', InputOption::VALUE_NONE, 'Process all deposits.');
+        $this->addOption('pln', null, InputOption::VALUE_REQUIRED, 'Optional list of PLNs to check.');
+        $this->addOption('limit', '-l', InputOption::VALUE_REQUIRED, 'Limit the number of deposits checked.');
+		$this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
     }
 
     public function setContainer(ContainerInterface $container = null)
@@ -127,19 +108,23 @@ class DepositStatusCommand extends ContainerAwareCommand
      * @param type $limit
      * @return Deposit[]
      */
-    protected function getDeposits($all, $limit) {
+    protected function getDeposits($all, $limit, $plnId) {
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Deposit');
-        if($all) {
-            return $repo->findAll();
+        $qb = $repo->createQueryBuilder('d');
+        if( ! $all) {
+                $qb->where('d.agreement <> 1');
+                $qb->orWhere('d.agreement is null');
         }
-        return $repo->createQueryBuilder('d')
-                ->where('d.agreement <> 1')
-                ->orWhere('d.agreement is null')
-                ->orderBy('d.id')
-                ->setMaxResults($limit)
-                ->getQuery()
-                ->getResult();
-    }
+        if($plnId !== null) {
+            $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findOneBy(array('id' => $plnId));
+            $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
+            $qb->setParameter('pln', $plns);
+        }
+        $qb->orderBy('d.id');
+        $qb->setMaxResults($limit);
+        return $qb->getQuery()
+            ->getResult();
+        }
     
     protected function queryDeposit(Deposit $deposit) {
         $pln = $deposit->getPln();
@@ -177,16 +162,16 @@ class DepositStatusCommand extends ContainerAwareCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $all = $input->getOption('all');
+        $plnId = $input->getOption('pln');
         $dryRun = $input->getOption('dry-run');
-        $box = $input->getOption('box');
         $limit = $input->getOption('limit');
         
-        $deposits = $this->getDeposits($all, $limit);
+        $deposits = $this->getDeposits($all, $limit, $plnId);
         $this->logger->notice("Checking deposit status for " . count($deposits) . " deposits.");
         
         foreach($deposits as $deposit) {
             $result = $this->queryDeposit($deposit);
-            $this->logger->notice("{$result[0]} - {$deposit->getUUid()}");
+            $this->logger->notice("{$deposit->getPln()->getId()} - {$result[0]} - {$deposit->getUUid()}");
             if($dryRun) {
                 continue;
             }

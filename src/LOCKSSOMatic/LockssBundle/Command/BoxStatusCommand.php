@@ -39,17 +39,8 @@ class BoxStatusCommand extends ContainerAwareCommand
     {
         $this->setName('lom:box:status');
         $this->setDescription('Check the status of the LOCKSS AUs');
-        $this->addArgument(
-            'boxes',
-            InputArgument::IS_ARRAY,
-            'Optional list of box ids to check.'
-        );
-        $this->addOption(
-            'dry-run',
-            '-d',
-            InputOption::VALUE_NONE,
-            'Do not update box status, just report results to console.'
-        );
+        $this->addOption('pln', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Optional list of PLNs to check.');
+        $this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Do not update box status, just report results to console.');
     }
 
     public function setContainer(ContainerInterface $container = null)
@@ -60,18 +51,19 @@ class BoxStatusCommand extends ContainerAwareCommand
         $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
     }
 
-    protected function getBoxes($boxIds = null)
+    protected function getBoxes($plnIds = null)
     {
-        if ($boxIds === null || count($boxIds) === 0) {
+        if ($plnIds === null || count($plnIds) === 0) {
             return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findAll();
         }
-        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findById($boxIds);
+        $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findById($plnIds);
+        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findByPln($plns);
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $boxIds = $input->getArgument('boxes');
-        foreach ($this->getBoxes($boxIds) as $box) {
+        $plnIds = $input->getOption('pln');
+        foreach ($this->getBoxes($plnIds) as $box) {
             $wsdl = "http://{$box->getHostname()}:{$box->getWebservicePort()}/ws/DaemonStatusService?wsdl";
             $this->logger->notice("checking {$wsdl}");
             $client = new LockssSoapClient();

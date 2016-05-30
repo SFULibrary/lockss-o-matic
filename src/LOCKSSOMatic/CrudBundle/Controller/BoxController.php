@@ -67,14 +67,12 @@ class BoxController extends ProtectedController
      */
     public function createAction(Request $request, $plnId)
     {
-        $pln = $this->currentPln();
-        if ($pln === null) {
-            throw new BadRequestException();
-        }
+        $pln = $this->getPln($plnId);
+        $this->requireAccess('MONITOR', $pln);
         $this->requireAccess('PLNADMIN', $pln);
 
         $entity = new Box();
-        $form = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity, $plnId);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -107,11 +105,11 @@ class BoxController extends ProtectedController
      *
      * @return Form The form
      */
-    private function createCreateForm(Box $entity)
+    private function createCreateForm(Box $entity, $plnId)
     {
         $form = $this->createForm(
             new BoxType(), $entity, array(
-            'action' => $this->generateUrl('box_create'),
+            'action' => $this->generateUrl('box_create', array('plnId' => $plnId)),
             'method' => 'POST',
             )
         );
@@ -128,20 +126,18 @@ class BoxController extends ProtectedController
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
+    public function newAction($plnId)
     {
-        $pln = $this->currentPln();
-        if ($pln === null) {
-            throw new BadRequestException();
-        }
+        $pln = $this->getPln($plnId);
         $this->requireAccess('PLNADMIN', $pln);
 
         $entity = new Box();
-        $form = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity, $plnId);
 
         return array(
             'entity' => $entity,
             'form'   => $form->createView(),
+            'plnId' => $plnId,
         );
     }
 

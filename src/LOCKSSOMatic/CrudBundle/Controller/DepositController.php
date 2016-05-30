@@ -37,8 +37,10 @@ class DepositController extends ProtectedController
 		$this->requireAccess('MONITOR', $pln);
         
         $em = $this->getDoctrine()->getManager();
-        $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Deposit e JOIN LOCKSSOMaticCrudBundle:ContentProvider c WHERE c.pln = :pln';
-        $query = $em->createQuery($dql);
+        $qb = $em->getRepository('LOCKSSOMaticCrudBundle:Deposit')->createQueryBuilder('d');
+        $qb->select('d')
+            ->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
+        $query = $qb->getQuery();
 		$query->setParameters(array(
 			'pln' => $pln
 		));

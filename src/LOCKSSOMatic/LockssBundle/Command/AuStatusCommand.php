@@ -37,7 +37,7 @@ class AuStatusCommand extends ContainerAwareCommand {
 	public function configure() {
 		$this->setName('lom:au:status');
 		$this->setDescription('Check the status of the LOCKSS AUs');
-        $this->addArgument('aus', InputArgument::IS_ARRAY, "Optional list of AU database Iids to check.");
+        $this->addOption('pln', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Optional list of PLNs to check.');
 		$this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
 	}
 
@@ -67,24 +67,24 @@ class AuStatusCommand extends ContainerAwareCommand {
             ));
             if($status === null) {
                 $this->logger->warning("{$wsdl} failed.");
-                $errors[$box->getHostname()] = $client->getErrors();
+                $errors[$box->getHostname().':'.$box->getWebServicePort()] = $client->getErrors();
             } else {
-                $statuses[$box->getHostname()] = get_object_vars($status->return);
+                $statuses[$box->getHostname().':'.$box->getWebServicePort()] = get_object_vars($status->return);
             }
 		}
 		return array($statuses, $errors);
 	}
 
-    protected function getAus($auIds) {
-        if($auIds === null || count($auIds) === 0) {
+    protected function getAus($plnIds) {
+        if ($plnIds === null || count($plnIds) === 0) {
             return $this->em->getRepository('LOCKSSOMaticCrudBundle:Au')->findAll();
-        } else {
-            return $this->em->getRepository('LOCKSSOMaticCrudBUndle:Au')->findById($auIds);
         }
+        $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findById($plnIds);
+        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Au')->findByPln($plns);
     }
     
 	public function execute(InputInterface $input, OutputInterface $output) {
-		$aus = $this->getAus($input->getArgument('aus'));
+		$aus = $this->getAus($input->getOption('pln'));
 		foreach ($aus as $au) {
             $auStatus = new AuStatus();
             $auStatus->setAu($au);
