@@ -51,13 +51,47 @@ class DepositController extends ProtectedController
             25
         );
 
-
         return array(
             'pln' => $pln,
             'entities' => $entities,
         );
     }
 
+   /**
+     * Lists all Deposit entities.
+     *
+     * @Route("/search", name="deposit_search")
+     * @Method("GET")
+     * @Template()
+     */
+    public function searchAction(Request $request, $plnId)
+    {
+		$pln = $this->getPln($plnId);
+		$this->requireAccess('MONITOR', $pln);
+        
+        $q = $request->query->get('q', '');
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('LOCKSSOMaticCrudBundle:Deposit');
+        $entities = array();
+        $results = array();
+        if($q !== '') {
+			$results = $repo->search($pln, $q);
+	        $paginator = $this->get('knp_paginator');
+			$entities = $paginator->paginate(
+                $results, 
+                $request->query->getInt('page', 1), 
+                25
+			);
+        }
+        return array(
+            'q' => $q,
+            'count' => count($results),
+            'pln' => $pln,
+            'entities' => $entities,
+        );
+    }
+    
+    
     /**
      * Finds and displays a Deposit entity.
      *

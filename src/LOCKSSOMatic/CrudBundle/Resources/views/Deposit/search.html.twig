@@ -1,0 +1,68 @@
+{% extends '::base.html.twig' %}
+
+
+{% block pageheader %}
+    <h1>Deposit Search</h1>
+{% endblock %}
+
+{% block body -%}
+
+    <form method="get" action="{{path('deposit_search' ,{'plnId': pln.id})}}" class="form-horizontal">
+        <fieldset>
+            <legend>Search</legend>
+            <div class='form-group'>
+                <label class='col-sm-3 control-label' for='q'>Search deposit UUID</label>
+                <div class='col-sm-9'>
+                    <div class='input-group'>
+                        <input type='text' name='q' id='q' class='form-control' value='{{ q }}'>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <span class='glyphicon glyphicon-search'></span>
+                                Search
+                            </button>
+                        </span>
+                    </div>
+                    <p class='help-block'>Enter all or part of a deposit UUID to find matching deposits.</p>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
+    {% if q != '' %}
+        <p>Found {{ count }} results for <b> {{ q }} </b>.</p>
+
+        <div class="navigation">
+            {{ knp_pagination_render(entities) }}
+        </div>
+
+        <table class="table table-striped table-condensed table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Uuid</th>
+                    <th>Title</th>
+                    <th>Summary</th>
+                    <th>Agreement</th>
+                    <th>Datedeposited</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entity in entities %}
+                    <tr>
+                        <td><a href="{{ path('deposit_show', { 'id': entity.id, 'plnId': pln.id }) }}">{{ entity.uuid }}</a></td>
+                        <td>{{ entity.title }}</td>
+                        <td>{{ entity.summary }}</td>
+                        <td>{{ "%2.1f"|format(entity.agreement * 100) }}%</td>
+                        <td>{% if entity.dateDeposited %}{{ entity.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="navigation">
+            {{ knp_pagination_render(entities) }}
+        </div>
+
+    {% endif %}
+{% endblock %}
+
+

@@ -6,12 +6,14 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use LOCKSSOMatic\UserBundle\Entity\User;
+use Symfony\Bridge\Doctrine\Validator\Constraints as Assert;
 
 /**
  * Deposit made to LOCKSSOMatic.
  *
  * @ORM\Table(name="deposits")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="DepositRepository")
+ * @Assert\UniqueEntity("uuid")
  */
 class Deposit implements GetPlnInterface
 {
@@ -29,7 +31,7 @@ class Deposit implements GetPlnInterface
      *
      * @var string
      *
-     * @ORM\Column(name="uuid", type="string", length=36, nullable=false)
+     * @ORM\Column(name="uuid", type="string", length=36, nullable=false, unique=true)
      */
     private $uuid;
 
@@ -343,11 +345,11 @@ class Deposit implements GetPlnInterface
     /**
      * Add status
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\DepositStatus $status
+     * @param DepositStatus $status
      *
      * @return Deposit
      */
-    public function addStatus(\LOCKSSOMatic\CrudBundle\Entity\DepositStatus $status)
+    public function addStatus(DepositStatus $status)
     {
         $this->status[] = $status;
 
@@ -357,9 +359,9 @@ class Deposit implements GetPlnInterface
     /**
      * Remove status
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\DepositStatus $status
+     * @param DepositStatus $status
      */
-    public function removeStatus(\LOCKSSOMatic\CrudBundle\Entity\DepositStatus $status)
+    public function removeStatus(DepositStatus $status)
     {
         $this->status->removeElement($status);
     }
@@ -367,7 +369,7 @@ class Deposit implements GetPlnInterface
     /**
      * Get status
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getStatus()
     {
