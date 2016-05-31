@@ -35,17 +35,14 @@ class SoapWithAttachmentClient extends SoapClient {
         $mimeParser = new Parser();
         $mimeParser->setText($message);
         $attachments = $mimeParser->getAttachments();
-        print "START HERE:" . $attachments[0]->getContent();
         foreach($attachments as $a) {
-            dump($a);
-            //$this->attachments[$a->getFilename()] = $a;
+            file_put_contents($a->getFilename(), $a->getContent());
         }
         
         // print_r($this->parseResponseHeaders($this->__getLastResponseHeaders()));
         file_put_contents('/Users/mjoyce/soap.request', $result);
         return $attachments[0]->getContent();
     }
-    
 }
 
 class LockssSoapClient
