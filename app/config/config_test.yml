@@ -1,6 +1,5 @@
 imports:
     - { resource: config_dev.yml }
-    - { resource: parameters.yml }
 
 liip_functional_test:
     cache_sqlite_db: true
