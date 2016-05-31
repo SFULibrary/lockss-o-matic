@@ -43,17 +43,16 @@ class ConfigsController extends Controller
         $ip = $request->getClientIp();
         $allowed = array_map(function(Box $box) {return $box->getIpAddress();}, $pln->getBoxes()->toArray());
         $env = $this->container->get('kernel')->getEnvironment();
-		$logger = $this->get('monolog.logger.lockss');
         if ($env === 'dev' || $env === 'test') {
             $allowed[] = '127.0.0.1';
         }
         $allowed = array_merge($allowed, $this->container->getParameter('lockss_allowed_ips'));
         IpUtils::checkIp($ip, $allowed);
         if(! IpUtils::checkIp($ip, $allowed)) {
-			$logger->critical("Client IP {$ip} is not authorized for {$pln->getName()}({$pln->getId()}).");
+			$this->logger->critical("Client IP {$ip} is not authorized for {$pln->getName()}({$pln->getId()}).");
             throw new AccessDeniedHttpException("Client IP {$ip} is not authorized for this PLN.");
         } else {
-            $logger->notice("LOCKSS - {$ip} allowed for {$pln->getName()}({$pln->getId()}).");        
+            $this->logger->notice("LOCKSS - {$ip} allowed for {$pln->getName()}({$pln->getId()}).");        
         }
     }
     

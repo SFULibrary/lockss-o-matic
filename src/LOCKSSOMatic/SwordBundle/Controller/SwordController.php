@@ -14,6 +14,7 @@ use LOCKSSOMatic\SwordBundle\Exceptions\HostMismatchException;
 use LOCKSSOMatic\SwordBundle\Exceptions\MaxUploadSizeExceededException;
 use LOCKSSOMatic\SwordBundle\Exceptions\TargetOwnerUnknownException;
 use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
+use Monolog\Logger;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use SimpleXMLElement;
@@ -37,6 +38,11 @@ class SwordController extends Controller
      * @var LoggingService
      */
     private $activityLog;
+    
+    /**
+     * @var Logger
+     */
+    private $swordLog;
 
     public function __construct()
     {
@@ -47,6 +53,7 @@ class SwordController extends Controller
     {
         parent::setContainer($container);
         $this->activityLog = $this->container->get('activity_log');
+        $this->swordLog = $this->container->get('monolog.logger.sword');
     }
 
     private function fetchHeader(Request $request, $name, $required = false)
@@ -151,6 +158,7 @@ class SwordController extends Controller
      */
     public function serviceDocumentAction(Request $request)
     {
+        $this->swordLog->notice("service document");
         $obh = $this->fetchHeader($request, 'On-Behalf-Of', true);
         $provider = $this->getContentProvider($obh);
         $plugin = $provider->getPlugin();
@@ -249,6 +257,7 @@ class SwordController extends Controller
      */
     public function createDepositAction(Request $request, $providerUuid)
     {
+        $this->swordLog->notice("create deposit");
         $em = $this->getDoctrine()->getManager();
         $provider = $this->getContentProvider($providerUuid);
 
@@ -307,6 +316,7 @@ class SwordController extends Controller
      */
     public function statementAction($providerUuid, $depositUuid)
     {
+        $this->swordLog->notice("statement - {$providerUuid} - {$depositUuid}");
         $provider = $this->getContentProvider($providerUuid);
         $deposit = $this->getDeposit($depositUuid);
         $this->matchDepositToProvider($deposit, $provider);
@@ -347,6 +357,7 @@ class SwordController extends Controller
      */
     public function receiptAction($providerUuid, $depositUuid)
     {
+        $this->swordLog->notice("receipt - {$providerUuid} - {$depositUuid}");
         $provider = $this->getContentProvider($providerUuid);
         $deposit = $this->getDeposit($depositUuid);
         $this->matchDepositToProvider($deposit, $provider);
@@ -365,6 +376,7 @@ class SwordController extends Controller
      */
     public function editDepositAction(Request $request, $providerUuid, $depositUuid)
     {
+        $this->swordLog->notice("edit - {$providerUuid} - {$depositUuid}");
         $this->activityLog->overrideUser($providerUuid);
 
         $provider = $this->getContentProvider($providerUuid);
