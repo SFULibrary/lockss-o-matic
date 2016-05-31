@@ -14,7 +14,6 @@ use ZipArchive;
 
 class PLNPluginImportService
 {
-
     /**
      * @var EntityManager
      */
@@ -36,7 +35,7 @@ class PLNPluginImportService
         $this->jarDir = $container->getParameter('lockss_jar_directory');
         $this->fs = new Filesystem();
         if (!$this->fs->isAbsolutePath($this->jarDir)) {
-            $this->jarDir = $this->container->get('kernel')->getRootDir() . '/../' . $this->jarDir;
+            $this->jarDir = $this->container->get('kernel')->getRootDir().'/../'.$this->jarDir;
         }
         try {
             if (!$this->fs->exists($this->jarDir)) {
@@ -46,15 +45,18 @@ class PLNPluginImportService
         } catch (IOExceptionInterface $e) {
             $this->logger->error("Error creating directory {$this->jarDir}");
             $this->logger->error($e);
+
             return false;
         }
+
         return true;
     }
 
     /**
-     *
      * @param SplFileInfo $jarInfo
+     *
      * @return Plugins
+     *
      * @throws Exception if an error occurs
      */
     public function importJarFile(SplFileInfo $jarInfo, $copy = true)
@@ -72,6 +74,7 @@ class PLNPluginImportService
             $plugin = $this->buildPlugin($pluginXml, $jarInfo, $copy);
             $this->em->persist($plugin);
             $this->addProperties($plugin, $pluginXml);
+
             return $plugin;
         } catch (Exception $e) {
             throw new Exception("Error processing {$jarInfo->getFilename()}", null, $e);
@@ -105,6 +108,7 @@ class PLNPluginImportService
                 return $keys['Name'];
             }
         }
+
         return '';
     }
 
@@ -112,7 +116,7 @@ class PLNPluginImportService
      * Find a property string in a LOCKSS plugin.xml file.
      *
      * @param SimpleXMLElement $xml
-     * @param string $propName
+     * @param string           $propName
      *
      * @return string
      *
@@ -125,16 +129,16 @@ class PLNPluginImportService
             return $data[0];
         }
         if (count($data) === 0) {
-            return null;
+            return;
         }
-        throw new Exception('Too many entry elements for property string ' . $propName);
+        throw new Exception('Too many entry elements for property string '.$propName);
     }
 
     /**
      * Find a list element in a LOCKSS plugin.xml file.
      *
      * @param SimpleXMLElement $xml
-     * @param type $propName
+     * @param type             $propName
      *
      * @return SimpleXMLElement
      *
@@ -147,16 +151,16 @@ class PLNPluginImportService
             return $data[0];
         }
         if (count($data) === 0) {
-            return null;
+            return;
         }
-        throw new Exception('Too many entry elements for property element' . $propName);
+        throw new Exception('Too many entry elements for property element'.$propName);
     }
 
     /**
      * Generate and persist a new Plugins object.
      *
-     * @param Plugin $plugin
-     * @param string $name
+     * @param Plugin                  $plugin
+     * @param string                  $name
      * @param string|SimpleXMLElement $value
      *
      * @return PluginProperty
@@ -166,23 +170,24 @@ class PLNPluginImportService
         $property = new PluginProperty();
         $property->setPlugin($plugin);
         $property->setPropertyKey($name);
-        if($value !== null) {
-            switch($value->getName()) {
+        if ($value !== null) {
+            switch ($value->getName()) {
                 case 'string':
                     $property->setPropertyValue((string) $value);
                     break;
                 case 'list':
                     $values = array();
-                    foreach($value->children() as $child) {
-                        $values[] = (string)$child;
+                    foreach ($value->children() as $child) {
+                        $values[] = (string) $child;
                     }
                     $property->setPropertyValue($values);
                     break;
                 default:
-                    $property->setPropertyValue((string)$value);
+                    $property->setPropertyValue((string) $value);
             }
         }
         $this->em->persist($property);
+
         return $property;
     }
 
@@ -198,7 +203,7 @@ class PLNPluginImportService
         $pluginId = $this->findXmlPropString($xml, 'plugin_identifier');
 
         $pluginVersion = $this->findXmlPropString($xml, 'plugin_version');
-        if($pluginVersion === null || $pluginVersion === '') {
+        if ($pluginVersion === null || $pluginVersion === '') {
             throw new Exception("Plugin {$filename} does not have a plugin_version element in its XML configuration.");
         }
 
@@ -213,7 +218,7 @@ class PLNPluginImportService
 
         $plugin->setFilename($filename);
         $basename = basename($filename, '.jar');
-        $jarPath = $this->jarDir . '/' . $basename . '-v' . $pluginVersion . '.jar';
+        $jarPath = $this->jarDir.'/'.$basename.'-v'.$pluginVersion.'.jar';
         if ($copy) {
             copy($jarInfo->getPathname(), $jarPath);
         }
@@ -224,21 +229,21 @@ class PLNPluginImportService
 
     private static $importPropStrings = array(
         'au_name',
-		'au_permission_url',
-		'plugin_crawl_type',
+        'au_permission_url',
+        'plugin_crawl_type',
         'plugin_identifier',
         'plugin_name',
         'plugin_publishing_platform',
         'plugin_status',
         'plugin_version',
-		'plugin_parent',
+        'plugin_parent',
         'required_daemon_version',
     );
-	
-	private static $importPropLists = array(
-		'au_crawlrules',
-		'au_start_url',
-	);
+
+    private static $importPropLists = array(
+        'au_crawlrules',
+        'au_start_url',
+    );
 
     /**
      * Import the data from the plugin. Does not create content
@@ -252,12 +257,12 @@ class PLNPluginImportService
         foreach (self::$importPropStrings as $prop) {
             $this->newPluginProperty($plugin, $prop, $this->findXmlPropString($xml, $prop));
         }
-        
+
         foreach (self::$importPropLists as $prop) {
             $this->newPluginProperty($plugin, $prop, $this->findXmlPropElement($xml, $prop));
         }
 
-		$configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
+        $configProps = $this->findXmlPropElement($xml, 'plugin_config_props');
         if ($configProps === null) {
             throw new Exception("No PluginConfigProps element in {$plugin->getFilename()} version {$plugin->getVersion()}");
         }

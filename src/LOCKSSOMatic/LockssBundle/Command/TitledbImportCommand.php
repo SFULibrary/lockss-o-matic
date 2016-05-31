@@ -17,11 +17,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Private Lockss network plugin import command-line
+ * Private Lockss network plugin import command-line.
  */
 class TitledbImportCommand extends ContainerAwareCommand
 {
-
     /**
      * @var EntityManager
      */
@@ -64,7 +63,7 @@ class TitledbImportCommand extends ContainerAwareCommand
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $titleFiles = $input->getArgument('titledbs');
-        
+
         $logger = $this->getLogger();
 
         foreach ($titleFiles as $file) {
@@ -95,7 +94,7 @@ class TitledbImportCommand extends ContainerAwareCommand
                     $output->writeln($p->getMessage());
                 }
             }
-            $i++;
+            ++$i;
             if ($i % 200 === 0) {
                 $this->reportProgress($i, $count, $output);
             }
@@ -135,6 +134,7 @@ class TitledbImportCommand extends ContainerAwareCommand
         $root->setPropertyKey((string) $title->attributes()->name);
         $root->setAu($au);
         $this->buildChildProperties($title, $root);
+
         return $au;
     }
 
@@ -154,7 +154,7 @@ class TitledbImportCommand extends ContainerAwareCommand
     {
         $nodes = $xml->xpath("property[@name='{$name}']/@value");
         if (count($nodes) === 0) {
-            return null;
+            return;
         }
         if (count($nodes) === 1) {
             return (string) $nodes[0];
@@ -169,7 +169,7 @@ class TitledbImportCommand extends ContainerAwareCommand
 
         $pluginId = $this->getPropertyValue($xml, 'plugin');
         if ($pluginId === null) {
-            throw new Exception("AU stanza does not have a plugin property.");
+            throw new Exception('AU stanza does not have a plugin property.');
         }
         if (array_key_exists($pluginId, $pluginCache) && $this->em->contains($pluginCache[$pluginId])) {
             return $pluginCache[$pluginId];
@@ -180,6 +180,7 @@ class TitledbImportCommand extends ContainerAwareCommand
             throw new Exception("Unknown pluginId: {$pluginId}");
         }
         $pluginCache[$pluginId] = $plugin;
+
         return $pluginCache[$pluginId];
     }
 
@@ -193,7 +194,7 @@ class TitledbImportCommand extends ContainerAwareCommand
 
         $owner = $this->em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')
             ->findOneBy(array(
-            'name' => $name
+            'name' => $name,
             ));
         if ($owner === null) {
             $owner = new ContentOwner();
@@ -201,6 +202,7 @@ class TitledbImportCommand extends ContainerAwareCommand
             $this->em->persist($owner);
         }
         $ownerCache[$name] = $owner;
+
         return $ownerCache[$name];
     }
 }

@@ -6,74 +6,76 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * DepositStatus
+ * DepositStatus.
  *
  * @ORM\Table(name="deposit_status")
  * @ORM\Entity
  */
-class DepositStatus implements GetPlnInterface {
+class DepositStatus implements GetPlnInterface
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
 
-	/**
-	 * @var integer
-	 *
-	 * @ORM\Column(name="id", type="integer")
-	 * @ORM\Id
-	 * @ORM\GeneratedValue(strategy="IDENTITY")
-	 */
-	private $id;
+    /**
+     * @var Deposit
+     *
+     * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="status")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="deposit_id", referencedColumnName="id")
+     * })
+     */
+    private $deposit;
 
-	/**
-	 * @var Deposit
-	 *
-	 * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="status")
-	 * @ORM\JoinColumns({
-	 *   @ORM\JoinColumn(name="deposit_id", referencedColumnName="id")
-	 * })
-	 */
-	private $deposit;
-    
     /**
      * @var int
      * @ORM\Column(name="agreement", type="float")
      */
     private $agreement;
 
-	/**
-	 * @var DateTime
-	 *
-	 * @ORM\Column(name="query_date", type="datetime", nullable=false)
-	 */
-	private $queryDate;
-    
-	/**
-	 * @var string
-	 *
-	 * @ORM\Column(name="status", type="array", nullable=true)
-	 */
-	private $status;
-    
-    public function __construct() {
+    /**
+     * @var DateTime
+     *
+     * @ORM\Column(name="query_date", type="datetime", nullable=false)
+     */
+    private $queryDate;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="status", type="array", nullable=true)
+     */
+    private $status;
+
+    public function __construct()
+    {
         $this->status = array();
     }
 
-	public function getPln() {
-		return $this->deposit->getPln();
-	}
-
-	/**
-	 * Get id
-	 *
-	 * @return integer 
-	 */
-	public function getId() {
-		return $this->id;
-	}
-
+    public function getPln()
+    {
+        return $this->deposit->getPln();
+    }
 
     /**
-     * Set agreement
+     * Get id.
      *
-     * @param integer $agreement
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set agreement.
+     *
+     * @param int $agreement
      *
      * @return DepositStatus
      */
@@ -85,9 +87,9 @@ class DepositStatus implements GetPlnInterface {
     }
 
     /**
-     * Get agreement
+     * Get agreement.
      *
-     * @return integer
+     * @return int
      */
     public function getAgreement()
     {
@@ -95,7 +97,7 @@ class DepositStatus implements GetPlnInterface {
     }
 
     /**
-     * Set queryDate
+     * Set queryDate.
      *
      * @param \DateTime $queryDate
      *
@@ -109,7 +111,7 @@ class DepositStatus implements GetPlnInterface {
     }
 
     /**
-     * Get queryDate
+     * Get queryDate.
      *
      * @return \DateTime
      */
@@ -119,7 +121,7 @@ class DepositStatus implements GetPlnInterface {
     }
 
     /**
-     * Set status
+     * Set status.
      *
      * @param array $status
      *
@@ -133,7 +135,7 @@ class DepositStatus implements GetPlnInterface {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return array
      */
@@ -143,7 +145,7 @@ class DepositStatus implements GetPlnInterface {
     }
 
     /**
-     * Set deposit
+     * Set deposit.
      *
      * @param Deposit $deposit
      *
@@ -157,7 +159,7 @@ class DepositStatus implements GetPlnInterface {
     }
 
     /**
-     * Get deposit
+     * Get deposit.
      *
      * @return Deposit
      */

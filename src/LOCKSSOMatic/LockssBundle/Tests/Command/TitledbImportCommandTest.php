@@ -13,7 +13,6 @@ use SimpleXMLElement;
  */
 class TitledbImportCommandTest extends AbstractTestCase
 {
-
     /**
      * @var PLNTitledbImportCommand
      */
@@ -32,14 +31,15 @@ class TitledbImportCommandTest extends AbstractTestCase
 
     /**
      * @param string $id
+     *
      * @return Plugin
      */
     protected function getPlugin($id)
     {
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
+
         return $repo->findOneByIdentifier($id);
     }
-
 
     public function testGetPropertyValue()
     {
@@ -77,6 +77,7 @@ ENDXML;
 
     /**
      * @covers LOCKSSOMatic\LockssBundle\Command\PLNTitledbImportCommand::getContentOwner
+     *
      * @todo   Implement testGetContentOwner().
      */
     public function testGetContentOwner()
@@ -96,6 +97,7 @@ ENDXML;
 
     /**
      * @covers LOCKSSOMatic\LockssBundle\Command\PLNTitledbImportCommand::addAu
+     *
      * @todo   Implement testAddAu().
      */
     public function testAddAu()
@@ -134,6 +136,7 @@ ENDXML;
    <property name="attributes.year" value="2010" />
   </property>
 ENDXML;
+
         return $str;
     }
 }

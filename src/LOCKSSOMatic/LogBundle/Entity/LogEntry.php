@@ -32,14 +32,15 @@ use LOCKSSOMatic\CRUDBundle\Entity\Pln;
 use LOCKSSOMatic\UserBundle\Entity\User;
 
 /**
- * LogEntry
+ * LogEntry.
+ *
  * @ORM\Table(name="log_entry")
  * @ORM\Entity(readOnly=true)
  */
 class LogEntry
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -73,6 +74,7 @@ class LogEntry
 
     /**
      * @ORM\Column(name="summary", type="text", nullable=false)
+     *
      * @var string
      */
     private $summary;
@@ -116,9 +118,9 @@ class LogEntry
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -126,9 +128,10 @@ class LogEntry
     }
 
     /**
-     * Set bundle
+     * Set bundle.
      *
      * @param string $bundle
+     *
      * @return LogEntry
      */
     public function setBundle($bundle)
@@ -139,7 +142,7 @@ class LogEntry
     }
 
     /**
-     * Get bundle
+     * Get bundle.
      *
      * @return string
      */
@@ -152,14 +155,15 @@ class LogEntry
         if (preg_match('{([a-zA-Z]*)Bundle}', $this->class, $matches)) {
             return $matches[1];
         }
+
         return '';
-        
     }
 
     /**
-     * Set class
+     * Set class.
      *
      * @param string $class
+     *
      * @return LogEntry
      */
     public function setClass($class)
@@ -170,7 +174,7 @@ class LogEntry
     }
 
     /**
-     * Get class
+     * Get class.
      *
      * @return string
      */
@@ -180,9 +184,10 @@ class LogEntry
     }
 
     /**
-     * Set caller
+     * Set caller.
      *
      * @param string $caller
+     *
      * @return LogEntry
      */
     public function setCaller($caller)
@@ -193,7 +198,7 @@ class LogEntry
     }
 
     /**
-     * Get caller
+     * Get caller.
      *
      * @return string
      */
@@ -203,9 +208,10 @@ class LogEntry
     }
 
     /**
-     * Set level
+     * Set level.
      *
      * @param string $level
+     *
      * @return LogEntry
      */
     public function setLevel($level)
@@ -216,7 +222,7 @@ class LogEntry
     }
 
     /**
-     * Get level
+     * Get level.
      *
      * @return string
      */
@@ -226,9 +232,10 @@ class LogEntry
     }
 
     /**
-     * Set summary
+     * Set summary.
      *
      * @param string $summary
+     *
      * @return LogEntry
      */
     public function setSummary($summary)
@@ -239,7 +246,7 @@ class LogEntry
     }
 
     /**
-     * Get summary
+     * Get summary.
      *
      * @return string
      */
@@ -249,9 +256,10 @@ class LogEntry
     }
 
     /**
-     * Set message
+     * Set message.
      *
      * @param string $message
+     *
      * @return LogEntry
      */
     public function setMessage($message)
@@ -262,7 +270,7 @@ class LogEntry
     }
 
     /**
-     * Get message
+     * Get message.
      *
      * @return string
      */
@@ -272,9 +280,10 @@ class LogEntry
     }
 
     /**
-     * Set created
+     * Set created.
      *
      * @param DateTime $created
+     *
      * @return LogEntry
      */
     public function setCreated()
@@ -282,12 +291,12 @@ class LogEntry
         if ($this->created === null) {
             $this->created = new \DateTime();
         }
-        
+
         return $this;
     }
 
     /**
-     * Get created
+     * Get created.
      *
      * @return DateTime
      */
@@ -297,9 +306,10 @@ class LogEntry
     }
 
     /**
-     * Set pln
+     * Set pln.
      *
      * @param Pln $pln
+     *
      * @return LogEntry
      */
     public function setPln(Pln $pln = null)
@@ -310,7 +320,7 @@ class LogEntry
     }
 
     /**
-     * Get pln
+     * Get pln.
      *
      * @return Pln
      */
@@ -320,9 +330,10 @@ class LogEntry
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param mixed $user
+     *
      * @return LogEntry
      */
     public function setUser($user = null)
@@ -332,11 +343,12 @@ class LogEntry
         } else {
             $this->user = $user;
         }
+
         return $this;
     }
 
     /**
-     * Get user
+     * Get user.
      *
      * @return mixed
      */
@@ -344,11 +356,12 @@ class LogEntry
     {
         return $this->user;
     }
-    
+
     /**
-     * Set ip
+     * Set ip.
      *
      * @param string $ip
+     *
      * @return LogEntry
      */
     public function setIp($ip)
@@ -359,7 +372,7 @@ class LogEntry
     }
 
     /**
-     * Get ip
+     * Get ip.
      *
      * @return string
      */
@@ -388,7 +401,7 @@ class LogEntry
             'message',
         );
     }
-    
+
     /**
      * Return a list of fields, in the same order as toArrayHeader().
      *
@@ -406,7 +419,7 @@ class LogEntry
             $this->caller,
             $this->pln,
             $this->summary,
-            $this->message
+            $this->message,
         );
     }
 }

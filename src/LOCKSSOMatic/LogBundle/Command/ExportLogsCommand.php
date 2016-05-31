@@ -26,8 +26,6 @@
 
 namespace LOCKSSOMatic\LogBundle\Command;
 
-use Doctrine\ORM\EntityManager;
-use LOCKSSOMatic\LoggingBundle\Entity\LogEntry;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,7 +37,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ExportLogsCommand extends ContainerAwareCommand
 {
-
     /**
      * Configure the commmand.
      */
@@ -63,7 +60,7 @@ class ExportLogsCommand extends ContainerAwareCommand
     /**
      * Execute the command.
      *
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -87,7 +84,7 @@ class ExportLogsCommand extends ContainerAwareCommand
         }
 
         $actLog->log(
-            'Logs exported to ' . realpath($file) . ($exists ? ' (appended)' : '')
+            'Logs exported to '.realpath($file).($exists ? ' (appended)' : '')
         );
     }
 }

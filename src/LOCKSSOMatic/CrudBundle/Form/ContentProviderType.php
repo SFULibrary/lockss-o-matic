@@ -8,10 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ContentProviderType extends AbstractType
 {
-
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -21,18 +20,18 @@ class ContentProviderType extends AbstractType
                 'text',
                 array(
                 'required' => false,
-                'attr'     => array(
-                    'help' => 'Leave UUID blank to have one generated.'
-                ))
+                'attr' => array(
+                    'help' => 'Leave UUID blank to have one generated.',
+                ), )
             )
             ->add(
                 'permissionurl',
                 'url',
                 array(
                 'label' => 'Permission URL',
-                'attr'  => array(
-                    'help' => 'URL for the LOCKSS permission statement.'
-                )
+                'attr' => array(
+                    'help' => 'URL for the LOCKSS permission statement.',
+                ),
                 )
             )
             ->add('name')
@@ -41,8 +40,8 @@ class ContentProviderType extends AbstractType
                 'integer',
                 array(
                 'attr' => array(
-                    'help' => 'Maximum file size allowed in an AU, in kb (1,000 bytes)'
-                )
+                    'help' => 'Maximum file size allowed in an AU, in kb (1,000 bytes)',
+                ),
                 )
             )
             ->add(
@@ -50,8 +49,8 @@ class ContentProviderType extends AbstractType
                 'integer',
                 array(
                 'attr' => array(
-                    'help' => 'Maximum AU size, in kb (1,000 bytes)'
-                )
+                    'help' => 'Maximum AU size, in kb (1,000 bytes)',
+                ),
                 )
             )
             ->add('contentOwner')
@@ -66,7 +65,7 @@ class ContentProviderType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\ContentProvider'
+            'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\ContentProvider',
         ));
     }
 

@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Box implements GetPlnInterface
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -43,19 +43,19 @@ class Box implements GetPlnInterface
     /**
      * The port used for the lockss.xml file.
      *
-     * @var integer
+     * @var int
      * @ORM\Column(name="port", type="integer", nullable=false)
      */
     private $port;
-	
-	/**
-	 * The port to use for webservice requests - usually :80, but may be 
-	 * different for testing.
-	 *
-	 * @var integer
-	 * @ORM\Column(name="ws_port", type="integer", nullable=false) 
-	 */
-	private $webServicePort;
+
+    /**
+     * The port to use for webservice requests - usually :80, but may be 
+     * different for testing.
+     *
+     * @var int
+     * @ORM\Column(name="ws_port", type="integer", nullable=false) 
+     */
+    private $webServicePort;
 
     /**
      * The box's IP address. The class will resolve it automatically from the
@@ -83,22 +83,23 @@ class Box implements GetPlnInterface
      * Timestamped list of box status query results.
      *
      * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="box")
+     *
      * @var Collection|BoxStatus
      */
     private $status;
-    
+
     public function __construct()
     {
         $this->status = new ArrayCollection();
         $this->protocol = 'TCP';
         $this->port = 9729;
-		$this->webServicePort = 80;
+        $this->webServicePort = 80;
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -106,9 +107,10 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Set hostname
+     * Set hostname.
      *
      * @param string $hostname
+     *
      * @return Box
      */
     public function setHostname($hostname)
@@ -119,7 +121,7 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Get hostname
+     * Get hostname.
      *
      * @return string
      */
@@ -129,9 +131,10 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Set ipAddress
+     * Set ipAddress.
      *
      * @param string $ipAddress
+     *
      * @return Box
      */
     public function setIpAddress($ipAddress)
@@ -142,7 +145,7 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Get ipAddress
+     * Get ipAddress.
      *
      * @return string
      */
@@ -152,21 +155,22 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Set pln
+     * Set pln.
      *
      * @param Pln $pln
+     *
      * @return Box
      */
     public function setPln(Pln $pln = null)
     {
         $this->pln = $pln;
         $pln->addBox($this);
-        
+
         return $this;
     }
 
     /**
-     * Get pln
+     * Get pln.
      *
      * @return Pln
      */
@@ -176,9 +180,10 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Add status
+     * Add status.
      *
      * @param BoxStatus $status
+     *
      * @return Box
      */
     public function addStatus(BoxStatus $status)
@@ -189,7 +194,7 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Remove status
+     * Remove status.
      *
      * @param BoxStatus $status
      */
@@ -197,16 +202,17 @@ class Box implements GetPlnInterface
     {
         $this->status->removeElement($status);
     }
-    
+
     /**
      * @return BoxStatus
      */
-    public function getCurrentStatus() {
+    public function getCurrentStatus()
+    {
         return $this->status->last();
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return Collection|BoxStatus
      */
@@ -216,9 +222,10 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Set protocol
+     * Set protocol.
      *
      * @param string $protocol
+     *
      * @return Box
      */
     public function setProtocol($protocol)
@@ -229,7 +236,7 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Get protocol
+     * Get protocol.
      *
      * @return string
      */
@@ -239,9 +246,10 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Set port
+     * Set port.
      *
-     * @param integer $port
+     * @param int $port
+     *
      * @return Box
      */
     public function setPort($port)
@@ -252,9 +260,9 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Get port
+     * Get port.
      *
-     * @return integer
+     * @return int
      */
     public function getPort()
     {
@@ -265,7 +273,7 @@ class Box implements GetPlnInterface
      * Resolve the hostname into an ipAddress and save it. Called automatically
      * when saving the box via doctrine.
      *
-     * @param boolean $force force the update, even if the ip is already known.
+     * @param bool $force force the update, even if the ip is already known.
      */
     public function resolveHostname($force = false)
     {
@@ -278,9 +286,10 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Set webServicePort
+     * Set webServicePort.
      *
-     * @param integer $webServicePort
+     * @param int $webServicePort
+     *
      * @return Box
      */
     public function setWebServicePort($webServicePort)
@@ -291,9 +300,9 @@ class Box implements GetPlnInterface
     }
 
     /**
-     * Get webServicePort
+     * Get webServicePort.
      *
-     * @return integer 
+     * @return int
      */
     public function getWebServicePort()
     {

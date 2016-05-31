@@ -14,9 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class AuProperty implements GetPlnInterface
 {
-
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -69,6 +68,7 @@ class AuProperty implements GetPlnInterface
      * The children of the property.
      *
      * @ORM\OneToMany(targetEntity="AuProperty", mappedBy="parent")
+     *
      * @var ArrayCollection
      */
     private $children;
@@ -79,9 +79,9 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -89,9 +89,10 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Set propertyKey
+     * Set propertyKey.
      *
      * @param string $propertyKey
+     *
      * @return AuProperty
      */
     public function setPropertyKey($propertyKey)
@@ -102,7 +103,7 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Get propertyKey
+     * Get propertyKey.
      *
      * @return string
      */
@@ -112,9 +113,10 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Set propertyValue
+     * Set propertyValue.
      *
      * @param string $propertyValue
+     *
      * @return AuProperty
      */
     public function setPropertyValue($propertyValue)
@@ -125,7 +127,7 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Get propertyValue
+     * Get propertyValue.
      *
      * @return string
      */
@@ -135,9 +137,10 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Set parent
+     * Set parent.
      *
      * @param AuProperty $parent
+     *
      * @return AuProperty
      */
     public function setParent(AuProperty $parent = null)
@@ -146,11 +149,12 @@ class AuProperty implements GetPlnInterface
         if ($parent !== null) {
             $parent->addChild($this);
         }
+
         return $this;
     }
 
     /**
-     * Get parent
+     * Get parent.
      *
      * @return AuProperty
      */
@@ -162,7 +166,7 @@ class AuProperty implements GetPlnInterface
     /**
      * Returns true if the property has a parent.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasParent()
     {
@@ -170,9 +174,10 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Set au
+     * Set au.
      *
      * @param Au $au
+     *
      * @return AuProperty
      */
     public function setAu(Au $au = null)
@@ -184,7 +189,7 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Get au
+     * Get au.
      *
      * @return Au
      */
@@ -194,9 +199,10 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Add children
+     * Add children.
      *
      * @param AuProperty $children
+     *
      * @return AuProperty
      */
     public function addChild(AuProperty $children)
@@ -207,7 +213,7 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Remove children
+     * Remove children.
      *
      * @param AuProperty $children
      */
@@ -217,7 +223,7 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * Get children
+     * Get children.
      *
      * @return Collection
      */
@@ -229,7 +235,7 @@ class AuProperty implements GetPlnInterface
     /**
      * Return true if the property has children.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasChildren()
     {
@@ -237,7 +243,7 @@ class AuProperty implements GetPlnInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPln()
     {

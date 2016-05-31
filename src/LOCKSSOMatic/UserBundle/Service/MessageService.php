@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class MessageService
 {
-
     /**
      * @var Logger
      */
@@ -41,7 +40,7 @@ class MessageService
     {
         $this->tokenStorage = $tokenStorage;
     }
-    
+
     public function send($content, User $user = null)
     {
         $message = new Message();

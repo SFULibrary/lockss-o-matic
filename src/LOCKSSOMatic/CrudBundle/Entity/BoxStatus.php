@@ -7,41 +7,41 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BoxStatus
+ * BoxStatus.
  *
  * @ORM\Table(name="box_status")
  * @ORM\Entity
  */
-class BoxStatus implements GetPlnInterface {
-
-	/**
-	 * @var integer
-	 *
-	 * @ORM\Column(name="id", type="integer")
-	 * @ORM\Id
-	 * @ORM\GeneratedValue(strategy="IDENTITY")
-	 */
-	private $id;
-
-	/**
-	 * @var Box
-	 *
-	 * @ORM\ManyToOne(targetEntity="Box", inversedBy="status")
-	 * @ORM\JoinColumns({
-	 *   @ORM\JoinColumn(name="box_id", referencedColumnName="id")
-	 * })
-	 */
-	private $box;
-
-	/**
-	 * @var DateTime
-	 *
-	 * @ORM\Column(name="query_date", type="datetime", nullable=false)
-	 */
-	private $queryDate;
-    
+class BoxStatus implements GetPlnInterface
+{
     /**
-     * @var boolean
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var Box
+     *
+     * @ORM\ManyToOne(targetEntity="Box", inversedBy="status")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="box_id", referencedColumnName="id")
+     * })
+     */
+    private $box;
+
+    /**
+     * @var DateTime
+     *
+     * @ORM\Column(name="query_date", type="datetime", nullable=false)
+     */
+    private $queryDate;
+
+    /**
+     * @var bool
      * @ORM\Column(name="success", type="boolean")
      */
     private $success;
@@ -52,78 +52,87 @@ class BoxStatus implements GetPlnInterface {
      * @ORM\OneToMany(targetEntity="CacheStatus", mappedBy="boxStatus", cascade={"persist"})
      */
     private $caches;
-    
+
     /**
-     * @var String
+     * @var string
      * 
      * @ORM\Column(name="errors", type="text", nullable=true)
      */
     private $errors;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->success = false;
         $this->caches = array();
     }
 
-	public function getPln() {
-		return $this->box->getPln();
-	}
-
-	/**
-	 * Get id
-	 *
-	 * @return integer 
-	 */
-	public function getId() {
-		return $this->id;
-	}
-
-	/**
-	 * Set queryDate
-	 *
-	 * @param \DateTime $queryDate
-	 * @return BoxStatus
-	 */
-	public function setQueryDate($queryDate) {
-		$this->queryDate = $queryDate;
-
-		return $this;
-	}
-
-	/**
-	 * Get queryDate
-	 *
-	 * @return \DateTime 
-	 */
-	public function getQueryDate() {
-		return $this->queryDate;
-	}
-
-	/**
-	 * Set box
-	 *
-	 * @param Box $box
-	 * @return BoxStatus
-	 */
-	public function setBox(Box $box = null) {
-		$this->box = $box;
-
-		return $this;
-	}
-
-	/**
-	 * Get box
-	 *
-	 * @return Box 
-	 */
-	public function getBox() {
-		return $this->box;
-	}
+    public function getPln()
+    {
+        return $this->box->getPln();
+    }
 
     /**
-     * Set success
+     * Get id.
      *
-     * @param boolean $success
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set queryDate.
+     *
+     * @param \DateTime $queryDate
+     *
+     * @return BoxStatus
+     */
+    public function setQueryDate($queryDate)
+    {
+        $this->queryDate = $queryDate;
+
+        return $this;
+    }
+
+    /**
+     * Get queryDate.
+     *
+     * @return \DateTime
+     */
+    public function getQueryDate()
+    {
+        return $this->queryDate;
+    }
+
+    /**
+     * Set box.
+     *
+     * @param Box $box
+     *
+     * @return BoxStatus
+     */
+    public function setBox(Box $box = null)
+    {
+        $this->box = $box;
+
+        return $this;
+    }
+
+    /**
+     * Get box.
+     *
+     * @return Box
+     */
+    public function getBox()
+    {
+        return $this->box;
+    }
+
+    /**
+     * Set success.
+     *
+     * @param bool $success
      *
      * @return BoxStatus
      */
@@ -135,9 +144,9 @@ class BoxStatus implements GetPlnInterface {
     }
 
     /**
-     * Get success
+     * Get success.
      *
-     * @return boolean
+     * @return bool
      */
     public function getSuccess()
     {
@@ -145,7 +154,7 @@ class BoxStatus implements GetPlnInterface {
     }
 
     /**
-     * Add cach
+     * Add cach.
      *
      * @param CacheStatus $cach
      *
@@ -159,7 +168,7 @@ class BoxStatus implements GetPlnInterface {
     }
 
     /**
-     * Remove cach
+     * Remove cach.
      *
      * @param CacheStatus $cache
      */
@@ -169,7 +178,7 @@ class BoxStatus implements GetPlnInterface {
     }
 
     /**
-     * Get caches
+     * Get caches.
      *
      * @return Collection
      */
@@ -179,7 +188,7 @@ class BoxStatus implements GetPlnInterface {
     }
 
     /**
-     * Set errors
+     * Set errors.
      *
      * @param string $errors
      *
@@ -193,7 +202,7 @@ class BoxStatus implements GetPlnInterface {
     }
 
     /**
-     * Get errors
+     * Get errors.
      *
      * @return string
      */

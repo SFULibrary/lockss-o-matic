@@ -7,8 +7,8 @@ use Doctrine\ORM\Query\Expr\Func;
 
 class DepositRepository extends EntityRepository
 {
-    
-    public function search(Pln $pln, $q) {
+    public function search(Pln $pln, $q)
+    {
         $qb = $this->createQueryBuilder('d');
         $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
         $qb->setParameter('pln', $pln);
@@ -18,7 +18,7 @@ class DepositRepository extends EntityRepository
                 "'%{$q}%'"
             )
         );
-        return $qb->getQuery()->getResult();        
-    }
 
+        return $qb->getQuery()->getResult();
+    }
 }

@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PluginProperty
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -44,14 +44,15 @@ class PluginProperty
 
     /**
      * True if the property value is a list/array.
-     * @var boolean
+     *
+     * @var bool
      *
      * @ORM\Column(name="is_list", type="boolean", nullable=false)
      */
     private $isList;
 
     /**
-     * The parent of the property
+     * The parent of the property.
      *
      * @var PluginProperty
      *
@@ -78,6 +79,7 @@ class PluginProperty
      * The child properties of this property.
      *
      * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="parent");
+     *
      * @var PluginProperty[]
      */
     private $children;
@@ -88,11 +90,10 @@ class PluginProperty
         $this->isList = false;
     }
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -100,9 +101,10 @@ class PluginProperty
     }
 
     /**
-     * Set propertyKey
+     * Set propertyKey.
      *
      * @param string $propertyKey
+     *
      * @return PluginProperty
      */
     public function setPropertyKey($propertyKey)
@@ -113,7 +115,7 @@ class PluginProperty
     }
 
     /**
-     * Get propertyKey
+     * Get propertyKey.
      *
      * @return string
      */
@@ -123,9 +125,10 @@ class PluginProperty
     }
 
     /**
-     * Set propertyValue
+     * Set propertyValue.
      *
      * @param string|array $propertyValue
+     *
      * @return PlnProperty
      */
     public function setPropertyValue($propertyValue)
@@ -142,7 +145,7 @@ class PluginProperty
     }
 
     /**
-     * Get propertyValue
+     * Get propertyValue.
      *
      * @return mixed
      */
@@ -151,13 +154,14 @@ class PluginProperty
         if ($this->isList) {
             return unserialize($this->propertyValue);
         }
+
         return $this->propertyValue;
     }
 
     /**
      * Return true if the value of the property is a list.
      *
-     * @return boolean
+     * @return bool
      */
     public function isList()
     {
@@ -165,9 +169,10 @@ class PluginProperty
     }
 
     /**
-     * Set parent
+     * Set parent.
      *
      * @param PluginProperty $parent
+     *
      * @return PluginProperty
      */
     public function setParent(PluginProperty $parent = null)
@@ -176,12 +181,12 @@ class PluginProperty
         if ($parent !== null) {
             $parent->addChild($this);
         }
-        
+
         return $this;
     }
 
     /**
-     * Get parent
+     * Get parent.
      *
      * @return PluginProperty
      */
@@ -193,7 +198,7 @@ class PluginProperty
     /**
      * Return true if the property has a parent.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasParent()
     {
@@ -201,9 +206,10 @@ class PluginProperty
     }
 
     /**
-     * Set plugin
+     * Set plugin.
      *
      * @param Plugin $plugin
+     *
      * @return PluginProperty
      */
     public function setPlugin(Plugin $plugin = null)
@@ -215,7 +221,7 @@ class PluginProperty
     }
 
     /**
-     * Get plugin
+     * Get plugin.
      *
      * @return Plugin
      */
@@ -225,9 +231,10 @@ class PluginProperty
     }
 
     /**
-     * Add children
+     * Add children.
      *
      * @param PluginProperty $children
+     *
      * @return PluginProperty
      */
     public function addChild(PluginProperty $children)
@@ -238,7 +245,7 @@ class PluginProperty
     }
 
     /**
-     * Remove children
+     * Remove children.
      *
      * @param PluginProperty $children
      */
@@ -248,7 +255,7 @@ class PluginProperty
     }
 
     /**
-     * Get children
+     * Get children.
      *
      * @return Collection
      */
@@ -260,7 +267,7 @@ class PluginProperty
     /**
      * Return true if the property has child properties.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasChildren()
     {

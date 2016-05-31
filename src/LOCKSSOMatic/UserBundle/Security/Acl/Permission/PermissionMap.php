@@ -52,12 +52,12 @@ class PermissionMap extends BasicPermissionMap
             MaskBuilder::MASK_DEPOSIT,
             MaskBuilder::MASK_PLNADMIN,
         );
-        
+
         $this->map[self::PERMISSION_DEPOSIT] = array(
             MaskBuilder::MASK_DEPOSIT,
             MaskBuilder::MASK_PLNADMIN,
         );
-        
+
         $this->map[self::PERMISSION_PLNADMIN] = array(
             MaskBuilder::MASK_PLNADMIN,
         );

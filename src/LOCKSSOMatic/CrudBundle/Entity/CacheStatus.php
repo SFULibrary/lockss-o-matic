@@ -1,22 +1,19 @@
 <?php
 
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use LOCKSSOMatic\CrudBundle\Entity\BoxStatus;
-use LOCKSSOMatic\CrudBundle\Entity\CacheStatus;
 
 /**
- * Description of CacheStatus
+ * Description of CacheStatus.
  *
  * @ORM\Table(name="cache_status")
  * @ORM\Entity
  */
-class CacheStatus {
-
+class CacheStatus
+{
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -33,21 +30,20 @@ class CacheStatus {
      * })
      */
     private $boxStatus;
-        
-	/**
-     * The response from LOCKSS for one cache.
-     * 
-	 * @var array
-	 *
-	 * @ORM\Column(name="response", type="array", nullable=false)
-	 */
-    private $response;
-
 
     /**
-     * Get id
+     * The response from LOCKSS for one cache.
+     * 
+     * @var array
      *
-     * @return integer
+     * @ORM\Column(name="response", type="array", nullable=false)
+     */
+    private $response;
+
+    /**
+     * Get id.
+     *
+     * @return int
      */
     public function getId()
     {
@@ -55,7 +51,7 @@ class CacheStatus {
     }
 
     /**
-     * Set response
+     * Set response.
      *
      * @param array $response
      *
@@ -69,7 +65,7 @@ class CacheStatus {
     }
 
     /**
-     * Get response
+     * Get response.
      *
      * @return array
      */
@@ -79,7 +75,7 @@ class CacheStatus {
     }
 
     /**
-     * Set boxStatus
+     * Set boxStatus.
      *
      * @param BoxStatus $boxStatus
      *
@@ -93,7 +89,7 @@ class CacheStatus {
     }
 
     /**
-     * Get boxStatus
+     * Get boxStatus.
      *
      * @return BoxStatus
      */
@@ -101,35 +97,43 @@ class CacheStatus {
     {
         return $this->boxStatus;
     }
-    
-    public function getStatusKeys() {
+
+    public function getStatusKeys()
+    {
         return array_keys($this->response);
     }
-    
+
     /**
-	 * @param string $name
-	 * @return string|null
-	 */
-	public function getStatusValue($name) {
-		if (!array_key_exists($name, $this->response)) {
-			return null;
-		}
-		return $this->response[$name];
-	}
-	
-	public function getActiveCount() {
-		return $this->getStatusValue('activeCount');
-	}
-	
-	public function getFree() {
-		return $this->getStatusValue('free');
-	}
-	
-	public function getSize() {
-		return $this->getStatusValue('size');
-	}
-	
-	public function getUsed() {
-		return $this->getStatusValue('used');
-	}
+     * @param string $name
+     *
+     * @return string|null
+     */
+    public function getStatusValue($name)
+    {
+        if (!array_key_exists($name, $this->response)) {
+            return;
+        }
+
+        return $this->response[$name];
+    }
+
+    public function getActiveCount()
+    {
+        return $this->getStatusValue('activeCount');
+    }
+
+    public function getFree()
+    {
+        return $this->getStatusValue('free');
+    }
+
+    public function getSize()
+    {
+        return $this->getStatusValue('size');
+    }
+
+    public function getUsed()
+    {
+        return $this->getStatusValue('used');
+    }
 }

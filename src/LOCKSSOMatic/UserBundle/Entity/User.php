@@ -3,13 +3,12 @@
 namespace LOCKSSOMatic\UserBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 
 /**
- * User
+ * User.
  *
  * @ORM\Table(name="lom_user")
  * @ORM\Entity(repositoryClass="UserRepository")
@@ -17,7 +16,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 class User extends BaseUser
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -27,29 +26,31 @@ class User extends BaseUser
 
     /**
      * @ORM\Column(name="fullname", type="string", length=128)
+     *
      * @var string
      */
     private $fullname;
-    
+
     /**
      * @ORM\Column(name="institution", type="string", length=128)
+     *
      * @var string
      */
     private $institution;
 
     /**
      * @ORM\OneToMany(targetEntity="LOCKSSOMatic\CrudBundle\Entity\Deposit", mappedBy="user")
+     *
      * @var Deposit[]
      */
     private $deposits;
 
-
     /**
      * @ORM\OneToMany(targetEntity="Message", mappedBy="user")
+     *
      * @var Message[]
      */
     private $messages;
-
 
     public function __construct()
     {
@@ -59,17 +60,17 @@ class User extends BaseUser
         $this->deposits = new ArrayCollection();
         $this->messages = new ArrayCollection();
     }
-    
+
     public function setEmail($email)
     {
         parent::setEmail($email);
         $this->setUsername($email);
     }
-    
+
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -77,9 +78,10 @@ class User extends BaseUser
     }
 
     /**
-     * Set fullname
+     * Set fullname.
      *
      * @param string $fullname
+     *
      * @return User
      */
     public function setFullname($fullname)
@@ -90,7 +92,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get fullname
+     * Get fullname.
      *
      * @return string
      */
@@ -100,9 +102,10 @@ class User extends BaseUser
     }
 
     /**
-     * Set institution
+     * Set institution.
      *
      * @param string $institution
+     *
      * @return User
      */
     public function setInstitution($institution)
@@ -113,7 +116,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get institution
+     * Get institution.
      *
      * @return string
      */
@@ -123,9 +126,10 @@ class User extends BaseUser
     }
 
     /**
-     * Add deposits
+     * Add deposits.
      *
      * @param Deposit $deposits
+     *
      * @return User
      */
     public function addDeposit(Deposit $deposits)
@@ -136,7 +140,7 @@ class User extends BaseUser
     }
 
     /**
-     * Remove deposits
+     * Remove deposits.
      *
      * @param Deposit $deposits
      */
@@ -146,7 +150,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get deposits
+     * Get deposits.
      *
      * @return Deposit[]
      */
@@ -156,9 +160,10 @@ class User extends BaseUser
     }
 
     /**
-     * Add messages
+     * Add messages.
      *
      * @param Message $messages
+     *
      * @return User
      */
     public function addMessage(Message $messages)
@@ -169,7 +174,7 @@ class User extends BaseUser
     }
 
     /**
-     * Remove messages
+     * Remove messages.
      *
      * @param Message $messages
      */
@@ -179,7 +184,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get messages
+     * Get messages.
      *
      * @return Message[]
      */
@@ -188,6 +193,7 @@ class User extends BaseUser
         if ($seen === null) {
             return $this->messages;
         }
+
         return $this->messages->filter(function ($message) use ($seen) {
             return $message->getSeen() === $seen;
         });

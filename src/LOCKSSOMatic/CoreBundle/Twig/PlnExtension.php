@@ -8,8 +8,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Twig_Extension;
 use Twig_SimpleFunction;
 
-class PlnExtension extends Twig_Extension {
-
+class PlnExtension extends Twig_Extension
+{
     /**
      * @var Doctrine
      */
@@ -40,27 +40,31 @@ class PlnExtension extends Twig_Extension {
         );
     }
 
-    public function plnList() {
+    public function plnList()
+    {
         $em = $this->doctrine->getManager();
         $plns = array();
-        foreach($em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll() as $pln) {
-            if($this->access->hasAccess('MONITOR', $pln)) {
+        foreach ($em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll() as $pln) {
+            if ($this->access->hasAccess('MONITOR', $pln)) {
                 $plns[] = $pln;
             }
         }
+
         return $plns;
     }
 
-    public function currentPln() {
+    public function currentPln()
+    {
         $plnId = $this->session->get('plnId');
-        if(! $plnId) {
-            return null;
+        if (!$plnId) {
+            return;
         }
         $em = $this->doctrine->getManager();
+
         return $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
     }
 
-     public function getName()
+    public function getName()
     {
         return 'lom_plnsextension';
     }

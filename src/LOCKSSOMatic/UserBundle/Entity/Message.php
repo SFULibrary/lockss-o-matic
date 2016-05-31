@@ -3,13 +3,10 @@
 namespace LOCKSSOMatic\UserBundle\Entity;
 
 use DateTime;
-use LOCKSSOMatic\UserBundle\Entity\Message;
-use LOCKSSOMatic\UserBundle\Entity\MessageRepository;
-use LOCKSSOMatic\UserBundle\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Message
+ * Message.
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="MessageRepository")
@@ -17,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Message
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -30,24 +27,28 @@ class Message
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      * })
+     *
      * @var User2
      */
     private $user;
 
     /**
      * @ORM\Column(name="seen", type="boolean")
-     * @var boolean
+     *
+     * @var bool
      */
     private $seen;
 
     /**
      * @ORM\Column(name="content", type="text")
+     *
      * @var string
      */
     private $content;
 
     /**
      * @ORM\Column(name="created", type="datetime")
+     *
      * @var DateTime
      */
     private $created;
@@ -59,9 +60,9 @@ class Message
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -69,9 +70,10 @@ class Message
     }
 
     /**
-     * Set seen
+     * Set seen.
      *
-     * @param boolean $seen
+     * @param bool $seen
+     *
      * @return Message
      */
     public function setSeen($seen)
@@ -82,9 +84,9 @@ class Message
     }
 
     /**
-     * Get seen
+     * Get seen.
      *
-     * @return boolean
+     * @return bool
      */
     public function getSeen()
     {
@@ -92,9 +94,10 @@ class Message
     }
 
     /**
-     * Set content
+     * Set content.
      *
      * @param string $content
+     *
      * @return Message
      */
     public function setContent($content)
@@ -105,7 +108,7 @@ class Message
     }
 
     /**
-     * Get content
+     * Get content.
      *
      * @return string
      */
@@ -115,7 +118,7 @@ class Message
     }
 
     /**
-     * Get created
+     * Get created.
      *
      * @return DateTime
      */
@@ -125,9 +128,10 @@ class Message
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param User $user
+     *
      * @return Message
      */
     public function setUser(User $user = null)
@@ -138,7 +142,7 @@ class Message
     }
 
     /**
-     * Get user
+     * Get user.
      *
      * @return User
      */

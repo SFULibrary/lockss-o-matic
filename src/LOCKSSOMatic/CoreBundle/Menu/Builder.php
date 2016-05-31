@@ -11,7 +11,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class Builder implements ContainerAwareInterface
 {
     /**
-     *
      * @var ContainerInterface
      */
     private $container;
@@ -29,12 +28,14 @@ class Builder implements ContainerAwareInterface
         if ($this->container) {
             return $this->container->get('security.token_storage')->getToken()->getUser();
         }
-        return null;
+
+        return;
     }
 
     /**
      * @param FactoryInterface $factory
-     * @param array $options
+     * @param array            $options
+     *
      * @return ItemInterface
      */
     public function mainMenu(FactoryInterface $factory, array $options)
@@ -62,16 +63,16 @@ class Builder implements ContainerAwareInterface
         $menu['networks']->setChildrenAttribute('class', 'dropdown-menu');
 
         $menu['networks']->addChild('All networks', array('route' => 'pln'))->setAttribute('divider_append', true);
-        
+
         $access = $this->container->get('lom.access');
         $em = $this->container->get('doctrine')->getManager();
         $networks = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
 
         foreach ($networks as $pln) {
-            if( ! $access->hasAccess('PLN_MONITOR', $pln)) {
+            if (!$access->hasAccess('PLN_MONITOR', $pln)) {
                 continue;
             }
-            $mid = 'network_' . $pln->getId(); // only for grouping.
+            $mid = 'network_'.$pln->getId(); // only for grouping.
             $menu['networks']->addChild($mid, array('uri' => '#', 'label' => $pln->getName()));
             $menu['networks'][$mid]->setAttribute('class', 'dropdown-submenu');
             $menu['networks'][$mid]->setChildrenAttribute('class', 'dropdown-menu');
@@ -84,16 +85,17 @@ class Builder implements ContainerAwareInterface
             $menu['networks'][$mid]->addChild('Content', array('route' => 'content', 'routeParameters' => array('plnId' => $pln->getId())));
             $menu['networks'][$mid]->addChild('Deposits', array('route' => 'deposit', 'routeParameters' => array('plnId' => $pln->getId())));
         }
-        if($access->hasAccess('ROLE_ADMIN')) {
+        if ($access->hasAccess('ROLE_ADMIN')) {
             $menu->addChild('admin', array('uri' => '#', 'label' => 'Admin'));
             $menu['admin']->setAttribute('dropdown', true);
             $menu['admin']->setLinkAttribute('class', 'dropdown-toggle');
             $menu['admin']->setLinkAttribute('data-toggle', 'dropdown');
             $menu['admin']->setChildrenAttribute('class', 'dropdown-menu');
-            
+
             $menu['admin']->addChild('Users', array('route' => 'admin_user'));
             $menu['admin']->addChild('Access logs', array('route' => 'log'));
         }
+
         return $menu;
     }
 
@@ -116,5 +118,4 @@ class Builder implements ContainerAwareInterface
 
         return $menu;
     }
-
 }

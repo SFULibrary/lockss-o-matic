@@ -10,7 +10,7 @@ class ContentOwnerType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -19,14 +19,14 @@ class ContentOwnerType extends AbstractType
             ->add('emailAddress')
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\ContentOwner'
+            'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\ContentOwner',
         ));
     }
 

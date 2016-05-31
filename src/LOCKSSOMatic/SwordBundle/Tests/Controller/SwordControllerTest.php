@@ -9,7 +9,6 @@ use SimpleXMLElement;
 
 class SwordControllerTest extends AbstractTestCase
 {
-
     /**
      * @var Namespaces
      */
@@ -30,12 +29,13 @@ class SwordControllerTest extends AbstractTestCase
     {
         $xml = new SimpleXMLElement($string);
         $this->namespaces->registerNamespaces($xml);
+
         return $xml;
     }
 
     private function assertXpath(SimpleXMLElement $xml, $expected, $xpath, $method = 'assertEquals')
     {
-        $this->$method($expected, (string)($xml->xpath($xpath)[0]));
+        $this->$method($expected, (string) ($xml->xpath($xpath)[0]));
     }
 
     public function testServiceDocumentMissingOnBehalfOf()
@@ -76,15 +76,14 @@ class SwordControllerTest extends AbstractTestCase
         $this->assertXpath($xml, 'base_url', '//lom:property[1]/@name');
     }
 
-
     public function testCreateDepositMissingParam()
     {
         $provider = $this->references->getReference('provider');
-        $xmlStr = file_get_contents(dirname(__FILE__) . '/data/depositMissingParam.xml');
+        $xmlStr = file_get_contents(dirname(__FILE__).'/data/depositMissingParam.xml');
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/api/sword/2.0/col-iri/' . $provider->getUuid(),
+            '/api/sword/2.0/col-iri/'.$provider->getUuid(),
             array(),
             array(),
             array('Content-Type' => 'application/xml'),
@@ -103,11 +102,11 @@ class SwordControllerTest extends AbstractTestCase
     public function testCreateDepositMismatchedUrl()
     {
         $provider = $this->references->getReference('provider');
-        $xmlStr = file_get_contents(dirname(__FILE__) . '/data/depositMismatchedHosts.xml');
+        $xmlStr = file_get_contents(dirname(__FILE__).'/data/depositMismatchedHosts.xml');
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/api/sword/2.0/col-iri/' . $provider->getUuid(),
+            '/api/sword/2.0/col-iri/'.$provider->getUuid(),
             array(),
             array(),
             array('Content-Type' => 'application/xml'),
@@ -127,11 +126,11 @@ class SwordControllerTest extends AbstractTestCase
     public function testCreateDeposit()
     {
         $provider = $this->references->getReference('provider');
-        $xmlStr = file_get_contents(dirname(__FILE__) . '/data/depositSingle.xml');
+        $xmlStr = file_get_contents(dirname(__FILE__).'/data/depositSingle.xml');
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/api/sword/2.0/col-iri/' . $provider->getUuid(),
+            '/api/sword/2.0/col-iri/'.$provider->getUuid(),
             array(),
             array(),
             array('Content-Type' => 'application/xml'),
@@ -180,11 +179,11 @@ class SwordControllerTest extends AbstractTestCase
     public function testCreateDepositMultipleContent()
     {
         $provider = $this->references->getReference('provider');
-        $xmlStr = file_get_contents(dirname(__FILE__) . '/data/depositMultiple.xml');
+        $xmlStr = file_get_contents(dirname(__FILE__).'/data/depositMultiple.xml');
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/api/sword/2.0/col-iri/' . $provider->getUuid(),
+            '/api/sword/2.0/col-iri/'.$provider->getUuid(),
             array(),
             array(),
             array('Content-Type' => 'application/xml'),
@@ -235,11 +234,9 @@ class SwordControllerTest extends AbstractTestCase
 
     public function testEditDeposit()
     {
-
     }
 
     public function testStatement()
     {
-        
     }
 }

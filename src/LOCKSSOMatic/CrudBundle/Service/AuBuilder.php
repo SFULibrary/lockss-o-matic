@@ -10,7 +10,6 @@ use Monolog\Logger;
 
 class AuBuilder
 {
-
     /**
      * @var Logger
      */
@@ -20,32 +19,34 @@ class AuBuilder
      * @var ObjectManager
      */
     private $em;
-    
+
     /**
      * @var AuPropertyGenerator
      */
     private $propGenerator;
-    
+
     /**
      * @var AuIdGenerator
      */
     private $idGenerator;
-    
+
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
     }
-    
+
     public function setRegistry(Registry $registry)
     {
         $this->em = $registry->getManager();
     }
-    
-    public function setPropertyGenerator(AuPropertyGenerator $propGenerator) {
+
+    public function setPropertyGenerator(AuPropertyGenerator $propGenerator)
+    {
         $this->propGenerator = $propGenerator;
     }
 
-    public function setAuIdGenerator(AuIdGenerator $idGenerator) {
+    public function setAuIdGenerator(AuIdGenerator $idGenerator)
+    {
         $this->idGenerator = $idGenerator;
     }
 
@@ -53,6 +54,7 @@ class AuBuilder
      * Build an AU for the content item.
      *
      * @return Au
+     *
      * @param Content $content
      */
     public function fromContent(Content $content)
@@ -65,12 +67,12 @@ class AuBuilder
         $au->setContentprovider($provider);
         $au->setPln($provider->getPln());
         $au->setPlugin($provider->getPlugin());
-        
+
         $this->em->persist($au);
         $this->em->flush();
-        
+
         $this->propGenerator->generateProperties($au);
-        
+
         return $au;
     }
 }

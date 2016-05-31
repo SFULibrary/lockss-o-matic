@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ContentProviderController extends Controller
 {
-
     /**
      * Lists all ContentProvider entities.
      *
@@ -44,7 +43,6 @@ class ContentProviderController extends Controller
             $request->query->getInt('page', 1),
             25
         );
-
 
         return array(
             'entities' => $entities,
@@ -80,7 +78,7 @@ class ContentProviderController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -102,9 +100,9 @@ class ContentProviderController extends Controller
             )
         );
 
-            $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Create'));
 
-            return $form;
+        return $form;
     }
 
     /**
@@ -121,7 +119,7 @@ class ContentProviderController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -145,7 +143,7 @@ class ContentProviderController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -171,8 +169,8 @@ class ContentProviderController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -198,9 +196,9 @@ class ContentProviderController extends Controller
             )
         );
 
-            $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update'));
 
-            return $form;
+        return $form;
     }
 
     /**
@@ -234,8 +232,8 @@ class ContentProviderController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -295,9 +293,10 @@ class ContentProviderController extends Controller
             array('URL', 'journalTitle', 'Size', 'Checksum Type', 'Checksum Value'),
             $provider->getPlugin()->getDefinitionalProperties()
         );
-        $fh = fopen("php://temp", 'r+');
+        $fh = fopen('php://temp', 'r+');
         fputcsv($fh, $params);
         rewind($fh);
+
         return new Response(
             stream_get_contents($fh),
             Response::HTTP_OK,
@@ -314,64 +313,68 @@ class ContentProviderController extends Controller
             'uuid',
             'text',
             array(
-            'label'    => 'Deposit UUID',
+            'label' => 'Deposit UUID',
             'required' => false,
-            'attr'     => array(
-                'help' => 'Leave UUID blank to have one generated.'
-            )
+            'attr' => array(
+                'help' => 'Leave UUID blank to have one generated.',
+            ),
             )
         );
-            $formBuilder->add('title', 'text');
-            $formBuilder->add('summary', 'textarea');
-            $formBuilder->add('file', 'file', array('label' => 'CSV File'));
-            $formBuilder->add('submit', 'submit', array('label' => 'Import'));
-            $formBuilder->setAction($this->generateUrl(
+        $formBuilder->add('title', 'text');
+        $formBuilder->add('summary', 'textarea');
+        $formBuilder->add('file', 'file', array('label' => 'CSV File'));
+        $formBuilder->add('submit', 'submit', array('label' => 'Import'));
+        $formBuilder->setAction($this->generateUrl(
                 'contentprovider_csv_import',
                 array('id' => $id)
             ));
-            $formBuilder->setMethod('POST');
-            return $formBuilder->getForm();
+        $formBuilder->setMethod('POST');
+
+        return $formBuilder->getForm();
     }
 
-    private function precheckContent($record, Plugin $plugin) {
-        foreach($plugin->getDefinitionalProperties() as $property) {
-            if(! array_key_exists($property, $record)) {
+    private function precheckContent($record, Plugin $plugin)
+    {
+        foreach ($plugin->getDefinitionalProperties() as $property) {
+            if (!array_key_exists($property, $record)) {
                 throw new BadRequestException("{$property} must have a value.");
             }
         }
     }
 
-    private function precheckDeposit($csv, ContentProvider $provider) {
+    private function precheckDeposit($csv, ContentProvider $provider)
+    {
         $plugin = $provider->getPlugin();
         $permissionHost = $provider->getPermissionHost();
-        foreach($csv as $record) {
+        foreach ($csv as $record) {
             $this->precheckContent($record, $plugin);
             $host = parse_url($record['url'], PHP_URL_HOST);
-            if($host !== $permissionHost) {
+            if ($host !== $permissionHost) {
                 $msg = "Content host:{$host} Permission host: {$permissionHost}";
                 throw new HostMismatchException($msg);
             }
-            if($record['size'] && $record['size'] > $provider->getMaxFileSize()) {
+            if ($record['size'] && $record['size'] > $provider->getMaxFileSize()) {
                 throw new MaxUploadSizeExceededException("Content size {$record['size']} exceeds provider's maximum: {$provider->getMaxFileSize()}");
             }
         }
-        
     }
 
-    private function getCsvData(Form $form) {
+    private function getCsvData(Form $form)
+    {
         $data = $form->getData();
         $dataFile = $data['file'];
         $fh = $dataFile->openFile();
         $headers = array_map(function ($h) { return strtolower($h);}, $fh->fgetcsv());
         $headerIdx = array_flip($headers);
         $records = array();
-        while(($row = $fh->fgetcsv()) && (count($row) >= 2)) {
+        while (($row = $fh->fgetcsv()) && (count($row) >= 2)) {
             $record = array();
-            foreach($headers as $header) {
+            foreach ($headers as $header) {
                 $record[$header] = $row[$headerIdx[$header]];
             }
             $records[] = $record;
         }
+
         return $records;
     }
 
@@ -396,18 +399,18 @@ class ContentProviderController extends Controller
             $csv = $this->getCsvData($form);
             $this->precheckDeposit($csv, $provider);
 
-            /** @var DepositBuilder $builder */
+            /* @var DepositBuilder $builder */
             $depositBuilder = $this->container->get('crud.builder.deposit');
             $contentBuilder = $this->container->get('crud.builder.content');
             $auBuilder = $this->container->get('crud.builder.au');
 
             $deposit = $depositBuilder->fromForm($form, $provider, $em);
-            foreach($csv as $record) {
+            foreach ($csv as $record) {
                 $content = $contentBuilder->fromArray($record);
                 $content->setDeposit($deposit);
                 $auid = $content->generateAuid();
                 $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
-                    'auid' => $auid
+                    'auid' => $auid,
                 ));
                 if ($au === null) {
                     $au = $auBuilder->fromContent($content);
@@ -416,15 +419,17 @@ class ContentProviderController extends Controller
             }
 
             $em->flush();
+
             return $this->redirect($this->generateUrl(
                 'deposit_show',
                 array('id' => $deposit->getId())
             ));
         }
+
         return array(
-            'entity'   => $provider,
+            'entity' => $provider,
             'required' => $requiredParams,
-            'form'     => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 }

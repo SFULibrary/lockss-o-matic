@@ -20,9 +20,10 @@ abstract class ProtectedController extends Controller
     {
         $plnId = $this->container->get('session')->get('plnId');
         if ($plnId === null) {
-            return null;
+            return;
         }
         $em = $this->getDoctrine()->getManager();
+
         return $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
     }
 
@@ -30,8 +31,8 @@ abstract class ProtectedController extends Controller
      * Check that the current user has access to the PLN. Throws an exception
      * if the user does not.
      *
-     * @param String $permission
-     * @param Pln $pln
+     * @param string $permission
+     * @param Pln    $pln
      */
     protected function requireAccess($permission, Pln $pln)
     {

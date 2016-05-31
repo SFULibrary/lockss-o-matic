@@ -14,11 +14,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Private Lockss network plugin import command-line
+ * Private Lockss network plugin import command-line.
  */
 class PluginImportCommand extends ContainerAwareCommand
 {
-
     /**
      * @var EntityManager
      */
@@ -61,7 +60,7 @@ class PluginImportCommand extends ContainerAwareCommand
     /**
      * Execute the command.
      *
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
     protected function execute(InputInterface $input, OutputInterface $output)

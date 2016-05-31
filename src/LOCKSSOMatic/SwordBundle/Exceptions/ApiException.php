@@ -34,7 +34,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 abstract class ApiException extends HttpException
 {
-
     /**
      * SWORD error documents should (in the RFC2119 sense) include an error URI
      * to indicate the type of error in a machine-readable way.
@@ -44,13 +43,11 @@ abstract class ApiException extends HttpException
     protected $errorUri = '';
 
     /**
-     *
-     *
-     * @param int $statusCode HTTP status code
-     * @param string $message Exception message
-     * @param \Exception $previous previous exception, if any
-     * @param array $headers HTTP headers to set in the response
-     * @param int $code exception code
+     * @param int        $statusCode HTTP status code
+     * @param string     $message    Exception message
+     * @param \Exception $previous   previous exception, if any
+     * @param array      $headers    HTTP headers to set in the response
+     * @param int        $code       exception code
      */
     public function __construct(
         $statusCode,
@@ -62,9 +59,9 @@ abstract class ApiException extends HttpException
         parent::__construct($statusCode, $message, $previous, $headers, $code);
         $this->headers['Content-type'] = 'text/xml';
     }
-    
+
     /**
-     * Get the Error Uri
+     * Get the Error Uri.
      *
      * @return string
      */

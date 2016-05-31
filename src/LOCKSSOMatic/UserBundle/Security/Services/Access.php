@@ -3,7 +3,6 @@
 namespace LOCKSSOMatic\UserBundle\Security\Services;
 
 use LOCKSSOMatic\UserBundle\Entity\User;
-use LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder;
 use LOCKSSOMatic\UserBundle\Security\Acl\Permission\PermissionMap;
 use LOCKSSOMatic\UserBundle\Security\Acl\Permission\PlnAccessLevels;
 use Monolog\Logger;
@@ -27,11 +26,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * In templates: {% if lom_access.hasAccess('PLNADMIN', pln) %} Yes {% else %} No {% endif %}
  *
  * In controllers: ($this->get('lom.access')->checkAccess("PLNADMIN", $pln);
- *
  */
 class Access
 {
-
     /**
      * @var AuthorizationChecker
      */
@@ -89,8 +86,6 @@ class Access
      * @param string $permission
      * @param object $entity
      *
-     * @return null
-     *
      * @throws AccessDeniedException if access is denied.
      */
     public function checkAccess($permission, $entity = null)
@@ -115,7 +110,8 @@ class Access
         try {
             return $this->aclProvider->findAcl($objectId);
         } catch (AclNotFoundException $ex) {
-            $this->logger->info("No ACL for {$objectId} " . $ex->getMessage());
+            $this->logger->info("No ACL for {$objectId} ".$ex->getMessage());
+
             return $this->aclProvider->createAcl($objectId);
         }
     }
@@ -127,7 +123,7 @@ class Access
      * @param string $permission
      * @param object $entity
      *
-     * @return boolean permission granted
+     * @return bool permission granted
      */
     public function hasAccess($permission, $entity = null, $user = null)
     {
@@ -150,7 +146,7 @@ class Access
         $acl = $this->getAcl($objectId);
         $pm = new PermissionMap();
         $masks = $pm->getMasks($permission, $entity);
-        
+
         $securityId = UserSecurityIdentity::fromAccount($user);
         try {
             return $acl->isGranted($masks, array($securityId), true);
@@ -170,14 +166,15 @@ class Access
                 return $level;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
-     * Grant a role to a user
+     * Grant a role to a user.
      *
      * @param string $role
-     * @param User $user
+     * @param User   $user
      */
     public function grantRole($role, $user)
     {
@@ -185,10 +182,10 @@ class Access
     }
 
     /**
-     * Revoke a role from a user
+     * Revoke a role from a user.
      *
      * @param string $role
-     * @param User $user
+     * @param User   $user
      */
     public function revokeRole($role, $user)
     {
@@ -200,13 +197,13 @@ class Access
      *
      * @param string $permission
      * @param object $entity
-     * @param User $user
+     * @param User   $user
      */
     public function grantAccess($permission, $entity, $user = null)
     {
         $this->aclManager->addObjectPermission(
             $entity,
-            constant('LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder::MASK_' . $permission),
+            constant('LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder::MASK_'.$permission),
             $user
         );
     }
@@ -217,7 +214,7 @@ class Access
      *
      * @param string $permission
      * @param object $entity
-     * @param User $user
+     * @param User   $user
      */
     public function setAccess($permission, $entity, $user = null)
     {
@@ -231,7 +228,7 @@ class Access
      * Revoke all access for an entity from a user.
      *
      * @param object $entity
-     * @param User $user
+     * @param User   $user
      */
     public function revokeAccess($entity, $user = null)
     {

@@ -34,14 +34,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TargetOwnerUnknownException extends ApiException
 {
-    
     /**
      * Construct the exception.
      *
-     * @param string $message
+     * @param string     $message
      * @param \Exception $previous
-     * @param array $headers
-     * @param int $code
+     * @param array      $headers
+     * @param int        $code
      */
     public function __construct(
         $message = '',
@@ -50,7 +49,7 @@ class TargetOwnerUnknownException extends ApiException
         $code = 0
     ) {
         $str = 'A valid content provider UUID is required. ';
-        parent::__construct(Response::HTTP_FORBIDDEN, $str . $message, $previous, $headers, $code);
+        parent::__construct(Response::HTTP_FORBIDDEN, $str.$message, $previous, $headers, $code);
         $this->errorUri = 'http://purl.org/net/sword/error/TargetOwnerUnknown';
     }
 }

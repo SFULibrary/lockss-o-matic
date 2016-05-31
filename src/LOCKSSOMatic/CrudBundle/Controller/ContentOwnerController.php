@@ -17,7 +17,6 @@ use LOCKSSOMatic\CrudBundle\Form\ContentOwnerType;
  */
 class ContentOwnerController extends Controller
 {
-
     /**
      * Lists all ContentOwner entities.
      *
@@ -36,7 +35,6 @@ class ContentOwnerController extends Controller
             $request->query->getInt('page', 1),
             25
         );
-
 
         return array(
             'entities' => $entities,
@@ -65,7 +63,7 @@ class ContentOwnerController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -98,11 +96,11 @@ class ContentOwnerController extends Controller
     public function newAction()
     {
         $entity = new ContentOwner();
-        $form   = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity);
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -126,7 +124,7 @@ class ContentOwnerController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -152,19 +150,19 @@ class ContentOwnerController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
 
     /**
-    * Creates a form to edit a ContentOwner entity.
-    *
-    * @param ContentOwner $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to edit a ContentOwner entity.
+     *
+     * @param ContentOwner $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createEditForm(ContentOwner $entity)
     {
         $form = $this->createForm(new ContentOwnerType(), $entity, array(
@@ -204,8 +202,8 @@ class ContentOwnerController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -216,15 +214,15 @@ class ContentOwnerController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')->find($id);
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find ContentOwner entity.');
         }
 
-            $em->remove($entity);
-            $em->flush();
+        $em->remove($entity);
+        $em->flush();
 
         return $this->redirect($this->generateUrl('contentowner'));
     }

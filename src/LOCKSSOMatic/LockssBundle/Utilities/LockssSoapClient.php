@@ -21,9 +21,9 @@ class LockssSoapClient
 
         $this->options = array(
             'soap_version' => SOAP_1_1,
-            'trace'        => true,
-            'exceptions'   => true,
-            'cache'        => WSDL_CACHE_BOTH,
+            'trace' => true,
+            'exceptions' => true,
+            'cache' => WSDL_CACHE_BOTH,
         );
     }
 
@@ -47,30 +47,35 @@ class LockssSoapClient
         if (array_key_exists($key, $this->options)) {
             return $this->options[$key];
         }
-        return null;
+
+        return;
     }
 
     public function getErrors()
     {
         return implode("\n", $this->errors);
     }
-    
-    public function hasErrors() {
+
+    public function hasErrors()
+    {
         return count($this->errors) > 0;
     }
-    
-    public function soapErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
+
+    public function soapErrorHandler($errno, $errmsg, $filename, $linenum, $vars)
+    {
         $this->errors[] = "Soap Error: {$errmsg}";
     }
-    
-    public function soapExceptionHandler(Exception $e) {
+
+    public function soapExceptionHandler(Exception $e)
+    {
         // Symfony\Component\Debug\Debug enables its own exception handler
         $this->errors[] = "Soap Exception: {$e->getMessage()}";
     }
 
     /**
      * @param string $method
-     * @param array $params
+     * @param array  $params
+     *
      * @return stdClass|stdClass[]
      */
     public function call($method, $params = array())
@@ -80,25 +85,26 @@ class LockssSoapClient
         $response = null;
         try {
             $this->client = @new SoapClient($this->wsdl, $this->options);
-            if($this->client) {
+            if ($this->client) {
                 $response = $this->client->$method($params);
             }
         } catch (SoapFault $e) {
             $this->errors[] = "Soap Fault: {$e->getMessage()}";
-            if($this->client) {
+            if ($this->client) {
                 $this->errors[] = strstr($this->client->__getLastResponseHeaders(), "\n", true);
             }
             $this->errors[] = $e->getMessage();
-            
+
             // Symfony is particularily aggressive about getting at this error.
             set_error_handler('var_dump', 0); // Never called because of empty mask.
-            @trigger_error("");
+            @trigger_error('');
             restore_error_handler();
         } catch (Exception $e) {
             $this->errors[] = "PHP Exception: {$e->getMessage()}";
         }
         set_error_handler($oldErrorHandler);
         set_exception_handler($oldExceptionHandler);
+
         return $response;
     }
 }

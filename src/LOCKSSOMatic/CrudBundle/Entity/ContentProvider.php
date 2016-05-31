@@ -4,7 +4,6 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -17,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ContentProvider implements GetPlnInterface
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -61,7 +60,7 @@ class ContentProvider implements GetPlnInterface
     /**
      * The maximum file size for the provider.
      *
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="max_file_size", type="integer", nullable=true)
      */
@@ -70,7 +69,7 @@ class ContentProvider implements GetPlnInterface
     /**
      * The maximum AU size for the provider.
      *
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="max_au_size", type="integer", nullable=true)
      */
@@ -99,7 +98,7 @@ class ContentProvider implements GetPlnInterface
      * })
      */
     private $pln;
-    
+
     /**
      * The LOCKSS Plugin for the content owner.
      *
@@ -118,14 +117,16 @@ class ContentProvider implements GetPlnInterface
      * List of AUs for the provider.
      *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="contentProvider")
+     *
      * @var Au[]
      */
     private $aus;
-    
+
     /**
      * Deposits made by the provider.
      *
      * @ORM\OneToMany(targetEntity="Deposit", mappedBy="contentProvider")
+     *
      * @var Deposit[]
      */
     private $deposits;
@@ -137,9 +138,9 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -147,9 +148,10 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set type
+     * Set type.
      *
      * @param string $type
+     *
      * @return ContentProvider
      */
     public function setType($type)
@@ -160,7 +162,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get type
+     * Get type.
      *
      * @return string
      */
@@ -170,9 +172,10 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set uuid
+     * Set uuid.
      *
      * @param string $uuid
+     *
      * @return ContentProvider
      */
     public function setUuid($uuid)
@@ -183,7 +186,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get uuid
+     * Get uuid.
      *
      * @return string
      */
@@ -193,9 +196,10 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set permissionurl
+     * Set permissionurl.
      *
      * @param string $permissionurl
+     *
      * @return ContentProvider
      */
     public function setPermissionurl($permissionurl)
@@ -206,7 +210,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get permissionurl
+     * Get permissionurl.
      *
      * @return string
      */
@@ -221,9 +225,10 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
+     *
      * @return ContentProvider
      */
     public function setName($name)
@@ -234,7 +239,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -244,9 +249,10 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set maxFileSize
+     * Set maxFileSize.
      *
-     * @param integer $maxFileSize
+     * @param int $maxFileSize
+     *
      * @return ContentProvider
      */
     public function setMaxFileSize($maxFileSize)
@@ -257,9 +263,9 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get maxFileSize
+     * Get maxFileSize.
      *
-     * @return integer
+     * @return int
      */
     public function getMaxFileSize()
     {
@@ -267,9 +273,10 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set maxAuSize
+     * Set maxAuSize.
      *
-     * @param integer $maxAuSize
+     * @param int $maxAuSize
+     *
      * @return ContentProvider
      */
     public function setMaxAuSize($maxAuSize)
@@ -280,9 +287,9 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get maxAuSize
+     * Get maxAuSize.
      *
-     * @return integer
+     * @return int
      */
     public function getMaxAuSize()
     {
@@ -290,9 +297,10 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set contentOwner
+     * Set contentOwner.
      *
      * @param ContentOwner $contentOwner
+     *
      * @return ContentProvider
      */
     public function setContentOwner(ContentOwner $contentOwner = null)
@@ -304,7 +312,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get contentOwner
+     * Get contentOwner.
      *
      * @return ContentOwner
      */
@@ -314,9 +322,10 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set pln
+     * Set pln.
      *
      * @param Pln $pln
+     *
      * @return ContentProvider
      */
     public function setPln(Pln $pln = null)
@@ -328,7 +337,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get pln
+     * Get pln.
      *
      * @return Pln
      */
@@ -338,9 +347,10 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Add aus
+     * Add aus.
      *
      * @param Au $aus
+     *
      * @return ContentProvider
      */
     public function addAus(Au $aus)
@@ -351,23 +361,24 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set plugin
+     * Set plugin.
      *
      * @param Plugin $plugin
+     *
      * @return ContentOwner
      */
     public function setPlugin(Plugin $plugin = null)
     {
         $this->plugin = $plugin;
-		if($plugin !== null) {
-			$plugin->addContentProvider($this);
-		}
+        if ($plugin !== null) {
+            $plugin->addContentProvider($this);
+        }
 
         return $this;
     }
 
     /**
-     * Get plugin
+     * Get plugin.
      *
      * @return Plugin
      */
@@ -377,7 +388,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Remove aus
+     * Remove aus.
      *
      * @param Au $aus
      */
@@ -387,7 +398,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get aus
+     * Get aus.
      *
      * @return Collection
      */
@@ -396,15 +407,16 @@ class ContentProvider implements GetPlnInterface
         return $this->aus;
     }
 
-
-    public function countAus() {
+    public function countAus()
+    {
         return $this->aus->count();
     }
 
     /**
-     * Add deposits
+     * Add deposits.
      *
      * @param Deposit $deposits
+     *
      * @return ContentProvider
      */
     public function addDeposit(Deposit $deposits)
@@ -415,7 +427,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Remove deposits
+     * Remove deposits.
      *
      * @param Deposit $deposits
      */
@@ -425,7 +437,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Get deposits
+     * Get deposits.
      *
      * @return ArrayCollection|Deposit[]
      */
@@ -437,14 +449,16 @@ class ContentProvider implements GetPlnInterface
     /**
      * @return Content
      */
-    public function getContent() {
+    public function getContent()
+    {
         $contentList = array();
-        foreach($this->deposits as $deposit) {
+        foreach ($this->deposits as $deposit) {
             $content = $deposit->getContent();
-            if($content !== null && count($content) > 0) {
+            if ($content !== null && count($content) > 0) {
                 $contentList = array_merge($contentList, $content->toArray());
             }
         }
+
         return $contentList;
     }
 

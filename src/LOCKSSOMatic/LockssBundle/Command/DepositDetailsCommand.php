@@ -17,7 +17,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DepositDetailsCommand extends ContainerAwareCommand
 {
-
     /**
      * @var EntityManager
      */
@@ -47,8 +46,9 @@ class DepositDetailsCommand extends ContainerAwareCommand
         $this->em = $container->get('doctrine')->getManager();
         $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
     }
-    
-    protected function getBoxChecksum(Box $box, Content $content) {
+
+    protected function getBoxChecksum(Box $box, Content $content)
+    {
         $auid = $this->idGenerator->fromContent($content);
         $checksumType = $content->getChecksumType();
 
@@ -57,18 +57,19 @@ class DepositDetailsCommand extends ContainerAwareCommand
         $client->setWsdl($wsdl);
         $client->setOption('login', $box->getPln()->getUsername());
         $client->setOption('password', $box->getPln()->getPassword());
-        
+
         $response = $client->call('hash', array(
             'hasherParams' => array(
                 'recordFilterStream' => true,
-                'hashType'           => 'V3File',
-                'algorithm'          => $checksumType,
-                'url'                => $content->getUrl(),
-                'auId'               => $auid,
-        )));
-        if($response === null) {
+                'hashType' => 'V3File',
+                'algorithm' => $checksumType,
+                'url' => $content->getUrl(),
+                'auId' => $auid,
+        ), ));
+        if ($response === null) {
             $this->logger->warning("{$wsdl} failed.");
-            return null;
+
+            return;
         }
         if (property_exists($response->return, 'blockFileDataHandler')) {
             $matches = array();
@@ -81,33 +82,33 @@ class DepositDetailsCommand extends ContainerAwareCommand
             return $response->return->errorMessage;
         }
     }
-    
+
     /**
      * @return Deposit
      */
-    protected function getDeposit($id) {
+    protected function getDeposit($id)
+    {
         $deposit = $this->em->find('LOCKSSOMaticCrudBundle:Deposit', $id);
+
         return $deposit;
     }
-    
+
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $id = $input->getArgument('depositId');
         $deposit = $this->getDeposit($id);
-        if( ! $deposit) {
+        if (!$deposit) {
             $output->writeln('No deposit with that ID found.');
             exit;
         }
-        foreach($deposit->getContent() as $content) {
+        foreach ($deposit->getContent() as $content) {
             $output->writeln($content->getUrl());
             $output->writeln("{$content->getChecksumValue()}:{$content->getChecksumType()}");
-            
-            foreach($deposit->getPln()->getBoxes() as $box) {
+
+            foreach ($deposit->getPln()->getBoxes() as $box) {
                 $checksum = $this->getBoxChecksum($box, $content);
                 $output->writeln("{$checksum}:{$box->getHostname()}");
             }
         }
     }
-
 }
-

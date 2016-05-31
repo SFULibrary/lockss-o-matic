@@ -7,9 +7,9 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
  */
 interface GetPlnInterface
 {
-
     /**
      * Get the PLN for an entity.
+     *
      * @return Pln[]
      */
     public function getPln();

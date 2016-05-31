@@ -2,17 +2,15 @@
 
 namespace LOCKSSOMatic\CrudBundle\Form;
 
-use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PlnType extends AbstractType
 {
-
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -28,7 +26,7 @@ class PlnType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\Pln'
+            'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\Pln',
         ));
     }
 

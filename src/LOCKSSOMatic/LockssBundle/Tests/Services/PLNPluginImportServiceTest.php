@@ -10,7 +10,6 @@ use LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService;
  */
 class PLNPluginImportServiceTest extends AbstractTestCase
 {
-
     /**
      * @var PLNPluginImportService
      */
@@ -28,6 +27,7 @@ class PLNPluginImportServiceTest extends AbstractTestCase
 
     /**
      * @covers LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService::importJarFile
+     *
      * @todo   Implement testImportJarFile().
      */
     public function testImportJarFile()
@@ -40,6 +40,7 @@ class PLNPluginImportServiceTest extends AbstractTestCase
 
     /**
      * @covers LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService::getPluginPath
+     *
      * @todo   Implement testGetPluginPath().
      */
     public function testGetPluginPath()
@@ -52,6 +53,7 @@ class PLNPluginImportServiceTest extends AbstractTestCase
 
     /**
      * @covers LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService::findXmlPropString
+     *
      * @todo   Implement testFindXmlPropString().
      */
     public function testFindXmlPropString()
@@ -64,6 +66,7 @@ class PLNPluginImportServiceTest extends AbstractTestCase
 
     /**
      * @covers LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService::findXmlPropElement
+     *
      * @todo   Implement testFindXmlPropElement().
      */
     public function testFindXmlPropElement()
@@ -76,6 +79,7 @@ class PLNPluginImportServiceTest extends AbstractTestCase
 
     /**
      * @covers LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService::newPluginProperty
+     *
      * @todo   Implement testNewPluginProperty().
      */
     public function testNewPluginProperty()
@@ -88,6 +92,7 @@ class PLNPluginImportServiceTest extends AbstractTestCase
 
     /**
      * @covers LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService::buildPlugin
+     *
      * @todo   Implement testBuildPlugin().
      */
     public function testBuildPlugin()
@@ -100,6 +105,7 @@ class PLNPluginImportServiceTest extends AbstractTestCase
 
     /**
      * @covers LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService::addProperties
+     *
      * @todo   Implement testAddProperties().
      */
     public function testAddProperties()

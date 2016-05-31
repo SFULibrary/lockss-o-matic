@@ -18,7 +18,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints as Assert;
 class Deposit implements GetPlnInterface
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -43,15 +43,15 @@ class Deposit implements GetPlnInterface
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
      */
     private $title;
-	
-	/**
-	 * The agreement for the deposit's content URLs in the lockss boxes.
-	 *
-	 * @var double
-	 * 
-	 * @ORM\Column(name="agreement", type="float", nullable=true)
-	 */
-	private $agreement;
+
+    /**
+     * The agreement for the deposit's content URLs in the lockss boxes.
+     *
+     * @var float
+     * 
+     * @ORM\Column(name="agreement", type="float", nullable=true)
+     */
+    private $agreement;
 
     /**
      * A summary/description of the deposit.
@@ -72,7 +72,7 @@ class Deposit implements GetPlnInterface
     private $dateDeposited;
 
     /**
-     * The content provider that created the deposit.s
+     * The content provider that created the deposit.s.
      *
      * @var ContentProvider
      *
@@ -90,6 +90,7 @@ class Deposit implements GetPlnInterface
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
      * })
+     *
      * @var User
      */
     private $user;
@@ -101,9 +102,10 @@ class Deposit implements GetPlnInterface
      * @ORM\OneToMany(targetEntity="Content", mappedBy="deposit")
      */
     private $content;
-    
+
     /**
      * The statuses from LOCKSS for the deposit.
+     *
      * @var DepositStatus
      * 
      * @ORM\OneToMany(targetEntity="DepositStatus", mappedBy="deposit")
@@ -116,11 +118,10 @@ class Deposit implements GetPlnInterface
         $this->status = new ArrayCollection();
     }
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -128,9 +129,10 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Set uuid
+     * Set uuid.
      *
      * @param string $uuid
+     *
      * @return Deposit
      */
     public function setUuid($uuid)
@@ -141,7 +143,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Get uuid
+     * Get uuid.
      *
      * @return string
      */
@@ -151,9 +153,10 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Set title
+     * Set title.
      *
      * @param string $title
+     *
      * @return Deposit
      */
     public function setTitle($title)
@@ -164,7 +167,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
@@ -174,9 +177,10 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Set summary
+     * Set summary.
      *
      * @param string $summary
+     *
      * @return Deposit
      */
     public function setSummary($summary)
@@ -187,7 +191,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Get summary
+     * Get summary.
      *
      * @return string
      */
@@ -197,9 +201,10 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Set dateDeposited
+     * Set dateDeposited.
      *
      * @param DateTime $dateDeposited
+     *
      * @return Deposit
      */
     public function setDateDeposited($dateDeposited)
@@ -210,7 +215,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Get dateDeposited
+     * Get dateDeposited.
      *
      * @return DateTime
      */
@@ -220,21 +225,22 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Set contentProvider
+     * Set contentProvider.
      *
      * @param ContentProvider $contentProvider
+     *
      * @return Deposit
      */
     public function setContentProvider(ContentProvider $contentProvider = null)
     {
         $this->contentProvider = $contentProvider;
         $contentProvider->addDeposit($this);
-        
+
         return $this;
     }
 
     /**
-     * Get contentProvider
+     * Get contentProvider.
      *
      * @return ContentProvider
      */
@@ -244,9 +250,10 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Add deposits
+     * Add deposits.
      *
      * @param Content $content
+     *
      * @return Deposit
      */
     public function addContent(Content $content)
@@ -257,7 +264,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Remove deposits
+     * Remove deposits.
      *
      * @param Content $content
      */
@@ -266,12 +273,13 @@ class Deposit implements GetPlnInterface
         $this->content->removeElement($content);
     }
 
-    public function countContent() {
+    public function countContent()
+    {
         return $this->content->count();
     }
 
     /**
-     * Get deposits
+     * Get deposits.
      *
      * @return ArrayCollection|Content[]
      */
@@ -288,9 +296,10 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param mixed $user
+     *
      * @return User
      */
     public function setUser(User $user)
@@ -302,7 +311,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Get user
+     * Get user.
      *
      * @return User|null
      */
@@ -312,7 +321,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPln()
     {
@@ -320,9 +329,10 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Set agreement
+     * Set agreement.
      *
      * @param string $agreement
+     *
      * @return Deposit
      */
     public function setAgreement($agreement)
@@ -333,9 +343,9 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Get agreement
+     * Get agreement.
      *
-     * @return string 
+     * @return string
      */
     public function getAgreement()
     {
@@ -343,7 +353,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Add status
+     * Add status.
      *
      * @param DepositStatus $status
      *
@@ -357,7 +367,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Remove status
+     * Remove status.
      *
      * @param DepositStatus $status
      */
@@ -367,7 +377,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return Collection
      */

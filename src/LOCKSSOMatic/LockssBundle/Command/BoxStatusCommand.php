@@ -4,14 +4,12 @@ namespace LOCKSSOMatic\LockssBundle\Command;
 
 use DateTime;
 use Doctrine\ORM\EntityManager;
-use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\BoxStatus;
 use LOCKSSOMatic\CrudBundle\Entity\CacheStatus;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
 use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,7 +17,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class BoxStatusCommand extends ContainerAwareCommand
 {
-
     /**
      * @var EntityManager
      */
@@ -57,6 +54,7 @@ class BoxStatusCommand extends ContainerAwareCommand
             return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findAll();
         }
         $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findById($plnIds);
+
         return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findByPln($plns);
     }
 
@@ -79,7 +77,7 @@ class BoxStatusCommand extends ContainerAwareCommand
             $status = $client->call(
                 'queryRepositorySpaces',
                 array(
-                    'repositorySpaceQuery' => 'SELECT *'
+                    'repositorySpaceQuery' => 'SELECT *',
                 )
             );
 
@@ -93,11 +91,11 @@ class BoxStatusCommand extends ContainerAwareCommand
             if (!is_array($r)) {
                 $r = array($r);
             }
-            foreach ($r as $c) {                
+            foreach ($r as $c) {
                 $cache = new CacheStatus();
                 $cache->setBoxStatus($boxStatus);
                 $cache->setResponse(get_object_vars($c));
-                if($c->percentageFull > 0.90) {
+                if ($c->percentageFull > 0.90) {
                     $this->logger->warning("{$box->getHostname()} has cache {$c->repositorySpaceId} which is more than 90% full.");
                 }
                 $this->em->persist($cache);

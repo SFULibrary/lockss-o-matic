@@ -15,9 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Content implements GetPlnInterface
 {
-
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -46,7 +45,7 @@ class Content implements GetPlnInterface
     /**
      * The size of the content in 1000-byte units.
      *
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="size", type="integer", nullable=true)
      */
@@ -64,6 +63,7 @@ class Content implements GetPlnInterface
 
     /**
      * The checksum type for verifying the deposit. One of SHA1 or MD5.
+     *
      * @var string
      *
      * @ORM\Column(name="checksum_type", type="string", length=24, nullable=true)
@@ -84,7 +84,7 @@ class Content implements GetPlnInterface
     /**
      * True if the content should be recrawled.
      *
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="recrawl", type="boolean", nullable=false)
      */
@@ -116,6 +116,7 @@ class Content implements GetPlnInterface
 
     /**
      * @ORM\OneToMany(targetEntity="ContentProperty", mappedBy="content")
+     *
      * @var ArrayCollection
      */
     private $contentProperties;
@@ -126,9 +127,9 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -136,9 +137,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set url
+     * Set url.
      *
      * @param string $url
+     *
      * @return Content
      */
     public function setUrl($url)
@@ -149,7 +151,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get url
+     * Get url.
      *
      * @return string
      */
@@ -159,9 +161,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set title
+     * Set title.
      *
      * @param string $title
+     *
      * @return Content
      */
     public function setTitle($title)
@@ -172,7 +175,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
@@ -182,14 +185,15 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set size
+     * Set size.
      *
-     * @param integer $size
+     * @param int $size
+     *
      * @return Content
      */
     public function setSize($size)
     {
-        if($size !== '') {
+        if ($size !== '') {
             $this->size = $size;
         }
 
@@ -197,9 +201,9 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get size
+     * Get size.
      *
-     * @return integer
+     * @return int
      */
     public function getSize()
     {
@@ -207,9 +211,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set dateDeposited
+     * Set dateDeposited.
      *
      * @param DateTime $dateDeposited
+     *
      * @return Content
      */
     public function setDateDeposited($dateDeposited)
@@ -220,7 +225,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get dateDeposited
+     * Get dateDeposited.
      *
      * @return DateTime
      */
@@ -230,9 +235,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set checksumType
+     * Set checksumType.
      *
      * @param string $checksumType
+     *
      * @return Content
      */
     public function setChecksumType($checksumType)
@@ -243,7 +249,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get checksumType
+     * Get checksumType.
      *
      * @return string
      */
@@ -253,9 +259,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set checksumValue
+     * Set checksumValue.
      *
      * @param string $checksumValue
+     *
      * @return Content
      */
     public function setChecksumValue($checksumValue)
@@ -266,7 +273,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get checksumValue
+     * Get checksumValue.
      *
      * @return string
      */
@@ -276,9 +283,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set recrawl
+     * Set recrawl.
      *
-     * @param boolean $recrawl
+     * @param bool $recrawl
+     *
      * @return Content
      */
     public function setRecrawl($recrawl)
@@ -289,9 +297,9 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get recrawl
+     * Get recrawl.
      *
-     * @return boolean
+     * @return bool
      */
     public function getRecrawl()
     {
@@ -299,9 +307,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set deposit
+     * Set deposit.
      *
      * @param Deposit $deposit
+     *
      * @return Content
      */
     public function setDeposit(Deposit $deposit = null)
@@ -315,7 +324,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get deposit
+     * Get deposit.
      *
      * @return Deposit
      */
@@ -325,9 +334,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set au
+     * Set au.
      *
      * @param Au $au
+     *
      * @return Content
      */
     public function setAu(Au $au = null)
@@ -341,7 +351,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get au
+     * Get au.
      *
      * @return Au
      */
@@ -358,9 +368,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Add contentProperties
+     * Add contentProperties.
      *
      * @param ContentProperty $contentProperties
+     *
      * @return Content
      */
     public function addContentProperty(ContentProperty $contentProperties)
@@ -371,7 +382,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Remove contentProperties
+     * Remove contentProperties.
      *
      * @param ContentProperty $contentProperties
      */
@@ -386,7 +397,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get contentProperties
+     * Get contentProperties.
      *
      * @return Collection
      */
@@ -409,13 +420,15 @@ class Content implements GetPlnInterface
         }
         $callback = function ($matches) {
             $char = ord($matches[0]);
-            return '%' . strtoupper(sprintf("%02x", $char));
+
+            return '%'.strtoupper(sprintf('%02x', $char));
         };
+
         return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPln()
     {

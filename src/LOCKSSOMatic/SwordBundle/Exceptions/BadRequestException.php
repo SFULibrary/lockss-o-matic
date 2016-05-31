@@ -26,7 +26,6 @@
 
 namespace LOCKSSOMatic\SwordBundle\Exceptions;
 
-use LOCKSSOMatic\SwordBundle\Exceptions\ApiException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -35,14 +34,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BadRequestException extends ApiException
 {
-        
     /**
      * Construct the exception.
      *
-     * @param string $message
+     * @param string     $message
      * @param \Exception $previous
-     * @param array $headers
-     * @param int $code
+     * @param array      $headers
+     * @param int        $code
      */
     public function __construct(
         $message = null,

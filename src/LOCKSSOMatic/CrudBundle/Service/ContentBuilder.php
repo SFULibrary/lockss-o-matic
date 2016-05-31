@@ -34,103 +34,112 @@ use Monolog\Logger;
 use SimpleXMLElement;
 use Symfony\Component\Routing\Router;
 
-class ContentBuilder {
+class ContentBuilder
+{
+    /**
+     * @var Logger
+     */
+    private $logger;
 
-	/**
-	 * @var Logger
-	 */
-	private $logger;
+    /**
+     * @var ObjectManager
+     */
+    private $em;
 
-	/**
-	 * @var ObjectManager
-	 */
-	private $em;
-
-	/**
-	 * @var Router
-	 */
-	private $router;
+    /**
+     * @var Router
+     */
+    private $router;
 
     /**
      * @var AuIdGenerator
      */
     private $idGenerator;
-    
-	public function setLogger(Logger $logger) {
-		$this->logger = $logger;
-	}
 
-	public function setRegistry(Registry $registry) {
-		$this->em = $registry->getManager();
-	}
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
 
-	public function setRouter(Router $router) {
-		$this->router = $router;
-	}
+    public function setRegistry(Registry $registry)
+    {
+        $this->em = $registry->getManager();
+    }
 
-    public function setAuIdGenerator(AuIdGenerator $idGenerator) {
+    public function setRouter(Router $router)
+    {
+        $this->router = $router;
+    }
+
+    public function setAuIdGenerator(AuIdGenerator $idGenerator)
+    {
         $this->idGenerator = $idGenerator;
     }
 
-	protected function buildProperty(Content $content, $key, $value) {
-		$contentProperty = new ContentProperty();
-		$contentProperty->setContent($content);
-		$contentProperty->setPropertyKey($key);
-		$contentProperty->setPropertyValue($value);
-		if ($this->em !== null) {
-			$this->em->persist($contentProperty);
-		}
-		return $contentProperty;
-	}
+    protected function buildProperty(Content $content, $key, $value)
+    {
+        $contentProperty = new ContentProperty();
+        $contentProperty->setContent($content);
+        $contentProperty->setPropertyKey($key);
+        $contentProperty->setPropertyValue($value);
+        if ($this->em !== null) {
+            $this->em->persist($contentProperty);
+        }
 
-	/**
-	 *
-	 * @param SimpleXMLElement $xml
-	 * @return Content
-	 */
-	public function fromSimpleXML(SimpleXMLElement $xml) {
-		$content = new Content();
-		$content->setSize($xml->attributes()->size);
-		$content->setChecksumType($xml->attributes()->checksumType);
-		$content->setChecksumValue($xml->attributes()->checksumValue);
-		$content->setUrl(trim((string) $xml));
-		$content->setRecrawl(true);
-		$content->setDepositDate();
-		$this->buildProperty($content, 'journalTitle', $xml->attributes('pkp', true)->journalTitle);
-		$this->buildProperty($content, 'publisher', $xml->attributes('pkp', true)->publisher);
-		$content->setTitle($xml->attributes('pkp', true)->journalTitle);
-		if ($this->em !== null) {
-			$this->em->persist($content);
-		}
+        return $contentProperty;
+    }
 
-		foreach ($xml->xpath('lom:property') as $node) {
-			$this->buildProperty($content, (string) $node->attributes()->name, (string) $node->attributes()->value);
-		}
+    /**
+     * @param SimpleXMLElement $xml
+     *
+     * @return Content
+     */
+    public function fromSimpleXML(SimpleXMLElement $xml)
+    {
+        $content = new Content();
+        $content->setSize($xml->attributes()->size);
+        $content->setChecksumType($xml->attributes()->checksumType);
+        $content->setChecksumValue($xml->attributes()->checksumValue);
+        $content->setUrl(trim((string) $xml));
+        $content->setRecrawl(true);
+        $content->setDepositDate();
+        $this->buildProperty($content, 'journalTitle', $xml->attributes('pkp', true)->journalTitle);
+        $this->buildProperty($content, 'publisher', $xml->attributes('pkp', true)->publisher);
+        $content->setTitle($xml->attributes('pkp', true)->journalTitle);
+        if ($this->em !== null) {
+            $this->em->persist($content);
+        }
 
-		return $content;
-	}
+        foreach ($xml->xpath('lom:property') as $node) {
+            $this->buildProperty($content, (string) $node->attributes()->name, (string) $node->attributes()->value);
+        }
 
-	public function fromArray($record) {
-		$content = new Content();
-		$content->setSize($record['size']);
-		$content->setChecksumType($record['checksum type']);
-		$content->setChecksumValue($record['checksum value']);
-		$content->setUrl($record['url']);
-		$content->setRecrawl(true);
-		if (array_key_exists('title', $record)) {
-			$content->setTitle($record['title']);
-		} else {
-			$content->setTitle("Generated Title");
-		}
-		$content->setDepositDate();
+        return $content;
+    }
 
-		if ($this->em !== null) {
-			$this->em->persist($content);
-		}
+    public function fromArray($record)
+    {
+        $content = new Content();
+        $content->setSize($record['size']);
+        $content->setChecksumType($record['checksum type']);
+        $content->setChecksumValue($record['checksum value']);
+        $content->setUrl($record['url']);
+        $content->setRecrawl(true);
+        if (array_key_exists('title', $record)) {
+            $content->setTitle($record['title']);
+        } else {
+            $content->setTitle('Generated Title');
+        }
+        $content->setDepositDate();
 
-		foreach (array_keys($record) as $key) {
-			$this->buildProperty($content, $key, $record[$key]);
-		}
-		return $content;
-	}
+        if ($this->em !== null) {
+            $this->em->persist($content);
+        }
+
+        foreach (array_keys($record) as $key) {
+            $this->buildProperty($content, $key, $record[$key]);
+        }
+
+        return $content;
+    }
 }

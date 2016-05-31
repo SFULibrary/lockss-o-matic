@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PluginController extends Controller
 {
-
     /**
      * Lists all Plugin entities.
      *
@@ -35,7 +34,6 @@ class PluginController extends Controller
             $request->query->getInt('page', 1),
             25
         );
-
 
         return array(
             'entities' => $entities,
@@ -60,7 +58,7 @@ class PluginController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
         );
     }
 }

@@ -66,9 +66,9 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $email      = $input->getArgument('email');
-        $password   = $input->getArgument('password');
-        $inactive   = $input->getOption('inactive');
+        $email = $input->getArgument('email');
+        $password = $input->getArgument('password');
+        $inactive = $input->getOption('inactive');
         $superadmin = $input->getOption('super-admin');
 
         $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
@@ -86,7 +86,7 @@ EOT
             $email = $this->getHelper('dialog')->askAndValidate(
                 $output,
                 'Please choose an email:',
-                function($email) {
+                function ($email) {
                     if (empty($email)) {
                         throw new \Exception('Email can not be empty');
                     }
@@ -101,7 +101,7 @@ EOT
             $password = $this->getHelper('dialog')->askHiddenResponseAndValidate(
                 $output,
                 'Please choose a password:',
-                function($password) {
+                function ($password) {
                     if (empty($password)) {
                         throw new \Exception('Password can not be empty');
                     }

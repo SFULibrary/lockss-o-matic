@@ -7,17 +7,17 @@ use LOCKSSOMatic\CrudBundle\Entity\Content;
 use Monolog\Logger;
 use Symfony\Component\Routing\Router;
 
-class AuIdGenerator {
+class AuIdGenerator
+{
+    /**
+     * @var Logger
+     */
+    private $logger;
 
-	/**
-	 * @var Logger
-	 */
-	private $logger;
-
-	/**
-	 * @var Router
-	 */
-	private $router;
+    /**
+     * @var Router
+     */
+    private $router;
 
     //  Array (     
     //      [ca.ca.sfu.lib.plugin.pkppln.PkpPlnPlugin] => Array (
@@ -31,19 +31,22 @@ class AuIdGenerator {
     {
         $this->logger = $logger;
     }
-    
-    public function setRouter(Router $router) {
+
+    public function setRouter(Router $router)
+    {
         $this->router = $router;
     }
-    
-    public function setNondefinitionalCPDs($data) {
+
+    public function setNondefinitionalCPDs($data)
+    {
         $this->nondefinitionalCPDs = $data;
     }
-	
-	public function fromContent(Content $content, $lockssAuid = true) {
+
+    public function fromContent(Content $content, $lockssAuid = true)
+    {
         $plugin = $content->getDeposit()->getContentProvider()->getPlugin();
         if ($plugin === null) {
-            return null;
+            return;
         }
         $pluginId = $plugin->getIdentifier();
         $pluginKey = str_replace('.', '|', $pluginId);
@@ -52,26 +55,29 @@ class AuIdGenerator {
         sort($propNames);
 
         foreach ($propNames as $name) {
-            if(! $lockssAuid && 
+            if (!$lockssAuid &&
                 array_key_exists($pluginId, $this->nondefinitionalCPDs) &&
                 in_array($name, $this->nondefinitionalCPDs[$pluginId])) {
                 continue;
             }
-			$value = $content->getContentPropertyValue($name, true);
-			if(! $value && $lockssAuid) {
-				$value = $content->getAu()->getAuPropertyValue($name, true);
-			}
-            $auKey .= '&' . $name . '~' . $value;
+            $value = $content->getContentPropertyValue($name, true);
+            if (!$value && $lockssAuid) {
+                $value = $content->getAu()->getAuPropertyValue($name, true);
+            }
+            $auKey .= '&'.$name.'~'.$value;
         }
-        $id = $pluginKey . $auKey;
+        $id = $pluginKey.$auKey;
+
         return $id;
-	}
-	
-	public function fromAu(Au $au, $lockssAuid = true) {
-		$content = $au->getContent()->first();
-		if($content === null) {
-			return null;
-		}
-		return $this->fromContent($content, $lockssAuid);
-	}
+    }
+
+    public function fromAu(Au $au, $lockssAuid = true)
+    {
+        $content = $au->getContent()->first();
+        if ($content === null) {
+            return;
+        }
+
+        return $this->fromContent($content, $lockssAuid);
+    }
 }

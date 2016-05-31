@@ -63,10 +63,8 @@ abstract class RoleCommand extends ContainerAwareCommand
      * @param UserManipulator $manipulator
      * @param OutputInterface $output
      * @param string          $email
-     * @param boolean         $super
+     * @param bool            $super
      * @param string          $role
-     *
-     * @return void
      */
     abstract protected function executeRoleCommand(UserManipulator $manipulator, OutputInterface $output, $email, $super, $role);
 
@@ -79,7 +77,7 @@ abstract class RoleCommand extends ContainerAwareCommand
             $email = $this->getHelper('dialog')->askAndValidate(
                 $output,
                 'Please choose a email:',
-                function($email) {
+                function ($email) {
                     if (empty($email)) {
                         throw new \Exception('Username can not be empty');
                     }
@@ -93,7 +91,7 @@ abstract class RoleCommand extends ContainerAwareCommand
             $role = $this->getHelper('dialog')->askAndValidate(
                 $output,
                 'Please choose a role:',
-                function($role) {
+                function ($role) {
                     if (empty($role)) {
                         throw new \Exception('Role can not be empty');
                     }

@@ -10,7 +10,6 @@ use LOCKSSOMatic\LockssBundle\Command\PluginImportCommand;
  */
 class PluginImportCommandTest extends AbstractTestCase
 {
-
     /**
      * @var PluginImportCommand
      */
@@ -28,14 +27,14 @@ class PluginImportCommandTest extends AbstractTestCase
 
     public function testExecute()
     {
-        $file = __DIR__ . '/../data/SFUCartoonsPlugin.jar';
+        $file = __DIR__.'/../data/SFUCartoonsPlugin.jar';
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
 
         $plugins = $repo->findAll();
         $count = count($plugins);
 
         $null = $repo->findOneBy(array(
-            'name' => 'Simon Fraser University Library Editorial Cartoons Collection Plugin'
+            'name' => 'Simon Fraser University Library Editorial Cartoons Collection Plugin',
         ));
         $this->assertNull($null);
 
@@ -45,7 +44,7 @@ class PluginImportCommandTest extends AbstractTestCase
         ));
 
         $plugin = $repo->findOneBy(array(
-            'name' => 'Test Plugin'
+            'name' => 'Test Plugin',
         ));
         $this->assertNotNull($plugin);
         $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\Plugin', $plugin);

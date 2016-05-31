@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * LOCKSS Plugin
+ * LOCKSS Plugin.
  *
  * @ORM\Table(name="plugins")
  * @ORM\Entity(repositoryClass="PluginRepository")
@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Plugin
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -42,6 +42,7 @@ class Plugin
 
     /**
      * Original file name for the plugin, does not include the version number.
+     *
      * @var string
      * @ORM\Column(name="filename", type="string", length=127)
      */
@@ -49,6 +50,7 @@ class Plugin
 
     /**
      * Version number for the plugin, from the plugin's Xml config.
+     *
      * @var int
      * @ORM\Column(name="version", type="integer")
      */
@@ -56,6 +58,7 @@ class Plugin
 
     /**
      * Plugin identifier (an FQDN) from the plugin's Xml config.
+     *
      * @var string
      * @ORM\Column(name="identifier", type="string", length=255)
      */
@@ -65,6 +68,7 @@ class Plugin
      * AUs created for this plugin.
      *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="plugin")
+     *
      * @var Au[]
      */
     private $aus;
@@ -73,6 +77,7 @@ class Plugin
      * Content owners which use the plugin.
      *
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="plugin")
+     *
      * @var ContentOwner[]
      */
     private $contentProviders;
@@ -81,6 +86,7 @@ class Plugin
      * Properties for the plugin.
      *
      * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="plugin")
+     *
      * @var PluginProperty[]
      */
     private $pluginProperties;
@@ -94,9 +100,9 @@ class Plugin
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -104,9 +110,10 @@ class Plugin
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
+     *
      * @return Plugin
      */
     public function setName($name)
@@ -117,7 +124,7 @@ class Plugin
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -127,9 +134,10 @@ class Plugin
     }
 
     /**
-     * Set path
+     * Set path.
      *
      * @param string $path
+     *
      * @return Plugin
      */
     public function setPath($path)
@@ -140,7 +148,7 @@ class Plugin
     }
 
     /**
-     * Get path
+     * Get path.
      *
      * @return string
      */
@@ -150,9 +158,10 @@ class Plugin
     }
 
     /**
-     * Add aus
+     * Add aus.
      *
      * @param Au $aus
+     *
      * @return Plugin
      */
     public function addAus(Au $aus)
@@ -163,7 +172,7 @@ class Plugin
     }
 
     /**
-     * Remove aus
+     * Remove aus.
      *
      * @param Au $aus
      */
@@ -173,7 +182,7 @@ class Plugin
     }
 
     /**
-     * Get aus
+     * Get aus.
      *
      * @return Collection
      */
@@ -183,9 +192,10 @@ class Plugin
     }
 
     /**
-     * Add contentProviders
+     * Add contentProviders.
      *
      * @param ContentProvider $contentProvider
+     *
      * @return Plugin
      */
     public function addContentProvider(ContentProvider $contentProvider)
@@ -196,7 +206,7 @@ class Plugin
     }
 
     /**
-     * Remove contentProviders
+     * Remove contentProviders.
      *
      * @param ContentProvider $contentProvider
      */
@@ -206,7 +216,7 @@ class Plugin
     }
 
     /**
-     * Get contentProviders
+     * Get contentProviders.
      *
      * @return Collection
      */
@@ -216,9 +226,10 @@ class Plugin
     }
 
     /**
-     * Add pluginProperties
+     * Add pluginProperties.
      *
      * @param PluginProperty $pluginProperties
+     *
      * @return Plugin
      */
     public function addPluginProperty(PluginProperty $pluginProperties)
@@ -229,7 +240,7 @@ class Plugin
     }
 
     /**
-     * Remove pluginProperties
+     * Remove pluginProperties.
      *
      * @param PluginProperty $pluginProperties
      */
@@ -239,7 +250,7 @@ class Plugin
     }
 
     /**
-     * Get pluginProperties
+     * Get pluginProperties.
      *
      * @return Collection
      */
@@ -262,6 +273,7 @@ class Plugin
             }
             $properties[] = $p;
         }
+
         return $properties;
     }
 
@@ -279,7 +291,8 @@ class Plugin
                 return $prop->getPropertyValue();
             }
         }
-        return "";
+
+        return '';
     }
 
     /**
@@ -302,6 +315,7 @@ class Plugin
                 $properties[] = $child;
             }
         }
+
         return $properties;
     }
 
@@ -309,6 +323,7 @@ class Plugin
      * Get the value of one property for the plugin.
      *
      * @param string $propertyKey
+     *
      * @return string|null
      */
     public function getPropertyValue($propertyKey)
@@ -318,22 +333,26 @@ class Plugin
                 return $property->getPropertyValue();
             }
         }
-        return null;
+
+        return;
     }
-    
+
     /**
-     * Get a Property object
+     * Get a Property object.
      * 
      * @param type $propertyKey
+     *
      * @return PluginProperty|null
      */
-    public function getProperty($propertyKey) {
-        foreach($this->getPluginProperties() as $property) {
-            if($property->getPropertyKey() === $propertyKey) {
+    public function getProperty($propertyKey)
+    {
+        foreach ($this->getPluginProperties() as $property) {
+            if ($property->getPropertyKey() === $propertyKey) {
                 return $property;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
@@ -366,14 +385,15 @@ class Plugin
 
         return $properties;
     }
-    
+
     /**
      * Convenience method. Get the plugin parameter names which are not 
      * definitonal.
      *
      * @return ArrayCollection|PluginProperty[]
      */
-    public function getNonDefinitionalProperties() {
+    public function getNonDefinitionalProperties()
+    {
         $properties = array();
 
         foreach ($this->getPluginConfigParams() as $prop) {
@@ -405,13 +425,14 @@ class Plugin
      */
     public function __toString()
     {
-        return $this->getName() . ' version ' . $this->getVersion();
+        return $this->getName().' version '.$this->getVersion();
     }
 
     /**
-     * Set filename
+     * Set filename.
      *
      * @param string $filename
+     *
      * @return Plugin
      */
     public function setFilename($filename)
@@ -422,9 +443,9 @@ class Plugin
     }
 
     /**
-     * Get filename
+     * Get filename.
      *
-     * @return string 
+     * @return string
      */
     public function getFilename()
     {
@@ -432,9 +453,10 @@ class Plugin
     }
 
     /**
-     * Set version
+     * Set version.
      *
      * @param \int $version
+     *
      * @return Plugin
      */
     public function setVersion($version)
@@ -445,9 +467,9 @@ class Plugin
     }
 
     /**
-     * Get version
+     * Get version.
      *
-     * @return \int 
+     * @return \int
      */
     public function getVersion()
     {
@@ -455,9 +477,10 @@ class Plugin
     }
 
     /**
-     * Set identifier
+     * Set identifier.
      *
      * @param string $identifier
+     *
      * @return Plugin
      */
     public function setIdentifier($identifier)
@@ -468,9 +491,9 @@ class Plugin
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
-     * @return string 
+     * @return string
      */
     public function getIdentifier()
     {
@@ -478,9 +501,10 @@ class Plugin
     }
 
     /**
-     * Add plns
+     * Add plns.
      *
      * @param Pln $plns
+     *
      * @return Plugin
      */
     public function addPln(Pln $plns)
@@ -491,7 +515,7 @@ class Plugin
     }
 
     /**
-     * Remove plns
+     * Remove plns.
      *
      * @param Pln $plns
      */
@@ -501,7 +525,7 @@ class Plugin
     }
 
     /**
-     * Get plns
+     * Get plns.
      *
      * @return Collection
      */

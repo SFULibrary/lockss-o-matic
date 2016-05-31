@@ -10,37 +10,37 @@ class BoxType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('hostname', 'text', array(
-                'required' => false, 
+                'required' => false,
                 'attr' => array(
-                    'class' => 'hostname'
-            )))
+                    'class' => 'hostname',
+            ), ))
             ->add('protocol')
             ->add('ipAddress', 'text', array(
                 'required' => false,
                 'attr' => array(
                     'class' => 'ipAddress ',
                     'help' => 'LOCKSSOMatic will look up the IP address if it is blank.',
-                )
+                ),
             ))
             ->add('port')
-			->add('webServicePort')
+            ->add('webServicePort')
             ->add('pln')
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\Box'
+            'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\Box',
         ));
     }
 

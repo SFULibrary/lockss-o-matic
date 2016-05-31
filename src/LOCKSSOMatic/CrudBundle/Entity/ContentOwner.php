@@ -15,9 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ContentOwner
 {
-
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -48,6 +47,7 @@ class ContentOwner
 
     /**
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="contentOwner")
+     *
      * @var ArrayCollection
      */
     private $contentProviders;
@@ -58,9 +58,9 @@ class ContentOwner
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -68,9 +68,10 @@ class ContentOwner
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
+     *
      * @return ContentOwner
      */
     public function setName($name)
@@ -81,7 +82,7 @@ class ContentOwner
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -91,9 +92,10 @@ class ContentOwner
     }
 
     /**
-     * Set emailAddress
+     * Set emailAddress.
      *
      * @param string $emailAddress
+     *
      * @return ContentOwner
      */
     public function setEmailAddress($emailAddress)
@@ -104,7 +106,7 @@ class ContentOwner
     }
 
     /**
-     * Get emailAddress
+     * Get emailAddress.
      *
      * @return string
      */
@@ -118,11 +120,11 @@ class ContentOwner
         return $this->name;
     }
 
-
     /**
-     * Add contentProviders
+     * Add contentProviders.
      *
      * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
+     *
      * @return ContentOwner
      */
     public function addContentProvider(\LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders)
@@ -133,7 +135,7 @@ class ContentOwner
     }
 
     /**
-     * Remove contentProviders
+     * Remove contentProviders.
      *
      * @param \LOCKSSOMatic\CrudBundle\Entity\ContentProvider $contentProviders
      */
@@ -143,7 +145,7 @@ class ContentOwner
     }
 
     /**
-     * Get contentProviders
+     * Get contentProviders.
      *
      * @return \Doctrine\Common\Collections\Collection
      */

@@ -6,7 +6,6 @@ use ArrayObject;
 
 class PlnAccessLevels
 {
-
     private static $levels = array(
         'PLNADMIN' => 'Admin',
         'DEPOSIT' => 'Deposit',
@@ -21,6 +20,7 @@ class PlnAccessLevels
     public static function levels()
     {
         $ao = new ArrayObject(self::$levels);
+
         return $ao->getArrayCopy();
     }
 }

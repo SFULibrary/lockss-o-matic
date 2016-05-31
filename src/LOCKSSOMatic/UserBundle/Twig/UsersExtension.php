@@ -32,11 +32,10 @@ use LOCKSSOMatic\UserBundle\Entity\User;
 /**
  * Wrapper around the user repository for use in twig templates. Lets you get a
  * list of users in any template. Configure this class as a service in
- * services.yml and then call it like this: {% for user in userList() %} ... {% endfor %}
+ * services.yml and then call it like this: {% for user in userList() %} ... {% endfor %}.
  */
 class UsersExtension extends \Twig_Extension
 {
-
     /**
      * @var Doctrine
      */
@@ -68,11 +67,12 @@ class UsersExtension extends \Twig_Extension
     {
         $em = $this->doctrine->getManager();
         $users = $em->getRepository('LOCKSSOMaticUserBundle:User')->findAll();
+
         return $users;
     }
 
     /**
-     * Get the extension's name
+     * Get the extension's name.
      *
      * @return string the name as configured in services.yml
      */

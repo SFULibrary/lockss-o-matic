@@ -5,7 +5,7 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Keystore
+ * Keystore.
  *
  * @ORM\Table()
  * @ORM\Entity
@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Keystore
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -38,9 +38,9 @@ class Keystore
      */
     private $path;
 
-	/**
-	 * Original filename, as uploaded in the web form.
-	 * 
+    /**
+     * Original filename, as uploaded in the web form.
+     * 
      * @var string
      *
      * @ORM\Column(name="filename", type="string", length=255)
@@ -48,9 +48,9 @@ class Keystore
     private $filename;
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -58,9 +58,10 @@ class Keystore
     }
 
     /**
-     * Set string
+     * Set string.
      *
      * @param string $string
+     *
      * @return Keystore
      */
     public function setString($string)
@@ -71,9 +72,9 @@ class Keystore
     }
 
     /**
-     * Get string
+     * Get string.
      *
-     * @return string 
+     * @return string
      */
     public function getString()
     {
@@ -81,9 +82,10 @@ class Keystore
     }
 
     /**
-     * Set filename
+     * Set filename.
      *
      * @param string $filename
+     *
      * @return Keystore
      */
     public function setFilename($filename)
@@ -94,9 +96,9 @@ class Keystore
     }
 
     /**
-     * Get filename
+     * Get filename.
      *
-     * @return string 
+     * @return string
      */
     public function getFilename()
     {
@@ -104,9 +106,10 @@ class Keystore
     }
 
     /**
-     * Set pln
+     * Set pln.
      *
      * @param Pln $pln
+     *
      * @return Keystore
      */
     public function setPln(Pln $pln = null)
@@ -117,9 +120,9 @@ class Keystore
     }
 
     /**
-     * Get pln
+     * Get pln.
      *
-     * @return Pln 
+     * @return Pln
      */
     public function getPln()
     {
@@ -127,9 +130,10 @@ class Keystore
     }
 
     /**
-     * Set path
+     * Set path.
      *
      * @param string $path
+     *
      * @return Keystore
      */
     public function setPath($path)
@@ -140,16 +144,17 @@ class Keystore
     }
 
     /**
-     * Get path
+     * Get path.
      *
-     * @return string 
+     * @return string
      */
     public function getPath()
     {
         return $this->path;
     }
-	
-	public function __toString() {
-		return $this->filename;
-	}
+
+    public function __toString()
+    {
+        return $this->filename;
+    }
 }

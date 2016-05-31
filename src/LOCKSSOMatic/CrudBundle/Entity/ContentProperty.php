@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ContentProperty implements GetPlnInterface
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -42,14 +42,15 @@ class ContentProperty implements GetPlnInterface
 
     /**
      * True if the property value is a list/array.
-     * @var boolean
+     *
+     * @var bool
      *
      * @ORM\Column(name="is_list", type="boolean", nullable=false)
      */
     private $isList;
 
     /**
-     * The Content for the property
+     * The Content for the property.
      *
      * @var Content
      *
@@ -66,9 +67,9 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -76,9 +77,10 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Set propertyKey
+     * Set propertyKey.
      *
      * @param string $propertyKey
+     *
      * @return PlnProperty
      */
     public function setPropertyKey($propertyKey)
@@ -89,7 +91,7 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Get propertyKey
+     * Get propertyKey.
      *
      * @return string
      */
@@ -99,9 +101,10 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Set propertyValue
+     * Set propertyValue.
      *
      * @param string|array $propertyValue
+     *
      * @return PlnProperty
      */
     public function setPropertyValue($propertyValue)
@@ -118,7 +121,7 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Get propertyValue
+     * Get propertyValue.
      *
      * @return mixed
      */
@@ -127,13 +130,14 @@ class ContentProperty implements GetPlnInterface
         if ($this->isList) {
             return unserialize($this->propertyValue);
         }
+
         return $this->propertyValue;
     }
 
     /**
      * Return true if the value of the property is a list.
      *
-     * @return boolean
+     * @return bool
      */
     public function isList()
     {
@@ -141,21 +145,22 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Set content
+     * Set content.
      *
      * @param Content $content
+     *
      * @return ContentProperty
      */
     public function setContent(Content $content = null)
     {
         $this->content = $content;
         $content->addContentProperty($this);
-        
+
         return $this;
     }
 
     /**
-     * Get content
+     * Get content.
      *
      * @return Content
      */
@@ -165,19 +170,20 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPln()
     {
         return $this->getContent()->getPln();
     }
 
-
-
     /**
-     * Set isList
+     * Set isList.
+     *
      * @todo why is this settable?
-     * @param boolean $isList
+     *
+     * @param bool $isList
+     *
      * @return ContentProperty
      */
     public function setIsList($isList)
@@ -188,9 +194,9 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Get isList
+     * Get isList.
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsList()
     {
