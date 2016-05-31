@@ -155,7 +155,11 @@ monolog:
     channels: [lockss, sword]
 
     handlers:
-        main:
+        sword:
+            type: rotating_file
+            channels: ['sword']
+            path: "%kernel.logs_dir%/sword.log"
+            level: notice
             formatter: monolog.formatter.standard
         lockss:
             type:   rotating_file
@@ -167,5 +171,4 @@ monolog:
             type:   rotating_file
             path:  "%kernel.logs_dir%/sword-%kernel.environment%.log"
             level: notice
-            channels: [sword]
             formatter: monolog.formatter.standard
