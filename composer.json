@@ -31,8 +31,7 @@
         "egulias/email-validator": "^1.2",
         "twig/extensions": "^1.3",
         "knplabs/knp-menu-bundle": "^2.0",
-        "besimple/soap": "@dev",
-        "beberlei/DoctrineExtensions": "^1.0"
+        "php-mime-mail-parser/php-mime-mail-parser": "^2.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

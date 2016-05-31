@@ -4,8 +4,49 @@ namespace LOCKSSOMatic\LockssBundle\Utilities;
 
 use BeSimple\SoapClient\SoapClient;
 use Exception;
+use PhpMimeMailParser\Parser;
+use SoapClient;
 use SoapFault;
 use stdClass;
+
+class SoapWithAttachmentClient extends SoapClient {
+        
+    private $expectAttachments;
+    
+    private $attachments;
+    
+    public function __construct($wsdl, array $options = null)
+    {
+        parent::__construct($wsdl, $options);
+        $this->expectAttachments = false;
+    }
+    
+    public function setAttachments($expectAttachments) {
+        $this->expectAttachments = $expectAttachments;
+    }
+    
+    public function __doRequest($request, $location, $action, $version, $one_way = 0)
+    {
+        $result = parent::__doRequest($request, $location, $action, $version, $one_way);
+        if( ! $this->expectAttachments) {
+            return $result;
+        }
+        $message = $this->__getLastResponseHeaders() . "\r\n\r\n" . $result;
+        $mimeParser = new Parser();
+        $mimeParser->setText($message);
+        $attachments = $mimeParser->getAttachments();
+        print "START HERE:" . $attachments[0]->getContent();
+        foreach($attachments as $a) {
+            dump($a);
+            //$this->attachments[$a->getFilename()] = $a;
+        }
+        
+        // print_r($this->parseResponseHeaders($this->__getLastResponseHeaders()));
+        file_put_contents('/Users/mjoyce/soap.request', $result);
+        return $attachments[0]->getContent();
+    }
+    
+}
 
 class LockssSoapClient
 {
@@ -86,8 +127,10 @@ class LockssSoapClient
         $oldErrorHandler = set_error_handler(array($this, 'soapErrorHandler'));
         $oldExceptionHandler = set_exception_handler(array($this, 'soapExceptionHandler'));
         $response = null;
+        dump($params);
         try {
-            $this->client = @new SoapClient($this->wsdl, $this->options);
+            $this->client = @new SoapWithAttachmentClient($this->wsdl, $this->options);
+            $this->client->setAttachments($attachments);
             if($this->client) {
                 $response = $this->client->$method($params);
             }
