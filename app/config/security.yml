@@ -26,14 +26,14 @@ security:
             pattern: ^/
             form_login:
                 provider: fos_userbundle
-                csrf_provider: security.csrf.token_manager # Use form.csrf_provider instead for Symfony <2.4
+                csrf_provider: security.csrf.token_manager
             logout:       true
             anonymous:    true
-            switch_user:  { role: ROLE_ADMIN }
             remember_me:
-                key: "%secret%"
-                lifetime: 31536000 # one year in seconds
-                path: /
+                key:      "%secret%"
+                lifetime: 31536000 # 365 days in seconds
+                path:     /
+                domain:   ~ # Defaults to the current domain from $_SERVER
 
     access_control:
         - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }

@@ -337,7 +337,7 @@ class Plugin
     }
 
     /**
-     * Convenience method. Get the definitional plugin parameter names
+     * Convenience method. Get the definitional plugin parameter names.
      *
      * @return ArrayCollection|PluginProperty[]
      */
@@ -368,7 +368,8 @@ class Plugin
     }
     
     /**
-     * Convenience method. Get the plugin parameter names which are not definitonal.
+     * Convenience method. Get the plugin parameter names which are not 
+     * definitonal.
      *
      * @return ArrayCollection|PluginProperty[]
      */
@@ -377,7 +378,7 @@ class Plugin
 
         foreach ($this->getPluginConfigParams() as $prop) {
             $key = '';
-            $definitional = false;
+            $nonDefinitional = false;
             foreach ($prop->getChildren() as $child) {
                 if ($child->getPropertyKey() === 'key') {
                     $key = $child->getPropertyValue();
@@ -386,10 +387,10 @@ class Plugin
                     continue;
                 }
                 if ($child->getPropertyValue() === 'false') {
-                    $definitional = true;
+                    $nonDefinitional = true;
                 }
             }
-            if ($key !== '' && $definitional === true) {
+            if ($key !== '' && $nonDefinitional === true) {
                 $properties[] = $key;
             }
         }

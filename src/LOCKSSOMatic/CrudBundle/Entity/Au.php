@@ -11,7 +11,7 @@ use Exception;
  * LOCKSS archival unit.
  *
  * @ORM\Table(name="aus")
- * @ORM\Entity(repositoryClass="AuRepository")
+ * @ORM\Entity()
  */
 class Au implements GetPlnInterface
 {
@@ -95,7 +95,7 @@ class Au implements GetPlnInterface
      * Timestamped list of AU status records.
      *
      * @ORM\OneToMany(targetEntity="AuStatus", mappedBy="au")
-     * @var AuStatus[]
+     * @var AuStatus[]|Collection
      */
     private $auStatus;
 
@@ -199,8 +199,11 @@ class Au implements GetPlnInterface
      */
     public function getAuPropertyValue($name, $encoded = false)
     {
-        $property = $this->getAuProperty($name);
         $value = '';
+        $property = $this->getAuProperty($name);
+        if($property === null) {
+            return '';
+        }
         foreach($property->getChildren() as $prop) {
             if($prop->getPropertyKey() === 'value') {
                 $value = $prop->getPropertyValue();

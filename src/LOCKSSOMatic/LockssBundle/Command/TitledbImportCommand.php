@@ -175,8 +175,7 @@ class TitledbImportCommand extends ContainerAwareCommand
             return $pluginCache[$pluginId];
         }
         $pluginRepo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
-        $pluginList = $pluginRepo->findByPluginIdentifier($pluginId);
-        $plugin = $pluginList[0];
+        $plugin = $pluginRepo->findOneByIdentifier($pluginId);
         if ($plugin === null) {
             throw new Exception("Unknown pluginId: {$pluginId}");
         }

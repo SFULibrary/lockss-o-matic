@@ -4,11 +4,9 @@ namespace LOCKSSOMatic\CrudBundle\Service;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Util\Debug;
 use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Au;
 use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
-use LOCKSSOMatic\CrudBundle\Entity\PluginProperty;
 use Monolog\Logger;
 use Symfony\Component\Routing\Router;
 
@@ -45,7 +43,6 @@ class AuPropertyGenerator
 
     public function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null)
     {
-        $this->logger->error("building prop {$key} for {$au->getId()}");
         $property = new AuProperty();
         $property->setAu($au);
         $property->setPropertyKey($key);
@@ -113,11 +110,14 @@ class AuPropertyGenerator
         }
         $plugin = $au->getPlugin();
         $definitional = $plugin->getDefinitionalProperties();
-        foreach(array_slice($content, 1) as $c) {
+        $baseContent = $content[0];
+        foreach(array_slice($content->toArray(), 1) as $c) {
             // compare each content item to the first one, looking for differences.
             foreach($definitional as $prop) {
-                if($c->getContentPropertyValue($prop) !== $content[0]->getContentProperties()) {
-                    throw new Exception("Content property mismatch in AU #{$au->getId()}");
+                if($c->getContentPropertyValue($prop) !== $baseContent->getContentPropertyValue($prop)) {
+                    throw new Exception("Content property mismatch in AU #{$au->getId()}: "
+                    . "content {$c->getId()} {$prop} is " . $c->getContentPropertyValue($prop) 
+                    . "Expected {$baseContent->getContentPropertyValue($prop)} ");
                 }
             }
         }
@@ -168,7 +168,12 @@ class AuPropertyGenerator
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getPluginIdentifier(), $root);
 		$this->buildProperty($au, 'attributes.publisher', $content->getContentPropertyValue('publisher'), $root);
         foreach ($content->getContentProperties() as $property) {
-            $this->buildProperty($au, "attributes.pkppln." . $property->getPropertyKey(), $property->getPropertyValue(), $root);
+            $value = $property->getPropertyValue();
+            if(is_array($value)) {
+                $this->logger->warn("AU {$au->getId()} has unsupported property value list {$property->getPropertyKey()}");
+                continue;
+            }
+            $this->buildProperty($au, "attributes.pkppln." . $property->getPropertyKey(), $value, $root);
         }
 
 		$this->em->flush();

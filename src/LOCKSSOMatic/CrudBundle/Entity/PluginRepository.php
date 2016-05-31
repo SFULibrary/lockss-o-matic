@@ -7,19 +7,6 @@ use Doctrine\ORM\EntityRepository;
 class PluginRepository extends EntityRepository
 {
 
-    /**
-     * Find a plugin based on its plugin_identifier property.
-     *
-     * @param string $pluginId
-     * @return Plugin|null
-     */
-    public function findByPluginIdentifier($pluginId)
-    {
-        return $results = $this->findBy(array(
-            'identifier' => $pluginId,
-        ));
-    }
-
     public function pluginIds() {
         $query = $this->createQueryBuilder('p')
             ->select('p.identifier')

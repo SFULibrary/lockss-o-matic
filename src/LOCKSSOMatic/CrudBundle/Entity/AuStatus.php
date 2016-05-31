@@ -136,6 +136,9 @@ class AuStatus implements GetPlnInterface {
 	 * {@inheritDoc}
 	 */
 	public function getPln() {
+        if($this->au === null) {
+            return null;
+        }
 		return $this->getAu()->getPln();
 	}
 

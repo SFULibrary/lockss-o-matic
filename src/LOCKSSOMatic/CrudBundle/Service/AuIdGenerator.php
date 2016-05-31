@@ -45,7 +45,7 @@ class AuIdGenerator {
         if ($plugin === null) {
             return null;
         }
-        $pluginId = $plugin->getPluginIdentifier();
+        $pluginId = $plugin->getIdentifier();
         $pluginKey = str_replace('.', '|', $pluginId);
         $auKey = '';
         $propNames = $plugin->getDefinitionalProperties();

@@ -1,5 +1,6 @@
 imports:
     - { resource: config_dev.yml }
+    - { resource: parameters.yml }
 
 liip_functional_test:
     cache_sqlite_db: true
@@ -7,7 +8,7 @@ liip_functional_test:
 framework:
     test: ~
     session:
-        storage_id: session.storage.filesystem
+        storage_id: session.storage.mock_file
     profiler:
         collect: false
 
@@ -23,5 +24,18 @@ doctrine:
         default_connection: default
         connections:
             default:
-                driver: pdo_sqlite
-                path: %kernel.cache_dir%/test.db
+                driver:   pdo_sqlite
+                path:     %kernel.cache_dir%/test.sqlite
+
+security:
+    firewalls:
+        main:
+            http_basic: ~
+    encoders:
+        FOS\UserBundle\Model\UserInterface: plaintext
+
+parameters:
+    router.request_context.base_url: /web/app_dev.php
+    router.request_context.host: lom.test
+    router.request_context.scheme: http
+    pln_data_dir: test/data
