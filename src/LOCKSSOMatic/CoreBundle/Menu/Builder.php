@@ -26,7 +26,10 @@ class Builder implements ContainerAwareInterface
     protected function getUser()
     {
         if ($this->container) {
-            return $this->container->get('security.token_storage')->getToken()->getUser();
+            $user = $this->container->get('security.token_storage')->getToken()->getUser();
+            if($user instanceof User) {
+                return $user;
+            }
         }
 
         return;
@@ -45,6 +48,11 @@ class Builder implements ContainerAwareInterface
 
         $menu->addChild('Home', array('route' => 'home'));
 
+        $user = $this->getUser();
+        if($user === null) {
+            return $menu;
+        }
+        
         $menu->addChild('LOCKSS', array('uri' => '#', 'label' => 'LOCKSS'));
         $menu['LOCKSS']->setAttribute('dropdown', true);
         $menu['LOCKSS']->setLinkAttribute('class', 'dropdown-toggle');
@@ -106,15 +114,19 @@ class Builder implements ContainerAwareInterface
         $menu = $factory->createItem('root');
         $menu->setChildrenAttribute('class', 'nav navbar-nav navbar-right');
 
-        $menu->addChild('user', array('uri' => '#', 'label' => $user->getEmail()));
-        $menu['user']->setAttribute('dropdown', true);
-        $menu['user']->setLinkAttribute('class', 'dropdown-toggle');
-        $menu['user']->setLinkAttribute('data-toggle', 'dropdown');
-        $menu['user']->setChildrenAttribute('class', 'dropdown-menu');
+        if($user !== null) {
+            $menu->addChild('user', array('uri' => '#', 'label' => $user->getEmail()));
+            $menu['user']->setAttribute('dropdown', true);
+            $menu['user']->setLinkAttribute('class', 'dropdown-toggle');
+            $menu['user']->setLinkAttribute('data-toggle', 'dropdown');
+            $menu['user']->setChildrenAttribute('class', 'dropdown-menu');
 
-        $menu['user']->addChild('Profile', array('route' => 'fos_user_profile_show'));
-        $menu['user']->addChild('Change password', array('route' => 'fos_user_change_password'));
-        $menu['user']->addChild('Logout', array('route' => 'fos_user_security_logout'));
+            $menu['user']->addChild('Profile', array('route' => 'fos_user_profile_show'));
+            $menu['user']->addChild('Change password', array('route' => 'fos_user_change_password'));
+            $menu['user']->addChild('Logout', array('route' => 'fos_user_security_logout'));
+        } else {
+            $menu->addChild('Login', array('route' => 'fos_user_security_login'));
+        }
 
         return $menu;
     }

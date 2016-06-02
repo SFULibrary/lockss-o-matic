@@ -2,6 +2,7 @@
 
 namespace LOCKSSOMatic\UserBundle\Security\Services;
 
+use FOS\UserBundle\Doctrine\UserManager;
 use LOCKSSOMatic\UserBundle\Entity\User;
 use LOCKSSOMatic\UserBundle\Security\Acl\Permission\PermissionMap;
 use LOCKSSOMatic\UserBundle\Security\Acl\Permission\PlnAccessLevels;
@@ -53,6 +54,11 @@ class Access
      * @var Logger
      */
     private $logger;
+    
+    /**
+     * @var UserManager
+     */
+    private $userManager;
 
     public function setAuthChecker(AuthorizationChecker $securityContext)
     {
@@ -77,6 +83,10 @@ class Access
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
+    }
+    
+    public function setUserManager(UserManager $userManager) {
+        $this->userManager = $userManager;
     }
 
     /**
@@ -126,9 +136,13 @@ class Access
      * @return bool permission granted
      */
     public function hasAccess($permission, $entity = null, $user = null)
-    {
+    {        
         if ($user === null) {
-            $user = $this->tokenStorage->getToken()->getUser();
+            if ($this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+                $user   = $this->tokenStorage->getToken()->getUser();
+            } else {
+                $user = new User();
+            }
         }
 
         if ($user->hasRole('ROLE_ADMIN')) {

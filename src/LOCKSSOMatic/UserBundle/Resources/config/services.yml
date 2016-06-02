@@ -23,6 +23,7 @@ services:
             - [ setTokenStorage, ["@security.token_storage"]]
             - [ setAclManager, ["@problematic.acl_manager"]]
             - [ setAclProvider, ["@security.acl.provider"]]
+            - [ setUserManager, ["@fos_user.user_manager"]]
 #            - [ setRegistry, ["@doctrine"] ]
             - [ setLogger, ["@logger"] ]
         tags:

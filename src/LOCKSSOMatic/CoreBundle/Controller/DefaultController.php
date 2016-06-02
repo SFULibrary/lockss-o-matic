@@ -47,23 +47,4 @@ class DefaultController extends Controller
     {
         return array();
     }
-
-    /**
-     * Switch the user to a different pln in the current session.
-     *
-     * @Route("/switch", name="switch_pln")
-     *
-     * @param Request $Request
-     * @param type    $plnId
-     * @param type    $url
-     */
-    public function switchPlnAction(Request $request)
-    {
-        $url = $request->query->get('url');
-        $plnId = $request->query->get('pln');
-        $session = $this->container->get('session');
-        $session->set('plnId', $plnId);
-
-        return $this->redirect($url);
-    }
 }
