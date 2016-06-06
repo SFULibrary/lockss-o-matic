@@ -279,10 +279,12 @@ class BoxController extends ProtectedController
     {
         $pln = $this->getPln($plnId);
         $this->requireAccess('PLNADMIN', $pln);
-        $this->requireAccess('PLNADMIN', $pln);
 
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Box entity.');
+        }
 
         if ($entity->getPln() !== $pln) {
             $this->addFlash('danger', "This box is part of the {$entity->getPln()->getName()} network, but you have selected the {$pln->getName()} network.");

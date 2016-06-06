@@ -69,7 +69,7 @@ class ContentProviderController extends Controller
             }
             $em->persist($entity);
             $em->flush();
-
+            $this->addFlash('success', 'The content provider was saved.');
             return $this->redirect($this->generateUrl(
                 'contentprovider_show',
                 array('id' => $entity->getId())
@@ -224,9 +224,10 @@ class ContentProviderController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
+            $this->addFlash('success', 'The content provider was saved.');
 
             return $this->redirect($this->generateUrl(
-                'contentprovider_edit',
+                'contentprovider_show',
                 array('id' => $id)
             ));
         }

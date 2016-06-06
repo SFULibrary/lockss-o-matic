@@ -58,6 +58,7 @@ class ContentOwnerController extends Controller
             $em->persist($entity);
             $em->flush();
 
+            $this->addFlash('success', 'The content owner has been saved.');
             return $this->redirect($this->generateUrl('contentowner_show', array('id' => $entity->getId())));
         }
 
@@ -197,8 +198,8 @@ class ContentOwnerController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
-
-            return $this->redirect($this->generateUrl('contentowner_edit', array('id' => $id)));
+            $this->addFlash('success', 'The content owner has been saved.');
+            return $this->redirect($this->generateUrl('contentowner_show', array('id' => $entity->getId())));
         }
 
         return array(

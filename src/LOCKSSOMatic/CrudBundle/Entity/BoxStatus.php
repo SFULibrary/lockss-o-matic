@@ -49,7 +49,7 @@ class BoxStatus implements GetPlnInterface
     /**
      * @var Collection|CacheStatus
      * 
-     * @ORM\OneToMany(targetEntity="CacheStatus", mappedBy="boxStatus", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="CacheStatus", mappedBy="boxStatus", orphanRemoval=true)
      */
     private $caches;
 

@@ -144,6 +144,42 @@ class BoxControllerTest extends AbstractTestCase {
         $this->assertEquals('127.0.0.1', $box->getIpAddress());
         $this->assertEquals(1234, $box->getPort());
         $this->assertEquals(12345, $box->getWebServicePort());
-        
     }
+    
+    public function testDelete() {
+        $this->client->request('GET', '/pln/1/box/1/delete');
+        $response = $this->client->getResponse();
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals('/pln/1/box/', $response->headers->get('Location'));
+
+        $this->em->clear(); // caching is great until it isn't.
+        $this->assertNull($this->em->find('LOCKSSOMaticCrudBundle:Box', 1));
+        $this->assertCount(0, $this->em->getRepository('LOCKSSOMaticCrudBundle:BoxStatus')->findAll());
+        $this->assertCount(0, $this->em->getRepository('LOCKSSOMaticCrudBundle:CacheStatus')->findAll());
+    }
+
+    
+    public function testDeleteBadPln() {
+        $this->client->request('GET', '/pln/3/box/1/delete');
+        $response = $this->client->getResponse();
+        $this->assertEquals(404, $response->getStatusCode());
+        
+        $this->em->clear(); // caching is great until it isn't.
+        $this->assertNotNull($this->em->find('LOCKSSOMaticCrudBundle:Box', 1));
+        $this->assertCount(1, $this->em->getRepository('LOCKSSOMaticCrudBundle:BoxStatus')->findAll());
+        $this->assertCount(1, $this->em->getRepository('LOCKSSOMaticCrudBundle:CacheStatus')->findAll());
+    }
+
+    
+    public function testDeleteBadBox() {
+        $this->client->request('GET', '/pln/1/box/3/delete');
+        $response = $this->client->getResponse();
+        $this->assertEquals(404, $response->getStatusCode());
+
+        $this->em->clear(); // caching is great until it isn't.
+        $this->assertNotNull($this->em->find('LOCKSSOMaticCrudBundle:Box', 1));
+        $this->assertCount(1, $this->em->getRepository('LOCKSSOMaticCrudBundle:BoxStatus')->findAll());
+        $this->assertCount(1, $this->em->getRepository('LOCKSSOMaticCrudBundle:CacheStatus')->findAll());
+    }
+    
 }

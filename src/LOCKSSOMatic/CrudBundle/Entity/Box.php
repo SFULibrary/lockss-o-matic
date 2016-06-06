@@ -82,7 +82,7 @@ class Box implements GetPlnInterface
     /**
      * Timestamped list of box status query results.
      *
-     * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="box")
+     * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="box", orphanRemoval=true)
      *
      * @var Collection|BoxStatus
      */
