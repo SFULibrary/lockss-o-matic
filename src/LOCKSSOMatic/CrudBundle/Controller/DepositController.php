@@ -15,16 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class DepositController extends ProtectedController
 {
-    protected function getPln($plnId)
-    {
-        $pln = $this->getDoctrine()->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
-        if ($pln === null) {
-            throw new BadRequestException('Unknown PLN.');
-        }
-
-        return $pln;
-    }
-
     /**
      * Lists all Deposit entities.
      *

@@ -83,4 +83,67 @@ class BoxControllerTest extends AbstractTestCase {
         $response = $this->client->getResponse();
         $this->assertEquals(404, $response->getStatusCode());
     }
+    
+    public function testCreate() {
+        $this->client->request('GET', '/pln/1/box/new');
+        $response = $this->client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        $crawler = $this->client->getCrawler();
+        $formCrawler = $crawler->selectButton('Create');
+        $form = $formCrawler->form(array(
+            'lockssomatic_crudbundle_box[hostname]' => 'localhost',
+            'lockssomatic_crudbundle_box[protocol]' => 'TCP',
+            'lockssomatic_crudbundle_box[ipAddress]' => '',
+            'lockssomatic_crudbundle_box[port]' => '1234',
+            'lockssomatic_crudbundle_box[webServicePort]' => '12345',
+        ));
+        $this->client->submit($form);
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals('/pln/1/box/3', $this->client->getResponse()->headers->get('Location'));
+        
+        $this->client->request('GET', '/pln/1/box/3');
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertContains('127.0.0.1', $this->client->getResponse()->getContent());
+        
+        $box = $this->em->find('LOCKSSOMaticCrudBundle:Box', 3);
+        $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\Box', $box);
+        $this->assertEquals('localhost', $box->getHostname());
+        $this->assertEquals('TCP', $box->getProtocol());
+        $this->assertEquals('127.0.0.1', $box->getIpAddress());
+        $this->assertEquals(1234, $box->getPort());
+        $this->assertEquals(12345, $box->getWebServicePort());
+    }
+
+    public function testEdit() {
+        $this->client->request('GET', '/pln/1/box/1/edit');
+        $response = $this->client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        $crawler = $this->client->getCrawler();
+        $formCrawler = $crawler->selectButton('Update');
+        $form = $formCrawler->form(array(
+            'lockssomatic_crudbundle_box[hostname]' => 'localhost',
+            'lockssomatic_crudbundle_box[protocol]' => 'TCP',
+            'lockssomatic_crudbundle_box[ipAddress]' => '',
+            'lockssomatic_crudbundle_box[port]' => '1234',
+            'lockssomatic_crudbundle_box[webServicePort]' => '12345',
+        ));
+        $this->client->submit($form);
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals('/pln/1/box/1', $this->client->getResponse()->headers->get('Location'));
+        
+        $this->client->request('GET', '/pln/1/box/1');
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertContains('127.0.0.1', $this->client->getResponse()->getContent());
+        
+        $box = $this->em->find('LOCKSSOMaticCrudBundle:Box', 1);
+        $this->assertInstanceOf('LOCKSSOMatic\CrudBundle\Entity\Box', $box);
+        $this->assertEquals('localhost', $box->getHostname());
+        $this->assertEquals('TCP', $box->getProtocol());
+        $this->assertEquals('127.0.0.1', $box->getIpAddress());
+        $this->assertEquals(1234, $box->getPort());
+        $this->assertEquals(12345, $box->getWebServicePort());
+        
+    }
 }

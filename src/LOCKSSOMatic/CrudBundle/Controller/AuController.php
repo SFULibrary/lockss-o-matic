@@ -15,16 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AuController extends ProtectedController
 {
-    protected function getPln($plnId)
-    {
-        $pln = $this->getDoctrine()->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
-        if ($pln === null) {
-            throw $this->createNotFoundException('Unknown PLN.');
-        }
-
-        return $pln;
-    }
-
     /**
      * Lists all Au entities.
      *

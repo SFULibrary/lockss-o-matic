@@ -121,6 +121,7 @@ class BoxController extends ProtectedController
         $this->requireAccess('PLNADMIN', $pln);
 
         $entity = new Box();
+        $entity->setPln($pln);
         $form = $this->createCreateForm($entity, $plnId);
 
         return array(
@@ -251,6 +252,7 @@ class BoxController extends ProtectedController
 
         if ($editForm->isValid()) {
             $entity->setPln($pln);
+            $entity->resolveHostname();
             $em->flush();
 
             $this->addFlash('success', 'The box has been updated.');
