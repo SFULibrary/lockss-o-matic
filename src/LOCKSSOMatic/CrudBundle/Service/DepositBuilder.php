@@ -10,9 +10,15 @@ use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
 use Monolog\Logger;
 use SimpleXMLElement;
-use SplFileInfo;
 use Symfony\Component\Form\Form;
 
+/**
+ * Constructs a single deposit object from either form data or a SWORD deposit's
+ * XML payload.
+ * 
+ * This class doesn't build the corresponding content objects, that must be done
+ * with a call to ContentBuilder.
+ */
 class DepositBuilder
 {
     /**
@@ -78,7 +84,7 @@ class DepositBuilder
         $deposit->setContentProvider($provider);
         $deposit->setDepositDate();
 
-        if ($data['uuid'] !== null && $data['uuid'] !== '') {
+        if (array_key_exists('uuid', $data) && $data['uuid'] !== null && $data['uuid'] !== '') {
             $deposit->setUuid($data['uuid']);
         } else {
             $deposit->setUuid(Uuid::v4());

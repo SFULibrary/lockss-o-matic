@@ -22,4 +22,20 @@ class DefaultControllerAnonTest extends AbstractTestCase
         $this->assertContains('Redirecting to', $response->getContent());
     }
     
+    public function testMenus() {
+        $this->client->request('GET', '/login');
+        $response = $this->client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        
+        $crawler = $this->client->getCrawler()->filter('#navbar ul');
+        $this->assertCount(2, $crawler);
+        $main = $crawler->eq(0);
+        $this->assertCount(1, $main->filter('li'));
+        $this->assertEquals('Home', trim($main->filter('li')->eq(0)->text()));
+        
+        $user = $crawler->eq(1);
+        $this->assertCount(1, $user->filter('li'));
+        $this->assertEquals('Login', trim($user->filter('li')->eq(0)->text()));
+    }
+    
 }

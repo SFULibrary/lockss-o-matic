@@ -25,7 +25,7 @@
                 <tr>
                     <td><a href="{{ path('au_show', {'id': entity.id, 'plnId': pln.id}) }}">{{ prop_generator.generateSymbol(entity, 'au_name') }}</a></td>
                     <td>{% if entity.managed %} Yes {% else %} No {% endif %}</td>
-                    <td>{{ entity.auStatus.last().summary() }}</td>
+                    <td>{% if entity.auStatus|length > 0 %}{{ entity.auStatus.last().summary() }}{% else %}Not checked{% endif %}</td>
                     <td>{{ entity.comment }}</td>
                 </tr>
             {% endfor %}

@@ -76,7 +76,8 @@ class ContentController extends ProtectedController
         }
 
         if ($pln->getId() !== $entity->getAu()->getPln()->getId()) {
-            $this->addFlash('warning', "This content item is part of the {$pln->getName()} PLN, but you have selected {$this->currentPln()} to work with.");
+            $this->addFlash('warning', "This content item is not part of the requested PLN.");
+            $this->redirect('content', array('plnId' => $plnId));
         }
 
         return array(

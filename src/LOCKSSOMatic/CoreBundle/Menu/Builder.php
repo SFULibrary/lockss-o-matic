@@ -14,10 +14,16 @@ class Builder implements ContainerAwareInterface
      * @var ContainerInterface
      */
     private $container;
+    
+    private $user;
 
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
+    }
+    
+    public function setUser(User $user) {
+        $this->user = $user;
     }
 
     /**
@@ -25,9 +31,12 @@ class Builder implements ContainerAwareInterface
      */
     protected function getUser()
     {
+        if($this->user instanceof User) {
+            return $this->user;
+        }
         if ($this->container) {
             $user = $this->container->get('security.token_storage')->getToken()->getUser();
-            if($user instanceof User) {
+            if ($user instanceof User) {
                 return $user;
             }
         }
@@ -49,7 +58,7 @@ class Builder implements ContainerAwareInterface
         $menu->addChild('Home', array('route' => 'home'));
 
         $user = $this->getUser();
-        if($user === null) {
+        if ($user === null) {
             return $menu;
         }
         
@@ -114,7 +123,7 @@ class Builder implements ContainerAwareInterface
         $menu = $factory->createItem('root');
         $menu->setChildrenAttribute('class', 'nav navbar-nav navbar-right');
 
-        if($user !== null) {
+        if ($user !== null) {
             $menu->addChild('user', array('uri' => '#', 'label' => $user->getEmail()));
             $menu['user']->setAttribute('dropdown', true);
             $menu['user']->setLinkAttribute('class', 'dropdown-toggle');

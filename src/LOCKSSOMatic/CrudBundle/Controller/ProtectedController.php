@@ -12,22 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 abstract class ProtectedController extends Controller
 {
     /**
-     * Get the current user's selected PLN, or null if one has not been selected.
-     *
-     * @return Pln
-     */
-    protected function currentPln()
-    {
-        $plnId = $this->container->get('session')->get('plnId');
-        if ($plnId === null) {
-            return;
-        }
-        $em = $this->getDoctrine()->getManager();
-
-        return $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
-    }
-
-    /**
      * Check that the current user has access to the PLN. Throws an exception
      * if the user does not.
      *
@@ -38,5 +22,22 @@ abstract class ProtectedController extends Controller
     {
         $access = $this->container->get('lom.access');
         $access->checkAccess($permission, $pln);
+    }
+    
+    /**
+     * Find a PLN or throw an exception.
+     * 
+     * @param int $plnId
+     * @return Pln
+     * @throws BadRequestException
+     */
+    protected function getPln($plnId)
+    {
+        $pln = $this->getDoctrine()->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
+        if ($pln === null) {
+            throw $this->createNotFoundException('Unknown PLN.');
+        }
+
+        return $pln;
     }
 }

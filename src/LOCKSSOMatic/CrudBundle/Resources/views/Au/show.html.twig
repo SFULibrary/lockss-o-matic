@@ -2,24 +2,24 @@
 
 
 {% macro bytesToSize(bytes) %}
-	{% spaceless %}
-		{% set kilobyte = 1024 %}
-		{% set megabyte = kilobyte * 1024 %}
-		{% set gigabyte = megabyte * 1024 %}
-		{% set terabyte = gigabyte * 1024 %}
+    {% spaceless %}
+        {% set kilobyte = 1024 %}
+        {% set megabyte = kilobyte * 1024 %}
+        {% set gigabyte = megabyte * 1024 %}
+        {% set terabyte = gigabyte * 1024 %}
 
-		{% if bytes < kilobyte %}
-			{{ bytes ~ ' B' }}
-		{% elseif bytes < megabyte %}
-			{{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
-		{% elseif bytes < gigabyte %}
-			{{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
-		{% elseif bytes < terabyte %}
-			{{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
-		{% else %}
-			{{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
-		{% endif %}
-	{% endspaceless %}
+        {% if bytes < kilobyte %}
+            {{ bytes ~ ' B' }}
+        {% elseif bytes < megabyte %}
+            {{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
+        {% elseif bytes < gigabyte %}
+            {{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
+        {% elseif bytes < terabyte %}
+            {{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
+        {% else %}
+            {{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
+        {% endif %}
+    {% endspaceless %}
 {% endmacro %}
 {% import _self as self %}
 
@@ -39,7 +39,7 @@
                         <ul>
                             {% for v in prop.propertyValue %}
                                 <li>{{ v }} </li>
-								{% endfor %}
+                                {% endfor %}
                         </ul>
                     {% else %}
                         {{ prop.propertyValue }}
@@ -56,6 +56,9 @@
             <a href="{{ path('au', {'plnId': pln.id}) }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-arrow-left"></span> Back
             </a>
+            <a href="{{ path('au_status', { 'id': entity.id, 'plnId': pln.id }) }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-tasks"></span> Status
+            </a>
         </div>
     </div>
 
@@ -69,17 +72,17 @@
                 <th>Au Name</th>
                 <td>{{ prop_generator.generateSymbol(entity, 'au_name') }}</td>
             </tr>
-			<tr>
-				<th>Recent Status</th>
-				<td>
-					{% if entity.auStatus|length > 0 %}
-						{% set status = entity.auStatus.last() %}
-                                                <a href="{{ path('au_status', {id: entity.id, 'plnId': pln.id }) }}">{{ status.summary()|nl2br }}</a>
-					{% else %}
-						<a href="{{ path('au_status', {id: entity.id, 'plnId': pln.id }) }}">Not checked yet</a>
-					{% endif %}
-				</td>
-			</tr>
+            <tr>
+                <th>Recent Status</th>
+                <td>
+                    {% if entity.auStatus|length > 0 %}
+                        {% set status = entity.auStatus.last() %}
+                        <a href="{{ path('au_status', {id: entity.id, 'plnId': pln.id }) }}">{{ status.summary()|nl2br }}</a>
+                    {% else %}
+                        <a href="{{ path('au_status', {id: entity.id, 'plnId': pln.id }) }}">Not checked yet</a>
+                    {% endif %}
+                </td>
+            </tr>
             <tr>
                 <th>Managed</th>
                 <td>{{ entity.managed }}</td>
@@ -88,10 +91,10 @@
                 <th>LOCKSSOMatic Auid</th>
                 <td>{{ entity.auid|preg_replace('/([~&])/', '$1&#8203;')|raw }}</td>
             </tr>
-			<tr>
-				<th>LOCKSS Auid</th>
-				<td>{{ auid_generator.fromAu(entity)|preg_replace('/([~&])/', '$1&#8203;')|raw }}</td>
-			</tr>
+            <tr>
+                <th>LOCKSS Auid</th>
+                <td>{{ auid_generator.fromAu(entity)|preg_replace('/([~&])/', '$1&#8203;')|raw }}</td>
+            </tr>
             <tr>
                 <th>Size (kB)</th>
                 <td>{{ entity.contentSize }}</td>
@@ -111,20 +114,20 @@
             <tr>
                 <th>Computed Properties</th>
                 <td>
-					<dl class='dl-horizontal'>
-						<dt>au_name</dt>
-						<dd>{{ prop_generator.generateSymbol(entity, 'au_name') }}</dd>
-						<dt>au_start_url</dt>
-						{% set symbol = prop_generator.generateSymbol(entity, 'au_start_url') %}
-						{% if symbol is iterable %}
-							{% for s in symbol %}
-								<dd><a href="{{s}}">{{ s }}</a></dd>
-								{% endfor %}
-							{% else %}
-							<dd><a href="{{symbol}}">{{symbol}}</a></dd>
-							{% endif %}
-					</dl>
-				</td>
+                    <dl class='dl-horizontal'>
+                        <dt>au_name</dt>
+                        <dd>{{ prop_generator.generateSymbol(entity, 'au_name') }}</dd>
+                        <dt>au_start_url</dt>
+                        {% set symbol = prop_generator.generateSymbol(entity, 'au_start_url') %}
+                        {% if symbol is iterable %}
+                            {% for s in symbol %}
+                                <dd><a href="{{s}}">{{ s }}</a></dd>
+                                {% endfor %}
+                            {% else %}
+                            <dd><a href="{{symbol}}">{{symbol}}</a></dd>
+                            {% endif %}
+                    </dl>
+                </td>
             </tr>
             <tr>
                 <th>Comment</th>

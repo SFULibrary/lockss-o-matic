@@ -18,16 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BoxController extends ProtectedController
 {
-    protected function getPln($plnId)
-    {
-        $pln = $this->getDoctrine()->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
-        if ($pln === null) {
-            throw new BadRequestException('Unknown PLN.');
-        }
-
-        return $pln;
-    }
-
     /**
      * Lists all Box entities.
      *
@@ -336,11 +326,17 @@ class BoxController extends ProtectedController
      * @Method("GET")
      * @Template()
      */
-    public function statusAction($id)
+    public function statusAction($plnId, $id)
     {
+        $pln = $this->getPln($plnId);
+        $this->requireAccess('MONITOR', $pln);
+        
         $em = $this->getDoctrine()->getManager();
-        $au = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
+        $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Box')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Box entity.');
+        }
 
-        return array('entity' => $au);
+        return array('entity' => $entity);
     }
 }

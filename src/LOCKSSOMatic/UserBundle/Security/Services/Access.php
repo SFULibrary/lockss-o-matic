@@ -85,7 +85,8 @@ class Access
         $this->logger = $logger;
     }
     
-    public function setUserManager(UserManager $userManager) {
+    public function setUserManager(UserManager $userManager)
+    {
         $this->userManager = $userManager;
     }
 
@@ -136,7 +137,7 @@ class Access
      * @return bool permission granted
      */
     public function hasAccess($permission, $entity = null, $user = null)
-    {        
+    {
         if ($user === null) {
             if ($this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
                 $user   = $this->tokenStorage->getToken()->getUser();

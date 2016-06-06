@@ -76,7 +76,7 @@ class ContentBuilder
         $this->idGenerator = $idGenerator;
     }
 
-    protected function buildProperty(Content $content, $key, $value)
+    public function buildProperty(Content $content, $key, $value)
     {
         $contentProperty = new ContentProperty();
         $contentProperty->setContent($content);
@@ -97,14 +97,14 @@ class ContentBuilder
     public function fromSimpleXML(SimpleXMLElement $xml)
     {
         $content = new Content();
-        $content->setSize($xml->attributes()->size);
-        $content->setChecksumType($xml->attributes()->checksumType);
-        $content->setChecksumValue($xml->attributes()->checksumValue);
+        $content->setSize((string)$xml->attributes()->size);
+        $content->setChecksumType((string)$xml->attributes()->checksumType);
+        $content->setChecksumValue((string)$xml->attributes()->checksumValue);
         $content->setUrl(trim((string) $xml));
         $content->setRecrawl(true);
         $content->setDepositDate();
-        $this->buildProperty($content, 'journalTitle', $xml->attributes('pkp', true)->journalTitle);
-        $this->buildProperty($content, 'publisher', $xml->attributes('pkp', true)->publisher);
+        $this->buildProperty($content, 'journalTitle', (string)$xml->attributes('pkp', true)->journalTitle);
+        $this->buildProperty($content, 'publisher', (string)$xml->attributes('pkp', true)->publisher);
         $content->setTitle($xml->attributes('pkp', true)->journalTitle);
         if ($this->em !== null) {
             $this->em->persist($content);

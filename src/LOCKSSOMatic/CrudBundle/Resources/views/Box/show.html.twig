@@ -39,6 +39,9 @@
             <a href="{{ path('box_delete', { 'id': entity.id, 'plnId': pln.id }) }}" class="btn btn-default js-confirm" data-confirm="Are you sure you want to delete this Box?">
                 <span class='glyphicon glyphicon-remove'></span> Delete
             </a>
+            <a href="{{ path('box_status', { 'id': entity.id, 'plnId': pln.id }) }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-tasks"></span> Status
+            </a>
         </div>
     </div>
 

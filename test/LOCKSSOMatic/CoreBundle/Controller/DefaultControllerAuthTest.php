@@ -33,5 +33,20 @@ class DefaultControllerAuthTest extends AbstractTestCase
         $response = $this->client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
-
+    
+    public function testMenus() {
+        $this->client->request('GET', '/');
+        $response = $this->client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        
+        $crawler = $this->client->getCrawler()->filter('#navbar > ul.nav');
+        $this->assertCount(2, $crawler);
+        $main = $crawler->eq(0);
+        $this->assertCount(4, $main->children());
+        
+        $user = $crawler->eq(1);
+        $this->assertCount(1, $user->children());
+        // 0 is the head of the menu, contains everything.
+        $this->assertEquals('Profile', trim($user->filter('li')->eq(1)->text()));
+    }
 }

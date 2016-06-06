@@ -19,7 +19,7 @@ class AuController extends ProtectedController
     {
         $pln = $this->getDoctrine()->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
         if ($pln === null) {
-            throw new BadRequestException('Unknown PLN.');
+            throw $this->createNotFoundException('Unknown PLN.');
         }
 
         return $pln;
