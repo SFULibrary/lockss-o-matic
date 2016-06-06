@@ -22,7 +22,8 @@ class Builder implements ContainerAwareInterface
         $this->container = $container;
     }
     
-    public function setUser(User $user) {
+    public function setUser(User $user)
+    {
         $this->user = $user;
     }
 
@@ -31,7 +32,7 @@ class Builder implements ContainerAwareInterface
      */
     protected function getUser()
     {
-        if($this->user instanceof User) {
+        if ($this->user instanceof User) {
             return $this->user;
         }
         if ($this->container) {
