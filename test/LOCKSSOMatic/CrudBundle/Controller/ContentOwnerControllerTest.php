@@ -4,7 +4,7 @@ namespace LOCKSSOMatic\CrudBundle\Controller;
 
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
 
-class ContentOwnerTest extends AbstractTestCase {
+class ContentOwnerControllerTest extends AbstractTestCase {
 
     protected $client;
 
