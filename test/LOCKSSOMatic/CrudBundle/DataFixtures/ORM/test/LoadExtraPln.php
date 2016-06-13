@@ -8,7 +8,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Pln;
 
 class LoadExtraPln extends AbstractDataFixture {
     public function getOrder() {
-        return 1;
+        return 2; // needs to be after LoadPln.
     }
     
     protected function doLoad(ObjectManager $manager) {

@@ -8,7 +8,7 @@ use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 
 class LoadExtraContentProvider extends AbstractDataFixture {
     public function getOrder() {
-        return 2; // After ContentOwner, Pln, Plugin.
+        return 3; // After ContentProvider
     }
     
     protected function doLoad(ObjectManager $manager) {
