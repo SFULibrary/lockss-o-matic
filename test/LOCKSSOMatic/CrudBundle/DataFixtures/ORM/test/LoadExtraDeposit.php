@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractDataFixture;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 
-class LoadDeposit extends AbstractDataFixture {
+class LoadExtraDeposit extends AbstractDataFixture {
     public function getOrder() {
         return 3; // After ContentProvider
     }
