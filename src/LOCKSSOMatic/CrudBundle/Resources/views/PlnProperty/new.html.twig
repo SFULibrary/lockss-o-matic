@@ -10,3 +10,9 @@
     {{ form(form, {"style": "horizontal"}) }}
 
 {% endblock %}
+
+{% block javascripts %}
+    {% javascripts '@LOCKSSOMaticCrudBundle/Resources/public/js/pln_property.js' %}
+      <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
