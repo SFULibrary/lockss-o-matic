@@ -74,7 +74,7 @@ class Box implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="boxes")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id", onDelete="RESTRICT", nullable=false)
      * })
      */
     private $pln;

@@ -58,30 +58,6 @@ class Keystore
     }
 
     /**
-     * Set string.
-     *
-     * @param string $string
-     *
-     * @return Keystore
-     */
-    public function setString($string)
-    {
-        $this->string = $string;
-
-        return $this;
-    }
-
-    /**
-     * Get string.
-     *
-     * @return string
-     */
-    public function getString()
-    {
-        return $this->string;
-    }
-
-    /**
      * Set filename.
      *
      * @param string $filename

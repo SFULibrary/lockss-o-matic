@@ -28,7 +28,6 @@ class ExtendedDepositControllerTest extends AbstractTestCase {
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPln',
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadPlugin',
             'LOCKSSOMatic\UserBundle\DataFixtures\ORM\test\LoadUser',
-            
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadExtraContentProvider',
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadExtraPln',
             'LOCKSSOMatic\CrudBundle\DataFixtures\ORM\test\LoadExtraDeposit',

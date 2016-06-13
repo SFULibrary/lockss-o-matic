@@ -30,16 +30,6 @@ class DepositStatusCommand extends ContainerAwareCommand
     private $logger;
 
     /**
-     * @var Box[]
-     */
-    private $boxes;
-
-    /**
-     * @var int
-     */
-    private $boxCount;
-
-    /**
      * @var AuIdGenerator
      */
     private $idGenerator;

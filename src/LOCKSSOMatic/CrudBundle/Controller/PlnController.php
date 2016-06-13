@@ -218,9 +218,9 @@ class PlnController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
-
+            $this->addFlash('success', 'The PLN has been updated.');
             return $this->redirect($this->generateUrl(
-                'pln_edit',
+                'pln_show',
                 array('id' => $id)
             ));
         }
@@ -279,6 +279,9 @@ class PlnController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
+        if( ! $entity) {
+            throw $this->createNotFoundException('The PLN could not be found.');
+        }
         $this->get('lom.access')->checkAccess('PLNADMIN', $entity);
         $users = $em->getRepository('LOCKSSOMaticUserBundle:User')->findAll();
 
@@ -339,6 +342,9 @@ class PlnController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
+        if( ! $pln) {
+            throw $this->createNotFoundException('The PLN was not found.');
+        }
         $this->get('lom.access')->checkAccess('PLNADMIN', $pln);
         $form = $this->createEditAccessForm($pln);
 
@@ -403,7 +409,9 @@ class PlnController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
-
+        if( ! $pln) {
+            throw $this->createNotFoundException('The PLN could not be found.');
+        }
         return array(
             'pln' => $pln,
         );
@@ -453,6 +461,8 @@ class PlnController extends Controller
     /**
      * @Route("/{id}/plugins/update", name="pln_plugins_update")
      * @Method("POST")
+     * 
+     * @todo Rejig the edit form. One select per plugin should be the way to go.
      *
      * @param Request $request
      * @param type    $id
@@ -504,6 +514,9 @@ class PlnController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
+        if( ! $pln) {
+            throw $this->createNotFoundException('The PLN was not found.');
+        }
         $keystore = $pln->getKeystore();
         if (!$keystore) {
             $keystore = new Keystore();
