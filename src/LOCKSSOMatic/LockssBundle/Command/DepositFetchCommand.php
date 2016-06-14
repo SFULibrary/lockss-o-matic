@@ -76,6 +76,7 @@ class DepositFetchCommand extends ContainerAwareCommand
                 'url' => $content->getUrl(),
             ), true);
             if($response === null) {
+                dump("CLIENT_ERRORS:");
                 dump($client->getErrors());
             }
             dump($response);
