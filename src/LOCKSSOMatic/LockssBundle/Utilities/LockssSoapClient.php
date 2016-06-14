@@ -2,7 +2,8 @@
 
 namespace LOCKSSOMatic\LockssBundle\Utilities;
 
-use BeSimple\SoapClient\SoapClient;
+use DOMDocument;
+use DOMXPath;
 use Exception;
 use PhpMimeMailParser\Parser;
 use SoapClient;
@@ -31,17 +32,34 @@ class SoapWithAttachmentClient extends SoapClient {
         if( ! $this->expectAttachments) {
             return $result;
         }
+        
+        // parse out the attachments and headers.
         $message = $this->__getLastResponseHeaders() . "\r\n\r\n" . $result;
         $mimeParser = new Parser();
         $mimeParser->setText($message);
         $attachments = $mimeParser->getAttachments();
         foreach($attachments as $a) {
-            file_put_contents($a->getFilename(), $a->getContent());
+            $headers = $a->getHeaders();
+            $this->attachments[$headers['content-id']] = $a->getContent();
         }
         
-        // print_r($this->parseResponseHeaders($this->__getLastResponseHeaders()));
-        file_put_contents('/Users/mjoyce/soap.request', $result);
-        return $attachments[0]->getContent();
+        // insert the attachment into the xop:Include elements.
+        $dom = new DOMDocument();
+        $dom->loadXml($this->attachments['<root.message@cxf.apache.org>']);
+        $xp = new DOMXPath($dom);
+        $xp->registerNamespace('xop', "http://www.w3.org/2004/08/xop/include");
+        $handler = $xp->query('//xop:Include')->item(0);
+        $contentId = str_replace('cid:', '', $handler->attributes->getNamedItem('href')->value);
+        $dom->replaceChild($dom->createCDATASection($this->attachments['<' . $contentId . '>']), $handler);
+        
+        return $dom->saveXML();
+    }
+    
+    public function getAttachment($id) {
+        if(array_key_exists($id, $this->attachements)) {
+            return $this->attachments[$id];
+        }
+        return $id;
     }
 }
 
@@ -124,7 +142,6 @@ class LockssSoapClient
         $oldErrorHandler = set_error_handler(array($this, 'soapErrorHandler'));
         $oldExceptionHandler = set_exception_handler(array($this, 'soapExceptionHandler'));
         $response = null;
-        dump($params);
         try {
             $this->client = @new SoapWithAttachmentClient($this->wsdl, $this->options);
             $this->client->setAttachments($attachments);
