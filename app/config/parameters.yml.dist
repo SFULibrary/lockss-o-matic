@@ -49,3 +49,6 @@ parameters:
     # even though LOCKSS thinks otherwise.
     lom_nondefinitional_cpds:
         ca.sfu.lib.plugin.pkppln.PkpPlnPlugin: [ manifest_url, permission_url ]
+
+    # LOCKSSOMatic stores content downloaded from lockss caches here
+    lom_cached_download_dir: cached

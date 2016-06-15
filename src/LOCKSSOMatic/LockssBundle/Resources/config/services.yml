@@ -3,3 +3,18 @@ services:
         class: LOCKSSOMatic\LockssBundle\Services\PLNPluginImportService
         calls:
             - [ setContainer, ["@service_container"] ]
+
+    lockss.content.hasher:
+        class: LOCKSSOMatic\LockssBundle\Services\ContentHasherService
+        calls:
+            - [ setLogger, ["@logger"] ]
+            - [ setRegistry, ["@doctrine"] ]
+            - [ setAuIdGenerator, ["@crud.au.idgenerator"]]
+  
+    lockss.content.fetcher:
+        class: LOCKSSOMatic\LockssBundle\Services\ContentFetcherService
+        calls:
+            - [ setLogger, ["@logger"] ]
+            - [ setRegistry, ["@doctrine"] ]
+            - [ setAuIdGenerator, ["@crud.au.idgenerator"] ]
+            - [ setHasher, ["@lockss.content.hasher"] ]

@@ -27,6 +27,7 @@
 namespace LOCKSSOMatic\CoreBundle\Services;
 
 use LOCKSSOMatic\CrudBundle\Entity\Au;
+use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
@@ -49,6 +50,11 @@ class FilePaths
      * @var string
      */
     private $env;
+    
+    /**
+     * @var string
+     */
+    private $downloadDir;
 
     /**
      * @var Filesystem
@@ -60,7 +66,7 @@ class FilePaths
      */
     public function __construct()
     {
-        $this->fs = new Filesystem();
+        $this->fs = new Filesystem();        
     }
 
     /**
@@ -82,6 +88,10 @@ class FilePaths
     {
         $this->env = $env;
     }
+    
+    public function setDownloadDir($dir) {
+        $this->downloadDir = $dir;
+    }
 
     /**
      * Get the root file system path.
@@ -93,6 +103,24 @@ class FilePaths
         $path = dirname($this->env);
 
         return realpath($path);
+    }
+    
+    public function getCacheDownloadDir() {
+        $path = implode('/', array(
+            $this->getRootPath(),
+            $this->downloadDir,
+        ));
+        return $path;
+    }
+    
+    public function getDownloadContentPath(Content $content) {
+        $path = implode('/', array(
+            $this->getCacheDownloadDir(),
+            $content->getDeposit()->getUuid(),
+            $content->getId(),
+            basename($content->getUrl())
+        ));
+        return $path;
     }
 
     /**
@@ -268,5 +296,5 @@ class FilePaths
         ));
 
         return $path;
-    }
+    }    
 }

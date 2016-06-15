@@ -4,9 +4,143 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "295d5ff1acac58ce05ee2fc9ff2b85ab",
-    "content-hash": "8cb02a7a0d795b8c006a1f37b693e864",
+    "hash": "1ae290d3730e02f89d94905092e02686",
+    "content-hash": "48bd02497a5dc5818fd6a1c1e011b8d9",
     "packages": [
+        {
+            "name": "ass/xmlsecurity",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aschamberger/XmlSecurity.git",
+                "reference": "c8976519ebbf6e4d953cd781d09df44b7f65fbb8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aschamberger/XmlSecurity/zipball/c8976519ebbf6e4d953cd781d09df44b7f65fbb8",
+                "reference": "c8976519ebbf6e4d953cd781d09df44b7f65fbb8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "lib-openssl": ">=0.9.0",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "suggest": {
+                "ext-mcrypt": "*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "ass\\XmlSecurity": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Robert Richards",
+                    "email": "rrichards@cdatazone.org"
+                },
+                {
+                    "name": "Andreas Schamberger",
+                    "email": "mail@andreass.net"
+                }
+            ],
+            "description": "The XmlSecurity library is written in PHP for working with XML Encryption and Signatures",
+            "homepage": "https://github.com/aschamberger/XmlSecurity",
+            "keywords": [
+                "encryption",
+                "security",
+                "signature",
+                "xml"
+            ],
+            "time": "2015-05-31 10:10:35"
+        },
+        {
+            "name": "besimple/soap",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ubermichael/BeSimpleSoap.git",
+                "reference": "2390bd7a1fbd852ceb64a9aa7b0ed9a57c9fe90a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ubermichael/BeSimpleSoap/zipball/2390bd7a1fbd852ceb64a9aa7b0ed9a57c9fe90a",
+                "reference": "2390bd7a1fbd852ceb64a9aa7b0ed9a57c9fe90a",
+                "shasum": ""
+            },
+            "require": {
+                "ass/xmlsecurity": "~1.0",
+                "ext-curl": "*",
+                "ext-soap": "*",
+                "php": ">=5.3.0",
+                "symfony/framework-bundle": "~2.6",
+                "symfony/twig-bundle": "~2.6",
+                "zendframework/zend-mime": "2.1.*"
+            },
+            "replace": {
+                "besimple/soap-bundle": "self.version",
+                "besimple/soap-client": "self.version",
+                "besimple/soap-common": "self.version",
+                "besimple/soap-server": "self.version",
+                "besimple/soap-wsdl": "self.version"
+            },
+            "require-dev": {
+                "ext-mcrypt": "*",
+                "mikey179/vfsstream": "~1.0",
+                "symfony/filesystem": "~2.3",
+                "symfony/process": "~2.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "BeSimple\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Francis Besset",
+                    "email": "francis.besset@gmail.com"
+                },
+                {
+                    "name": "Christian Kerl",
+                    "email": "christian-kerl@web.de"
+                },
+                {
+                    "name": "Andreas Schamberger",
+                    "email": "mail@andreass.net"
+                }
+            ],
+            "description": "Build and consume SOAP and WSDL based web services",
+            "homepage": "http://besim.pl",
+            "keywords": [
+                "soap"
+            ],
+            "support": {
+                "source": "https://github.com/ubermichael/BeSimpleSoap/tree/master"
+            },
+            "time": "2016-06-14 23:58:16"
+        },
         {
             "name": "components/jquery",
             "version": "1.11.1",
@@ -459,16 +593,16 @@
         },
         {
             "name": "doctrine/doctrine-bundle",
-            "version": "1.6.2",
+            "version": "1.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineBundle.git",
-                "reference": "e9c2ccf573b59b7cea566390f34254fed3c20ed9"
+                "reference": "fd51907c6c76acaa8a5234822a4f901c1500afc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/e9c2ccf573b59b7cea566390f34254fed3c20ed9",
-                "reference": "e9c2ccf573b59b7cea566390f34254fed3c20ed9",
+                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/fd51907c6c76acaa8a5234822a4f901c1500afc1",
+                "reference": "fd51907c6c76acaa8a5234822a4f901c1500afc1",
                 "shasum": ""
             },
             "require": {
@@ -485,13 +619,14 @@
                 "phpunit/phpunit": "~4",
                 "satooshi/php-coveralls": "~0.6.1",
                 "symfony/phpunit-bridge": "~2.7|~3.0",
+                "symfony/property-info": "~2.8|~3.0",
                 "symfony/validator": "~2.2|~3.0",
                 "symfony/yaml": "~2.2|~3.0",
                 "twig/twig": "~1.10"
             },
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle.",
-                "symfony/web-profiler-bundle": "to use the data collector"
+                "symfony/web-profiler-bundle": "To use the data collector."
             },
             "type": "symfony-bundle",
             "extra": {
@@ -534,7 +669,7 @@
                 "orm",
                 "persistence"
             ],
-            "time": "2016-01-10 17:21:44"
+            "time": "2016-04-21 19:55:56"
         },
         {
             "name": "doctrine/doctrine-cache-bundle",
@@ -995,7 +1130,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/d1fccc6335b74beca94525551cacc06b256ed261",
-                "reference": "abb35b94ed8ec78a504c9e1a2cd803d85d3ffad9",
+                "reference": "d1fccc6335b74beca94525551cacc06b256ed261",
                 "shasum": ""
             },
             "require": {
@@ -1406,7 +1541,7 @@
                     "email": "stof@notk.org"
                 },
                 {
-                    "name": "KnpLabs",
+                    "name": "Knplabs",
                     "homepage": "http://knplabs.com"
                 },
                 {
@@ -1744,88 +1879,9 @@
             "time": "2016-03-18 20:34:03"
         },
         {
-            "name": "php-mime-mail-parser/php-mime-mail-parser",
-            "version": "2.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-mime-mail-parser/php-mime-mail-parser.git",
-                "reference": "3954ff4bba24f4450f836a98da441568fb7a84a2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-mime-mail-parser/php-mime-mail-parser/zipball/3954ff4bba24f4450f836a98da441568fb7a84a2",
-                "reference": "3954ff4bba24f4450f836a98da441568fb7a84a2",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mailparse": "*",
-                "php": "^5.4.0 || ^7.0"
-            },
-            "replace": {
-                "exorus/php-mime-mail-parser": "*",
-                "messaged/php-mime-mail-parser": "*"
-            },
-            "require-dev": {
-                "phpunit/php-token-stream": "^1.3.0",
-                "phpunit/phpunit": "^4.0 || ^5.0",
-                "satooshi/php-coveralls": "0.*",
-                "squizlabs/php_codesniffer": "2.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "PhpMimeMailParser\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "bucabay",
-                    "email": "gabe@fijiwebdesign.com",
-                    "homepage": "http://www.fijiwebdesign.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "eXorus",
-                    "email": "exorus.spam@gmail.com",
-                    "homepage": "https://github.com/eXorus/",
-                    "role": "Developer"
-                },
-                {
-                    "name": "M.Valinskis",
-                    "email": "M.Valins@gmail.com",
-                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
-                    "role": "Developer"
-                },
-                {
-                    "name": "eugene.emmett.wood",
-                    "email": "gene_w@cementhorizon.com",
-                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
-                    "role": "Developer"
-                },
-                {
-                    "name": "alknetso",
-                    "email": "alkne@gmail.com",
-                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Fully Tested Mailparse Extension Wrapper for PHP 5.4+",
-            "homepage": "https://github.com/php-mime-mail-parser/php-mime-mail-parser",
-            "keywords": [
-                "MimeMailParser",
-                "mail",
-                "mailparse",
-                "mime"
-            ],
-            "time": "2016-05-25 07:27:22"
-        },
-        {
-            "name": "phpdocumentor/reflection-docblock",
-            "version": "2.0.4",
+            "name": "problematic/acl-manager-bundle",
+            "version": "dev-master",
+            "target-dir": "Problematic/AclManagerBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Problematic/ProblematicAclManagerBundle.git",
@@ -2476,16 +2532,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v2.7.13",
+            "version": "v2.7.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "7c23f76ba732de9b34075970b0d0a3ec9a5c38f0"
+                "reference": "fe443f4a8b6b2f3977d4fe6b348e9f85a7840ea1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/7c23f76ba732de9b34075970b0d0a3ec9a5c38f0",
-                "reference": "7c23f76ba732de9b34075970b0d0a3ec9a5c38f0",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/fe443f4a8b6b2f3977d4fe6b348e9f85a7840ea1",
+                "reference": "fe443f4a8b6b2f3977d4fe6b348e9f85a7840ea1",
                 "shasum": ""
             },
             "require": {
@@ -2599,7 +2655,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2016-05-09 20:35:47"
+            "time": "2016-06-06 15:23:39"
         },
         {
             "name": "twig/extensions",
@@ -2764,6 +2820,112 @@
                 "web"
             ],
             "time": "2015-11-24 19:37:05"
+        },
+        {
+            "name": "zendframework/zend-mime",
+            "version": "2.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-mime.git",
+                "reference": "066d6eecff586a7fb10e8907c032beaf1a9d6104"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-mime/zipball/066d6eecff586a7fb10e8907c032beaf1a9d6104",
+                "reference": "066d6eecff586a7fb10e8907c032beaf1a9d6104",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "zendframework/zend-stdlib": "self.version"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master",
+                "zendframework/zend-mail": "self.version"
+            },
+            "suggest": {
+                "zendframework/zend-mail": "Zend\\Mail component"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev",
+                    "dev-develop": "2.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Mime\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://github.com/zendframework/zend-mime",
+            "keywords": [
+                "mime",
+                "zf2"
+            ],
+            "time": "2013-04-17 13:32:54"
+        },
+        {
+            "name": "zendframework/zend-stdlib",
+            "version": "2.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-stdlib.git",
+                "reference": "0027339961ad3d49f91ee092e23f7269c18cb470"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/0027339961ad3d49f91ee092e23f7269c18cb470",
+                "reference": "0027339961ad3d49f91ee092e23f7269c18cb470",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master",
+                "zendframework/zend-eventmanager": "self.version",
+                "zendframework/zend-filter": "self.version",
+                "zendframework/zend-serializer": "self.version",
+                "zendframework/zend-servicemanager": "self.version"
+            },
+            "suggest": {
+                "pecl-weakref": "Implementation of weak references for Stdlib\\CallbackHandler",
+                "zendframework/zend-eventmanager": "To support aggregate hydrator usage",
+                "zendframework/zend-filter": "To support naming strategy hydrator usage",
+                "zendframework/zend-serializer": "Zend\\Serializer component",
+                "zendframework/zend-servicemanager": "To support hydrator plugin manager usage"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev",
+                    "dev-develop": "2.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Stdlib\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://github.com/zendframework/zend-stdlib",
+            "keywords": [
+                "stdlib",
+                "zf2"
+            ],
+            "time": "2013-04-17 13:32:54"
         }
     ],
     "packages-dev": [
@@ -2879,16 +3041,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v1.11.3",
+            "version": "v1.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfPHP/PHP-CS-Fixer.git",
-                "reference": "b0a383d856d884d6b16e15892f507ecf89f8dbd2"
+                "reference": "eeb280e909834603ffe03524dbe0066e77c83084"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/b0a383d856d884d6b16e15892f507ecf89f8dbd2",
-                "reference": "b0a383d856d884d6b16e15892f507ecf89f8dbd2",
+                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/eeb280e909834603ffe03524dbe0066e77c83084",
+                "reference": "eeb280e909834603ffe03524dbe0066e77c83084",
                 "shasum": ""
             },
             "require": {
@@ -2929,7 +3091,7 @@
                 }
             ],
             "description": "A tool to automatically fix PHP code style",
-            "time": "2016-05-26 23:49:24"
+            "time": "2016-06-07 07:51:27"
         },
         {
             "name": "liip/functional-test-bundle",
@@ -3153,32 +3315,32 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "3c91bdf81797d725b14cb62906f9a4ce44235972"
+                "reference": "58a8137754bc24b25740d4281399a4a3596058e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/3c91bdf81797d725b14cb62906f9a4ce44235972",
-                "reference": "3c91bdf81797d725b14cb62906f9a4ce44235972",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/58a8137754bc24b25740d4281399a4a3596058e0",
+                "reference": "58a8137754bc24b25740d4281399a4a3596058e0",
                 "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.0.2",
                 "php": "^5.3|^7.0",
-                "phpdocumentor/reflection-docblock": "~2.0",
-                "sebastian/comparator": "~1.1",
-                "sebastian/recursion-context": "~1.0"
+                "phpdocumentor/reflection-docblock": "^2.0|^3.0.2",
+                "sebastian/comparator": "^1.1",
+                "sebastian/recursion-context": "^1.0"
             },
             "require-dev": {
-                "phpspec/phpspec": "~2.0"
+                "phpspec/phpspec": "^2.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5.x-dev"
+                    "dev-master": "1.6.x-dev"
                 }
             },
             "autoload": {
@@ -3211,7 +3373,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2016-02-15 07:46:21"
+            "time": "2016-06-07 08:13:47"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -4114,7 +4276,8 @@
     "stability-flags": {
         "friendsofsymfony/user-bundle": 20,
         "problematic/acl-manager-bundle": 20,
-        "j20/php-uuid": 20
+        "j20/php-uuid": 20,
+        "besimple/soap": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

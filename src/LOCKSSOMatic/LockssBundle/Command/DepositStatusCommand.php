@@ -9,7 +9,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\CrudBundle\Entity\DepositStatus;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
-use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
+use LOCKSSOMatic\LockssBundle\Services\ContentHasherService;
 use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class DepositStatusCommand extends ContainerAwareCommand
 {
     /**
-     * @var EntityManager
+     * @var ObjectManager
      */
     private $em;
 
@@ -33,8 +33,11 @@ class DepositStatusCommand extends ContainerAwareCommand
      * @var AuIdGenerator
      */
     private $idGenerator;
-
-    private $SKIP_BOXES = array(3, 7);
+    
+    /**
+     * @var ContentHasherService
+     */
+    private $hasher;
 
     public function configure()
     {
@@ -52,46 +55,12 @@ class DepositStatusCommand extends ContainerAwareCommand
         $this->logger = $container->get('logger');
         $this->em = $container->get('doctrine')->getManager();
         $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
+        $this->hasher = $this->getContainer()->get('lockss.content.hasher');
     }
 
     protected function getBoxChecksum(Box $box, Content $content)
     {
-        $auid = $this->idGenerator->fromContent($content);
-        $checksumType = $content->getChecksumType();
-
-        $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/HasherService?wsdl";
-        $client = new LockssSoapClient();
-        $client->setWsdl($wsdl);
-        $client->setOption('login', $box->getPln()->getUsername());
-        $client->setOption('password', $box->getPln()->getPassword());
-
-        $response = $client->call('hash', array(
-            'hasherParams' => array(
-                'recordFilterStream' => true,
-                'hashType' => 'V3File',
-                'algorithm' => $checksumType,
-                'url' => $content->getUrl(),
-                'auId' => $auid,
-        ), ));
-        if ($response === null) {
-            $this->logger->warning("{$wsdl} failed.");
-            $this->logger->warning($client->getErrors());
-
-            return '*';
-        }
-        if (property_exists($response->return, 'blockFileDataHandler')) {
-            $matches = array();
-            if (preg_match("/^([a-fA-F0-9]+)\s+http/m", $response->return->blockFileDataHandler, $matches)) {
-                return $matches[1];
-            } else {
-                return '-';
-            }
-        } else {
-            $this->logger->warning("{$wsdl} returned error.");
-            $this->logger->warning($response->return->errorMessage);
-
-            return '*';
-        }
+        return $this->hasher->getChecksum('sha1', $content, $box);
     }
 
     /**
@@ -135,10 +104,6 @@ class DepositStatusCommand extends ContainerAwareCommand
             $result[$content->getId()] = array();
             $result[$content->getId()]['expected'] = $content->getChecksumValue();
             foreach ($boxes as $box) {
-                if (in_array($box->getId(), $this->SKIP_BOXES)) {
-                    $result[$content->getId()][$box->getHostname()] = '*';
-                    continue;
-                }
                 $checksum = $this->getBoxChecksum($box, $content);
                 if (strtoupper($content->getChecksumValue()) === strtoupper($checksum)) {
                     ++$matches;
