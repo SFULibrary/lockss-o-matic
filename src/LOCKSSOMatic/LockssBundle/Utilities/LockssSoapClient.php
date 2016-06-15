@@ -2,66 +2,10 @@
 
 namespace LOCKSSOMatic\LockssBundle\Utilities;
 
-use DOMDocument;
-use DOMXPath;
+use BeSimple\SoapClient\SoapClient;
 use Exception;
-use PhpMimeMailParser\Parser;
-use SoapClient;
 use SoapFault;
 use stdClass;
-
-class SoapWithAttachmentClient extends SoapClient {
-        
-    private $expectAttachments;
-    
-    private $attachments;
-    
-    public function __construct($wsdl, array $options = null)
-    {
-        parent::__construct($wsdl, $options);
-        $this->expectAttachments = false;
-    }
-    
-    public function setAttachments($expectAttachments) {
-        $this->expectAttachments = $expectAttachments;
-    }
-    
-    public function __doRequest($request, $location, $action, $version, $one_way = 0)
-    {
-        $result = parent::__doRequest($request, $location, $action, $version, $one_way);
-        if( ! $this->expectAttachments) {
-            return $result;
-        }
-        
-        // parse out the attachments and headers.
-        $message = $this->__getLastResponseHeaders() . "\r\n\r\n" . $result;
-        $mimeParser = new Parser();
-        $mimeParser->setText($message);
-        $attachments = $mimeParser->getAttachments();
-        foreach($attachments as $a) {
-            $headers = $a->getHeaders();
-            $this->attachments[$headers['content-id']] = $a->getContent();
-        }
-        
-        // insert the attachment into the xop:Include elements.
-        $dom = new DOMDocument();
-        $dom->loadXml($this->attachments['<root.message@cxf.apache.org>']);
-        $xp = new DOMXPath($dom);
-        $xp->registerNamespace('xop', "http://www.w3.org/2004/08/xop/include");
-        $handler = $xp->query('//xop:Include')->item(0);
-        $contentId = str_replace('cid:', '', $handler->attributes->getNamedItem('href')->value);
-        $dom->replaceChild($dom->createCDATASection($this->attachments['<' . $contentId . '>']), $handler);
-        
-        return $dom->saveXML();
-    }
-    
-    public function getAttachment($id) {
-        if(array_key_exists($id, $this->attachements)) {
-            return $this->attachments[$id];
-        }
-        return $id;
-    }
-}
 
 class LockssSoapClient
 {
@@ -143,8 +87,7 @@ class LockssSoapClient
         $oldExceptionHandler = set_exception_handler(array($this, 'soapExceptionHandler'));
         $response = null;
         try {
-            $this->client = @new SoapWithAttachmentClient($this->wsdl, $this->options);
-            $this->client->setAttachments($attachments);
+            $this->client = @new SoapClient($this->wsdl, $this->options);
             if($this->client) {
                 $response = $this->client->$method($params);
             }

@@ -2,12 +2,10 @@
 
 namespace LOCKSSOMatic\LockssBundle\Command;
 
-use DateTime;
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
-use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
-use LOCKSSOMatic\CrudBundle\Entity\DepositStatus;
+use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
 use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
@@ -49,37 +47,30 @@ class DepositFetchCommand extends ContainerAwareCommand
         $this->em = $container->get('doctrine')->getManager();
         $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
     }
-
+    
     /**
+     * Gets the boxes for a PLN in a random order.
      * 
-     * @param type $all
-     * @param type $limit
-     * @return Deposit[]
+     * @return Box[]
      */
+    public function loadBoxes(Pln $pln) {
+        $boxes = $pln->getBoxes()->toArray();
+        shuffle($boxes);
+        return $boxes;
+    }
+
     protected function getDeposits($uuids) {
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Deposit');
         return $repo->findBy(array('uuid' => $uuids));
     }
     
     protected function fetchDeposit(Deposit $deposit) {
+        $pln = $deposit->getPln();
+        $boxes = $this->loadBoxes($pln);
         $auid = $this->idGenerator->fromAu($deposit->getContent()->first()->getAu());
-        $box = $this->em->find('LOCKSSOMaticCrudBundle:Box', 9); // 9 === localhost:8081
-        $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/ContentService?wsdl";
-        $client = new LockssSoapClient();
-        $client->setWsdl($wsdl);
-        $client->setOption('login', $box->getPln()->getUsername());
-        $client->setOption('password', $box->getPln()->getPassword());
+        
         foreach($deposit->getContent() as $content) {
-            $this->logger->notice("fetching {$content->getUrl()}");
-            $response = $client->call('fetchFile', array(
-                'auid' => $auid,
-                'url' => $content->getUrl(),
-            ), true);
-            if($response === null) {
-                dump("CLIENT_ERRORS:");
-                dump($client->getErrors());
-            }
-            dump($response);
+            
         }
     }
     

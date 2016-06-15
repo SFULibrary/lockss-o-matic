@@ -86,6 +86,7 @@ class ContentFetcherService
         $boxes = $pln->getBoxes()->toArray();
         shuffle($boxes);
 
+        print "expected value: " . $content->getChecksumValue() . "\n";
         $file = null;
         
         foreach ($boxes as $box) {
@@ -100,6 +101,7 @@ class ContentFetcherService
         }
         if($file === null) {
             $this->logger->error("Cannot find matching content on any LOCKSS box.");
+            return;
         }
         return $file;
     }

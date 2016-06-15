@@ -5,3 +5,4 @@ services:
             - [ setLogger, ["@monolog.logger" ]]
             - [ setKernelEnv, ["%kernel.root_dir%"]]
             - [ setDownloadDir, ["%lom_cached_download_dir%"]]
+            
