@@ -1,5 +1,29 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
 use LOCKSSOMatic\CrudBundle\Entity\Keystore;
@@ -23,7 +47,9 @@ use Symfony\Component\HttpFoundation\Request;
 class PlnController extends Controller
 {
     /**
-     * Lists all Pln entities.
+     * Lists all Pln entities. Does pagination, even though there's 
+     * probably never going to be more than 25 PLNs in a LOCKSSOMatic
+     * instance.
      *
      * @Route("/", name="pln")
      * @Method("GET")
@@ -52,6 +78,10 @@ class PlnController extends Controller
      * @Route("/", name="pln_create")
      * @Method("POST")
      * @Template("LOCKSSOMaticCrudBundle:Pln:new.html.twig")
+     * 
+     * @param Request $request
+     *
+     * @return array|RedirectResponse
      */
     public function createAction(Request $request)
     {
@@ -105,6 +135,8 @@ class PlnController extends Controller
      * @Route("/new", name="pln_new")
      * @Method("GET")
      * @Template()
+     * 
+     * @return array
      */
     public function newAction()
     {
@@ -123,6 +155,8 @@ class PlnController extends Controller
      * @Route("/{id}", name="pln_show")
      * @Method("GET")
      * @Template()
+     * 
+     * @return array
      */
     public function showAction($id)
     {
@@ -148,6 +182,10 @@ class PlnController extends Controller
      * @Route("/{id}/edit", name="pln_edit")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $id
+     * 
+     * @return array
      */
     public function editAction($id)
     {
@@ -201,6 +239,11 @@ class PlnController extends Controller
      * @Route("/{id}", name="pln_update")
      * @Method("PUT")
      * @Template("LOCKSSOMaticCrudBundle:Pln:edit.html.twig")
+     * 
+     * @param Request $request
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function updateAction(Request $request, $id)
     {
@@ -236,6 +279,11 @@ class PlnController extends Controller
      * Deletes a Pln entity.
      *
      * @Route("/{id}/delete", name="pln_delete")
+     * 
+     * @param Request $request
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function deleteAction(Request $request, $id)
     {
@@ -270,10 +318,14 @@ class PlnController extends Controller
     }
 
     /**
+     * Show all of the users and how they can access the PLN.
+     * 
      * @Route("/{id}/access", name="pln_access")
      * @Template("LOCKSSOMaticCrudBundle:Pln:access.html.twig")
      *
      * @param type $id
+     * 
+     * @return array
      */
     public function showAccessAction($id)
     {
@@ -292,6 +344,12 @@ class PlnController extends Controller
         );
     }
 
+    /**
+     * Create the form to edit the user access for the PLN.
+     * 
+     * @param Pln $pln
+     * @return Form the form
+     */
     private function createEditAccessForm(Pln $pln)
     {
         $em = $this->getDoctrine()->getManager();
@@ -332,11 +390,15 @@ class PlnController extends Controller
     }
 
     /**
+     * Display a form to edit the user access to a PLN.
+     * 
      * @Route("/{id}/access/edit", name="pln_access_edit")
      * @Method("GET")
      * @Template("LOCKSSOMaticCrudBundle:Pln:accessEdit.html.twig")
      *
-     * @param type $id
+     * @param int $id
+     * 
+     * @return array
      */
     public function editAccessAction($id)
     {
@@ -354,6 +416,12 @@ class PlnController extends Controller
         );
     }
 
+    /**
+     * Update user access to the PLN.
+     * 
+     * @param Request $request
+     * @param Pln $pln
+     */
     private function updateAccess(Request $request, Pln $pln)
     {
         $em = $this->getDoctrine()->getManager();
@@ -371,10 +439,16 @@ class PlnController extends Controller
     }
 
     /**
+     * Process the access update request and return a 
+     * redirect.
+     * 
      * @Route("/{id}/access/edit", name="pln_access_update")
      * @Method("POST")
      *
-     * @param type $id
+     * @param Request $request
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function updateAccessAction(Request $request, $id)
     {
@@ -402,8 +476,14 @@ class PlnController extends Controller
     }
 
     /**
+     * Show a list of the plugins associated with a PLN.
+     * 
      * @Route("/{id}/plugins", name="pln_plugins")
      * @Template("LOCKSSOMaticCrudBundle:Pln:plugins.html.twig")
+     * 
+     * @param int $id
+     * 
+     * @return array
      */
     public function showPluginsAction($id)
     {
@@ -417,9 +497,15 @@ class PlnController extends Controller
         );
     }
 
+    /**
+     * Create a form to edit the plugins associated with a
+     * PLN.
+     * 
+     * @param Pln $pln
+     * @return Form
+     */
     private function createEditPluginsForm(Pln $pln)
     {
-        $em = $this->getDoctrine()->getManager();
         $options = array(
             'method' => 'POST',
             'action' => $this->generateUrl('pln_plugins_update', array(
@@ -440,11 +526,15 @@ class PlnController extends Controller
     }
 
     /**
+     * Display a form to edit the plugins associated with a PLN.
+     * 
      * @Route("/{id}/plugins/edit", name="pln_plugins_edit")
      * @Method("GET")
      * @Template("LOCKSSOMaticCrudBundle:Pln:pluginsEdit.html.twig");
      *
-     * @param type $id
+     * @param int $id
+     * 
+     * @return array
      */
     public function editPluginsAction($id)
     {
@@ -459,13 +549,17 @@ class PlnController extends Controller
     }
 
     /**
+     * Update the plugins associated with a PLN.
+     * 
      * @Route("/{id}/plugins/update", name="pln_plugins_update")
      * @Method("POST")
      * 
      * @todo Rejig the edit form. One select per plugin should be the way to go.
      *
      * @param Request $request
-     * @param type    $id
+     * @param int $id
+     * 
+     * @return RedirectResponse
      */
     public function updatePluginsAction(Request $request, $id)
     {
@@ -484,31 +578,21 @@ class PlnController extends Controller
         return $this->redirect($this->generateUrl('pln_access_edit', array('id' => $id)));
     }
 
-    private function getPluginDir()
-    {
-        $jarDir = $this->container->getParameter('lockss_jar_directory');
-        $fs = new Filesystem();
-        if (!$fs->isAbsolutePath($jarDir)) {
-            $jarDir = $this->container->get('kernel')->getRootDir().'/../'.$jarDir;
-        }
-        try {
-            $fs->mkdir($jarDir);
-        } catch (IOExceptionInterface $e) {
-            $this->addFlash('error', "Error creating directory {$jarDir}: {$e->getMessage()}");
-
-            return;
-        }
-
-        return $jarDir;
-    }
-
     /**
+     * Display information about the LOCKSS keystore, and
+     * show a widget to upload a new keystore. Also handles
+     * processing the form for post requests.
+     * 
+     * @todo this method does too much. Split it up to smaller methods.
+     * 
      * @Route("/{id}/keystore", name="pln_keystore")
      * @Method({"GET", "POST"})
      * @Template()
      *
      * @param Request $request
      * @param int     $id
+     * 
+     * @return array|RedirectResponse
      */
     public function keystoreAction(Request $request, $id)
     {
@@ -535,7 +619,7 @@ class PlnController extends Controller
 
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $pluginDir = $this->getPluginDir();
+            $pluginDir = $this->container->getPluginsExportDir($pln);
             if ($pluginDir) {
                 $file = $form['filename']->getData();
                 $file->move($pluginDir, "pln_{$pln->getId()}.keystore");

@@ -1,10 +1,4 @@
 services:
-    lom.twig.pln:
-        class: LOCKSSOMatic\CoreBundle\Twig\PlnExtension
-        arguments: [@doctrine, @session, @lom.access]
-        tags:
-            - { name: twig.extension }
-
     lom.filepaths:
         class: LOCKSSOMatic\CoreBundle\Services\FilePaths
         calls:

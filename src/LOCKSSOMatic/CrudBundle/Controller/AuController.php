@@ -2,25 +2,30 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Au controller.
+ * Au controller. All au routes are prefixed with /pln/{plnId}/au.
  *
  * @Route("/pln/{plnId}/au")
  */
 class AuController extends ProtectedController
 {
     /**
-     * Lists all Au entities.
+     * Lists all Au entities for one PLN. Does pagination. Listing
+     * AUs for a PLN requires MONITOR access for the PLN.
      *
      * @Route("/", name="au")
      * @Method("GET")
      * @Template()
+     * 
+     * @param Request $request
+     * @param int $plnId
+     * 
+     * @return array
      */
     public function indexAction(Request $request, $plnId)
     {
@@ -47,11 +52,18 @@ class AuController extends ProtectedController
     }
 
     /**
-     * Finds and displays a Au entity.
+     * Finds and displays an Au entity - checks that the AU is 
+     * in the PLN. Viewing an AU requires MONITOR access to the
+     * PLN.
      *
      * @Route("/{id}", name="au_show")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $plnId
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function showAction($plnId, $id)
     {
@@ -77,12 +89,19 @@ class AuController extends ProtectedController
     }
 
     /**
-     * Displays status entites for an AU.
+     * Displays status entites for an AU. Requires MONITOR
+     * access for the PLN.
      * 
-     * @param int $id
+     * @todo add paginated summaries and a details page.
+     * 
      * @Route("/{id}/status", name="au_status")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $plnId
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function statusAction($plnId, $id)
     {
