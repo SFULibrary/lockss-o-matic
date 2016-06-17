@@ -1,14 +1,40 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
+use LOCKSSOMatic\CrudBundle\Form\ContentOwnerType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
-use LOCKSSOMatic\CrudBundle\Form\ContentOwnerType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * ContentOwner controller. Standard CRUD stuff really.
@@ -50,6 +76,10 @@ class ContentOwnerController extends Controller
      * @Route("/", name="contentowner_create")
      * @Method("POST")
      * @Template("LOCKSSOMaticCrudBundle:ContentOwner:new.html.twig")
+     * 
+     * @param Request $request
+     * 
+     * @return array|RedirectResponse
      */
     public function createAction(Request $request)
     {
@@ -77,7 +107,7 @@ class ContentOwnerController extends Controller
      *
      * @param ContentOwner $entity The entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createCreateForm(ContentOwner $entity)
     {
@@ -97,6 +127,8 @@ class ContentOwnerController extends Controller
      * @Route("/new", name="contentowner_new")
      * @Method("GET")
      * @Template()
+     * 
+     * @return array
      */
     public function newAction()
     {
@@ -115,6 +147,10 @@ class ContentOwnerController extends Controller
      * @Route("/{id}", name="contentowner_show")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $id
+     * 
+     * @return array
      */
     public function showAction($id)
     {
@@ -140,6 +176,10 @@ class ContentOwnerController extends Controller
      * @Route("/{id}/edit", name="contentowner_edit")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $id
+     * 
+     * @return array
      */
     public function editAction($id)
     {
@@ -166,7 +206,7 @@ class ContentOwnerController extends Controller
      *
      * @param ContentOwner $entity The entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createEditForm(ContentOwner $entity)
     {
@@ -185,6 +225,11 @@ class ContentOwnerController extends Controller
      * @Route("/{id}", name="contentowner_update")
      * @Method("PUT")
      * @Template("LOCKSSOMaticCrudBundle:ContentOwner:edit.html.twig")
+     * 
+     * @param Request $request
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function updateAction(Request $request, $id)
     {
@@ -213,9 +258,15 @@ class ContentOwnerController extends Controller
         );
     }
     /**
-     * Deletes a ContentOwner entity.
+     * Deletes a ContentOwner entity. Does not do any
+     * confirmation checking.
      *
      * @Route("/{id}/delete", name="contentowner_delete")
+     * 
+     * @param Request $request 
+     * @param int $id
+     * 
+     * @return RedirectResponse
      */
     public function deleteAction(Request $request, $id)
     {
@@ -237,7 +288,7 @@ class ContentOwnerController extends Controller
      *
      * @param mixed $id The entity id
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return Form The form
      */
     private function createDeleteForm($id)
     {

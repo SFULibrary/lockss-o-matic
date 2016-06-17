@@ -1,29 +1,60 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Form\BoxType;
-use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Box controller.
+ * Box controller. Very CRUDish. All routes are prefixed with
+ * /pln/{plnId}/box
  *
  * @Route("/pln/{plnId}/box")
  */
 class BoxController extends ProtectedController
 {
     /**
-     * Lists all Box entities.
+     * Lists all Box entities for a PLN. Does pagination, although
+     * it's unlikely there will be more than 25 boxes in a PLN.
      *
      * @Route("/", name="box")
      * @Method("GET")
      * @Template()
+     * 
+     * @param Request $request
+     * @param int $plnId
+     * 
+     * @return array
      */
     public function indexAction(Request $request, $plnId)
     {
@@ -48,11 +79,16 @@ class BoxController extends ProtectedController
     }
 
     /**
-     * Creates a new Box entity.
+     * Creates a new Box entity in a PLN.
      *
      * @Route("/", name="box_create")
      * @Method("POST")
      * @Template("LOCKSSOMaticCrudBundle:Box:new.html.twig")
+     * 
+     * @param Request $request
+     * @param int $plnId
+     * 
+     * @return array|RedirectResponse
      */
     public function createAction(Request $request, $plnId)
     {
@@ -91,6 +127,7 @@ class BoxController extends ProtectedController
      * Creates a form to create a Box entity.
      *
      * @param Box $entity The entity
+     * @param int $plnId
      *
      * @return Form The form
      */
@@ -114,6 +151,10 @@ class BoxController extends ProtectedController
      * @Route("/new", name="box_new")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $plnId
+     * 
+     * @return array
      */
     public function newAction($plnId)
     {
@@ -132,11 +173,17 @@ class BoxController extends ProtectedController
     }
 
     /**
-     * Finds and displays a Box entity.
+     * Finds and displays a Box entity. Checks that the box is
+     * in the PLN.
      *
      * @Route("/{id}", name="box_show")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $plnId
+     * @param int $id
+     * 
+     * @return array
      */
     public function showAction($plnId, $id)
     {
@@ -164,11 +211,17 @@ class BoxController extends ProtectedController
     }
 
     /**
-     * Displays a form to edit an existing Box entity.
+     * Displays a form to edit an existing Box entity. Checks that
+     * the box is in the PLN.
      *
      * @Route("/{id}/edit", name="box_edit")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $plnId
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function editAction($plnId, $id)
     {
@@ -200,6 +253,7 @@ class BoxController extends ProtectedController
      * Creates a form to edit a Box entity.
      *
      * @param Box $entity The entity
+     * @param int $plnId
      *
      * @return Form The form
      */
@@ -229,6 +283,12 @@ class BoxController extends ProtectedController
      * @Route("/{id}", name="box_update")
      * @Method("PUT")
      * @Template("LOCKSSOMaticCrudBundle:Box:edit.html.twig")
+     * 
+     * @param Request $request
+     * @param int $plnId
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function updateAction(Request $request, $plnId, $id)
     {
@@ -271,11 +331,16 @@ class BoxController extends ProtectedController
     }
 
     /**
-     * Deletes a Box entity.
+     * Deletes a Box entity. Does no confirmation checking.
      *
      * @Route("/{id}/delete", name="box_delete")
+     * 
+     * @param int $plnId
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
-    public function deleteAction(Request $request, $plnId, $id)
+    public function deleteAction($plnId, $id)
     {
         $pln = $this->getPln($plnId);
         $this->requireAccess('PLNADMIN', $pln);
