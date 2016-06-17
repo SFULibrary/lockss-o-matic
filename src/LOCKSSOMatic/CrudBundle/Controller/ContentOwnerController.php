@@ -11,18 +11,22 @@ use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
 use LOCKSSOMatic\CrudBundle\Form\ContentOwnerType;
 
 /**
- * ContentOwner controller.
+ * ContentOwner controller. Standard CRUD stuff really.
  *
  * @Route("/contentowner")
  */
 class ContentOwnerController extends Controller
 {
     /**
-     * Lists all ContentOwner entities.
+     * Lists all ContentOwner entities. Does pagination.
      *
      * @Route("/", name="contentowner")
      * @Method("GET")
      * @Template()
+     * 
+     * @param Request $request
+     * 
+     * @return array
      */
     public function indexAction(Request $request)
     {

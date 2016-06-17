@@ -40,11 +40,16 @@ use Symfony\Component\HttpFoundation\Request;
 class DepositController extends ProtectedController
 {
     /**
-     * Lists all Deposit entities.
+     * Lists all Deposit entities in a PLN. Does pagination.
      *
      * @Route("/", name="deposit")
      * @Method("GET")
      * @Template()
+     * 
+     * @param Request $request
+     * @param int $plnId
+     * 
+     * @return array
      */
     public function indexAction(Request $request, $plnId)
     {
@@ -73,11 +78,16 @@ class DepositController extends ProtectedController
     }
 
     /**
-     * Lists all Deposit entities.
+     * Search the deposits in a PLN. Paginates the search results.
      *
      * @Route("/search", name="deposit_search")
      * @Method("GET")
      * @Template()
+     * 
+     * @param Request $request
+     * @param int $plnId
+     * 
+     * @return array
      */
     public function searchAction(Request $request, $plnId)
     {
@@ -113,6 +123,11 @@ class DepositController extends ProtectedController
      * @Route("/{id}", name="deposit_show")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $plnId
+     * @param int $id
+     * 
+     * @return array
      */
     public function showAction($plnId, $id)
     {
