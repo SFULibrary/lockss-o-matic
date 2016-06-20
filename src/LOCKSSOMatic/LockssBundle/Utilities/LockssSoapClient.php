@@ -71,7 +71,7 @@ class LockssSoapClient
         // Symfony\Component\Debug\Debug enables its own exception handler
         $this->errors[] = "Soap Exception: {$e->getMessage()}";
     }
-
+    
     /**
      * @param string $method
      * @param array  $params

@@ -28,11 +28,6 @@ class AuContentCommand extends ContainerAwareCommand
     private $logger;
 
     /**
-     * @var Box[]
-     */
-    private $boxes;
-
-    /**
      * @var AuIdGenerator
      */
     private $idGenerator;
