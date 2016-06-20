@@ -49,6 +49,14 @@
                 <td><a href="{{ path('deposit_show', {'id': entity.deposit.id, 'plnId': pln.id}) }}">{{ entity.deposit.title }}</a></td>
             </tr>
             <tr>
+                <th>Original Deposit</th>
+                <td>
+                    <a href="{{ path('original_deposit', {'providerUuid': entity.deposit.contentProvider.uuid, 'depositUuid': entity.deposit.uuid, 'filename': entity.filename}) }}">
+                        {{ url('original_deposit', {'providerUuid': entity.deposit.contentProvider.uuid, 'depositUuid': entity.deposit.uuid, 'filename': entity.filename}) }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
                 <th>Au</th>
                 <td>
                     {% if entity.au %}

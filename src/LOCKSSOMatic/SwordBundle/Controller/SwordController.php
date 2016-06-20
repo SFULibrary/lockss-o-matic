@@ -7,6 +7,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
+use LOCKSSOMatic\LockssBundle\Services\ContentFetcherService;
 use LOCKSSOMatic\LogBundle\Services\LoggingService;
 use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SwordBundle\Exceptions\DepositUnknownException;
@@ -20,6 +21,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -316,7 +319,8 @@ class SwordController extends Controller
 
     /**
      * Get a deposit statement, showing the status of the deposit in LOCKSS,
-     * from this URL. Also known as state-iri.
+     * from this URL. Also known as state-iri. Includes a sword:originalDeposit element for
+     * each content item in the deposit.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/state", name="sword_statement", requirements={
      *      "providerUuid": ".{36}",
@@ -356,6 +360,43 @@ class SwordController extends Controller
                 ),
             $response
         );
+    }
+    
+    /**
+     * @Route("/original/{providerUuid}/{depositUuid}/{filename}", name="original_deposit", requirements={
+     *      "providerUuid": ".{36}",
+     *      "depositUuid": ".{36}"
+     * })
+     * 
+     * @param type $providerUuid
+     * @param type $depositUuid
+     * @param type $filename
+     */
+    public function originalDepositAction($providerUuid, $depositUuid, $filename) {
+        $this->swordLog->notice("original deposit - {$providerUuid} - {$depositUuid} - {$filename}");
+        $provider = $this->getContentProvider($providerUuid);
+        $deposit = $this->getDeposit($depositUuid);
+        $this->matchDepositToProvider($deposit, $provider);
+        
+        $repo = $this->getDoctrine()->getManager()->getRepository('LOCKSSOMaticCrudBundle:Content');
+        $content = $repo->findByFilename($deposit, $filename);
+        
+        /** @var ContentFetcherService */
+        $fetcher = $this->container->get('lockss.content.fetcher');
+        $file = $fetcher->fetch($content[0]);
+        $tmp = tempnam(sys_get_temp_dir(), 'lockss-');
+        $handle = fopen($tmp, 'wb');
+        while($data = fread($file, 65535)) {
+            fwrite($handle, $data);
+        }
+        fclose($file);
+        fclose($handle);
+        
+        $response = new BinaryFileResponse($tmp);
+        $response->setContentDisposition('attachment', $filename);
+        $response->setStatusCode(Response::HTTP_OK);
+        $response->deleteFileAfterSend(true);
+        return $response;
     }
 
     /**

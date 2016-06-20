@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Content that has been deposited to LOCKSSOMatic.
  *
  * @ORM\Table(name="content")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ContentRepository")
  */
 class Content implements GetPlnInterface
 {
@@ -394,6 +394,10 @@ class Content implements GetPlnInterface
     public function hasContentProperty($key)
     {
         return $this->contentProperties->containsKey($key);
+    }
+    
+    public function getFilename() {
+        return basename($this->url);
     }
 
     /**
