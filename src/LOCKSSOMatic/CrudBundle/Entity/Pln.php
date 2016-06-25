@@ -1,5 +1,29 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,12 +35,15 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="plns")
  * @ORM\Entity
- *
- * TODO: Add plugin.registries (list of URLs)
- * TODO: add plugin.titleDbs
  */
 class Pln
 {
+    /**
+     * LOCKSS will only recognize these properties in an XML file if they
+     * are lists.
+     * 
+     * @todo In PHP >=5.6 this can be a const array.
+     */
     private static $LIST_REQUIRED = array(
         'org.lockss.id.initialV3PeerList',
         'org.lockss.titleDbs',
@@ -87,6 +114,8 @@ class Pln
     private $boxes;
 
     /**
+     * Java Keystore file.
+     * 
      * @var Keystore
      * @ORM\OneToOne(targetEntity="Keystore", inversedBy="pln")
      * @ORM\JoinColumn(name="keystore_id", referencedColumnName="id")
@@ -103,12 +132,18 @@ class Pln
     private $properties;
 
     /**
+     * List of content providers for this PLN. Each provider is associated with
+     * exactly one PLN.
+     * 
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
      *
      * @var Pln[]
      */
     private $contentProviders;
 
+    /**
+     * Construct a PLN.
+     */
     public function __construct()
     {
         $this->aus = new ArrayCollection();
@@ -152,6 +187,11 @@ class Pln
         return $this->name;
     }
 
+    /**
+     * Synonym for getName().
+     * 
+     * @return string
+     */
     public function __toString()
     {
         return $this->name;
@@ -184,13 +224,18 @@ class Pln
     /**
      * Get aus.
      *
-     * @return ArrayCollection
+     * @return ArrayCollection|Au[]
      */
     public function getAus()
     {
         return $this->aus;
     }
 
+    /**
+     * Count the AUs in this PLN.
+     * 
+     * @return int
+     */
     public function countAus()
     {
         return $this->aus->count();
@@ -211,13 +256,13 @@ class Pln
     }
 
     /**
-     * Remove boxes.
+     * Remove box.
      *
-     * @param Box $boxes
+     * @param Box $box
      */
-    public function removeBox(Box $boxes)
+    public function removeBox(Box $box)
     {
-        $this->boxes->removeElement($boxes);
+        $this->boxes->removeElement($box);
     }
 
     /**
@@ -231,7 +276,7 @@ class Pln
     }
 
     /**
-     * Add plnProperties.
+     * Set a property for this PLN.
      *
      * @param string $key
      * @param string $value
@@ -259,13 +304,20 @@ class Pln
         return $this;
     }
 
+    /**
+     * Get a list of the property keys.
+     * 
+     * @return string[]
+     */
     public function getPropertyKeys()
     {
         return array_keys($this->properties);
     }
 
     /**
-     * Get plnProperties.
+     * Get a property. If the property key is an array, or if it is in 
+     * self::$LIST_REQUIRED, or if $forceArray is true, the value returned 
+     * will be an array.
      *
      * @param string $key
      *
@@ -286,44 +338,55 @@ class Pln
         return $this->properties[$key];
     }
 
+    /**
+     * Return all of the properties. It's best to use 
+     * getPropertyKeys()/getProperty($key) as that will respect self::$LIST_REQUIRED.
+     * 
+     * @return array
+     */
     public function getProperties()
     {
         return $this->properties;
     }
 
+    /**
+     * Set all the properties in one go.
+     * 
+     * @param type $properties
+     */
     public function setProperties($properties)
     {
         $this->properties = $properties;
     }
 
     /**
-     * Add contentProviders.
+     * Add contentProvider.
      *
-     * @param ContentProvider $contentProviders
+     * @param ContentProvider $contentProvider
      *
      * @return Pln
      */
-    public function addContentProvider(ContentProvider $contentProviders)
+    public function addContentProvider(ContentProvider $contentProvider)
     {
-        $this->contentProviders[] = $contentProviders;
+        $this->contentProviders[] = $contentProvider;
 
         return $this;
     }
 
     /**
-     * Remove contentProviders.
+     * Remove contentProvider.
      *
-     * @param ContentProvider $contentProviders
+     * @param ContentProvider $contentProvider
      */
-    public function removeContentProvider(ContentProvider $contentProviders)
+    public function removeContentProvider(ContentProvider $contentProvider)
     {
-        $this->contentProviders->removeElement($contentProviders);
+        $this->contentProviders->removeElement($contentProvider);
     }
 
     /**
      * Get contentProviders.
      *
-     * @return ContentProvider[]
+     * @return ArrayCollection|ContentProvider[]
      */
     public function getContentProviders()
     {
@@ -331,9 +394,9 @@ class Pln
     }
 
     /**
-     * Get plugins.
+     * Get plugins keyed by plugin identifier.
      *
-     * @return Collection|Plugin[]
+     * @return Plugin[]
      */
     public function getPlugins()
     {

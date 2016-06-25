@@ -26,7 +26,6 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;

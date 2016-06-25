@@ -1,11 +1,34 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Content Providers make deposits to LOCKSS via LOCKSSOMatic.
@@ -58,7 +81,7 @@ class ContentProvider implements GetPlnInterface
     private $name;
 
     /**
-     * The maximum file size for the provider.
+     * The maximum file size for the provider in 1000-byte units.
      *
      * @var int
      *
@@ -67,7 +90,7 @@ class ContentProvider implements GetPlnInterface
     private $maxFileSize;
 
     /**
-     * The maximum AU size for the provider.
+     * The maximum AU size for the provider in 1000-byte units.
      *
      * @var int
      *
@@ -76,7 +99,8 @@ class ContentProvider implements GetPlnInterface
     private $maxAuSize;
 
     /**
-     * The owner for the provider. Providers make deposit on behalf of owners.
+     * The owner for the provider. Providers make deposit on behalf 
+     * of owners.
      *
      * @var ContentOwner
      *
@@ -102,8 +126,6 @@ class ContentProvider implements GetPlnInterface
     /**
      * The LOCKSS Plugin for the content owner.
      *
-     * TODO should the plugin be on the content provider?
-     *
      * @var Plugin
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentProviders")
@@ -127,7 +149,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @ORM\OneToMany(targetEntity="Deposit", mappedBy="contentProvider")
      *
-     * @var Deposit[]
+     * @var ArrayCollection|Deposit[]
      */
     private $deposits;
 
@@ -148,31 +170,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Set type.
-     *
-     * @param string $type
-     *
-     * @return ContentProvider
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * Get type.
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Set uuid.
+     * Set uuid, converted to uppercase.
      *
      * @param string $uuid
      *
@@ -219,6 +217,12 @@ class ContentProvider implements GetPlnInterface
         return $this->permissionurl;
     }
 
+    /**
+     * Convenience method to get the host holding the permission statement 
+     * from the permission url.
+     * 
+     * @return string
+     */
     public function getPermissionHost()
     {
         return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
@@ -406,7 +410,12 @@ class ContentProvider implements GetPlnInterface
     {
         return $this->aus;
     }
-
+    
+    /**
+     * Count the AUs associated with the provider.
+     * 
+     * @return int
+     */
     public function countAus()
     {
         return $this->aus->count();
@@ -447,7 +456,9 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * @return Content
+     * Get all of the content items associated with the provider.
+     * 
+     * @return Content[]
      */
     public function getContent()
     {
@@ -463,7 +474,7 @@ class ContentProvider implements GetPlnInterface
     }
 
     /**
-     * Give a string representation of the provider.
+     * Synonym for getName().
      *
      * @return string
      */

@@ -1,5 +1,29 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
@@ -27,7 +51,7 @@ class Deposit implements GetPlnInterface
     private $id;
 
     /**
-     * The UUID for the deposit.
+     * The UUID for the deposit. Should be UPPERCASE.
      *
      * @var string
      *
@@ -45,7 +69,7 @@ class Deposit implements GetPlnInterface
     private $title;
 
     /**
-     * The agreement for the deposit's content URLs in the lockss boxes.
+     * The amount of agreement for the deposit's content URLs in the lockss boxes.
      *
      * @var float
      * 
@@ -112,6 +136,9 @@ class Deposit implements GetPlnInterface
      */
     private $status;
 
+    /**
+     * Build a new deposit.
+     */
     public function __construct()
     {
         $this->content = new ArrayCollection();
@@ -250,7 +277,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Add deposits.
+     * Add content.
      *
      * @param Content $content
      *
@@ -264,7 +291,7 @@ class Deposit implements GetPlnInterface
     }
 
     /**
-     * Remove deposits.
+     * Remove content.
      *
      * @param Content $content
      */
@@ -273,6 +300,11 @@ class Deposit implements GetPlnInterface
         $this->content->removeElement($content);
     }
 
+    /**
+     * Count the content items in this deposit.
+     * 
+     * @return int
+     */
     public function countContent()
     {
         return $this->content->count();
@@ -288,6 +320,9 @@ class Deposit implements GetPlnInterface
         return $this->content;
     }
 
+    /**
+     * Set the deposit date. It can't be altered once it's set.
+     */
     public function setDepositDate()
     {
         if ($this->dateDeposited === null) {
@@ -331,7 +366,7 @@ class Deposit implements GetPlnInterface
     /**
      * Set agreement.
      *
-     * @param string $agreement
+     * @param float $agreement
      *
      * @return Deposit
      */
@@ -345,7 +380,7 @@ class Deposit implements GetPlnInterface
     /**
      * Get agreement.
      *
-     * @return string
+     * @return float
      */
     public function getAgreement()
     {

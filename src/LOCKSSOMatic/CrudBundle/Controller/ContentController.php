@@ -32,7 +32,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Content controller. All routes are prefixed with /pln/{plnId}/content
+ * Content controller. Content is read-only. All routes are prefixed 
+ * with /pln/{plnId}/content
  *
  * @Route("/pln/{plnId}/content")
  */
