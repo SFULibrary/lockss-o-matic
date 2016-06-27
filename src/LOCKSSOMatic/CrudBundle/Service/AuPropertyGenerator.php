@@ -1,5 +1,29 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Service;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
@@ -10,6 +34,9 @@ use LOCKSSOMatic\CrudBundle\Entity\AuProperty;
 use Monolog\Logger;
 use Symfony\Component\Routing\Router;
 
+/**
+ * Build a property on an AU.
+ */
 class AuPropertyGenerator
 {
     /**
@@ -27,21 +54,45 @@ class AuPropertyGenerator
      */
     private $router;
 
+    /**
+     * Set the logger.
+     * 
+     * @param Logger $logger
+     */
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
     }
 
+    /**
+     * Set the entity manager through a poorly named method.
+     * 
+     * @param Registry $registry
+     */
     public function setRegistry(Registry $registry)
     {
         $this->em = $registry->getManager();
     }
 
+    /**
+     * Set the page router.
+     * 
+     * @param Router $router
+     */
     public function setRouter(Router $router)
     {
         $this->router = $router;
     }
 
+    /**
+     * Build a property.
+     * 
+     * @param Au $au
+     * @param string $key
+     * @param string $value
+     * @param AuProperty $parent
+     * @return AuProperty
+     */
     public function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null)
     {
         $property = new AuProperty();
@@ -54,6 +105,17 @@ class AuPropertyGenerator
         return $property;
     }
 
+    /**
+     * So, LOCKSS properties can be C-style vsprintf strings, but with 
+     * named parameters. The entire thing is encoded in a plugin's XML file as
+     * single string. It's complicated.
+     * 
+     * @param AU $au
+     * @param string $name
+     * @param string $propertyValue
+     * @return string
+     * @throws Exception
+     */
     private function generate(AU $au, $name, $propertyValue)
     {
         $matches = array();
@@ -77,6 +139,14 @@ class AuPropertyGenerator
         return vsprintf($formatStr, $values);
     }
 
+    /**
+     * Generate a symbol, according to a LOCKSS vstring-like property.
+     * 
+     * @param Au $au
+     * @param string $name
+     * @return string|array
+     * @throws Exception
+     */
     public function generateSymbol(Au $au, $name)
     {
         $plugin = $au->getPlugin();
@@ -130,7 +200,14 @@ class AuPropertyGenerator
             }
         }
     }
-
+    
+    /**
+     * Generate all of the properties for an AU, optionally clearing all
+     * the previously set properties.
+     * 
+     * @param Au $au
+     * @param boolean $clear
+     */
     public function generateProperties(Au $au, $clear = false)
     {
         $this->validateContent($au);

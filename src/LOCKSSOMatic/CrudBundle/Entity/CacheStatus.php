@@ -167,12 +167,22 @@ class CacheStatus
     {
         return $this->getStatusValue('free');
     }
-
+    
+    /**
+     * Get the total size of the cache.
+     * 
+     * @return int
+     */
     public function getSize()
     {
         return $this->getStatusValue('size');
     }
 
+    /**
+     * Get the space used in the cache.
+     * 
+     * @return int
+     */
     public function getUsed()
     {
         return $this->getStatusValue('used');

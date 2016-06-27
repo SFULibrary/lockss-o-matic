@@ -34,6 +34,9 @@ use Monolog\Logger;
 use SimpleXMLElement;
 use Symfony\Component\Routing\Router;
 
+/**
+ * Build a piece of content.
+ */
 class ContentBuilder
 {
     /**
@@ -56,26 +59,56 @@ class ContentBuilder
      */
     private $idGenerator;
 
+    /**
+     * Set the logger
+     * 
+     * @param Logger $logger
+     */
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
     }
 
+    /**
+     * Set the entity manager via a poorly named function.
+     * 
+     * @param Registry $registry
+     */
     public function setRegistry(Registry $registry)
     {
         $this->em = $registry->getManager();
     }
 
+    /**
+     * Set the page router.
+     * 
+     * @param Router $router
+     */
     public function setRouter(Router $router)
     {
         $this->router = $router;
     }
 
+    /**
+     * Set the AU Id generate.
+     * 
+     * @param AuIdGenerator $idGenerator
+     */
     public function setAuIdGenerator(AuIdGenerator $idGenerator)
     {
         $this->idGenerator = $idGenerator;
     }
 
+    /**
+     * Build a property for the content. If $this->em is set, the property
+     * is persisted to the database.
+     * 
+     * @param Content $content
+     * @param string $key
+     * @param string $value
+     * 
+     * @return ContentProperty
+     */
     public function buildProperty(Content $content, $key, $value)
     {
         $contentProperty = new ContentProperty();
@@ -90,6 +123,9 @@ class ContentBuilder
     }
 
     /**
+     * Build a content item from some XML. Persists to the database if 
+     * $this->em is set.
+     * 
      * @param SimpleXMLElement $xml
      *
      * @return Content
@@ -117,6 +153,14 @@ class ContentBuilder
         return $content;
     }
 
+    /**
+     * Build a content item from an array, probably from a CSV file. The $record
+     * requires size, checksum type, checksum value, url. Title, is optional
+     * and anything required by the relevant LOCKSS plugin is also required.
+     * 
+     * @param array $record
+     * @return Content
+     */
     public function fromArray($record)
     {
         $content = new Content();
