@@ -20,7 +20,6 @@ class LoadContentProvider extends AbstractDataFixture {
         $provider->setPermissionurl("http://example.com/permission");
         $provider->setPln($this->referenceRepository->getReference('pln'));
         $provider->setPlugin($this->referenceRepository->getReference('plugin'));
-        $provider->setType('unused');
         $provider->setUuid('49EC670D-A5C9-42E1-8054-AC64A17B6475');
         $manager->persist($provider);
         $manager->flush();
