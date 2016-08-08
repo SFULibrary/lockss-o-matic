@@ -86,7 +86,7 @@ class ContentFetcherService
         $boxes = $pln->getBoxes()->toArray();
         shuffle($boxes);
 
-        print "expected value: " . $content->getChecksumValue() . "\n";
+        //print "expected value: " . $content->getChecksumValue() . "\n";
         $file = null;
         
         foreach ($boxes as $box) {
