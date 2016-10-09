@@ -42,6 +42,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Private Lockss network plugin import command-line.
+ * 
+ * @todo is the use case for this still valid?
  */
 class TitledbImportCommand extends ContainerAwareCommand
 {
@@ -50,12 +52,18 @@ class TitledbImportCommand extends ContainerAwareCommand
      */
     private $em;
 
+    /**
+     * {@inheritDocs}
+     */
     public function setContainer(ContainerInterface $container = null)
     {
         parent::setContainer($container);
         $this->em = $container->get('doctrine')->getManager();
     }
 
+    /**
+     * {@inheritDocs}
+     */
     public function configure()
     {
         $this->setName('lom:import:titledb')
@@ -80,6 +88,9 @@ class TitledbImportCommand extends ContainerAwareCommand
         return $this->getContainer()->get('logger');
     }
 
+    /**
+     * {@inheritDocs}
+     */
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $activityLog = $this->getContainer()->get('activity_log');
@@ -100,6 +111,13 @@ class TitledbImportCommand extends ContainerAwareCommand
         }
     }
 
+    /**
+     * Process one titledb XML file.
+     * 
+     * @param string $file
+     * @param OutputInterface $output
+     * @param string $providerId
+     */
     protected function processFile($file, OutputInterface $output, $providerId)
     {
         $xml = simplexml_load_file($file);
@@ -126,6 +144,13 @@ class TitledbImportCommand extends ContainerAwareCommand
         $this->reportProgress($i, $count, $output);
     }
 
+    /**
+     * Report the progress of the import to the shell.
+     * 
+     * @param int $processed
+     * @param int $total
+     * @param OutputInterface $output
+     */
     protected function reportProgress($processed, $total, $output)
     {
         $this->em->flush();
@@ -137,6 +162,12 @@ class TitledbImportCommand extends ContainerAwareCommand
         $output->writeln(" {$processed} / {$total} - {$memory} of {$available}");
     }
 
+    /**
+     * Process one title
+     * 
+     * @param SimpleXMLElement $title
+     * @param ContentProvider $provider
+     */
     protected function processTitle(SimpleXMLElement $title, ContentProvider $provider)
     {
         $au = $this->buildAu($title);
@@ -148,6 +179,14 @@ class TitledbImportCommand extends ContainerAwareCommand
         $this->em->persist($au);
     }
 
+    /**
+     * Build an AU.
+     * 
+     * @todo This should use AuBuilder.
+     * 
+     * @param SimpleXMLElement $title
+     * @return Au
+     */
     public function buildAu(SimpleXMLElement $title)
     {
         $au = new Au();
@@ -162,6 +201,12 @@ class TitledbImportCommand extends ContainerAwareCommand
         return $au;
     }
 
+    /**
+     * Build child properties of a property.
+     * 
+     * @param SimpleXMLElement $xml
+     * @param AuProperty $parent
+     */
     public function buildChildProperties(SimpleXMLElement $xml, AuProperty $parent = null)
     {
         foreach ($xml->xpath('property') as $x) {
@@ -174,6 +219,14 @@ class TitledbImportCommand extends ContainerAwareCommand
         }
     }
 
+    /**
+     * Find a property value in some XML.
+     * 
+     * @param SimpleXMLElement $xml
+     * @param string $name
+     * @return string 
+     * @throws Exception
+     */
     public function getPropertyValue(SimpleXMLElement $xml, $name)
     {
         $nodes = $xml->xpath("property[@name='{$name}']/@value");
@@ -186,6 +239,14 @@ class TitledbImportCommand extends ContainerAwareCommand
         throw new Exception("Too many elements for property {$name}");
     }
 
+    /**
+     * Get the plugin for a title. Plugins are cached in the static $pluginCache.
+     * 
+     * @staticvar array $pluginCache
+     * @param SimpleXMLElement $xml
+     * @return array
+     * @throws Exception
+     */
     public function getPlugin(SimpleXMLElement $xml)
     {
         // cache the plugins for speed.
@@ -208,6 +269,13 @@ class TitledbImportCommand extends ContainerAwareCommand
         return $pluginCache[$pluginId];
     }
 
+    /**
+     * Get a content owner. They are cached in the static $ownerCache.
+     * 
+     * @staticvar array $ownerCache
+     * @param type $name
+     * @return ContentOwner|array
+     */
     public function getContentOwner($name)
     {
         static $ownerCache = array();

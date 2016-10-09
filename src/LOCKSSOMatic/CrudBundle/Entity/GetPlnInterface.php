@@ -27,7 +27,7 @@
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 /**
- * If an entity is directly related to a PLN, it should implement this 
+ * If an entity is directly or indirectly related to a PLN, it should implement this 
  * interface.
  */
 interface GetPlnInterface
