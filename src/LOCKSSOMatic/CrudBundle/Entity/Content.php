@@ -1,5 +1,29 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
@@ -11,14 +35,12 @@ use Doctrine\ORM\Mapping as ORM;
  * Content that has been deposited to LOCKSSOMatic.
  *
  * @ORM\Table(name="content")
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity(repositoryClass="ContentRepository")
  */
 class Content implements GetPlnInterface
 {
-
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -28,6 +50,8 @@ class Content implements GetPlnInterface
 
     /**
      * The URL for the content.
+     * 
+     * @todo is 255 long enough?
      *
      * @var string
      *
@@ -47,7 +71,7 @@ class Content implements GetPlnInterface
     /**
      * The size of the content in 1000-byte units.
      *
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="size", type="integer", nullable=true)
      */
@@ -65,6 +89,7 @@ class Content implements GetPlnInterface
 
     /**
      * The checksum type for verifying the deposit. One of SHA1 or MD5.
+     *
      * @var string
      *
      * @ORM\Column(name="checksum_type", type="string", length=24, nullable=true)
@@ -84,8 +109,10 @@ class Content implements GetPlnInterface
 
     /**
      * True if the content should be recrawled.
+     * 
+     * @todo is this used anywhere?
      *
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="recrawl", type="boolean", nullable=false)
      */
@@ -98,7 +125,7 @@ class Content implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="content")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="deposit_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="deposit_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $deposit;
@@ -110,26 +137,32 @@ class Content implements GetPlnInterface
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="content")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $au;
 
     /**
+     * The contentProperties associated with this content.
+     * 
      * @ORM\OneToMany(targetEntity="ContentProperty", mappedBy="content")
+     *
      * @var ArrayCollection
      */
     private $contentProperties;
 
+    /**
+     * Build a new Content item.
+     */
     public function __construct()
     {
         $this->contentProperties = new ArrayCollection();
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -137,9 +170,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set url
+     * Set url.
      *
      * @param string $url
+     *
      * @return Content
      */
     public function setUrl($url)
@@ -150,7 +184,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get url
+     * Get url.
      *
      * @return string
      */
@@ -160,9 +194,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set title
+     * Set title.
      *
      * @param string $title
+     *
      * @return Content
      */
     public function setTitle($title)
@@ -173,7 +208,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
@@ -183,14 +218,15 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set size
+     * Set size.
      *
-     * @param integer $size
+     * @param int $size
+     *
      * @return Content
      */
     public function setSize($size)
     {
-        if($size !== '') {
+        if ($size !== '') {
             $this->size = $size;
         }
 
@@ -198,9 +234,9 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get size
+     * Get size.
      *
-     * @return integer
+     * @return int
      */
     public function getSize()
     {
@@ -208,9 +244,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set dateDeposited
+     * Set dateDeposited.
      *
      * @param DateTime $dateDeposited
+     *
      * @return Content
      */
     public function setDateDeposited($dateDeposited)
@@ -221,7 +258,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get dateDeposited
+     * Get dateDeposited.
      *
      * @return DateTime
      */
@@ -231,9 +268,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set checksumType
+     * Set checksumType.
      *
      * @param string $checksumType
+     *
      * @return Content
      */
     public function setChecksumType($checksumType)
@@ -244,7 +282,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get checksumType
+     * Get checksumType.
      *
      * @return string
      */
@@ -254,9 +292,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set checksumValue
+     * Set checksumValue.
      *
      * @param string $checksumValue
+     *
      * @return Content
      */
     public function setChecksumValue($checksumValue)
@@ -267,7 +306,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get checksumValue
+     * Get checksumValue.
      *
      * @return string
      */
@@ -277,9 +316,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set recrawl
+     * Set recrawl.
      *
-     * @param boolean $recrawl
+     * @param bool $recrawl
+     *
      * @return Content
      */
     public function setRecrawl($recrawl)
@@ -290,9 +330,9 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get recrawl
+     * Get recrawl.
      *
-     * @return boolean
+     * @return bool
      */
     public function getRecrawl()
     {
@@ -300,9 +340,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set deposit
+     * Set deposit.
      *
      * @param Deposit $deposit
+     *
      * @return Content
      */
     public function setDeposit(Deposit $deposit = null)
@@ -316,7 +357,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get deposit
+     * Get deposit.
      *
      * @return Deposit
      */
@@ -326,9 +367,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Set au
+     * Set au.
      *
      * @param Au $au
+     *
      * @return Content
      */
     public function setAu(Au $au = null)
@@ -342,7 +384,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Get au
+     * Get au.
      *
      * @return Au
      */
@@ -352,7 +394,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * @ORM\PrePersist
+     * Set the deposit date. It cannot be changed once it is set.
      */
     public function setDepositDate()
     {
@@ -362,9 +404,10 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Add contentProperties
+     * Add contentProperties.
      *
      * @param ContentProperty $contentProperties
+     *
      * @return Content
      */
     public function addContentProperty(ContentProperty $contentProperties)
@@ -375,7 +418,7 @@ class Content implements GetPlnInterface
     }
 
     /**
-     * Remove contentProperties
+     * Remove contentProperties.
      *
      * @param ContentProperty $contentProperties
      */
@@ -384,21 +427,45 @@ class Content implements GetPlnInterface
         $this->contentProperties->removeElement($contentProperties);
     }
 
+    /**
+     * Check if the content has a given property.
+     * 
+     * @param string $key
+     * 
+     * @return bool
+     */
     public function hasContentProperty($key)
     {
         return $this->contentProperties->containsKey($key);
     }
 
     /**
-     * Get contentProperties
+     * Convenience method. Get the filename of the content from the URL.
+     * 
+     * @return string
+     */
+    public function getFilename() {
+        return basename($this->url);
+    }
+
+    /**
+     * Get contentProperties.
      *
-     * @return Collection
+     * @return Collection|ContentProperty
      */
     public function getContentProperties()
     {
         return $this->contentProperties;
     }
 
+    /**
+     * Get the value of a content property, optionally encoded to
+     * LOCKSS standards.
+     * 
+     * @param string $key
+     * @param bool $encoded
+     * @return string
+     */
     public function getContentPropertyValue($key, $encoded = false)
     {
         $value = null;
@@ -413,39 +480,15 @@ class Content implements GetPlnInterface
         }
         $callback = function ($matches) {
             $char = ord($matches[0]);
-            return '%' . strtoupper(sprintf("%02x", $char));
+
+            return '%'.strtoupper(sprintf('%02x', $char));
         };
+
         return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
     }
 
     /**
-     * Generate the AUid that this piece of content belongs in.
-     *
-     * @return string
-     */
-    public function generateAuid()
-    {
-        $plugin = $this->getDeposit()->getContentProvider()->getPlugin();
-        if ($plugin === null) {
-            return null;
-        }
-        $pluginKey = str_replace('.', '|', $plugin->getPluginIdentifier());
-        $auKey = '';
-        $propNames = $plugin->getDefinitionalProperties();
-        sort($propNames);
-
-        foreach ($propNames as $name) {
-            $auKey .= '&' . $name . '~' . $this->getContentPropertyValue(
-                $name,
-                true
-            );
-        }
-        $this->auid = $pluginKey . $auKey;
-        return $this->auid;
-    }
-
-    /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPln()
     {

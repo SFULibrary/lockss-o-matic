@@ -1,0 +1,16 @@
+<lockss-config>
+{% for key in pln.getPropertyKeys %}	
+	{% set value = pln.getProperty(key) %}
+	{%- if value is iterable -%}
+	<property name="{{ key }}">
+		<list>
+		{% for v in value -%}
+			<value>{{ v }}</value>
+		{% endfor -%}
+		</list>
+	</property>
+	{%- else -%}
+	<property name="{{ key }}" value="{{ value }}"/>
+	{% endif -%}
+{% endfor -%}
+</lockss-config>

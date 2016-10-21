@@ -1,0 +1,18 @@
+{% extends '::base.html.twig' %}
+
+    
+{% block pageheader %}
+    <h1>New PlnProperty</h1>
+{% endblock %}
+
+{% block body -%}
+
+    {{ form(form, {"style": "horizontal"}) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts '@LOCKSSOMaticCrudBundle/Resources/public/js/pln_property.js' %}
+      <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

@@ -4,7 +4,7 @@
     <sword:treatment>Content URLs deposited to {{ lom_sitename }}, 
         collection {{ contentProvider.name }}.</sword:treatment>
     
-    <content src="{{ url('deposit_show', {'id': deposit.id}) }}"/>
+    <content src="{{ url('deposit_show', {'id': deposit.id, 'plnId': deposit.getPln().id}) }}"/>
     
     <!-- Col-IRI. -->
     <link rel="edit-media" href="{{ url('sword_collection', { 'providerUuid': contentProvider.uuid } ) }}" />

@@ -3,6 +3,9 @@
 
 {% block pageheader %}
     <h1>Content List</h1>
+    <p class="count">
+        Displaying {{ entities|length }} records of {{ entities.getTotalItemCount }} total.
+    </p>
 {% endblock %}
 
 {% block body -%}
@@ -23,7 +26,7 @@
         <tbody>
             {% for entity in entities %}
                 <tr>
-                    <td><a href="{{ path('content_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                    <td><a href="{{ path('content_show', { 'id': entity.id, 'plnId': pln.id }) }}">{{ entity.id }}</a></td>
                     <td>{{ entity.url }}</td>
                     <td>{{ entity.title }}</td>
                     <td>{{ entity.size }}</td>

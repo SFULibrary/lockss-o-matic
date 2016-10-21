@@ -7,6 +7,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    security.acl.permission.map.class: LOCKSSOMatic\UserBundle\Security\Acl\Permission\PermissionMap
 
 framework:
     #esi:             ~
@@ -38,16 +39,19 @@ twig:
     form:
         resources: ['bootstrap_3_horizontal_layout.html.twig']
     form_themes:
-        - 'LOCKSSOMaticCrudBundle:Form:fields.html.twig'
+        - ':Form:fields.html.twig'
     globals:
         lom_access: "@lom.access"
         lom_sitename: "%site_name%"
+        prop_generator: "@crud.propertygenerator"
+        auid_generator: "@crud.au.idgenerator"
 
 # Assetic Configuration
 assetic:
     debug:          "%kernel.debug%"
     use_controller: false
-    bundles:        [ ]
+    bundles:        
+        - LOCKSSOMaticCrudBundle
     filters:
         cssrewrite: ~
     assets:
@@ -136,3 +140,35 @@ knp_paginator:
     template:
         pagination: KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig     # sliding pagination controls template
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
+        
+knp_menu:
+    twig:
+        template: lom_menu.html.twig
+    templating: false
+    default_renderer: twig
+ 
+monolog:
+    use_microseconds: false
+    
+    # enable monolog.logger.lockss and monolog.logger.sword 
+    # as separate loggers.
+    channels: [lockss, sword]
+
+    handlers:
+        sword:
+            type: rotating_file
+            channels: ['sword']
+            path: "%kernel.logs_dir%/sword.log"
+            level: notice
+            formatter: monolog.formatter.standard
+        lockss:
+            type:   rotating_file
+            path:  "%kernel.logs_dir%/lockss-%kernel.environment%.log"
+            level: notice
+            channels: [lockss]
+            formatter: monolog.formatter.standard
+        sword:
+            type:   rotating_file
+            path:  "%kernel.logs_dir%/sword-%kernel.environment%.log"
+            level: notice
+            formatter: monolog.formatter.standard

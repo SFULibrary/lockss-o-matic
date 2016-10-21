@@ -3,25 +3,29 @@
 
 {% block pageheader %}
     <h1>Au List</h1>
+    <p class="count">
+        Displaying {{ entities|length }} records of {{ entities.getTotalItemCount }} total.
+    </p>
 {% endblock %}
 
 {% block body -%}
 
     <table class="table table-striped table-condensed table-bordered table-hover">
+        <caption style="caption-side:bottom">Status is the most recent status from any box.</caption>
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Managed</th>
-                <th>Au start url</th>
+                <th>Status</th>
                 <th>Comment</th>
             </tr>
         </thead>
         <tbody>
             {% for entity in entities %}
                 <tr>
-                    <td><a href="{{ path('au_show', {'id': entity.id}) }}">{{ entity.auName }}</a></td>
+                    <td><a href="{{ path('au_show', {'id': entity.id, 'plnId': pln.id}) }}">{{ prop_generator.generateSymbol(entity, 'au_name') }}</a></td>
                     <td>{% if entity.managed %} Yes {% else %} No {% endif %}</td>
-                    <td><a href="{{ entity.auStartUrl }}">{{ entity.auStartUrl|preg_replace('/\\//', '&#8203;/')|raw }}</a></td>
+                    <td>{% if entity.auStatus|length > 0 %}{{ entity.auStatus.last().summary() }}{% else %}Not checked{% endif %}</td>
                     <td>{{ entity.comment }}</td>
                 </tr>
             {% endfor %}

@@ -18,9 +18,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @author Matthieu Bontemps <matthieu@knplabs.com>
- * @author Thibault Duplessis <thibault.duplessis@gmail.com>
- * @author Luis Cordova <cordoval@gmail.com>
+ * Overrides the CreateUserCommand from FOSUserBundle to add support for
+ * fullname and institution.
  */
 class CreateUserCommand extends ContainerAwareCommand
 {
@@ -35,6 +34,8 @@ class CreateUserCommand extends ContainerAwareCommand
             ->setDefinition(array(
                 new InputArgument('email', InputArgument::REQUIRED, 'The email'),
                 new InputArgument('password', InputArgument::REQUIRED, 'The password'),
+                new InputArgument('fullname', InputArgument::REQUIRED, 'The full name'),
+                new InputArgument('institution', InputArgument::REQUIRED, 'The institution'),
                 new InputOption('super-admin', null, InputOption::VALUE_NONE, 'Set the user as super admin'),
                 new InputOption('inactive', null, InputOption::VALUE_NONE, 'Set the user as inactive'),
             ))
@@ -66,13 +67,15 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $email      = $input->getArgument('email');
-        $password   = $input->getArgument('password');
-        $inactive   = $input->getOption('inactive');
+        $email = $input->getArgument('email');
+        $password = $input->getArgument('password');
+        $fullname = $input->getArgument('fullname');
+        $institution = $input->getArgument('institution');
+        $inactive = $input->getOption('inactive');
         $superadmin = $input->getOption('super-admin');
 
-        $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
-        $manipulator->create($email, $password, $email, !$inactive, $superadmin);
+        $manipulator = $this->getContainer()->get('lomuserbundle.user_manipulator');
+        $manipulator->create($email, $password, $fullname, $institution, !$inactive, $superadmin);
 
         $output->writeln(sprintf('Created user <comment>%s</comment>', $email));
     }
@@ -86,7 +89,7 @@ EOT
             $email = $this->getHelper('dialog')->askAndValidate(
                 $output,
                 'Please choose an email:',
-                function($email) {
+                function ($email) {
                     if (empty($email)) {
                         throw new \Exception('Email can not be empty');
                     }
@@ -97,11 +100,41 @@ EOT
             $input->setArgument('email', $email);
         }
 
+        if (!$input->getArgument('fullname')) {
+            $fullname = $this->getHelper('dialog')->askAndValidate(
+                $output,
+                'Please choose a fullname:',
+                function ($fullname) {
+                    if (empty($fullname)) {
+                        throw new \Exception('fullname can not be empty');
+                    }
+
+                    return $fullname;
+                }
+            );
+            $input->setArgument('fullname', $fullname);
+        }
+
+        if (!$input->getArgument('institution')) {
+            $institution = $this->getHelper('dialog')->askAndValidate(
+                $output,
+                'Please choose a institution:',
+                function ($institution) {
+                    if (empty($institution)) {
+                        throw new \Exception('institution can not be empty');
+                    }
+
+                    return $institution;
+                }
+            );
+            $input->setArgument('institution', $institution);
+        }
+
         if (!$input->getArgument('password')) {
             $password = $this->getHelper('dialog')->askHiddenResponseAndValidate(
                 $output,
                 'Please choose a password:',
-                function($password) {
+                function ($password) {
                     if (empty($password)) {
                         throw new \Exception('Password can not be empty');
                     }

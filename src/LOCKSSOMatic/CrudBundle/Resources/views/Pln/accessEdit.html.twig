@@ -3,7 +3,7 @@
 {% block body -%}
 	<h1>Pln edit access</h1>
 
-	<p>This table shows who has access to PLN {{ pln.name }}</p>
+	<p>This table shows users without the role PLN_ADMIN in {{ pln.name }}.</p>
 
 	{{ form(access_edit_form) }}
 

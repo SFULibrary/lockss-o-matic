@@ -1,12 +1,35 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
 use J20\Uuid\Uuid;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 use LOCKSSOMatic\CrudBundle\Form\ContentProviderType;
-use LOCKSSOMatic\CrudBundle\Service\DepositBuilder;
 use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SwordBundle\Exceptions\HostMismatchException;
 use LOCKSSOMatic\SwordBundle\Exceptions\MaxUploadSizeExceededException;
@@ -25,13 +48,17 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ContentProviderController extends Controller
 {
-
     /**
-     * Lists all ContentProvider entities.
+     * Lists all ContentProvider entities across all PLNs.
+     * Does pagination.
      *
      * @Route("/", name="contentprovider")
      * @Method("GET")
      * @Template()
+     * 
+     * @param Request $request
+     * 
+     * @return array
      */
     public function indexAction(Request $request)
     {
@@ -45,7 +72,6 @@ class ContentProviderController extends Controller
             25
         );
 
-
         return array(
             'entities' => $entities,
         );
@@ -57,6 +83,10 @@ class ContentProviderController extends Controller
      * @Route("/", name="contentprovider_create")
      * @Method("POST")
      * @Template("LOCKSSOMaticCrudBundle:ContentProvider:new.html.twig")
+     * 
+     * @param Request $request
+     * 
+     * @return RedirectResponse|array
      */
     public function createAction(Request $request)
     {
@@ -71,7 +101,7 @@ class ContentProviderController extends Controller
             }
             $em->persist($entity);
             $em->flush();
-
+            $this->addFlash('success', 'The content provider was saved.');
             return $this->redirect($this->generateUrl(
                 'contentprovider_show',
                 array('id' => $entity->getId())
@@ -80,7 +110,7 @@ class ContentProviderController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -102,9 +132,9 @@ class ContentProviderController extends Controller
             )
         );
 
-            $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Create'));
 
-            return $form;
+        return $form;
     }
 
     /**
@@ -113,6 +143,8 @@ class ContentProviderController extends Controller
      * @Route("/new", name="contentprovider_new")
      * @Method("GET")
      * @Template()
+     * 
+     * @return array
      */
     public function newAction()
     {
@@ -121,7 +153,7 @@ class ContentProviderController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -131,6 +163,10 @@ class ContentProviderController extends Controller
      * @Route("/{id}", name="contentprovider_show")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $id
+     * 
+     * @return array
      */
     public function showAction($id)
     {
@@ -145,7 +181,7 @@ class ContentProviderController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -156,6 +192,10 @@ class ContentProviderController extends Controller
      * @Route("/{id}/edit", name="contentprovider_edit")
      * @Method("GET")
      * @Template()
+     * 
+     * @param int $id
+     * 
+     * @return array
      */
     public function editAction($id)
     {
@@ -171,8 +211,8 @@ class ContentProviderController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -198,9 +238,9 @@ class ContentProviderController extends Controller
             )
         );
 
-            $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update'));
 
-            return $form;
+        return $form;
     }
 
     /**
@@ -209,6 +249,11 @@ class ContentProviderController extends Controller
      * @Route("/{id}", name="contentprovider_update")
      * @Method("PUT")
      * @Template("LOCKSSOMaticCrudBundle:ContentProvider:edit.html.twig")
+     * 
+     * @param Request $request
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function updateAction(Request $request, $id)
     {
@@ -226,26 +271,32 @@ class ContentProviderController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
+            $this->addFlash('success', 'The content provider was saved.');
 
             return $this->redirect($this->generateUrl(
-                'contentprovider_edit',
+                'contentprovider_show',
                 array('id' => $id)
             ));
         }
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
 
     /**
-     * Deletes a ContentProvider entity.
+     * Deletes a ContentProvider entity. Does not do any
+     * confirmation, just deletes.
      *
      * @Route("/{id}/delete", name="contentprovider_delete")
+     * 
+     * @param int $id
+     * 
+     * @return RedirectRequest
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction($id)
     {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
@@ -262,6 +313,8 @@ class ContentProviderController extends Controller
 
     /**
      * Creates a form to delete a ContentProvider entity by id.
+     * 
+     * @todo I think this is unused.
      *
      * @param mixed $id The entity id
      *
@@ -281,11 +334,22 @@ class ContentProviderController extends Controller
     }
 
     /**
-     * Import a CSV file.
+     * Create a sample CSV document for later import. Users
+     * can edit the CSV file in a spreadsheet editor and
+     * add the necessary rows. The $id parameter is the 
+     * database id for the content provider to create the deposit. Streams
+     * the CSV file.
+     * 
+     * @todo test this.
      *
      * @param Request $request
      * @Route("/{id}/csv-sample", name="contentprovider_csv_sample")
      * @Method({"GET"})
+     * 
+     * @param Request $request
+     * @param int $id
+     * 
+     * @return Response
      */
     public function csvSampleAction(Request $request, $id)
     {
@@ -295,9 +359,10 @@ class ContentProviderController extends Controller
             array('URL', 'journalTitle', 'Size', 'Checksum Type', 'Checksum Value'),
             $provider->getPlugin()->getDefinitionalProperties()
         );
-        $fh = fopen("php://temp", 'r+');
+        $fh = fopen('php://temp', 'r+');
         fputcsv($fh, $params);
         rewind($fh);
+
         return new Response(
             stream_get_contents($fh),
             Response::HTTP_OK,
@@ -307,6 +372,12 @@ class ContentProviderController extends Controller
         );
     }
 
+    /**
+     * Build a CSV import form.
+     * 
+     * @param int $id
+     * @return Form
+     */
     private function createImportForm($id)
     {
         $formBuilder = $this->createFormBuilder();
@@ -314,74 +385,103 @@ class ContentProviderController extends Controller
             'uuid',
             'text',
             array(
-            'label'    => 'Deposit UUID',
+            'label' => 'Deposit UUID',
             'required' => false,
-            'attr'     => array(
-                'help' => 'Leave UUID blank to have one generated.'
-            )
+            'attr' => array(
+                'help' => 'Leave UUID blank to have one generated.',
+            ),
             )
         );
-            $formBuilder->add('title', 'text');
-            $formBuilder->add('summary', 'textarea');
-            $formBuilder->add('file', 'file', array('label' => 'CSV File'));
-            $formBuilder->add('submit', 'submit', array('label' => 'Import'));
-            $formBuilder->setAction($this->generateUrl(
+        $formBuilder->add('title', 'text');
+        $formBuilder->add('summary', 'textarea');
+        $formBuilder->add('file', 'file', array('label' => 'CSV File'));
+        $formBuilder->add('submit', 'submit', array('label' => 'Import'));
+        $formBuilder->setAction($this->generateUrl(
                 'contentprovider_csv_import',
                 array('id' => $id)
             ));
-            $formBuilder->setMethod('POST');
-            return $formBuilder->getForm();
+        $formBuilder->setMethod('POST');
+
+        return $formBuilder->getForm();
     }
 
-    private function precheckContent($record, Plugin $plugin) {
-        foreach($plugin->getDefinitionalProperties() as $property) {
-            if( ! array_key_exists($property, $record)) {
+    /**
+     * Check a row to make sure it's correct and ready for import.
+     * 
+     * @param array $record
+     * @param Plugin $plugin
+     * @throws BadRequestException
+     */
+    private function precheckContent($record, Plugin $plugin)
+    {
+        foreach ($plugin->getDefinitionalProperties() as $property) {
+            if (!array_key_exists($property, $record)) {
                 throw new BadRequestException("{$property} must have a value.");
             }
         }
     }
 
-    private function precheckDeposit($csv, ContentProvider $provider) {
+    /**
+     * Precheck the deposit CSV data before doing an import.
+     * 
+     * @param array $csv
+     * @param ContentProvider $provider
+     * @throws HostMismatchException
+     * @throws MaxUploadSizeExceededException
+     */
+    private function precheckDeposit($csv, ContentProvider $provider)
+    {
         $plugin = $provider->getPlugin();
         $permissionHost = $provider->getPermissionHost();
-        foreach($csv as $record) {
+        foreach ($csv as $record) {
             $this->precheckContent($record, $plugin);
             $host = parse_url($record['url'], PHP_URL_HOST);
-            if($host !== $permissionHost) {
+            if ($host !== $permissionHost) {
                 $msg = "Content host:{$host} Permission host: {$permissionHost}";
                 throw new HostMismatchException($msg);
             }
-            if($record['size'] && $record['size'] > $provider->getMaxFileSize()) {
+            if ($record['size'] && $record['size'] > $provider->getMaxFileSize()) {
                 throw new MaxUploadSizeExceededException("Content size {$record['size']} exceeds provider's maximum: {$provider->getMaxFileSize()}");
             }
         }
-        
     }
 
-    private function getCsvData(Form $form) {
+    /**
+     * Get the CSV data from an upload form.
+     * 
+     * @param Form $form
+     * @return array
+     */
+    private function getCsvData(Form $form)
+    {
         $data = $form->getData();
         $dataFile = $data['file'];
         $fh = $dataFile->openFile();
         $headers = array_map(function ($h) { return strtolower($h);}, $fh->fgetcsv());
         $headerIdx = array_flip($headers);
         $records = array();
-        while(($row = $fh->fgetcsv()) && (count($row) >= 2)) {
+        while (($row = $fh->fgetcsv()) && (count($row) >= 2)) {
             $record = array();
-            foreach($headers as $header) {
+            foreach ($headers as $header) {
                 $record[$header] = $row[$headerIdx[$header]];
             }
             $records[] = $record;
         }
+
         return $records;
     }
 
     /**
      * Import a CSV file.
-     *
-     * @param Request $request
+     * 
      * @Route("/{id}/csv", name="contentprovider_csv_import")
      * @Method({"GET", "POST"})
      * @Template()
+     * 
+     * @param Request $request
+     * @param int $id
+     * 
+     * @return array|RedirectResponse
      */
     public function csvAction(Request $request, $id)
     {
@@ -396,18 +496,18 @@ class ContentProviderController extends Controller
             $csv = $this->getCsvData($form);
             $this->precheckDeposit($csv, $provider);
 
-            /** @var DepositBuilder $builder */
+            /* @var DepositBuilder $builder */
             $depositBuilder = $this->container->get('crud.builder.deposit');
             $contentBuilder = $this->container->get('crud.builder.content');
             $auBuilder = $this->container->get('crud.builder.au');
 
             $deposit = $depositBuilder->fromForm($form, $provider, $em);
-            foreach($csv as $record) {
+            foreach ($csv as $record) {
                 $content = $contentBuilder->fromArray($record);
                 $content->setDeposit($deposit);
                 $auid = $content->generateAuid();
                 $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
-                    'auid' => $auid
+                    'auid' => $auid,
                 ));
                 if ($au === null) {
                     $au = $auBuilder->fromContent($content);
@@ -416,15 +516,17 @@ class ContentProviderController extends Controller
             }
 
             $em->flush();
+
             return $this->redirect($this->generateUrl(
                 'deposit_show',
                 array('id' => $deposit->getId())
             ));
         }
+
         return array(
-            'entity'   => $provider,
+            'entity' => $provider,
             'required' => $requiredParams,
-            'form'     => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 }

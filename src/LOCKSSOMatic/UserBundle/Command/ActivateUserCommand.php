@@ -30,7 +30,7 @@ class ActivateUserCommand extends ContainerAwareCommand
             ->setName('fos:user:activate')
             ->setDescription('Activate a user')
             ->setDefinition(array(
-                new InputArgument('username', InputArgument::REQUIRED, 'The username'),
+                new InputArgument('email', InputArgument::REQUIRED, 'The email'),
             ))
             ->setHelp(<<<EOT
 The <info>fos:user:activate</info> command activates a user (so they will be able to log in):
@@ -45,12 +45,12 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $username = $input->getArgument('username');
+        $email = $input->getArgument('email');
 
         $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
-        $manipulator->activate($username);
+        $manipulator->activate($email);
 
-        $output->writeln(sprintf('User "%s" has been activated.', $username));
+        $output->writeln(sprintf('User "%s" has been activated.', $email));
     }
 
     /**
@@ -58,19 +58,19 @@ EOT
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
-        if (!$input->getArgument('username')) {
-            $username = $this->getHelper('dialog')->askAndValidate(
+        if (!$input->getArgument('email')) {
+            $email = $this->getHelper('dialog')->askAndValidate(
                 $output,
-                'Please choose a username:',
-                function($username) {
-                    if (empty($username)) {
+                'Please choose a email:',
+                function ($email) {
+                    if (empty($email)) {
                         throw new \Exception('Username can not be empty');
                     }
 
-                    return $username;
+                    return $email;
                 }
             );
-            $input->setArgument('username', $username);
+            $input->setArgument('email', $email);
         }
     }
 }

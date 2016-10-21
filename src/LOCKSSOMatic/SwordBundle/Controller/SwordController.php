@@ -7,6 +7,7 @@ use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
+use LOCKSSOMatic\LockssBundle\Services\ContentFetcherService;
 use LOCKSSOMatic\LogBundle\Services\LoggingService;
 use LOCKSSOMatic\SwordBundle\Exceptions\BadRequestException;
 use LOCKSSOMatic\SwordBundle\Exceptions\DepositUnknownException;
@@ -14,11 +15,14 @@ use LOCKSSOMatic\SwordBundle\Exceptions\HostMismatchException;
 use LOCKSSOMatic\SwordBundle\Exceptions\MaxUploadSizeExceededException;
 use LOCKSSOMatic\SwordBundle\Exceptions\TargetOwnerUnknownException;
 use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
+use Monolog\Logger;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,7 +31,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SwordController extends Controller
 {
-
     /**
      * @var Namespaces
      */
@@ -38,6 +41,11 @@ class SwordController extends Controller
      */
     private $activityLog;
 
+    /**
+     * @var Logger
+     */
+    private $swordLog;
+
     public function __construct()
     {
         $this->namespaces = new Namespaces();
@@ -47,6 +55,7 @@ class SwordController extends Controller
     {
         parent::setContainer($container);
         $this->activityLog = $this->container->get('activity_log');
+        $this->swordLog = $this->container->get('monolog.logger.sword');
     }
 
     private function fetchHeader(Request $request, $name, $required = false)
@@ -54,8 +63,8 @@ class SwordController extends Controller
         if ($request->headers->has($name)) {
             return $request->headers->get($name);
         }
-        if ($request->headers->has("X-" . $name)) {
-            return $request->headers->has("X-" . $name);
+        if ($request->headers->has('X-'.$name)) {
+            return $request->headers->has('X-'.$name);
         }
         // only accept headers in query parameters for development purposes.
         if ($this->container->get('kernel')->getEnvironment() === 'dev' && $request->query->has($name)) {
@@ -64,20 +73,23 @@ class SwordController extends Controller
         if ($required === true) {
             throw new BadRequestException("Required HTTP header {$name} missing.");
         }
-        return null;
+
+        return;
     }
 
     private function getSimpleXML($string)
     {
         $xml = new SimpleXMLElement($string);
         $this->namespaces->registerNamespaces($xml);
+
         return $xml;
     }
 
     /**
-     *
      * @param type $uuid
+     *
      * @return ContentProvider
+     *
      * @throws TargetOwnerUnknownException
      */
     private function getContentProvider($uuid = null)
@@ -89,13 +101,15 @@ class SwordController extends Controller
         if ($contentProvider === null) {
             throw new TargetOwnerUnknownException();
         }
+
         return $contentProvider;
     }
 
     /**
-     *
      * @param type $uuid
+     *
      * @return Deposit
+     *
      * @throws DepositUnknownException
      */
     private function getDeposit($uuid = null)
@@ -117,14 +131,16 @@ class SwordController extends Controller
         if ($deposit->getContentProvider()->getId() !== $contentProvider->getId()) {
             throw new BadRequestException(
                 'Deposit or Content Provider incorrect. The '
-                . 'requested deposit does not belong to the requested content provider.'
+                .'requested deposit does not belong to the requested content provider.'
             );
         }
     }
 
     /**
      * @param type $url
+     *
      * @return Content
+     *
      * @throws BadRequestException
      */
     private function getContent(Deposit $deposit, $url)
@@ -133,24 +149,26 @@ class SwordController extends Controller
             ->getDoctrine()
             ->getRepository('LOCKSSOMaticCrudBundle:Content')
             ->findOneBy(array(
-            'url'     => $url,
+            'url' => $url,
             'deposit' => $deposit,
-            ));
+        ));
         if ($content === null) {
-            throw new BadRequestException('Content item not in database: ' . $url);
+            throw new BadRequestException('Content item not in database: '.$url);
         }
 
         return $content;
     }
 
     /**
-     * SWORD service document, aka sd-iri
+     * SWORD service document, aka sd-iri.
      *
      * @Route("/sd-iri", name="sword_service")
+     *
      * @param Request $request
      */
     public function serviceDocumentAction(Request $request)
     {
+        $this->swordLog->notice('service document');
         $obh = $this->fetchHeader($request, 'On-Behalf-Of', true);
         $provider = $this->getContentProvider($obh);
         $plugin = $provider->getPlugin();
@@ -162,18 +180,27 @@ class SwordController extends Controller
         $response = $this->render(
             'LOCKSSOMaticSwordBundle:Sword:serviceDocument.xml.twig',
             array(
-            'plugin'          => $plugin,
+            'plugin' => $plugin,
             'contentProvider' => $provider,
             'checksumMethods' => $checksumMethods,
             )
         );
         $response->headers->set('Content-Type', 'text/xml');
+
         return $response;
     }
 
     private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin)
     {
+        $pluginId = $plugin->getPluginIdentifier();
+        $nondefinitionalCPDs = $this->container->getParameter('lom_nondefinitional_cpds');
+
         foreach ($plugin->getDefinitionalProperties() as $property) {
+            if (array_key_exists($pluginId, $nondefinitionalCPDs) &&
+                in_array($property, $nondefinitionalCPDs[$pluginId])) {
+                continue;
+            }
+
             $nodes = $content->xpath("lom:property[@name='$property']");
             if (count($nodes) === 0) {
                 throw new BadRequestException("{$property} is a required property.");
@@ -191,7 +218,7 @@ class SwordController extends Controller
     private function precheckDeposit(SimpleXMLElement $atomEntry, ContentProvider $provider)
     {
         if (count($atomEntry->xpath('//lom:content')) === 0) {
-            throw new BadRequestException("Empty deposits are not allowed.");
+            throw new BadRequestException('Empty deposits are not allowed.');
         }
         $plugin = $provider->getPlugin();
 
@@ -222,25 +249,28 @@ class SwordController extends Controller
             'LOCKSSOMaticSwordBundle:Sword:depositReceipt.xml.twig',
             array(
             'contentProvider' => $contentProvider,
-            'deposit'         => $deposit
+            'deposit' => $deposit,
             )
         );
         $response->headers->set('Content-Type', 'text/xml');
+
         return $response;
     }
 
     /**
-     * Create a deposit by posting XML to this URL, aka col-iri
+     * Create a deposit by posting XML to this URL, aka col-iri.
      *
      * @Route("/col-iri/{providerUuid}", name="sword_collection", requirements={
      *      "providerUuid": ".{36}"
      * })
      * @Method({"POST"})
+     *
      * @param Request $request
-     * @param string $providerUuid
+     * @param string  $providerUuid
      */
     public function createDepositAction(Request $request, $providerUuid)
     {
+        $this->swordLog->notice('create deposit');
         $em = $this->getDoctrine()->getManager();
         $provider = $this->getContentProvider($providerUuid);
 
@@ -250,15 +280,17 @@ class SwordController extends Controller
 
         $depositBuilder = $this->container->get('crud.builder.deposit');
         $contentBuilder = $this->container->get('crud.builder.content');
+        $idGenerator = $this->container->get('crud.au.idgenerator');
         $deposit = $depositBuilder->fromSimpleXML($atomEntry, $em);
         $deposit->setContentProvider($provider);
         foreach ($atomEntry->xpath('lom:content') as $node) {
             /** @var Content $content */
             $content = $contentBuilder->fromSimpleXML($node, $em);
             $content->setDeposit($deposit);
-            $auid = $content->generateAuid();
+            $auid = $idGenerator->fromContent($content, false);
+
             $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
-                'auid' => $auid
+                'auid' => $auid,
             ));
             if ($au === null) {
                 $auBuilder = $this->container->get('crud.builder.au');
@@ -275,28 +307,31 @@ class SwordController extends Controller
             'sword_reciept',
             array(
             'providerUuid' => $provider->getUuid(),
-            'depositUuid'  => $deposit->getUuid()
+            'depositUuid' => $deposit->getUuid(),
             ),
             true
         );
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(Response::HTTP_CREATED);
+
         return $response;
     }
 
     /**
      * Get a deposit statement, showing the status of the deposit in LOCKSS,
-     * from this URL. Also known as state-iri
+     * from this URL. Also known as state-iri. Includes a sword:originalDeposit element for
+     * each content item in the deposit.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/state", name="sword_statement", requirements={
      *      "providerUuid": ".{36}",
      *      "depositUuid": ".{36}"
      * })
-
+     
      * @Method({"GET"})
      */
     public function statementAction($providerUuid, $depositUuid)
     {
+        $this->swordLog->notice("statement - {$providerUuid} - {$depositUuid}");
         $provider = $this->getContentProvider($providerUuid);
         $deposit = $this->getDeposit($depositUuid);
         $this->matchDepositToProvider($deposit, $provider);
@@ -304,33 +339,68 @@ class SwordController extends Controller
         if ($provider->getPln()) {
             $boxes = $provider->getPln()->getBoxes();
         }
-        $content = $deposit->getContent();
 
-        $status = array();
-        foreach ($content as $item) {
-            foreach ($boxes as $box) {
-                $status[$item->getId()][$box->getId()] = 'unknown';
-                // TODO get the items status from the box via http request
-                // OR get it from the database if we do that.
-            }
+        if ($deposit->getAgreement() == 1) {
+            $state = 'agreement';
+            $stateDescription = 'LOCKSS boxes have harvested the content and agree on the checksum.';
+        } else {
+            $state = 'inProgress';
+            $stateDescription = 'LOCKSS boxes have not completed harvesting the content.';
         }
+
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
+
         return $this->render(
             'LOCKSSOMaticSwordBundle:Sword:statement.xml.twig',
             array(
-                'contentProvider' => $provider,
-                'boxes'           => $boxes,
-                'deposit'         => $deposit,
-                'content'         => $content,
-                'status'          => $status,
+                'state' => $state,
+                'stateDescription' => $stateDescription,
+                'deposit' => $deposit,
                 ),
             $response
         );
     }
+    
+    /**
+     * @Route("/original/{providerUuid}/{depositUuid}/{filename}", name="original_deposit", requirements={
+     *      "providerUuid": ".{36}",
+     *      "depositUuid": ".{36}"
+     * })
+     * 
+     * @param type $providerUuid
+     * @param type $depositUuid
+     * @param type $filename
+     */
+    public function originalDepositAction($providerUuid, $depositUuid, $filename) {
+        $this->swordLog->notice("original deposit - {$providerUuid} - {$depositUuid} - {$filename}");
+        $provider = $this->getContentProvider($providerUuid);
+        $deposit = $this->getDeposit($depositUuid);
+        $this->matchDepositToProvider($deposit, $provider);
+        
+        $repo = $this->getDoctrine()->getManager()->getRepository('LOCKSSOMaticCrudBundle:Content');
+        $content = $repo->findByFilename($deposit, $filename);
+        
+        /** @var ContentFetcherService */
+        $fetcher = $this->container->get('lockss.content.fetcher');
+        $file = $fetcher->fetch($content[0]);
+        $tmp = tempnam(sys_get_temp_dir(), 'lockss-');
+        $handle = fopen($tmp, 'wb');
+        while($data = fread($file, 65535)) {
+            fwrite($handle, $data);
+        }
+        fclose($file);
+        fclose($handle);
+        
+        $response = new BinaryFileResponse($tmp);
+        $response->setContentDisposition('attachment', $filename);
+        $response->setStatusCode(Response::HTTP_OK);
+        $response->deleteFileAfterSend(true);
+        return $response;
+    }
 
     /**
-     * Get a deposit receipt from this URL, also known as the edit-iri
+     * Get a deposit receipt from this URL, also known as the edit-iri.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_reciept", requirements={
      *      "providerUuid": ".{36}",
@@ -340,9 +410,11 @@ class SwordController extends Controller
      */
     public function receiptAction($providerUuid, $depositUuid)
     {
+        $this->swordLog->notice("receipt - {$providerUuid} - {$depositUuid}");
         $provider = $this->getContentProvider($providerUuid);
         $deposit = $this->getDeposit($depositUuid);
         $this->matchDepositToProvider($deposit, $provider);
+
         return $this->renderDepositReceipt($provider, $deposit);
     }
 
@@ -358,6 +430,7 @@ class SwordController extends Controller
      */
     public function editDepositAction(Request $request, $providerUuid, $depositUuid)
     {
+        $this->swordLog->notice("edit - {$providerUuid} - {$depositUuid}");
         $this->activityLog->overrideUser($providerUuid);
 
         $provider = $this->getContentProvider($providerUuid);
@@ -376,7 +449,7 @@ class SwordController extends Controller
             }
             $recrawl = $contentChunk[0]->attributes()->recrawl;
             $content->setRecrawl($recrawl === 'true');
-            $updated++;
+            ++$updated;
         }
 
         $this->activityLog->overrideUser(null);
@@ -385,17 +458,18 @@ class SwordController extends Controller
             'sword_reciept',
             array(
             'providerUuid' => $provider->getUuid(),
-            'depositUuid'  => $deposit->getUuid()
+            'depositUuid' => $deposit->getUuid(),
             ),
             true
         );
         $response->headers->set('Location', $editIri);
         $response->setStatusCode(Response::HTTP_OK);
+
         return $response;
     }
 
     /**
-     * Fetch a representation of the deposit from this URL, aka cont-iri
+     * Fetch a representation of the deposit from this URL, aka cont-iri.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}", name="sword_view", requirements={
      *      "providerUuid": ".{36}",
@@ -410,11 +484,12 @@ class SwordController extends Controller
         $this->matchDepositToProvider($deposit, $provider);
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
+
         return $this->render(
             'LOCKSSOMaticSwordBundle:Sword:depositView.xml.twig',
             array(
                 'contentProvider' => $provider,
-                'deposit'         => $deposit,
+                'deposit' => $deposit,
                 ),
             $response
         );

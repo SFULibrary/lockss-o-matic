@@ -4,20 +4,17 @@ namespace LOCKSSOMatic\UserBundle\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
-use Doctrine\ORM\Mapping\PrePersist;
 
 /**
- * Message
+ * Message.
  *
  * @ORM\Table()
- * @HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="MessageRepository")
  */
 class Message
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -30,24 +27,28 @@ class Message
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      * })
-     * @var User
+     *
+     * @var User2
      */
     private $user;
 
     /**
      * @ORM\Column(name="seen", type="boolean")
-     * @var boolean
+     *
+     * @var bool
      */
     private $seen;
 
     /**
      * @ORM\Column(name="content", type="text")
+     *
      * @var string
      */
     private $content;
 
     /**
      * @ORM\Column(name="created", type="datetime")
+     *
      * @var DateTime
      */
     private $created;
@@ -55,12 +56,13 @@ class Message
     public function __construct()
     {
         $this->seen = false;
+        $this->created = new DateTime();
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -68,9 +70,10 @@ class Message
     }
 
     /**
-     * Set seen
+     * Set seen.
      *
-     * @param boolean $seen
+     * @param bool $seen
+     *
      * @return Message
      */
     public function setSeen($seen)
@@ -81,9 +84,9 @@ class Message
     }
 
     /**
-     * Get seen
+     * Get seen.
      *
-     * @return boolean
+     * @return bool
      */
     public function getSeen()
     {
@@ -91,9 +94,10 @@ class Message
     }
 
     /**
-     * Set content
+     * Set content.
      *
      * @param string $content
+     *
      * @return Message
      */
     public function setContent($content)
@@ -104,7 +108,7 @@ class Message
     }
 
     /**
-     * Get content
+     * Get content.
      *
      * @return string
      */
@@ -114,16 +118,7 @@ class Message
     }
 
     /**
-     * Set created
-     * @PrePersist
-     */
-    public function setCreated()
-    {
-        $this->created = new DateTime();
-    }
-
-    /**
-     * Get created
+     * Get created.
      *
      * @return DateTime
      */
@@ -133,12 +128,13 @@ class Message
     }
 
     /**
-     * Set user
+     * Set user.
      *
-     * @param \LOCKSSOMatic\UserBundle\Entity\User $user
+     * @param User $user
+     *
      * @return Message
      */
-    public function setUser(\LOCKSSOMatic\UserBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
@@ -146,9 +142,9 @@ class Message
     }
 
     /**
-     * Get user
+     * Get user.
      *
-     * @return \LOCKSSOMatic\UserBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {

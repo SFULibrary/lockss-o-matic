@@ -62,7 +62,7 @@ EOT
             $email = $this->getHelper('dialog')->askAndValidate(
                 $output,
                 'Please choose a email:',
-                function($email) {
+                function ($email) {
                     if (empty($email)) {
                         throw new \Exception('Username can not be empty');
                     }

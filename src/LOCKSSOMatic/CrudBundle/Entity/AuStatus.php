@@ -1,12 +1,36 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * AuStatus
+ * AuStatus captures the status of one AU on each box.
  *
  * @ORM\Table(name="au_status")
  * @ORM\Entity
@@ -14,21 +38,13 @@ use Doctrine\ORM\Mapping as ORM;
 class AuStatus implements GetPlnInterface
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
-
-    /**
-     * TODO - why isn't this a reference to the Box class?
-     * @var string
-     *
-     * @ORM\Column(name="box_hostname", type="string", length=255, nullable=false)
-     */
-    private $boxHostname;
 
     /**
      * @var DateTime
@@ -40,33 +56,40 @@ class AuStatus implements GetPlnInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="property_key", type="string", length=255, nullable=false)
+     * @ORM\Column(name="status", type="array")
      */
-    private $propertyKey;
+    private $status;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="property_value", type="text", nullable=true)
+     * 
+     * @ORM\Column(name="errors", type="array")
      */
-    private $propertyValue;
+    private $errors;
+
+    /**
+     * Build a new AuStatus.
+     */
+    public function __construct()
+    {
+        $this->status = array();
+        $this->errors = array();
+    }
 
     /**
      * @var Au
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auStatus")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $au;
 
-
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -74,32 +97,10 @@ class AuStatus implements GetPlnInterface
     }
 
     /**
-     * Set boxHostname
-     *
-     * @param string $boxHostname
-     * @return AuStatus
-     */
-    public function setBoxHostname($boxHostname)
-    {
-        $this->boxHostname = $boxHostname;
-
-        return $this;
-    }
-
-    /**
-     * Get boxHostname
-     *
-     * @return string
-     */
-    public function getBoxHostname()
-    {
-        return $this->boxHostname;
-    }
-
-    /**
-     * Set queryDate
+     * Set queryDate.
      *
      * @param DateTime $queryDate
+     *
      * @return AuStatus
      */
     public function setQueryDate($queryDate)
@@ -110,7 +111,7 @@ class AuStatus implements GetPlnInterface
     }
 
     /**
-     * Get queryDate
+     * Get queryDate.
      *
      * @return DateTime
      */
@@ -120,55 +121,34 @@ class AuStatus implements GetPlnInterface
     }
 
     /**
-     * Set propertyKey
+     * Set propertyValue.
      *
-     * @param string $propertyKey
+     * @param string $status
+     *
      * @return AuStatus
      */
-    public function setPropertyKey($propertyKey)
+    public function setStatus($status)
     {
-        $this->propertyKey = $propertyKey;
+        $this->status = $status;
 
         return $this;
     }
 
     /**
-     * Get propertyKey
+     * Get propertyValue.
      *
-     * @return string
+     * @return array
      */
-    public function getPropertyKey()
+    public function getStatus()
     {
-        return $this->propertyKey;
+        return $this->status;
     }
 
     /**
-     * Set propertyValue
-     *
-     * @param string $propertyValue
-     * @return AuStatus
-     */
-    public function setPropertyValue($propertyValue)
-    {
-        $this->propertyValue = $propertyValue;
-
-        return $this;
-    }
-
-    /**
-     * Get propertyValue
-     *
-     * @return string
-     */
-    public function getPropertyValue()
-    {
-        return $this->propertyValue;
-    }
-
-    /**
-     * Set au
+     * Set au.
      *
      * @param Au $au
+     *
      * @return AuStatus
      */
     public function setAu(Au $au = null)
@@ -180,7 +160,7 @@ class AuStatus implements GetPlnInterface
     }
 
     /**
-     * Get au
+     * Get au.
      *
      * @return Au
      */
@@ -190,10 +170,61 @@ class AuStatus implements GetPlnInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPln()
     {
+        if ($this->au === null) {
+            return;
+        }
+
         return $this->getAu()->getPln();
+    }
+
+    /**
+     * Set errors.
+     *
+     * @param string $errors
+     *
+     * @return AuStatus
+     */
+    public function setErrors($errors)
+    {
+        $this->errors = $errors;
+
+        return $this;
+    }
+
+    /**
+     * Get errors.
+     *
+     * @return string
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Summarize the status of an au mapping states to counts.
+     * 
+     * @return array
+     */
+    public function summary()
+    {
+        $statuses = array();
+        foreach ($this->status as $host => $response) {
+            $state = $response['status'];
+            if (!array_key_exists($state, $statuses)) {
+                $statuses[$state] = 0;
+            }
+            ++$statuses[$state];
+        }
+        $status = '';
+        foreach ($statuses as $state => $count) {
+            $status = "{$state}: {$count}\n";
+        }
+
+        return $status;
     }
 }

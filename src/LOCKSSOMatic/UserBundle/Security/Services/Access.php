@@ -2,13 +2,16 @@
 
 namespace LOCKSSOMatic\UserBundle\Security\Services;
 
+use FOS\UserBundle\Doctrine\UserManager;
 use LOCKSSOMatic\UserBundle\Entity\User;
-use LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder;
+use LOCKSSOMatic\UserBundle\Security\Acl\Permission\PermissionMap;
 use LOCKSSOMatic\UserBundle\Security\Acl\Permission\PlnAccessLevels;
+use Monolog\Logger;
 use Problematic\AclManagerBundle\Domain\AclManager;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -24,28 +27,67 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * In templates: {% if lom_access.hasAccess('PLNADMIN', pln) %} Yes {% else %} No {% endif %}
  *
  * In controllers: ($this->get('lom.access')->checkAccess("PLNADMIN", $pln);
- *
  */
 class Access
 {
+    /**
+     * @var AuthorizationChecker
+     */
     private $securityContext;
+
+    /**
+     * @var TokenStorage
+     */
     private $tokenStorage;
+
+    /**
+     * @var AclManager
+     */
     private $aclManager;
+
+    /**
+     * @var MutableAclProvider
+     */
     private $aclProvider;
 
     /**
-     * Build the access wrapper. The parameters are configured in services.yml
-     *
-     * @param AuthorizationChecker $securityContext
-     * @param AclManager $aclManager
-     * @param MutableAclProvider $aclProvider
+     * @var Logger
      */
-    public function __construct(AuthorizationChecker $securityContext, TokenStorage $tokenStorage, AclManager $aclManager, MutableAclProvider $aclProvider)
+    private $logger;
+    
+    /**
+     * @var UserManager
+     */
+    private $userManager;
+
+    public function setAuthChecker(AuthorizationChecker $securityContext)
     {
         $this->securityContext = $securityContext;
+    }
+
+    public function setTokenStorage(TokenStorage $tokenStorage)
+    {
         $this->tokenStorage = $tokenStorage;
+    }
+
+    public function setAclManager(AclManager $aclManager)
+    {
         $this->aclManager = $aclManager;
+    }
+
+    public function setAclProvider(MutableAclProvider $aclProvider)
+    {
         $this->aclProvider = $aclProvider;
+    }
+
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
+    
+    public function setUserManager(UserManager $userManager)
+    {
+        $this->userManager = $userManager;
     }
 
     /**
@@ -54,8 +96,6 @@ class Access
      *
      * @param string $permission
      * @param object $entity
-     *
-     * @return null
      *
      * @throws AccessDeniedException if access is denied.
      */
@@ -68,10 +108,23 @@ class Access
         if (($entity === null) && ($this->securityContext->isGranted($permission))) {
             return;
         }
+
         if ($this->securityContext->isGranted($permission, $entity)) {
             return;
         }
+
         throw new AccessDeniedException("$permission is required for this page.");
+    }
+
+    protected function getAcl($objectId)
+    {
+        try {
+            return $this->aclProvider->findAcl($objectId);
+        } catch (AclNotFoundException $ex) {
+            $this->logger->info("No ACL for {$objectId} ".$ex->getMessage());
+
+            return $this->aclProvider->createAcl($objectId);
+        }
     }
 
     /**
@@ -81,14 +134,18 @@ class Access
      * @param string $permission
      * @param object $entity
      *
-     * @return boolean permission granted
+     * @return bool permission granted
      */
     public function hasAccess($permission, $entity = null, $user = null)
     {
         if ($user === null) {
-            $user = $this->tokenStorage->getToken()->getUser();
+            if ($this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+                $user   = $this->tokenStorage->getToken()->getUser();
+            } else {
+                $user = new User();
+            }
         }
-        
+
         if ($user->hasRole('ROLE_ADMIN')) {
             return true;
         }
@@ -96,25 +153,23 @@ class Access
         if ($entity === null) {
             return $user->hasRole($permission);
         }
-        
+
         // because it can be any arbitrary user, not just the current user,
         // isGranted() won't work here.
         $objectId = ObjectIdentity::fromDomainObject($entity);
-        try {
-            $acl = $this->aclProvider->findAcl($objectId);
-        } catch (\Exception $ex) {
-            return false;
-        }
+
+        $acl = $this->getAcl($objectId);
+        $pm = new PermissionMap();
+        $masks = $pm->getMasks($permission, $entity);
+
         $securityId = UserSecurityIdentity::fromAccount($user);
-        $builder = new MaskBuilder();
-        $builder->add(constant('LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder::MASK_' . $permission));
-        $mask = $builder->get();
         try {
-            return $acl->isGranted(array($mask), array($securityId), true);
+            return $acl->isGranted($masks, array($securityId), true);
         } catch (\Exception $ex) {
+            //die($ex->getMessage());
             // no need to do anything here.
         }
-        
+
         return false;
     }
 
@@ -126,43 +181,44 @@ class Access
                 return $level;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
-     * Grant a role to a user
+     * Grant a role to a user.
      *
      * @param string $role
-     * @param User $user
+     * @param User   $user
      */
     public function grantRole($role, $user)
     {
         $user->addRole($role);
     }
-    
+
     /**
-     * Revoke a role from a user
+     * Revoke a role from a user.
      *
      * @param string $role
-     * @param User $user
+     * @param User   $user
      */
     public function revokeRole($role, $user)
     {
         $user->removeRole($role);
     }
-    
+
     /**
      * Grant a permission to a user for an object.
      *
-     * @param string $mask
+     * @param string $permission
      * @param object $entity
-     * @param User $user
+     * @param User   $user
      */
-    public function grantAccess($mask, $entity, $user = null)
+    public function grantAccess($permission, $entity, $user = null)
     {
         $this->aclManager->addObjectPermission(
             $entity,
-            constant('LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder::MASK_' . $mask),
+            constant('LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder::MASK_'.$permission),
             $user
         );
     }
@@ -171,19 +227,15 @@ class Access
      * Set a user's access level. Unlike grantAccess, this method first revokes
      * all object permissions for the user before adding the new one.
      *
-     * @param string $mask
+     * @param string $permission
      * @param object $entity
-     * @param User $user
+     * @param User   $user
      */
-    public function setAccess($mask, $entity, $user = null)
+    public function setAccess($permission, $entity, $user = null)
     {
         $this->aclManager->revokeAllObjectPermissions($entity, $user);
-        if ($mask) {
-            $this->aclManager->setObjectPermission(
-                $entity,
-                constant('LOCKSSOMatic\UserBundle\Security\Acl\Permission\MaskBuilder::MASK_' . $mask),
-                $user
-            );
+        if ($permission) {
+            $this->grantAccess($permission, $entity, $user);
         }
     }
 
@@ -191,7 +243,7 @@ class Access
      * Revoke all access for an entity from a user.
      *
      * @param object $entity
-     * @param User $user
+     * @param User   $user
      */
     public function revokeAccess($entity, $user = null)
     {

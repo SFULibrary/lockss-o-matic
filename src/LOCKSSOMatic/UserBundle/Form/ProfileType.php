@@ -9,7 +9,6 @@ use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
 class ProfileType extends AbstractType
 {
-    
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('email');
@@ -22,12 +21,12 @@ class ProfileType extends AbstractType
         ));
         $builder->add('submit', 'submit');
     }
-    
+
     public function getName()
     {
         return 'lom_user_profile';
     }
-    
+
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(

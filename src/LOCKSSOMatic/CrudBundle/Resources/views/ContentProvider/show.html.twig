@@ -55,7 +55,15 @@
             </tr>
             <tr>
                 <th>LOCKSS Plugin</th>
-                <td><a href="{{ path('plugin_show', {'id': entity.plugin.id}) }}">{{ entity.plugin.name }}</a></td>
+                <td>
+					{% if entity.plugin is defined %}
+						<a href="{{ path('plugin_show', {'id': entity.plugin.id}) }}">{{ entity.plugin }}</a>
+					{% endif %}
+				</td>
+            </tr>
+            <tr>
+                <th>Service Document</th>
+                <td><a href="{{ url('sword_service', {'On-Behalf-Of': entity.uuid}) }}">XML</a></td>
             </tr>
         </tbody>
     </table>

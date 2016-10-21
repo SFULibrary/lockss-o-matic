@@ -16,3 +16,7 @@ _errors:
 
 _main:
     resource: routing.yml
+
+_assetic:
+    resource: .
+    type:     assetic

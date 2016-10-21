@@ -21,7 +21,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
  */
 class LoggingService
 {
-
     /**
      * @var EntityManager
      */
@@ -45,7 +44,7 @@ class LoggingService
     /**
      * Is the logger enabled?
      *
-     * @var boolean
+     * @var bool
      */
     private $enabled = true;
 
@@ -106,6 +105,7 @@ class LoggingService
         if ($this->request === null) {
             $this->request = $this->container->get('request_stack')->getCurrentRequest();
         }
+
         return $this->request;
     }
 
@@ -119,6 +119,7 @@ class LoggingService
         if ($this->tokenStorage === null) {
             $this->tokenStorage = $this->container->get('security.token_storage');
         }
+
         return $this->tokenStorage;
     }
 
@@ -132,6 +133,7 @@ class LoggingService
         if ($this->em === null) {
             $this->em = $this->container->get('doctrine')->getManager();
         }
+
         return $this->em;
     }
 
@@ -169,6 +171,7 @@ class LoggingService
             if (!preg_match('/^LOCKSSOMatic/', $class)) {
                 continue;
             }
+
             return $f;
         }
     }
@@ -176,7 +179,7 @@ class LoggingService
     /**
      * The SWORD bundle doesn't use Symfony users in the normal way. User IDs
      * are really UUIDs passed as HTTP headers or query parameters.
-     * overrideUser() lets code specify the user more than just "anon."
+     * overrideUser() lets code specify the user more than just "anon.".
      *
      * @param type $user
      */
@@ -198,6 +201,7 @@ class LoggingService
      * Otherwise, return 'console/' + the shell/command line user name.
      *
      * @param array $details
+     *
      * @return string
      */
     public function getUser(array $details = array())
@@ -212,11 +216,12 @@ class LoggingService
         if (array_key_exists('user', $details)) {
             return $details['user'];
         }
-        return 'console/' . getenv('USER');
+
+        return 'console/'.getenv('USER');
     }
 
     /**
-     * Create and store one log message
+     * Create and store one log message.
      *
      * The second parameter is an array of message details with keys
      *   level, a message level, defaults to info
@@ -224,7 +229,7 @@ class LoggingService
      *   message, the detailed message, defaults to null,
      *
      * @param string $summary a brief message
-     * @param array $details array with message details.
+     * @param array  $details array with message details.
      */
     public function log($summary, array $details = array())
     {
@@ -234,9 +239,9 @@ class LoggingService
         $entry = new LogEntry();
         # set some defaults.
         $details = array_merge(array(
-            'level'     => 'info',
-            'pln'       => null,
-            'message'   => null,
+            'level' => 'info',
+            'pln' => null,
+            'message' => null,
             ), $details);
 
         $frame = $this->findStackFrame();
@@ -265,7 +270,8 @@ class LoggingService
      * Log a doctrine event.
      *
      * @param EventArgs $args
-     * @param array $details
+     * @param array     $details
+     *
      * @throws Exception
      */
     private function doctrineLog(EventArgs $args, $details = array())
@@ -273,11 +279,11 @@ class LoggingService
         if ($args instanceof LifecycleEventArgs) {
             $entity = $args->getEntity();
             $id = $entity->getId();
-        } else if ($args instanceof PostFlushEventArgs) {
+        } elseif ($args instanceof PostFlushEventArgs) {
             $entity = $details['entity'];
             $id = $details['id'];
         } else {
-            throw new Exception('Unknown class ' . get_class($args));
+            throw new Exception('Unknown class '.get_class($args));
         }
 
         $class = get_class($entity);
@@ -307,7 +313,7 @@ class LoggingService
             $args,
             array(
             'action' => 'created',
-            'level'  => 'doctrine',
+            'level' => 'doctrine',
             )
         );
     }
@@ -323,7 +329,7 @@ class LoggingService
             $args,
             array(
             'action' => 'updated',
-            'level'  => 'doctrine',
+            'level' => 'doctrine',
             )
         );
     }
@@ -336,6 +342,7 @@ class LoggingService
      * session.
      *
      * @param LifecycleEventArgs $args
+     *
      * @return type
      */
     public function preRemove(LifecycleEventArgs $args)
@@ -349,7 +356,7 @@ class LoggingService
             'entity_removed',
             array(
             'entity' => $entity,
-            'id'     => $entity->getId(),
+            'id' => $entity->getId(),
             )
         );
     }
@@ -359,7 +366,8 @@ class LoggingService
      * for a removed entity, and creates a log of its removal.
      *
      * @param PostFlushEventArgs $args
-     * @return boolean
+     *
+     * @return bool
      */
     public function postFlush(PostFlushEventArgs $args)
     {
@@ -381,12 +389,13 @@ class LoggingService
             $args,
             array(
             'action' => 'deleted',
-            'level'  => 'doctrine',
+            'level' => 'doctrine',
             'entity' => $entity,
-            'id'     => $id,
+            'id' => $id,
             )
         );
-            return true;
+
+        return true;
     }
 
     /**
@@ -394,8 +403,9 @@ class LoggingService
      * get the logs and save them on disk, return them to a browser, or
      * whatever.
      *
-     * @param boolean $header include the CSV header
-     * @param boolean $purge remove the exported log entries
+     * @param bool $header include the CSV header
+     * @param bool $purge  remove the exported log entries
+     *
      * @return resource
      */
     public function export($header = true, $purge = false)
@@ -421,13 +431,14 @@ class LoggingService
                 $em->flush($entry);
             }
             $em->clear();
-            $count++;
+            ++$count;
         }
         if ($purge) {
             $em->flush();
-            $this->log($count . ' log entries purged from the database.');
+            $this->log($count.' log entries purged from the database.');
         }
         rewind($handle);
+
         return $handle;
     }
 
@@ -440,8 +451,9 @@ class LoggingService
      *   // do stuff with the log data, contains 100 entries in CSV.
      * }
      *
-     * @param boolean $header include the CSV header
-     * @param boolean $purge remove the exported log entries
+     * @param bool $header include the CSV header
+     * @param bool $purge  remove the exported log entries
+     *
      * @return callback
      */
     public function exportCallback($header = true, $purge = false)
@@ -458,18 +470,18 @@ class LoggingService
 
         $callback = function ($n = 100) use ($em, $iterator, $finished) {
             if ($finished) {
-                return null;
+                return;
             }
             // reset the execution time limit - this can take a long while,
             // and even though it is constantly returning data to the browser
             // Apache will kill it.
             set_time_limit(30);
-            $handle = fopen('php://temp/memory:' . 1024 * 1024, 'w+');
+            $handle = fopen('php://temp/memory:'. 1024 * 1024, 'w+');
             $i = 0;
             while ($i < $n && $iterator->valid() && $row = $iterator->current()) {
                 $entry = $row[0];
                 fputcsv($handle, $entry->toArray());
-                $i++;
+                ++$i;
                 $em->detach($entry);
                 $iterator->next();
             }
@@ -478,12 +490,13 @@ class LoggingService
                 $finished = true;
             }
             if ($i === 0) {
-                return null;
+                return;
             }
             fflush($handle);
             rewind($handle);
             $content = stream_get_contents($handle);
             fclose($handle);
+
             return $content;
         };
 

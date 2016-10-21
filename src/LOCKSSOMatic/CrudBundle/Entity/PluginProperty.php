@@ -1,5 +1,29 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -7,7 +31,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Hierarchial plugin property as defined by a plugin XML file.
+ * Hierarchial plugin property as defined by a plugin XML file. Plugin properties
+ * have a key and either a value or children. They may have a parent.
  *
  * @ORM\Table(name="plugin_properties")
  * @ORM\Entity
@@ -15,7 +40,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PluginProperty
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -43,7 +68,16 @@ class PluginProperty
     private $propertyValue;
 
     /**
-     * The parent of the property
+     * True if the property value is a list/array.
+     *
+     * @var bool
+     *
+     * @ORM\Column(name="is_list", type="boolean", nullable=false)
+     */
+    private $isList;
+
+    /**
+     * The parent of the property.
      *
      * @var PluginProperty
      *
@@ -61,7 +95,7 @@ class PluginProperty
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="pluginProperties")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $plugin;
@@ -70,20 +104,24 @@ class PluginProperty
      * The child properties of this property.
      *
      * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="parent");
+     *
      * @var PluginProperty[]
      */
     private $children;
 
+    /**
+     * Construct a plugin property.
+     */
     public function __construct()
     {
         $this->children = new ArrayCollection();
+        $this->isList = false;
     }
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -91,9 +129,10 @@ class PluginProperty
     }
 
     /**
-     * Set propertyKey
+     * Set propertyKey.
      *
      * @param string $propertyKey
+     *
      * @return PluginProperty
      */
     public function setPropertyKey($propertyKey)
@@ -104,7 +143,7 @@ class PluginProperty
     }
 
     /**
-     * Get propertyKey
+     * Get propertyKey.
      *
      * @return string
      */
@@ -114,32 +153,54 @@ class PluginProperty
     }
 
     /**
-     * Set propertyValue
+     * Set propertyValue, which is either a string or an array of strings.
      *
-     * @param string $propertyValue
-     * @return PluginProperty
+     * @param string|array $propertyValue
+     *
+     * @return PlnProperty
      */
     public function setPropertyValue($propertyValue)
     {
-        $this->propertyValue = $propertyValue;
+        if (is_array($propertyValue)) {
+            $this->isList = true;
+            $this->propertyValue = serialize($propertyValue);
+        } else {
+            $this->isList = false;
+            $this->propertyValue = $propertyValue;
+        }
 
         return $this;
     }
 
     /**
-     * Get propertyValue
+     * Get propertyValue. Returns either a string or an array of strings.
      *
-     * @return string
+     * @return mixed
      */
     public function getPropertyValue()
     {
+        if ($this->isList) {
+            return unserialize($this->propertyValue);
+        }
+
         return $this->propertyValue;
     }
 
     /**
-     * Set parent
+     * Return true if the value of the property is a list.
+     *
+     * @return bool
+     */
+    public function isList()
+    {
+        return $this->isList;
+    }
+
+    /**
+     * Set parent.
      *
      * @param PluginProperty $parent
+     *
      * @return PluginProperty
      */
     public function setParent(PluginProperty $parent = null)
@@ -148,12 +209,12 @@ class PluginProperty
         if ($parent !== null) {
             $parent->addChild($this);
         }
-        
+
         return $this;
     }
 
     /**
-     * Get parent
+     * Get parent.
      *
      * @return PluginProperty
      */
@@ -165,7 +226,7 @@ class PluginProperty
     /**
      * Return true if the property has a parent.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasParent()
     {
@@ -173,9 +234,10 @@ class PluginProperty
     }
 
     /**
-     * Set plugin
+     * Set plugin.
      *
      * @param Plugin $plugin
+     *
      * @return PluginProperty
      */
     public function setPlugin(Plugin $plugin = null)
@@ -187,7 +249,7 @@ class PluginProperty
     }
 
     /**
-     * Get plugin
+     * Get plugin.
      *
      * @return Plugin
      */
@@ -197,9 +259,10 @@ class PluginProperty
     }
 
     /**
-     * Add children
+     * Add children.
      *
      * @param PluginProperty $children
+     *
      * @return PluginProperty
      */
     public function addChild(PluginProperty $children)
@@ -210,7 +273,7 @@ class PluginProperty
     }
 
     /**
-     * Remove children
+     * Remove children.
      *
      * @param PluginProperty $children
      */
@@ -220,7 +283,7 @@ class PluginProperty
     }
 
     /**
-     * Get children
+     * Get children.
      *
      * @return Collection
      */
@@ -232,7 +295,7 @@ class PluginProperty
     /**
      * Return true if the property has child properties.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasChildren()
     {

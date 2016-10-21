@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class LogEntryController extends Controller
 {
-
     /**
      * Lists all LogEntry entities.
      *
@@ -34,7 +33,6 @@ class LogEntryController extends Controller
             $request->query->getInt('page', 1),
             25
         );
-
 
         return array(
             'entities' => $entities,
@@ -59,7 +57,7 @@ class LogEntryController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
         );
     }
 }

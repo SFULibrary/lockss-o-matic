@@ -1,11 +1,37 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Pln Properties are hierarchial.
+ * Content Properties are hierarchial.
+ * 
+ * @todo can this be a serialized array? Can it really be that simple?
  *
  * @ORM\Table(name="content_properties")
  * @ORM\Entity
@@ -13,7 +39,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ContentProperty implements GetPlnInterface
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -42,33 +68,37 @@ class ContentProperty implements GetPlnInterface
 
     /**
      * True if the property value is a list/array.
-     * @var boolean
+     *
+     * @var bool
      *
      * @ORM\Column(name="is_list", type="boolean", nullable=false)
      */
     private $isList;
 
     /**
-     * The Content for the property
+     * The Content for the property.
      *
      * @var Content
      *
      * @ORM\ManyToOne(targetEntity="Content", inversedBy="contentProperties")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="content_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="content_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $content;
 
+    /**
+     * Build a new content property.
+     */
     public function __construct()
     {
         $this->isList = false;
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -76,9 +106,10 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Set propertyKey
+     * Set propertyKey.
      *
      * @param string $propertyKey
+     *
      * @return PlnProperty
      */
     public function setPropertyKey($propertyKey)
@@ -89,7 +120,7 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Get propertyKey
+     * Get propertyKey.
      *
      * @return string
      */
@@ -99,9 +130,10 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Set propertyValue
+     * Set propertyValue.
      *
      * @param string|array $propertyValue
+     *
      * @return PlnProperty
      */
     public function setPropertyValue($propertyValue)
@@ -118,22 +150,23 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Get propertyValue
+     * Get propertyValue. Returns an array or a string.
      *
-     * @return mixed
+     * @return array|string
      */
     public function getPropertyValue()
     {
         if ($this->isList) {
             return unserialize($this->propertyValue);
         }
+
         return $this->propertyValue;
     }
 
     /**
      * Return true if the value of the property is a list.
      *
-     * @return boolean
+     * @return bool
      */
     public function isList()
     {
@@ -141,23 +174,24 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * Set content
+     * Set content.
      *
-     * @param \LOCKSSOMatic\CrudBundle\Entity\Content $content
+     * @param Content $content
+     *
      * @return ContentProperty
      */
-    public function setContent(\LOCKSSOMatic\CrudBundle\Entity\Content $content = null)
+    public function setContent(Content $content = null)
     {
         $this->content = $content;
         $content->addContentProperty($this);
-        
+
         return $this;
     }
 
     /**
-     * Get content
+     * Get content.
      *
-     * @return \LOCKSSOMatic\CrudBundle\Entity\Content
+     * @return Content
      */
     public function getContent()
     {
@@ -165,35 +199,11 @@ class ContentProperty implements GetPlnInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPln()
     {
         return $this->getContent()->getPln();
     }
 
-
-
-    /**
-     * Set isList
-     *
-     * @param boolean $isList
-     * @return ContentProperty
-     */
-    public function setIsList($isList)
-    {
-        $this->isList = $isList;
-
-        return $this;
-    }
-
-    /**
-     * Get isList
-     *
-     * @return boolean
-     */
-    public function getIsList()
-    {
-        return $this->isList;
-    }
 }

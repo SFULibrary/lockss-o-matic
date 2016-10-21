@@ -1,23 +1,45 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Exception;
 
 /**
  * LOCKSS archival unit.
  *
  * @ORM\Table(name="aus")
- * @ORM\Entity(repositoryClass="AuRepository")
- * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity()
  */
 class Au implements GetPlnInterface
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -28,13 +50,14 @@ class Au implements GetPlnInterface
     /**
      * True if this AU is managed by LOCKSSOMatic. Defaults to false.
      *
-     * @var boolean
+     * @var bool
      * @ORM\Column(name="managed", type="boolean", nullable=false)
      */
     private $managed;
 
     /**
      * The AU ID, as constructed by LOCKSS strange rules.
+     *
      * @var string
      *
      * @ORM\Column(name="auid", type="string", length=512, nullable=true)
@@ -42,23 +65,8 @@ class Au implements GetPlnInterface
     private $auid;
 
     /**
-     * The generated name of the AU.
-     *
-     * @var type
-     * @ORM\Column(name="au_name", type="string", length=512, nullable=false)
-     */
-    private $auName;
-
-    /**
-     * The URL for the manifest of this AU. Manifests are optional.
-     * @var string
-     *
-     * @ORM\Column(name="au_start_url", type="string", length=512, nullable=true)
-     */
-    private $auStartUrl;
-
-    /**
      * LOCKSSOMatic comment for this au. Its specific to LOCKSSOMatic.
+     *
      * @var string
      *
      * @ORM\Column(name="comment", type="string", length=512, nullable=true)
@@ -104,6 +112,7 @@ class Au implements GetPlnInterface
      * Hierarchial collection of properties for the AU.
      *
      * @ORM\OneToMany(targetEntity="AuProperty", mappedBy="au")
+     *
      * @var AuProperties[]
      */
     private $auProperties;
@@ -112,7 +121,8 @@ class Au implements GetPlnInterface
      * Timestamped list of AU status records.
      *
      * @ORM\OneToMany(targetEntity="AuStatus", mappedBy="au")
-     * @var AuStatus[]
+     *
+     * @var AuStatus[]|Collection
      */
     private $auStatus;
 
@@ -121,11 +131,14 @@ class Au implements GetPlnInterface
      * field.
      *
      * @ORM\OneToMany(targetEntity="Content", mappedBy="au")
+     *
      * @var Content[]
      */
     private $content;
 
-
+    /**
+     * Build a new, empty AU.
+     */
     public function __construct()
     {
         $this->managed = false;
@@ -135,9 +148,9 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -145,9 +158,10 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Set managed
+     * Set managed.
      *
-     * @param boolean $managed
+     * @param bool $managed
+     *
      * @return Au
      */
     public function setManaged($managed)
@@ -158,9 +172,9 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get managed
+     * Get managed.
      *
-     * @return boolean
+     * @return bool
      */
     public function getManaged()
     {
@@ -168,9 +182,10 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Set auid
+     * Set auid.
      *
      * @param string $auid
+     *
      * @return Au
      */
     public function setAuid($auid)
@@ -204,41 +219,28 @@ class Au implements GetPlnInterface
             }
             $properties[] = $p;
         }
+
         return $properties;
     }
 
     /**
-     * Get the properties which are definitional, according to the plugin's
-     * XML description.
-     * @return AuProperty[]
-     */
-    public function getDefinitionalProperties()
-    {
-        return $this->getPlugin()->getDefinitionalProperties();
-    }
-
-    /**
-     * Get the named AU property, optionally %-encoded.
+     * Get the named AU property value, optionally %-encoded.
      *
      * @param string $name
-     * @param bool $encoded
+     * @param bool   $encoded
+     *
      * @return string
      */
-    public function getAuProperty($name, $encoded = false)
+    public function getAuPropertyValue($name, $encoded = false)
     {
         $value = '';
-        foreach ($this->getAuProperties() as $prop) {
-            if ($prop->getPropertyKey() !== 'key') {
-                continue;
-            }
-            if ($prop->getPropertyValue() !== $name) {
-                continue;
-            }
-            foreach ($prop->getParent()->getChildren() as $child) {
-                if ($child->getPropertyKey() !== 'value') {
-                    continue;
-                }
-                $value = $child->getPropertyValue();
+        $property = $this->getAuProperty($name);
+        if ($property === null) {
+            return '';
+        }
+        foreach ($property->getChildren() as $prop) {
+            if ($prop->getPropertyKey() === 'value') {
+                $value = $prop->getPropertyValue();
             }
         }
         if ($encoded === false) {
@@ -246,38 +248,37 @@ class Au implements GetPlnInterface
         }
         $callback = function ($matches) {
             $char = ord($matches[0]);
-            return '%' . strtoupper(sprintf("%02x", $char));
+
+            return '%'.strtoupper(sprintf('%02x', $char));
         };
+
         return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
     }
 
     /**
-     * Set auStartUrl
+     * Get the named AU property.
      *
-     * @param string $auStartUrl
-     * @return Au
+     * @param string $name
+     * @param bool   $encoded
+     *
+     * @return AuProperty
      */
-    public function setAuStartUrl($auStartUrl)
+    public function getAuProperty($name)
     {
-        $this->auStartUrl = $auStartUrl;
+        foreach ($this->getAuProperties() as $prop) {
+            if ($prop->getPropertyKey() === 'key' && $prop->getPropertyValue() === $name) {
+                return $prop->getParent();
+            }
+        }
 
-        return $this;
+        return;
     }
 
     /**
-     * Get auStartUrl
-     *
-     * @return string
-     */
-    public function getAuStartUrl()
-    {
-        return $this->auStartUrl;
-    }
-    
-    /**
-     * Set comment
+     * Set comment.
      *
      * @param string $comment
+     *
      * @return Au
      */
     public function setComment($comment)
@@ -288,7 +289,7 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get comment
+     * Get comment.
      *
      * @return string
      */
@@ -298,9 +299,10 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Set pln
+     * Set pln.
      *
      * @param Pln $pln
+     *
      * @return Au
      */
     public function setPln(Pln $pln = null)
@@ -312,7 +314,7 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get pln
+     * Get pln.
      *
      * @return Pln
      */
@@ -322,9 +324,10 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Set contentprovider
+     * Set contentprovider.
      *
      * @param ContentProvider $contentprovider
+     *
      * @return Au
      */
     public function setContentprovider(ContentProvider $contentprovider = null)
@@ -336,7 +339,7 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get contentprovider
+     * Get contentprovider.
      *
      * @return ContentProvider
      */
@@ -346,9 +349,10 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Set plugin
+     * Set plugin.
      *
      * @param Plugin $plugin
+     *
      * @return Au
      */
     public function setPlugin(Plugin $plugin = null)
@@ -360,7 +364,7 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get plugin
+     * Get plugin.
      *
      * @return Plugin
      */
@@ -370,9 +374,10 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Add auProperties
+     * Add auProperties.
      *
      * @param AuProperty $auProperties
+     *
      * @return Au
      */
     public function addAuProperty(AuProperty $auProperties)
@@ -383,7 +388,7 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Remove auProperties
+     * Remove auProperties.
      *
      * @param AuProperty $auProperties
      */
@@ -393,7 +398,7 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get auProperties
+     * Get auProperties.
      *
      * @return AuProperty[]
      */
@@ -403,9 +408,10 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Add auStatus
+     * Add auStatus.
      *
      * @param AuStatus $auStatus
+     *
      * @return Au
      */
     public function addAuStatus(AuStatus $auStatus)
@@ -416,7 +422,7 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Remove auStatus
+     * Remove auStatus.
      *
      * @param AuStatus $auStatus
      */
@@ -426,7 +432,7 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get auStatus
+     * Get auStatus.
      *
      * @return Collection
      */
@@ -436,9 +442,10 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Add content
+     * Add content.
      *
      * @param Content $content
+     *
      * @return Au
      */
     public function addContent(Content $content)
@@ -449,7 +456,7 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Remove content
+     * Remove content.
      *
      * @param Content $content
      */
@@ -459,9 +466,9 @@ class Au implements GetPlnInterface
     }
 
     /**
-     * Get content
+     * Get content.
      *
-     * @return Collection
+     * @return Collection|Content[]
      */
     public function getContent()
     {
@@ -480,35 +487,31 @@ class Au implements GetPlnInterface
         foreach ($this->getContent() as $content) {
             $size += $content->getSize();
         }
+
         return $size;
     }
 
-    public function __toString()
-    {
-        return "AU #" . $this->id;
-    }
-
-
     /**
-     * Set auName
-     *
-     * @param string $auName
-     * @return Au
-     */
-    public function setAuName($auName)
-    {
-        $this->auName = $auName;
-
-        return $this;
-    }
-
-    /**
-     * Get auName
-     *
+     * This doesn't seem to do anything at all. Odd that. Is it even used?
+     * 
      * @return string
      */
-    public function getAuName()
+    public function status()
     {
-        return $this->auName;
+        if (count($this->auStatus) > 0) {
+            return '';
+        }
+
+        return;
+    }
+
+    /**
+     * Return a string representation of the AU.
+     * 
+     * @return type
+     */
+    public function __toString()
+    {
+        return 'AU #'.$this->id;
     }
 }

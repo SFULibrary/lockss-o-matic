@@ -17,7 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * ChangePasswordCommand
+ * ChangePasswordCommand.
  */
 class ChangePasswordCommand extends ContainerAwareCommand
 {
@@ -71,7 +71,7 @@ EOT
             $email = $this->getHelper('dialog')->askAndValidate(
                 $output,
                 'Please give the email:',
-                function($email) {
+                function ($email) {
                     if (empty($email)) {
                         throw new \Exception('Username can not be empty');
                     }
@@ -86,7 +86,7 @@ EOT
             $password = $this->getHelper('dialog')->askHiddenResponseAndValidate(
                 $output,
                 'Please enter the new password:',
-                function($password) {
+                function ($password) {
                     if (empty($password)) {
                         throw new \Exception('Password can not be empty');
                     }

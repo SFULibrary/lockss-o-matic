@@ -1,5 +1,0 @@
-services:
-    pln_plugin_importer:
-        class: LOCKSSOMatic\ImportExportBundle\Services\PLNPluginImportService
-        calls:
-            - [ setContainer, ["@service_container"] ]

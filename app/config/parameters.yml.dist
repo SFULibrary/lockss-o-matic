@@ -34,3 +34,21 @@ parameters:
 
     # Number of AUs per titledb.xml file
     lockss_aus_per_titledb: 50
+
+    # override the command-line router URL generator.    
+    router.request_context.host: lom.dv
+    router.request_context.scheme: http
+    router.request_context.base_url: /web/app_dev.php
+
+    # Allow these ips to access lockss.xml, titles.xml, etc. even if they aren't
+    # known lockss boxes. Either IP addresses or CIDRs.
+    lockss_allowed_ips:
+        - 127.0.0.1
+
+    # LOCKSSOMatic considers these plugin config params to be non-definitional
+    # even though LOCKSS thinks otherwise.
+    lom_nondefinitional_cpds:
+        ca.sfu.lib.plugin.pkppln.PkpPlnPlugin: [ manifest_url, permission_url ]
+
+    # LOCKSSOMatic stores content downloaded from lockss caches here
+    lom_cached_download_dir: cached

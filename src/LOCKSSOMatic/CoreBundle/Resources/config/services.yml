@@ -1,0 +1,8 @@
+services:
+    lom.filepaths:
+        class: LOCKSSOMatic\CoreBundle\Services\FilePaths
+        calls:
+            - [ setLogger, ["@monolog.logger" ]]
+            - [ setKernelEnv, ["%kernel.root_dir%"]]
+            - [ setDownloadDir, ["%lom_cached_download_dir%"]]
+            

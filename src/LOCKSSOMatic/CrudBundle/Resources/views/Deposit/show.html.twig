@@ -8,8 +8,11 @@
 {% block body -%}
     <div class="btn-toolbar">
         <div class="btn-group pull-right">
-            <a href="{{ path('deposit') }}" class="btn btn-default">
+            <a href="{{ path('deposit', {'plnId': pln.id}) }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+            <a href="{{ path('depositstatus', { 'depositId': entity.id, 'plnId': pln.id }) }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-tasks"></span> Status
             </a>
         </div>
     </div>
@@ -25,11 +28,23 @@
                 <td>{{ entity.title }}</td>
             </tr>
             <tr>
+                <th>Agreement</th>
+                <td>{{ "%2.1f"|format(entity.agreement * 100) }}% - <a href="{{ path('depositstatus', {'depositId': entity.id, 'plnId': pln.id}) }}">status</a></td>
+            </tr>
+            <tr>
                 <th>Summary</th>
                 <td>{{ entity.summary }}</td>
             </tr>
             <tr>
-                <th>Datedeposited</th>
+                <th>Deposit reciept</th>
+                <td><a href="{{ url('sword_reciept', {'depositUuid': entity.uuid, 'providerUuid': entity.contentProvider.uuid}) }}">{{ url('sword_reciept', {'depositUuid': entity.uuid, 'providerUuid': entity.contentProvider.uuid}) }}</a></td>
+            </tr>
+            <tr>
+                <th>Deposit Statement</th>
+                <td><a href="{{ url('sword_statement', {'depositUuid': entity.uuid, 'providerUuid': entity.contentProvider.uuid}) }}">{{ url('sword_statement', {'depositUuid': entity.uuid, 'providerUuid': entity.contentProvider.uuid}) }}</a></td>
+            </tr>
+            <tr>
+                <th>Date deposited</th>
                 <td>{{ entity.dateDeposited|date('Y-m-d H:i:s') }}</td>
             </tr>
         </tbody>
@@ -50,7 +65,7 @@
         <tbody>
             {% for content in entity.content %}
                 <tr>
-                    <td><a href="{{ path('content_show', { 'id': content.id }) }}">{{ content.id }}</a></td>
+                    <td><a href="{{ path('content_show', { 'id': content.id, 'plnId': pln.id }) }}">{{ content.id }}</a></td>
                     <td>{{ content.url }}</td>
                     <td>{{ content.title }}</td>
                     <td>{{ content.size }}</td>

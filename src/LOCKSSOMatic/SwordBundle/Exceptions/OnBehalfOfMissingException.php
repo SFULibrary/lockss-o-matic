@@ -32,14 +32,13 @@ namespace LOCKSSOMatic\SwordBundle\Exceptions;
  */
 class OnBehalfOfMissingException extends BadRequestException
 {
-
     /**
      * Construct the exception.
      *
-     * @param string $message
+     * @param string     $message
      * @param \Exception $previous
-     * @param array $headers
-     * @param int $code
+     * @param array      $headers
+     * @param int        $code
      */
     public function __construct(
         $message = '',
@@ -48,6 +47,6 @@ class OnBehalfOfMissingException extends BadRequestException
         $code = 0
     ) {
         $str = 'On-Behalf-Of header missing. LOCKSSOMatic requires the On-Behalf-Of HTTP header for service documents. ';
-        parent::__construct($str . $message, $previous, $headers, $code);
+        parent::__construct($str.$message, $previous, $headers, $code);
     }
 }

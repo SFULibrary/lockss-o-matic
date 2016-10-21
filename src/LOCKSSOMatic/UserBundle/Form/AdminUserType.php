@@ -10,7 +10,7 @@ class AdminUserType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -19,7 +19,7 @@ class AdminUserType extends AbstractType
             ->add('fullname')
             ->add('institution')
             ->add('enabled', 'checkbox', array(
-                'label' => 'Account Enabled'
+                'label' => 'Account Enabled',
             ))
             ->add('roles', 'choice', array(
                 'label' => 'Roles',
@@ -33,14 +33,14 @@ class AdminUserType extends AbstractType
             ))
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'LOCKSSOMatic\UserBundle\Entity\User'
+            'data_class' => 'LOCKSSOMatic\UserBundle\Entity\User',
         ));
     }
 

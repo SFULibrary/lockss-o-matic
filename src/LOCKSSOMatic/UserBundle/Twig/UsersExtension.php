@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2014. Michael Joyce <ubermichael@gmail.com>.
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,11 +32,10 @@ use LOCKSSOMatic\UserBundle\Entity\User;
 /**
  * Wrapper around the user repository for use in twig templates. Lets you get a
  * list of users in any template. Configure this class as a service in
- * services.yml and then call it like this: {% for user in userList() %} ... {% endfor %}
+ * services.yml and then call it like this: {% for user in userList() %} ... {% endfor %}.
  */
 class UsersExtension extends \Twig_Extension
 {
-
     /**
      * @var Doctrine
      */
@@ -68,11 +67,12 @@ class UsersExtension extends \Twig_Extension
     {
         $em = $this->doctrine->getManager();
         $users = $em->getRepository('LOCKSSOMaticUserBundle:User')->findAll();
+
         return $users;
     }
 
     /**
-     * Get the extension's name
+     * Get the extension's name.
      *
      * @return string the name as configured in services.yml
      */

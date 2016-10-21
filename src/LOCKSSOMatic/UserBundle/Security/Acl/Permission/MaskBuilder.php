@@ -12,9 +12,9 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder as BaseMaskBuilder;
  */
 class MaskBuilder extends BaseMaskBuilder
 {
-    const MASK_PLNADMIN = 256;      // 1 << 8
+    const MASK_MONITOR = 256;      // 1 << 8
     const MASK_DEPOSIT = 512;       // 1 << 9
-    const MASK_MONITOR = 1024;      // 1 << 10
+    const MASK_PLNADMIN = 1024;      // 1 << 10
 
     const CODE_PLNADMIN = 'A';      // A for Admin.
     const CODE_DEPOSIT = 'P';       // P for dePosit

@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>{{ pln.name }} Plugin Registry</title>
+    </head>
+    <body>
+        <h3>{{ pln.name }} Plugin Registry</h3>        
+        <ul>
+            {% for plugin in pln.plugins %}
+                <li><a href="{{ url('configs_plugin', {'plnId': pln.id, 'filename': plugin.filename}) }}">{{ plugin.filename }}</a></li>
+            {% endfor %}
+        </ul>
+        <p>
+        LOCKSS system has permission to collect, preserve, and serve this Archival Unit
+        </p>
+    </body>
+</html>

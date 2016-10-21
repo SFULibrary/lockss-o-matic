@@ -43,17 +43,16 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
  */
 class SwordErrorListener
 {
-
     /**
      * @var TwigEngine
      */
     private $templating;
-    
+
     /**
      * @var callable
      */
     private $controller;
-    
+
     /**
      * @var Logger
      */
@@ -63,7 +62,7 @@ class SwordErrorListener
      * Construct the logger. Parameters are configured in services.yml.
      *
      * @param TwigEngine $templating
-     * @param Logger $logger
+     * @param Logger     $logger
      */
     public function __construct(TwigEngine $templating, Logger $logger)
     {
@@ -80,16 +79,17 @@ class SwordErrorListener
     {
         $exception = $event->getException();
 
-        if( ! $this->controller[0] instanceof SwordController) {
+        if (!$this->controller[0] instanceof SwordController) {
             return;
         }
+
+        $this->logger->critical($exception);
 
         if ($exception instanceof ApiException) {
             $response = new Response();
             $response->headers->add($exception->getHeaders());
             $response->headers->set('Content-Type', 'text/xml');
             $response->setStatusCode($exception->getStatusCode());
-            $statusCode = $exception->getStatusCode();
             $response->setContent($this->templating->render(
                 'LOCKSSOMaticSwordBundle:Sword:exceptionDocument.xml.twig',
                 array(
@@ -100,9 +100,10 @@ class SwordErrorListener
                 )
             ));
             $event->setResponse($response);
+
             return;
         }
-        
+
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
         $response->setStatusCode(500);
@@ -116,6 +117,7 @@ class SwordErrorListener
             )
         ));
         $event->setResponse($response);
+
         return;
     }
 

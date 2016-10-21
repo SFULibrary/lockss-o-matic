@@ -18,7 +18,14 @@ services:
 
     lom.access:
         class: LOCKSSOMatic\UserBundle\Security\Services\Access
-        arguments: [@security.authorization_checker, @security.token_storage, @problematic.acl_manager, @security.acl.provider, @doctrine]
+        calls:
+            - [ setAuthChecker, ["@security.authorization_checker"]]
+            - [ setTokenStorage, ["@security.token_storage"]]
+            - [ setAclManager, ["@problematic.acl_manager"]]
+            - [ setAclProvider, ["@security.acl.provider"]]
+            - [ setUserManager, ["@fos_user.user_manager"]]
+#            - [ setRegistry, ["@doctrine"] ]
+            - [ setLogger, ["@logger"] ]
         tags:
             - { name: acl.check }
 
@@ -28,3 +35,8 @@ services:
             - [ setLogger, ["@logger"] ]
             - [ setRegistry, ["@doctrine"] ]
             - [ setTokenStorage, ["@security.token_storage"]]
+            
+    lomuserbundle.user_manipulator:
+        class: LOCKSSOMatic\UserBundle\Util\UserManipulator
+        arguments: [@fos_user.user_manager]
+

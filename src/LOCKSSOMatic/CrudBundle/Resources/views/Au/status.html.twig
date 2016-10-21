@@ -1,0 +1,89 @@
+{% extends '::base.html.twig' %}
+
+{% macro bytesToSize(bytes) %}
+    {% spaceless %}
+        {% set kilobyte = 1024 %}
+        {% set megabyte = kilobyte * 1024 %}
+        {% set gigabyte = megabyte * 1024 %}
+        {% set terabyte = gigabyte * 1024 %}
+
+        {% if bytes < kilobyte %}
+            {{ bytes ~ ' B' }}
+        {% elseif bytes < megabyte %}
+            {{ (bytes / kilobyte)|number_format(2, '.') ~ ' KB' }}
+        {% elseif bytes < gigabyte %}
+            {{ (bytes / megabyte)|number_format(2, '.') ~ ' MB' }}
+        {% elseif bytes < terabyte %}
+            {{ (bytes / gigabyte)|number_format(2, '.') ~ ' GB' }}
+        {% else %}
+            {{ (bytes / terabyte)|number_format(2, '.') ~ ' TB' }}
+        {% endif %}
+    {% endspaceless %}
+{% endmacro %}
+{% import _self as self %}
+
+{% block pageheader %}
+    <h1>Au Status</h1>
+    <p>Displaying status queries for <a href="{{ path('au_show', {'id': entity.id, 'plnId': pln.id}) }}">{{ prop_generator.generateSymbol(entity, 'au_name') }}</a></p>
+    {% endblock %}
+
+{% block body -%}
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('au', {'plnId': pln.id}) }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+        </div>
+    </div>
+
+    {% for status in entity.auStatus|reverse %}
+        <h2>{{ status.queryDate|date }}</h2>
+        <p>Summary: {{ status.summary() }}</p>
+        <table class="table table-condensed table-stripped">
+            <thead>
+                <tr>
+                    <th></th>
+                        {% for hostname in status.status|keys|sort %}
+                        <th>{{hostname}}</th>
+                        {% endfor %}
+                </tr>                        
+            </thead>
+            <tbody>
+                {% set protohost = status.status|keys|sort|first %}
+                {% for key in status.status[protohost]|keys|sort %}
+                    <tr>
+                        <th scope="row">{{key}}</th>
+                            {% for hostname in status.status|keys|sort %}
+                            <td>{% if status.status[hostname][key] is defined %}{{status.status[hostname][key]}}{% endif %}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if status.errors|length > 0 %}
+            <h3>Errors</h3>
+
+            <ul>
+                {% for hostname in status.errors|keys|sort %}
+                    <li><b>{{ hostname }}</b><br/>
+                        {{ status.errors[hostname]|nl2br }}                    
+                    </li>
+                {% endfor %}
+            </ul>
+            
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts '@LOCKSSOMaticCrudBundle/Resources/public/js/au_status.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block stylesheets %}
+    {% stylesheets '@LOCKSSOMaticCrudBundle/Resources/public/css/au_status.css' %}
+    <link rel='stylesheet' href='{{ asset_url }}'>
+    {% endstylesheets %}
+{% endblock %}

@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AdminUserController extends Controller
 {
-
     /**
      * Lists all User entities.
      *
@@ -53,9 +52,12 @@ class AdminUserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $entity->setPlainPassword(bin2hex(random_bytes(10)));
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
+
+            $this->addFlash('success', 'The user account has been created with a random password. The user should start password recovery to login.');
 
             return $this->redirect($this->generateUrl('admin_user_show', array('id' => $entity->getId())));
         }
@@ -256,6 +258,7 @@ class AdminUserController extends Controller
      *
      * @Route("/{id}/access", name="admin_user_access")
      * @Template("LOCKSSOMaticUserBundle:AdminUser:access.html.twig")
+     *
      * @param type $id
      */
     public function showAccessAction($id)
@@ -263,6 +266,7 @@ class AdminUserController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find($id);
         $plns = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
+
         return array(
             'user' => $user,
             'plns' => $plns,
@@ -286,7 +290,7 @@ class AdminUserController extends Controller
         );
         $builder = $this->createFormBuilder($defaultData, $options);
         foreach ($plns as $pln) {
-            $builder->add('pln_' . $pln->getId(), 'choice', array(
+            $builder->add('pln_'.$pln->getId(), 'choice', array(
                 'label' => $pln->getName(),
                 'choices' => $levels,
                 'empty_value' => 'No access',
@@ -294,10 +298,11 @@ class AdminUserController extends Controller
                 'multiple' => false,
                 'expanded' => false,
                 'mapped' => false,
-                'required' => false
+                'required' => false,
             ));
         }
         $builder->add('submit', 'submit', array('label' => 'Update'));
+
         return $builder->getForm();
     }
 
@@ -305,6 +310,7 @@ class AdminUserController extends Controller
      * @Route("/{id}/access/edit", name="user_access_edit")
      * @Method("GET")
      * @Template("LOCKSSOMaticUserBundle:AdminUser:accessEdit.html.twig")
+     *
      * @param type $id
      */
     public function editAccessAction($id)
@@ -312,6 +318,7 @@ class AdminUserController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->find($id);
         $form = $this->createEditAccessForm($user);
+
         return array(
             'user' => $user,
             'form' => $form->createView(),
@@ -326,7 +333,7 @@ class AdminUserController extends Controller
         $formData = $request->request->all();
         $data = $formData['form'];
         foreach ($plns as $pln) {
-            $key = 'pln_' . $pln->getId();
+            $key = 'pln_'.$pln->getId();
             if (!array_key_exists($key, $data)) {
                 continue;
             }
@@ -337,8 +344,9 @@ class AdminUserController extends Controller
     /**
      * @Route("/{id}/access/edit", name="user_access_update")
      * @Method("POST")
+     *
      * @param Request $request
-     * @param type $id
+     * @param type    $id
      */
     public function updateAccessAction(Request $request, $id)
     {
@@ -348,10 +356,12 @@ class AdminUserController extends Controller
         $form->handleRequest($request);
         if ($form->isValid()) {
             $this->updateAccess($request, $user);
-            $this->addFlash('success', "The form was saved.");
+            $this->addFlash('success', 'The form was saved.');
+
             return $this->redirect($this->generateUrl('admin_user_access', array('id' => $id)));
         }
-        $this->addFlash('error', "The form was not saved.");
+        $this->addFlash('error', 'The form was not saved.');
+
         return $this->redirect($this->generateUrl('user_access_edit', array('id' => $id)));
     }
 }

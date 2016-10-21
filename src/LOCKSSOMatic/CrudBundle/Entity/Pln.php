@@ -1,5 +1,29 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,14 +35,23 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="plns")
  * @ORM\Entity
- *
- * TODO: Add plugin.registries (list of URLs)
- * TODO: add plugin.titleDbs
  */
 class Pln
 {
     /**
-     * @var integer
+     * LOCKSS will only recognize these properties in an XML file if they
+     * are lists.
+     * 
+     * @todo In PHP >=5.6 this can be a const array.
+     */
+    private static $LIST_REQUIRED = array(
+        'org.lockss.id.initialV3PeerList',
+        'org.lockss.titleDbs',
+        'org.lockss.plugin.registries',
+    );
+
+    /**
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -36,27 +69,37 @@ class Pln
     private $name;
 
     /**
-     * Property server for the PLN. This is the host of the lockss.xml file.
-     *
+     * Description of the PLN.
+     * 
      * @var string
-     *
-     * @ORM\Column(name="prop_server", type="string", length=255, nullable=false)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
-    private $propServer;
+    private $description;
 
     /**
-     * Path to the lockss.xml file in the propServer.
+     * The username for LOCKSSOMatic to communicate with the box. Not in the
+     * lockss.xml file.
      *
      * @var string
      *
-     * @ORM\Column(name="props_path", type="text", nullable=true)
+     * @ORM\Column(name="username", type="string", length=64, nullable=true)
      */
-    private $propsPath;
+    private $username;
+
+    /**
+     * The password for LOCKSSOMatic to communicate with the box.
+     *
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=64, nullable=true)
+     */
+    private $password;
 
     /**
      * A list of all AUs in the PLN. Probably very large.
      *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
+     *
      * @var ArrayCollection|Au[]
      */
     private $aus;
@@ -65,37 +108,55 @@ class Pln
      * List of boxes in the PLN.
      *
      * @ORM\OneToMany(targetEntity="Box", mappedBy="pln");
+     *
      * @var Box[]
      */
     private $boxes;
 
     /**
-     * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
-     *
-     * @ORM\OneToMany(targetEntity="PlnProperty", mappedBy="pln");
-     * @var PlnProperty[]
+     * Java Keystore file.
+     * 
+     * @var Keystore
+     * @ORM\OneToOne(targetEntity="Keystore", inversedBy="pln")
+     * @ORM\JoinColumn(name="keystore_id", referencedColumnName="id")
      */
-    private $plnProperties;
+    private $keystore;
 
     /**
+     * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
+     *
+     * @ORM\Column(name="property", type="array", nullable=true);
+     *
+     * @var array
+     */
+    private $properties;
+
+    /**
+     * List of content providers for this PLN. Each provider is associated with
+     * exactly one PLN.
+     * 
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
+     *
      * @var Pln[]
      */
     private $contentProviders;
 
+    /**
+     * Construct a PLN.
+     */
     public function __construct()
     {
         $this->aus = new ArrayCollection();
         $this->boxes = new ArrayCollection();
-        $this->plnProperties = new ArrayCollection();
+        $this->properties = array();
         $this->contentProviders = new ArrayCollection();
-        $this->plugins = new ArrayCollection();
+        $this->plugins = new ArrayCollection(); // $this->plugins is not defined here.
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -103,9 +164,10 @@ class Pln
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
+     *
      * @return Pln
      */
     public function setName($name)
@@ -116,7 +178,7 @@ class Pln
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -126,60 +188,20 @@ class Pln
     }
 
     /**
-     * Set propserver
-     *
-     * @param string $propserver
-     * @return Pln
-     */
-    public function setPropserver($propserver)
-    {
-        $this->propServer = $propserver;
-
-        return $this;
-    }
-
-    /**
-     * Get propserver
-     *
+     * Synonym for getName().
+     * 
      * @return string
      */
-    public function getPropserver()
-    {
-        return $this->propServer;
-    }
-
-    /**
-     * Set propsPath
-     *
-     * @param string $propsPath
-     * @return Pln
-     */
-    public function setPropsPath($propsPath)
-    {
-        $this->propsPath = $propsPath;
-
-        return $this;
-    }
-
-    /**
-     * Get propsPath
-     *
-     * @return string
-     */
-    public function getPropsPath()
-    {
-        return $this->propsPath;
-    }
-
     public function __toString()
     {
         return $this->name;
     }
 
     /**
-     * Add aus
+     * Add aus.
      *
      * @param Au $aus
+     *
      * @return Pln
      */
     public function addAus(Au $aus)
@@ -190,7 +212,7 @@ class Pln
     }
 
     /**
-     * Remove aus
+     * Remove aus.
      *
      * @param Au $aus
      */
@@ -200,23 +222,30 @@ class Pln
     }
 
     /**
-     * Get aus
+     * Get aus.
      *
-     * @return ArrayCollection
+     * @return ArrayCollection|Au[]
      */
     public function getAus()
     {
         return $this->aus;
     }
-    
-    public function countAus() {
+
+    /**
+     * Count the AUs in this PLN.
+     * 
+     * @return int
+     */
+    public function countAus()
+    {
         return $this->aus->count();
     }
 
     /**
-     * Add boxes
+     * Add boxes.
      *
      * @param Box $boxes
+     *
      * @return Pln
      */
     public function addBox(Box $boxes)
@@ -227,17 +256,17 @@ class Pln
     }
 
     /**
-     * Remove boxes
+     * Remove box.
      *
-     * @param Box $boxes
+     * @param Box $box
      */
-    public function removeBox(Box $boxes)
+    public function removeBox(Box $box)
     {
-        $this->boxes->removeElement($boxes);
+        $this->boxes->removeElement($box);
     }
 
     /**
-     * Get boxes
+     * Get boxes.
      *
      * @return ArrayCollection|Box[]
      */
@@ -247,107 +276,117 @@ class Pln
     }
 
     /**
-     * Add plnProperties
+     * Set a property for this PLN.
      *
-     * @param PlnProperty $plnProperties
+     * @param string $key
+     * @param string $value
+     *
      * @return Pln
      */
-    public function addPlnProperty(PlnProperty $plnProperties)
+    public function setProperty($key, $value)
     {
-        $this->plnProperties[] = $plnProperties;
+        $this->properties[$key] = $value;
 
         return $this;
     }
 
     /**
-     * Remove plnProperties
+     * Remove property.
      *
-     * @param PlnProperty $plnProperties
-     */
-    public function removePlnProperty(PlnProperty $plnProperties)
-    {
-        $this->plnProperties->removeElement($plnProperties);
-    }
-
-    /**
-     * Get plnProperties
+     * @param string $key
      *
-     * @return PlnProperty[]
-     */
-    public function getPlnProperties()
-    {
-        return $this->plnProperties;
-    }
-
-    /**
-     * PLN Properties are hierarchial, so get just the top-most properties.
-     *
-     * @return PlnProperty[]
-     */
-    public function getRootPluginProperties()
-    {
-        $properties = array();
-        foreach ($this->plnProperties as $p) {
-            if ($p->hasParent()) {
-                continue;
-            }
-            $properties[] = $p;
-        }
-        return $properties;
-    }
-
-    /**
-     * Find the property with the given name. If there are multiple properties
-     * with the same name, only the first is returned.
-     *
-     * @param type $name
-     * @return PlnProperty
-     */
-    public function getProperty($name, $asList = false)
-    {
-        $properties = array();
-
-        foreach ($this->getPlnProperties() as $prop) {
-            if ($prop->getPropertyKey() === $name) {
-                $properties[] = $prop;
-            }
-        }
-        if($asList) {
-            return $properties;
-        }
-        if(count($properties) > 0) {
-            return $properties[0];
-        }
-        return null;
-    }
-
-    /**
-     * Add contentProviders
-     *
-     * @param ContentProvider $contentProviders
      * @return Pln
      */
-    public function addContentProvider(ContentProvider $contentProviders)
+    public function deleteProperty($key)
     {
-        $this->contentProviders[] = $contentProviders;
+        unset($this->properties[$key]);
 
         return $this;
     }
 
     /**
-     * Remove contentProviders
-     *
-     * @param ContentProvider $contentProviders
+     * Get a list of the property keys.
+     * 
+     * @return string[]
      */
-    public function removeContentProvider(ContentProvider $contentProviders)
+    public function getPropertyKeys()
     {
-        $this->contentProviders->removeElement($contentProviders);
+        return array_keys($this->properties);
     }
 
     /**
-     * Get contentProviders
+     * Get a property. If the property key is an array, or if it is in 
+     * self::$LIST_REQUIRED, or if $forceArray is true, the value returned 
+     * will be an array.
      *
-     * @return ContentProvider[]
+     * @param string $key
+     *
+     * @return string|array
+     */
+    public function getProperty($key, $forceArray = false)
+    {
+        if (!array_key_exists($key, $this->properties)) {
+            return;
+        }
+        if (is_array($this->properties[$key])) {
+            return $this->properties[$key];
+        }
+        if (in_array($key, self::$LIST_REQUIRED) || $forceArray) {
+            return array($this->properties[$key]);
+        }
+
+        return $this->properties[$key];
+    }
+
+    /**
+     * Return all of the properties. It's best to use 
+     * getPropertyKeys()/getProperty($key) as that will respect self::$LIST_REQUIRED.
+     * 
+     * @return array
+     */
+    public function getProperties()
+    {
+        return $this->properties;
+    }
+
+    /**
+     * Set all the properties in one go.
+     * 
+     * @param type $properties
+     */
+    public function setProperties($properties)
+    {
+        $this->properties = $properties;
+    }
+
+    /**
+     * Add contentProvider.
+     *
+     * @param ContentProvider $contentProvider
+     *
+     * @return Pln
+     */
+    public function addContentProvider(ContentProvider $contentProvider)
+    {
+        $this->contentProviders[] = $contentProvider;
+
+        return $this;
+    }
+
+    /**
+     * Remove contentProvider.
+     *
+     * @param ContentProvider $contentProvider
+     */
+    public function removeContentProvider(ContentProvider $contentProvider)
+    {
+        $this->contentProviders->removeElement($contentProvider);
+    }
+
+    /**
+     * Get contentProviders.
+     *
+     * @return ArrayCollection|ContentProvider[]
      */
     public function getContentProviders()
     {
@@ -355,17 +394,114 @@ class Pln
     }
 
     /**
-     * Get plugins
+     * Get plugins keyed by plugin identifier.
      *
-     * @return Collection|Plugin[] 
+     * @return Plugin[]
      */
     public function getPlugins()
     {
         $plugins = array();
-        foreach($this->getContentProviders() as $provider) {
+        foreach ($this->getContentProviders() as $provider) {
             $plugin = $provider->getPlugin();
             $plugins[$plugin->getIdentifier()] = $plugin;
         }
+
         return $plugins;
+    }
+
+    /**
+     * Set description.
+     *
+     * @param string $description
+     *
+     * @return Pln
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set keystore.
+     *
+     * @param Keystore $keystore
+     *
+     * @return Pln
+     */
+    public function setKeystore(Keystore $keystore = null)
+    {
+        $this->keystore = $keystore;
+
+        return $this;
+    }
+
+    /**
+     * Get keystore.
+     *
+     * @return Keystore
+     */
+    public function getKeystore()
+    {
+        return $this->keystore;
+    }
+
+    /**
+     * Set username.
+     *
+     * @param string $username
+     *
+     * @return Pln
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * Get username.
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set password.
+     *
+     * @param string $password
+     *
+     * @return Pln
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get password.
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 }
