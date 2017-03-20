@@ -49,7 +49,7 @@ class LoadBox extends AbstractDataFixture
 
     protected function getEnvironments()
     {
-        return array('test');
+        return array('test', 'dev');
     }
 
 //put your code here

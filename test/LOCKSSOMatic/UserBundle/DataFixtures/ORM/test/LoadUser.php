@@ -17,7 +17,6 @@ class LoadUser extends AbstractDataFixture
         $admin->setFullname('Admin User');
         $admin->setInstitution('Test Inst');
         $admin->setEnabled(true);
-        $admin->addRole('ROLE_SUPERADMIN');
         $admin->addRole('ROLE_ADMIN');
         $manager->persist($admin);
         $this->setReference('user.admin', $admin);
@@ -46,6 +45,6 @@ class LoadUser extends AbstractDataFixture
 
     protected function getEnvironments()
     {
-        return array('test');
+        return array('test', 'dev');
     }
 }
