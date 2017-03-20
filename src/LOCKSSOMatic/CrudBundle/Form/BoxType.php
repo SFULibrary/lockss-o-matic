@@ -49,7 +49,11 @@ class BoxType extends AbstractType
                 'attr' => array(
                     'class' => 'hostname',
             ), ))
-            ->add('protocol')
+            ->add('protocol', 'text', array(
+                'attr' => array(
+                    'help' => 'LOCKSS internal communication protocol. Almost certainly "TCP".'
+                ),
+            ))
             ->add('ipAddress', 'text', array(
                 'required' => false,
                 'attr' => array(
