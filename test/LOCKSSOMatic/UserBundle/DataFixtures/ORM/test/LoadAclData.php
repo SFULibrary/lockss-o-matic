@@ -58,6 +58,6 @@ class LoadAclData extends AbstractDataFixture implements OrderedFixtureInterface
 
     protected function getEnvironments()
     {
-        return array('test');
+        return array('test', 'dev');
     }
 }
