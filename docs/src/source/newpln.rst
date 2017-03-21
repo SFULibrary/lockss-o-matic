@@ -122,13 +122,26 @@ Follow the link to get a list of boxes for the PLN. It should be empty
 for a new PLN. Click the Add Box button to start adding a box. 
 
 Enter the box hostname in the field. The protocol should probably be
-TCP[#f1]_ but other possiblities may exist. Leave the IP address
-blank and LOM will find it out for you. 
+TCP [#f1]_ but other possiblities may exist. Leave the IP address
+blank and LOM will find it out for you. Enter the LOCKSS communication 
+port (usually 9729) and the LOCKSS UI/SOAP port (usually 8081) and
+select a PLN.
+
+`Lather, rinse, repeat`_.
+
+All done!
+---------
+
+At this point, clients should be able to make deposits via the SWORD 
+protocol. And LOCKSSOMatic should be able to write out the configuration 
+files, manifests, and titledb files.
+
+Wooooo.
 
 .. _topological sort: https://en.wikipedia.org/wiki/Topological_sorting
 .. _jarsigner: http://docs.oracle.com/javase/8/docs/technotes/tools/windows/jarsigner.html
-
-.. rubric:: Footnotes
+.. _Lather, rinse, repeat: https://www.youtube.com/watch?v=UmIiylvLdLc
+.. _rubric:: Footnotes
 
 .. [#f1] If you know which other protocols are possible, please let us 
          know.
