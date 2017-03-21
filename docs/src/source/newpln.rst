@@ -3,6 +3,13 @@
 Creating a new PLN
 ==================
 
+.. note::
+
+    PLN configuration is complex, and makes heavy use of 
+    :ref:`_perms-label`permissions. If you notice permissions 
+    issues during testing, consider logging out, clearing the 
+    cache, and logging in again.
+
 Set up a content provider
 --------------------------
 
@@ -102,10 +109,26 @@ content provider. Do the thing.
     Does the deposit button on the ContentProvider page actually work?
     I don't remember the last time I tried it.
 
-.. todo::
+Add Boxes to the PLN
+--------------------
 
-    Now that you have created a Content Provider, you should be able to
-    view the boxes and stuff. But that doesn't seem to be working 
-    due to permissions issues. Sigh.
+Technically, this can be done once the PLN is created. But things have 
+and order, and this order was determined by a `topological sort` with 
+the most difficult stuff going first.
 
+Once the PLN is created, it is available in the Networks menu in the
+top navigation. The PLN has several submenus, including one for Boxes. 
+Follow the link to get a list of boxes for the PLN. It should be empty
+for a new PLN. Click the Add Box button to start adding a box. 
+
+Enter the box hostname in the field. The protocol should probably be
+TCP[#f1]_ but other possiblities may exist. Leave the IP address
+blank and LOM will find it out for you. 
+
+.. _topological sort: https://en.wikipedia.org/wiki/Topological_sorting
 .. _jarsigner: http://docs.oracle.com/javase/8/docs/technotes/tools/windows/jarsigner.html
+
+.. rubric:: Footnotes
+
+.. [#f1] If you know which other protocols are possible, please let us 
+         know.

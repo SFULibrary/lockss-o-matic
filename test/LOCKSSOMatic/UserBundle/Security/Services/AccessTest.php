@@ -42,9 +42,7 @@ class AccessTest extends AbstractTestCase {
         $this->assertInstanceOf('LOCKSSOMatic\UserBundle\Security\Services\Access', $this->access);
     }
 
-    public function testCheckSuperAdminAccess() {
-        var_export($this->container->getParameter('security.role_hierarchy.roles'));
-        
+    public function testCheckAdminAccess() {
         $em = $this->container->get('doctrine')->getEntityManager();
         $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'admin@example.com'));
         
@@ -57,9 +55,10 @@ class AccessTest extends AbstractTestCase {
         $session->save();
         $this->access->setAuthChecker($this->container->get('security.authorization_checker'));
         $this->access->setTokenStorage($this->container->get('security.token_storage'));
-        $this->assertTrue($this->access->hasAccess('ROLE_SUPER_ADMIN', null, null));
-        //$this->assertTrue($this->access->hasAccess('ROLE_ADMIN', null, null));
-        $this->assertTrue($this->access->hasAccess('ROLE_USER', null, null));
+        $this->assertTrue($this->access->hasAccess('ROLE_ADMIN'));        
+        $this->assertTrue($this->access->hasAccess('ROLE_USER'));        
+        $this->assertTrue($this->access->hasAccess('MONITOR'));
+        $this->assertTrue($this->access->hasAccess('NON_EXISTANT_PERMISSION'));
     }
 
 }

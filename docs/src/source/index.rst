@@ -12,6 +12,7 @@ Contents:
 
    intro
    source
+   perms
    newpln
    todo
 
