@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\UserBundle\Security\Services;
 
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -14,9 +15,14 @@ class AccessTest extends AbstractTestCase {
      * @var Access
      */
     protected $access;
-
+    
+    protected $container;
+    
     public function setUp() {
         parent::setUp();
+        $kernel = static::createKernel();
+        $kernel->boot();
+        $this->container = $kernel->getContainer();
         $this->access = $this->getContainer()->get('lom.access');
     }
 
@@ -36,19 +42,24 @@ class AccessTest extends AbstractTestCase {
         $this->assertInstanceOf('LOCKSSOMatic\UserBundle\Security\Services\Access', $this->access);
     }
 
-    public function testCheckAdminAccess() {
-        $client = static::createClient(array(), array(
-            'PHP_AUTH_USER' => 'admin@example.com',
-            'PHP_AUTH_PW' => 'supersecret',
-        ));
+    public function testCheckSuperAdminAccess() {
+        var_export($this->container->getParameter('security.role_hierarchy.roles'));
+        
+        $em = $this->container->get('doctrine')->getEntityManager();
+        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'admin@example.com'));
+        
+        $firewall = 'main_firewall';
+        $token = new UsernamePasswordToken($user, $user->getPassword(), $firewall, $user->getRoles());
+        $this->container->get('security.context')->setToken($token);
 
-        $session = $this->getContainer()->get('session');
-        $firewall = 'main';
-        $token = new UsernamePasswordToken('admin', null, $firewall, array('ROLE_SUPER_ADMIN'));
+        $session = $this->container->get('session');
         $session->set('_security_' . $firewall, serialize($token));
         $session->save();
-
-        $this->assertTrue($this->access->checkAccess('ROLE_SUPER_ADMIN'));
+        $this->access->setAuthChecker($this->container->get('security.authorization_checker'));
+        $this->access->setTokenStorage($this->container->get('security.token_storage'));
+        $this->assertTrue($this->access->hasAccess('ROLE_SUPER_ADMIN', null, null));
+        //$this->assertTrue($this->access->hasAccess('ROLE_ADMIN', null, null));
+        $this->assertTrue($this->access->hasAccess('ROLE_USER', null, null));
     }
 
 }
