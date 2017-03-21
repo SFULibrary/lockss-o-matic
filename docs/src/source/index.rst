@@ -12,6 +12,8 @@ Contents:
 
    intro
    source
+   newpln
+   todo
 
 Indices and tables
 ==================
