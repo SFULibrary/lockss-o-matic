@@ -518,10 +518,10 @@ class ContentProviderController extends Controller
 
             $em->flush();
 
-            return $this->redirect($this->generateUrl(
-                'deposit_show',
-                array('id' => $deposit->getId())
-            ));
+            return $this->redirect($this->generateUrl('deposit_show', array(
+                'id' => $deposit->getId(),
+                'plnId' => $deposit->getPln()->getId(),
+            )));
         }
 
         return array(
