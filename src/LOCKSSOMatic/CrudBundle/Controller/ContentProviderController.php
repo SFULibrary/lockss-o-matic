@@ -500,12 +500,13 @@ class ContentProviderController extends Controller
             $depositBuilder = $this->container->get('crud.builder.deposit');
             $contentBuilder = $this->container->get('crud.builder.content');
             $auBuilder = $this->container->get('crud.builder.au');
-
+            $idGenerator = $this->container->get('crud.au.idgenerator');
+            
             $deposit = $depositBuilder->fromForm($form, $provider, $em);
             foreach ($csv as $record) {
                 $content = $contentBuilder->fromArray($record);
                 $content->setDeposit($deposit);
-                $auid = $content->generateAuid();
+                $auid = $idGenerator->fromContent($content, false);
                 $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
                     'auid' => $auid,
                 ));

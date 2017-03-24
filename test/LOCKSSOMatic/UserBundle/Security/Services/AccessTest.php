@@ -3,6 +3,7 @@
 namespace LOCKSSOMatic\UserBundle\Security\Services;
 
 use LOCKSSOMatic\CoreBundle\Utilities\AbstractTestCase;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -14,9 +15,14 @@ class AccessTest extends AbstractTestCase {
      * @var Access
      */
     protected $access;
-
+    
+    protected $container;
+    
     public function setUp() {
         parent::setUp();
+        $kernel = static::createKernel();
+        $kernel->boot();
+        $this->container = $kernel->getContainer();
         $this->access = $this->getContainer()->get('lom.access');
     }
 
@@ -37,18 +43,22 @@ class AccessTest extends AbstractTestCase {
     }
 
     public function testCheckAdminAccess() {
-        $client = static::createClient(array(), array(
-            'PHP_AUTH_USER' => 'admin@example.com',
-            'PHP_AUTH_PW' => 'supersecret',
-        ));
+        $em = $this->container->get('doctrine')->getEntityManager();
+        $user = $em->getRepository('LOCKSSOMaticUserBundle:User')->findOneBy(array('username' => 'admin@example.com'));
+        
+        $firewall = 'main_firewall';
+        $token = new UsernamePasswordToken($user, $user->getPassword(), $firewall, $user->getRoles());
+        $this->container->get('security.context')->setToken($token);
 
-        $session = $this->getContainer()->get('session');
-        $firewall = 'main';
-        $token = new UsernamePasswordToken('admin', null, $firewall, array('ROLE_SUPER_ADMIN'));
+        $session = $this->container->get('session');
         $session->set('_security_' . $firewall, serialize($token));
         $session->save();
-
-        $this->assertTrue($this->access->checkAccess('ROLE_SUPER_ADMIN'));
+        $this->access->setAuthChecker($this->container->get('security.authorization_checker'));
+        $this->access->setTokenStorage($this->container->get('security.token_storage'));
+        $this->assertTrue($this->access->hasAccess('ROLE_ADMIN'));        
+        $this->assertTrue($this->access->hasAccess('ROLE_USER'));        
+        $this->assertTrue($this->access->hasAccess('MONITOR'));
+        $this->assertTrue($this->access->hasAccess('NON_EXISTANT_PERMISSION'));
     }
 
 }
