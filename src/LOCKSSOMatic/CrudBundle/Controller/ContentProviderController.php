@@ -463,6 +463,9 @@ class ContentProviderController extends Controller
         while (($row = $fh->fgetcsv()) && (count($row) >= 2)) {
             $record = array();
             foreach ($headers as $header) {
+                if( ! isset($row[$headerIdx[$header]])) {
+                    continue;
+                }
                 $record[$header] = $row[$headerIdx[$header]];
             }
             $records[] = $record;
