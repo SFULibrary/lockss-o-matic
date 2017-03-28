@@ -1,5 +1,29 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\LockssBundle\Command;
 
 use DateTime;
@@ -17,6 +41,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Check on the status of each deposit that hasn't yet reached agreement. 
+ * 
+ * This command uses PHP's SoapClient, which is buggy. Limit the number of 
+ * deposits checked with the --limit command. 170 seems safe.
+ */
 class DepositStatusCommand extends ContainerAwareCommand
 {
     /**
@@ -39,6 +69,9 @@ class DepositStatusCommand extends ContainerAwareCommand
      */
     private $hasher;
 
+    /**
+     * {@inheritDocs}
+     */
     public function configure()
     {
         $this->setName('lom:deposit:status');
@@ -49,6 +82,9 @@ class DepositStatusCommand extends ContainerAwareCommand
         $this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
     }
 
+    /**
+     * {@inheritDocs}
+     */
     public function setContainer(ContainerInterface $container = null)
     {
         parent::setContainer($container);
@@ -58,16 +94,25 @@ class DepositStatusCommand extends ContainerAwareCommand
         $this->hasher = $this->getContainer()->get('lockss.content.hasher');
     }
 
+    /**
+     * Get the checksum of a content item from one box.
+     * 
+     * @param Box $box
+     * @param Content $content
+     * @return string
+     */
     protected function getBoxChecksum(Box $box, Content $content)
     {
         return $this->hasher->getChecksum('sha1', $content, $box);
     }
 
     /**
-     * @param type $all
-     * @param type $limit
-     *
-     * @return Deposit[]
+     * Get a list of deposits to check.
+     * 
+     * @param boolean $all
+     * @param int $limit
+     * @param int $plnId
+     * @return Deposit[]|Collection
      */
     protected function getDeposits($all, $limit, $plnId)
     {
@@ -89,6 +134,13 @@ class DepositStatusCommand extends ContainerAwareCommand
             ->getResult();
     }
 
+    /**
+     * Query a single deposit by getting the checksums of the deposit's content
+     * items from the boxes.
+     * 
+     * @param Deposit $deposit
+     * @return array
+     */
     protected function queryDeposit(Deposit $deposit)
     {
         $pln = $deposit->getPln();
@@ -120,6 +172,9 @@ class DepositStatusCommand extends ContainerAwareCommand
         return array($agreement, $result);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $all = $input->getOption('all');

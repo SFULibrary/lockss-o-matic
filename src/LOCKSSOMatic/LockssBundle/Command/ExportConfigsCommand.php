@@ -1,5 +1,30 @@
 <?php
 
+
+/*
+ * The MIT License
+ *
+ * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace LOCKSSOMatic\LockssBundle\Command;
 
 use Doctrine\ORM\EntityManager;
@@ -17,7 +42,8 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\Router;
 
 /**
- * Private Lockss network plugin import command-line.
+ * Private Lockss network export command. Exports one or more lockss.xml 
+ * config files.
  */
 class ExportConfigsCommand extends ContainerAwareCommand
 {
@@ -56,6 +82,9 @@ class ExportConfigsCommand extends ContainerAwareCommand
      */
     private $twig;
 
+    /**
+     * {@inheritDocs}
+     */
     public function configure()
     {
         $this->setName('lom:export:configs');
@@ -68,6 +97,9 @@ class ExportConfigsCommand extends ContainerAwareCommand
         $this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
     }
 
+    /**
+     * {@inheritDocs}
+     */
     public function setContainer(ContainerInterface $container = null)
     {
         parent::setContainer($container);
@@ -81,6 +113,7 @@ class ExportConfigsCommand extends ContainerAwareCommand
     }
 
     /**
+     * Get a list of PLNs based on $plnIds or all PLNs.
      * @param array plnIds
      *
      * @return Pln[]
@@ -94,6 +127,9 @@ class ExportConfigsCommand extends ContainerAwareCommand
         return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findById($plnIds);
     }
 
+    /**
+     * {@inheritDocs}
+     */
     public function execute(InputInterface $input, OutputInterface $output)
     {
         if (!file_exists($this->fp->getLockssDir())) {
@@ -122,6 +158,12 @@ class ExportConfigsCommand extends ContainerAwareCommand
         }
     }
 
+    /**
+     * Update the list of peers. The updated list is stored as properties
+     * in the PLN entity.
+     * 
+     * @param Pln $pln
+     */
     public function updatePeerList(Pln $pln)
     {
         $boxes = $pln->getBoxes();
@@ -132,11 +174,24 @@ class ExportConfigsCommand extends ContainerAwareCommand
         $pln->setProperty('org.lockss.id.initialV3PeerList', $list);
     }
 
+    /**
+     * Update the list of title.xml file URLs, and store that list as
+     * a property in the PLN.
+     * 
+     * @param Pln $pln
+     * @param type $auUrls
+     */
     public function updateTitleDbs(Pln $pln, $auUrls)
     {
         $pln->setProperty('org.lockss.titleDbs', $auUrls);
     }
 
+    /**
+     * Update the plugin registry list for the PLN and store the list as
+     * a property in the PLN.
+     * 
+     * @param Pln $pln
+     */
     public function updatePluginRegistries(Pln $pln)
     {
         $pln->setProperty('org.lockss.plugin.registries', $this->router->generate(
@@ -146,6 +201,11 @@ class ExportConfigsCommand extends ContainerAwareCommand
         ));
     }
 
+    /**
+     * Update the PLN keystore location and store that as a property in the PLN.
+     * 
+     * @param Pln $pln
+     */
     public function updateKeystoreLocation(Pln $pln)
     {
         if ($pln->getKeystore()) {
@@ -159,6 +219,11 @@ class ExportConfigsCommand extends ContainerAwareCommand
         }
     }
 
+    /**
+     * Update the PLN's authentication credentials.
+     * 
+     * @param Pln $pln
+     */
     public function updateAuthentication(Pln $pln)
     {
         $prefix = 'org.lockss.ui.users.lomauth';
@@ -168,6 +233,12 @@ class ExportConfigsCommand extends ContainerAwareCommand
         $pln->setProperty("{$prefix}.roles", 'debugRole');
     }
 
+    /**
+     * Export the PLN configuration file by exporting all of the properties
+     * associated with the PLN.
+     * 
+     * @param Pln $pln
+     */
     public function exportLockssXml(Pln $pln)
     {
         $twig = $this->getContainer()->get('templating');
@@ -181,6 +252,12 @@ class ExportConfigsCommand extends ContainerAwareCommand
         $this->fs->dumpFile($path, $xml);
     }
 
+    /**
+     * Export the keystore file.
+     * 
+     * @param Pln $pln
+     * @return type
+     */
     public function exportKeystore(Pln $pln)
     {
         $keystore = $pln->getKeystore();
@@ -194,6 +271,12 @@ class ExportConfigsCommand extends ContainerAwareCommand
         $this->fs->copy($keystore->getPath(), "{$path}/lockss.keystore");
     }
 
+    /**
+     * Export all of the LOCKSS plugins to the file system so that LOCKSS
+     * can harvest them as needed.
+     * 
+     * @param Pln $pln
+     */
     public function exportPlugins(Pln $pln)
     {
         $path = $this->fp->getPluginsExportDir($pln);
@@ -210,6 +293,11 @@ class ExportConfigsCommand extends ContainerAwareCommand
         $this->fs->dumpFile($this->fp->getPluginsManifestFile($pln), $html);
     }
 
+    /**
+     * Export the manifest files for the PLN.
+     * 
+     * @param Pln $pln
+     */
     public function exportManifests(Pln $pln)
     {
         foreach ($pln->getAus() as $au) {
@@ -231,6 +319,12 @@ class ExportConfigsCommand extends ContainerAwareCommand
         }
     }
 
+    /**
+     * Export the AU titledb.xml files, and return URLs for each exported file.
+     * 
+     * @param Pln $pln
+     * @return type
+     */
     public function exportAus(Pln $pln)
     {
         $auUrls = array();

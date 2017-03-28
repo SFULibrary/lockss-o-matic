@@ -49,7 +49,11 @@ class BoxType extends AbstractType
                 'attr' => array(
                     'class' => 'hostname',
             ), ))
-            ->add('protocol')
+            ->add('protocol', 'text', array(
+                'attr' => array(
+                    'help' => 'LOCKSS internal communication protocol. Almost certainly "TCP".'
+                ),
+            ))
             ->add('ipAddress', 'text', array(
                 'required' => false,
                 'attr' => array(
@@ -57,8 +61,18 @@ class BoxType extends AbstractType
                     'help' => 'LOCKSSOMatic will look up the IP address if it is blank.',
                 ),
             ))
-            ->add('port')
-            ->add('webServicePort')
+            ->add('port', 'text', array(
+                'label' => 'LOCKSS Port', 
+                'attr' => array(
+                    'help' => 'This is the port number that LOCKSS uses for internal communication, usually 9729.'
+                )                
+            ))
+            ->add('webServicePort', 'text', array(
+                'label' => 'LOCKSS UI Port', 
+                'attr' => array(
+                    'help' => 'This is the web front end and SOAP Port, usually 8081.'
+                )                
+            ))
             ->add('pln')
         ;
     }

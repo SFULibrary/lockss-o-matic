@@ -463,6 +463,9 @@ class ContentProviderController extends Controller
         while (($row = $fh->fgetcsv()) && (count($row) >= 2)) {
             $record = array();
             foreach ($headers as $header) {
+                if( ! isset($row[$headerIdx[$header]])) {
+                    continue;
+                }
                 $record[$header] = $row[$headerIdx[$header]];
             }
             $records[] = $record;
@@ -500,12 +503,13 @@ class ContentProviderController extends Controller
             $depositBuilder = $this->container->get('crud.builder.deposit');
             $contentBuilder = $this->container->get('crud.builder.content');
             $auBuilder = $this->container->get('crud.builder.au');
-
+            $idGenerator = $this->container->get('crud.au.idgenerator');
+            
             $deposit = $depositBuilder->fromForm($form, $provider, $em);
             foreach ($csv as $record) {
                 $content = $contentBuilder->fromArray($record);
                 $content->setDeposit($deposit);
-                $auid = $content->generateAuid();
+                $auid = $idGenerator->fromContent($content, false);
                 $au = $em->getRepository('LOCKSSOMaticCrudBundle:Au')->findOneBy(array(
                     'auid' => $auid,
                 ));
@@ -517,10 +521,10 @@ class ContentProviderController extends Controller
 
             $em->flush();
 
-            return $this->redirect($this->generateUrl(
-                'deposit_show',
-                array('id' => $deposit->getId())
-            ));
+            return $this->redirect($this->generateUrl('deposit_show', array(
+                'id' => $deposit->getId(),
+                'plnId' => $deposit->getPln()->getId(),
+            )));
         }
 
         return array(

@@ -19,8 +19,6 @@
         <thead>
             <tr>
                 <th>Hostname</th>
-                <th>Protocol</th>
-                <th>Port</th>
                 <th>Pln</th>
                 <th>Ipaddress</th>
                 <th>Status check</th>
@@ -31,8 +29,6 @@
             {% for entity in entities %}
                 <tr>
                     <td><a href="{{ path('box_show', { 'id': entity.id, 'plnId': pln.id }) }}">{{ entity.hostname }}</a></td>
-                    <td>{{ entity.protocol }}</td>
-                    <td>{{ entity.port }}</td>
                     <td><a href="{{ path('pln_show', {'id': entity.pln.id }) }}">{{ entity.pln.name }}</a></td>
                     <td>{{ entity.ipAddress }}</td>
                     <td>

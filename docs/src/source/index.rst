@@ -12,6 +12,9 @@ Contents:
 
    intro
    source
+   perms
+   newpln
+   todo
 
 Indices and tables
 ==================
