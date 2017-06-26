@@ -3,7 +3,8 @@
     <body>
         <h1>LOCKSSOMatic Manifest Page</h1>
         <ul>
-            {% for item in content %}
+            {% for row in content %}
+                {% set item = row[0] %}
                 <li><a href="{{ item.url }}">{{ item.url }}</a></li>
                 {% endfor %}
         </ul>

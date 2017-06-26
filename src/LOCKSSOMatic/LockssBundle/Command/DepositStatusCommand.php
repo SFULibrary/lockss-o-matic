@@ -127,7 +127,7 @@ class DepositStatusCommand extends ContainerAwareCommand
             $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
             $qb->setParameter('pln', $plns);
         }
-        $qb->orderBy('d.id');
+        $qb->orderBy('d.id', 'DESC');
         $qb->setMaxResults($limit);
 
         return $qb->getQuery()
