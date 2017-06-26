@@ -330,12 +330,7 @@ class ExportConfigsCommand extends ContainerAwareCommand
             $this->fs->dumpFile($manifestFile, $html);
             
             $this->em->clear();
-            gc_collect_cycles();
-            $memory = sprintf('%dM', memory_get_usage() / (1024 * 1024));
-            $available = ini_get('memory_limit');
-
-            $this->logger->critical(" {$memory} of {$available}");
-            
+            gc_collect_cycles();            
         }
     }
 
