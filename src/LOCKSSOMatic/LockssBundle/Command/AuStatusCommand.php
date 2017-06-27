@@ -79,18 +79,20 @@ class AuStatusCommand extends ContainerAwareCommand
 
     protected function getAus($plnIds)
     {
-        if ($plnIds === null || count($plnIds) === 0) {
-            return $this->em->getRepository('LOCKSSOMaticCrudBundle:Au')->findAll();
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('a')->from('LOCKSSOMatic\CrudBundle\Entity\Au', 'a');
+        if($plnIds) {
+            $qb->where('a.id IN :auids');
+            $qb->setParameter('auids', $plnIds);
         }
-        $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findById($plnIds);
-
-        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Au')->findByPln($plns);
+        return $qb->getQuery()->iterate();
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $aus = $this->getAus($input->getOption('pln'));
-        foreach ($aus as $au) {
+        $iterator = $this->getAus($input->getOption('pln'));
+        foreach ($iterator as $row) {
+            $au = $row[0];
             $auStatus = new AuStatus();
             $auStatus->setAu($au);
             $auStatus->setQueryDate(new DateTime());
@@ -102,6 +104,8 @@ class AuStatusCommand extends ContainerAwareCommand
             }
             $this->em->persist($auStatus);
             $this->em->flush();
+            $this->em->clear();
+            gc_collect_cycles();            
         }
     }
 }
