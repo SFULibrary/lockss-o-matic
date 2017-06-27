@@ -102,7 +102,6 @@ class AuStatusCommand extends ContainerAwareCommand
             }
             $this->em->persist($auStatus);
             $this->em->flush();
-            $this->em->clear();
         }
     }
 }
