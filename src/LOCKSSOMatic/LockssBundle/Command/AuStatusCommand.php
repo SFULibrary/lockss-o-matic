@@ -58,7 +58,7 @@ class AuStatusCommand extends ContainerAwareCommand
         $errors = array();
         foreach ($boxes as $box) {
             $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/DaemonStatusService?wsdl";
-            $this->logger->notice("checking {$wsdl}");
+            $this->logger->notice("checking {$wsdl} for AU {$au->getId()})");
             $client = new LockssSoapClient();
             $client->setWsdl($wsdl);
             $client->setOption('login', $pln->getUsername());
@@ -67,7 +67,7 @@ class AuStatusCommand extends ContainerAwareCommand
                 'auId' => $auid,
             ));
             if ($status === null) {
-                $this->logger->warning("{$wsdl} failed.");
+                $this->logger->warning("{$wsdl} failed: " . implode("\n", $client->getErrors()));
                 $errors[$box->getHostname().':'.$box->getWebServicePort()] = $client->getErrors();
             } else {
                 $statuses[$box->getHostname().':'.$box->getWebServicePort()] = get_object_vars($status->return);
