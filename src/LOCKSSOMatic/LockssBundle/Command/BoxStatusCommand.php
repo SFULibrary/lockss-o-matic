@@ -82,7 +82,7 @@ class BoxStatusCommand extends ContainerAwareCommand
             );
 
             if ($status === null) {
-                $this->logger->warning("{$wsdl} failed.");
+                $this->logger->warning("{$wsdl} failed: {$client->getErrors()}");
                 $boxStatus->setSuccess(false);
                 $boxStatus->setErrors($client->getErrors());
                 continue;
