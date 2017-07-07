@@ -1,30 +1,6 @@
 <?php
 
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\LockssBundle\Command;
 
 use Doctrine\ORM\EntityManager;
@@ -61,12 +37,11 @@ class DepositFetchCommand extends ContainerAwareCommand
      * @var AuIdGenerator
      */
     private $idGenerator;
-    
+
     /**
      * {@inheritDoc}
      */
-    public function configure()
-    {
+    public function configure() {
         $this->setName('lom:deposit:fetch');
         $this->setDescription('Fetch one or more deposits from the PLN.');
         $this->addArgument('uuids', InputArgument::IS_ARRAY, 'One or more deposit UUIDs to fetch.');
@@ -74,18 +49,21 @@ class DepositFetchCommand extends ContainerAwareCommand
 
     /**
      * {@inheritDoc}
+     *
+     * @param ContainerInterface $container
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
+    public function setContainer(ContainerInterface $container = null) {
         parent::setContainer($container);
         $this->logger = $container->get('logger');
         $this->em = $container->get('doctrine')->getManager();
         $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
     }
-    
+
     /**
      * Gets the boxes for a PLN in a random order.
-     * 
+     *
+     * @param Pln $pln
+     *
      * @return Box[]
      */
     public function loadBoxes(Pln $pln) {
@@ -96,7 +74,7 @@ class DepositFetchCommand extends ContainerAwareCommand
 
     /**
      * Get the deposits to download.
-     * 
+     *
      * @param string[] $uuids
      * @return Deposit[]|Collection
      */
@@ -107,34 +85,35 @@ class DepositFetchCommand extends ContainerAwareCommand
 
     /**
      * Download a deposit from the network.
-     * 
+     *
      * @todo I thought this was finished.
-     * 
+     *
      * @param Deposit $deposit
      */
     protected function fetchDeposit(Deposit $deposit) {
         $pln = $deposit->getPln();
         $boxes = $this->loadBoxes($pln);
         $auid = $this->idGenerator->fromAu($deposit->getContent()->first()->getAu());
-        
+
         foreach($deposit->getContent() as $content) {
-            
+
         }
     }
-    
+
     /**
      * {@inheritDoc}
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
-        $uuids = $input->getArgument('uuids');        
+    public function execute(InputInterface $input, OutputInterface $output) {
+        $uuids = $input->getArgument('uuids');
         $deposits = $this->getDeposits($uuids);
         $this->logger->notice("Fetching " . count($deposits) . " deposit(s)");
-        
+
         foreach($deposits as $deposit) {
             $this->logger->notice("Fetching {$deposit->getUuid()}");
             $result = $this->fetchDeposit($deposit);
         }
     }
-
 }

@@ -15,6 +15,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Check the status of the boxes in one or more PLNs.
+ */
 class BoxStatusCommand extends ContainerAwareCommand
 {
     /**
@@ -32,24 +35,35 @@ class BoxStatusCommand extends ContainerAwareCommand
      */
     private $idGenerator;
 
-    public function configure()
-    {
+    /**
+     * Configure the command.
+     */
+    public function configure() {
         $this->setName('lom:box:status');
-        $this->setDescription('Check the status of the LOCKSS AUs');
+        $this->setDescription('Check the status of the LOCKSS boxes');
         $this->addOption('pln', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Optional list of PLNs to check.');
         $this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Do not update box status, just report results to console.');
     }
 
-    public function setContainer(ContainerInterface $container = null)
-    {
+    /**
+     * Set the container.
+     *
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container = null) {
         parent::setContainer($container);
         $this->logger = $container->get('logger');
         $this->em = $container->get('doctrine')->getManager();
         $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
     }
 
-    protected function getBoxes($plnIds = null)
-    {
+    /**
+     * Get the boxes for the requested PLNs or all the PLNs.
+     *
+     * @param array $plnIds
+     * @return Pln[]
+     */
+    protected function getBoxes($plnIds = null) {
         if ($plnIds === null || count($plnIds) === 0) {
             return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findAll();
         }
@@ -58,8 +72,13 @@ class BoxStatusCommand extends ContainerAwareCommand
         return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findByPln($plns);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+    /**
+     * Execute the command.
+     *
+     * @param InputInterface $input
+     * @return null
+     */
+    public function execute(InputInterface $input) {
         $plnIds = $input->getOption('pln');
         foreach ($this->getBoxes($plnIds) as $box) {
             $wsdl = "http://{$box->getHostname()}:{$box->getWebservicePort()}/ws/DaemonStatusService?wsdl";

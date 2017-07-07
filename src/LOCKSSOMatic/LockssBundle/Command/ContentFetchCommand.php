@@ -13,6 +13,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * Fetch a content item from the PLN.
+ *
+ * @todo this doesn't seem finished.
+ */
 class ContentFetchCommand extends ContainerAwareCommand
 {
 
@@ -25,12 +30,12 @@ class ContentFetchCommand extends ContainerAwareCommand
      * @var Logger
      */
     private $logger;
-    
+
     /**
      * @var ContentFetcherService
      */
     private $fetcher;
-    
+
     /**
      * @var Filesystem
      */
@@ -41,15 +46,21 @@ class ContentFetchCommand extends ContainerAwareCommand
      */
     private $fp;
 
-    public function configure()
-    {
+    /**
+     * {@inheritdoc}
+     */
+    public function configure() {
         $this->setName('lom:content:fetch');
         $this->setDescription('Fetch one or more deposits from the PLN.');
         $this->addArgument('uuids', InputArgument::IS_ARRAY, 'One or more deposit UUIDs to fetch.');
     }
 
-    public function setContainer(ContainerInterface $container = null)
-    {
+    /**
+     * {@inheritdoc}
+     *
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container = null) {
         parent::setContainer($container);
         $this->logger = $container->get('logger');
         $this->em = $container->get('doctrine')->getManager();
@@ -57,9 +68,15 @@ class ContentFetchCommand extends ContainerAwareCommand
         $this->fs = new Filesystem();
         $this->fp = $this->getContainer()->get('lom.filepaths');
     }
-    
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return null
+     */
+    public function execute(InputInterface $input, OutputInterface $output) {
         $content = $this->em->find('LOCKSSOMaticCrudBundle:Content', 1982);
         $file = $this->fetcher->fetch($content);
         if($file === null) {
@@ -67,11 +84,11 @@ class ContentFetchCommand extends ContainerAwareCommand
         }
         $path = $this->fp->getDownloadContentPath($content);
         $dir = dirname($path);
-        if( !file_exists($dir)) {
+        if(!file_exists($dir)) {
             $this->fs->mkdir($dir);
         }
         $fh = fopen($path, 'wb');
-        while($data = fread($file, 64*1024)) {
+        while($data = fread($file, 64 * 1024)) {
             fwrite($fh, $data);
         }
     }

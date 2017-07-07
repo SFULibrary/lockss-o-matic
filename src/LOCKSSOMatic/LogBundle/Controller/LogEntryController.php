@@ -19,12 +19,13 @@ class LogEntryController extends Controller
     /**
      * Lists all LogEntry entities.
      *
+     * @param Request $request
+     *
      * @Route("/", name="log")
      * @Method("GET")
      * @Template()
      */
-    public function indexAction(Request $request)
-    {
+    public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
 
         $paginator = $this->get('knp_paginator');
@@ -42,12 +43,13 @@ class LogEntryController extends Controller
     /**
      * Finds and displays a LogEntry entity.
      *
+     * @param int $id
+     *
      * @Route("/{id}", name="log_show")
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id)
-    {
+    public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticLogBundle:LogEntry')->find($id);

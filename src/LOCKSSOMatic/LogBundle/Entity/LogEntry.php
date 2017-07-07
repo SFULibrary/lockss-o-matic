@@ -1,28 +1,5 @@
 <?php
 
-/* 
- * The MIT License
- *
- * Copyright (c) 2014 Mark Jordan, mjordan@sfu.ca.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 
 namespace LOCKSSOMatic\LogBundle\Entity;
 
@@ -112,8 +89,10 @@ class LogEntry
      */
     private $ip;
 
-    public function __construct()
-    {
+    /**
+     * Construct a log entry.
+     */
+    public function __construct() {
         $this->created = new DateTime();
     }
 
@@ -122,8 +101,7 @@ class LogEntry
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -134,8 +112,7 @@ class LogEntry
      *
      * @return LogEntry
      */
-    public function setBundle($bundle)
-    {
+    public function setBundle($bundle) {
         $this->bundle = $bundle;
 
         return $this;
@@ -146,8 +123,7 @@ class LogEntry
      *
      * @return string
      */
-    public function getBundle()
-    {
+    public function getBundle() {
         if ($this->bundle) {
             return $this->bundle;
         }
@@ -166,8 +142,7 @@ class LogEntry
      *
      * @return LogEntry
      */
-    public function setClass($class)
-    {
+    public function setClass($class) {
         $this->class = $class;
 
         return $this;
@@ -178,8 +153,7 @@ class LogEntry
      *
      * @return string
      */
-    public function getClass()
-    {
+    public function getClass() {
         return $this->class;
     }
 
@@ -190,8 +164,7 @@ class LogEntry
      *
      * @return LogEntry
      */
-    public function setCaller($caller)
-    {
+    public function setCaller($caller) {
         $this->caller = $caller;
 
         return $this;
@@ -202,8 +175,7 @@ class LogEntry
      *
      * @return string
      */
-    public function getCaller()
-    {
+    public function getCaller() {
         return $this->caller;
     }
 
@@ -214,8 +186,7 @@ class LogEntry
      *
      * @return LogEntry
      */
-    public function setLevel($level)
-    {
+    public function setLevel($level) {
         $this->level = $level;
 
         return $this;
@@ -226,8 +197,7 @@ class LogEntry
      *
      * @return string
      */
-    public function getLevel()
-    {
+    public function getLevel() {
         return $this->level;
     }
 
@@ -238,8 +208,7 @@ class LogEntry
      *
      * @return LogEntry
      */
-    public function setSummary($summary)
-    {
+    public function setSummary($summary) {
         $this->summary = $summary;
 
         return $this;
@@ -250,8 +219,7 @@ class LogEntry
      *
      * @return string
      */
-    public function getSummary()
-    {
+    public function getSummary() {
         return $this->summary;
     }
 
@@ -262,8 +230,7 @@ class LogEntry
      *
      * @return LogEntry
      */
-    public function setMessage($message)
-    {
+    public function setMessage($message) {
         $this->message = $message;
 
         return $this;
@@ -274,20 +241,17 @@ class LogEntry
      *
      * @return string
      */
-    public function getMessage()
-    {
+    public function getMessage() {
         return $this->message;
     }
 
     /**
-     * Set created.
-     *
-     * @param DateTime $created
+     * Set created. If the log entry already has a created time, nothing
+     * happens.
      *
      * @return LogEntry
      */
-    public function setCreated()
-    {
+    public function setCreated() {
         if ($this->created === null) {
             $this->created = new \DateTime();
         }
@@ -300,8 +264,7 @@ class LogEntry
      *
      * @return DateTime
      */
-    public function getCreated()
-    {
+    public function getCreated() {
         return $this->created;
     }
 
@@ -312,8 +275,7 @@ class LogEntry
      *
      * @return LogEntry
      */
-    public function setPln(Pln $pln = null)
-    {
+    public function setPln(Pln $pln = null) {
         $this->pln = $pln;
 
         return $this;
@@ -324,8 +286,7 @@ class LogEntry
      *
      * @return Pln
      */
-    public function getPln()
-    {
+    public function getPln() {
         return $this->pln;
     }
 
@@ -336,8 +297,7 @@ class LogEntry
      *
      * @return LogEntry
      */
-    public function setUser($user = null)
-    {
+    public function setUser($user = null) {
         if ($user instanceof User) {
             $this->user = $user->getEmail();
         } else {
@@ -352,8 +312,7 @@ class LogEntry
      *
      * @return mixed
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->user;
     }
 
@@ -364,8 +323,7 @@ class LogEntry
      *
      * @return LogEntry
      */
-    public function setIp($ip)
-    {
+    public function setIp($ip) {
         $this->ip = $ip;
 
         return $this;
@@ -376,8 +334,7 @@ class LogEntry
      *
      * @return string
      */
-    public function getIp()
-    {
+    public function getIp() {
         return $this->ip;
     }
 
@@ -386,8 +343,7 @@ class LogEntry
      *
      * @return array
      */
-    public static function toArrayHeader()
-    {
+    public static function toArrayHeader() {
         return array(
             'created',
             'ip',
@@ -407,8 +363,7 @@ class LogEntry
      *
      * @return type
      */
-    public function toArray()
-    {
+    public function toArray() {
         return array(
             $this->created->format('c'),
             $this->ip,

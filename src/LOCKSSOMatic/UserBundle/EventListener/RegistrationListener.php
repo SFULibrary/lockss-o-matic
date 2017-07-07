@@ -8,6 +8,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ * User registration listener.
+ *
+ * @todo why is this here?
+ */
 class RegistrationListener implements EventSubscriberInterface
 {
     /**
@@ -18,20 +23,27 @@ class RegistrationListener implements EventSubscriberInterface
     /**
      * @param UrlGeneratorInterface $router
      */
-    public function __construct(UrlGeneratorInterface $router)
-    {
+    public function __construct(UrlGeneratorInterface $router) {
         $this->router = $router;
     }
 
-    public static function getSubscribedEvents()
-    {
+    /**
+     * Get the subscribed events for the listener.
+     *
+     * @return array
+     */
+    public static function getSubscribedEvents() {
         return array(
             FOSUserEvents::REGISTRATION_INITIALIZE => 'onRegistrationInitialize',
         );
     }
 
-    public function onRegistrationInitialize(GetResponseUserEvent $event)
-    {
+    /**
+     * Redirect the user to the login page. For some reason. uh?
+     *
+     * @param GetResponseUserEvent $event
+     */
+    public function onRegistrationInitialize(GetResponseUserEvent $event) {
         $url = $this->router->generate('fos_user_security_login');
         $response = new RedirectResponse($url);
 

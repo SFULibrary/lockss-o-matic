@@ -15,8 +15,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
-    {
+    public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('locksso_matic_log');
 

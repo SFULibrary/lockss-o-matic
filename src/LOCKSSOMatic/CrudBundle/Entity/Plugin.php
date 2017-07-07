@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -118,8 +94,7 @@ class Plugin
     /**
      * Build a Plugin.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->aus = new ArrayCollection();
         $this->contentProviders = new ArrayCollection();
         $this->pluginProperties = new ArrayCollection();
@@ -131,8 +106,7 @@ class Plugin
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -143,8 +117,7 @@ class Plugin
      *
      * @return Plugin
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -155,8 +128,7 @@ class Plugin
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -167,8 +139,7 @@ class Plugin
      *
      * @return Plugin
      */
-    public function setPath($path)
-    {
+    public function setPath($path) {
         $this->path = $path;
 
         return $this;
@@ -179,8 +150,7 @@ class Plugin
      *
      * @return string
      */
-    public function getPath()
-    {
+    public function getPath() {
         return $this->path;
     }
 
@@ -191,8 +161,7 @@ class Plugin
      *
      * @return Plugin
      */
-    public function addAus(Au $aus)
-    {
+    public function addAus(Au $aus) {
         $this->aus[] = $aus;
 
         return $this;
@@ -203,8 +172,7 @@ class Plugin
      *
      * @param Au $aus
      */
-    public function removeAus(Au $aus)
-    {
+    public function removeAus(Au $aus) {
         $this->aus->removeElement($aus);
     }
 
@@ -213,8 +181,7 @@ class Plugin
      *
      * @return Collection
      */
-    public function getAus()
-    {
+    public function getAus() {
         return $this->aus;
     }
 
@@ -225,8 +192,7 @@ class Plugin
      *
      * @return Plugin
      */
-    public function addContentProvider(ContentProvider $contentProvider)
-    {
+    public function addContentProvider(ContentProvider $contentProvider) {
         $this->contentProviders[] = $contentProvider;
 
         return $this;
@@ -237,8 +203,7 @@ class Plugin
      *
      * @param ContentProvider $contentProvider
      */
-    public function removeContentProvider(ContentProvider $contentProvider)
-    {
+    public function removeContentProvider(ContentProvider $contentProvider) {
         $this->contentProviders->removeElement($contentProvider);
     }
 
@@ -247,8 +212,7 @@ class Plugin
      *
      * @return Collection
      */
-    public function getContentProviders()
-    {
+    public function getContentProviders() {
         return $this->contentProviders;
     }
 
@@ -259,8 +223,7 @@ class Plugin
      *
      * @return Plugin
      */
-    public function addPluginProperty(PluginProperty $pluginProperties)
-    {
+    public function addPluginProperty(PluginProperty $pluginProperties) {
         $this->pluginProperties[] = $pluginProperties;
 
         return $this;
@@ -271,8 +234,7 @@ class Plugin
      *
      * @param PluginProperty $pluginProperties
      */
-    public function removePluginProperty(PluginProperty $pluginProperties)
-    {
+    public function removePluginProperty(PluginProperty $pluginProperties) {
         $this->pluginProperties->removeElement($pluginProperties);
     }
 
@@ -281,8 +243,7 @@ class Plugin
      *
      * @return Collection
      */
-    public function getPluginProperties()
-    {
+    public function getPluginProperties() {
         return $this->pluginProperties;
     }
 
@@ -291,8 +252,7 @@ class Plugin
      *
      * @return PluginProperty[]
      */
-    public function getRootPluginProperties()
-    {
+    public function getRootPluginProperties() {
         $properties = array();
         foreach ($this->pluginProperties as $p) {
             if ($p->hasParent()) {
@@ -310,8 +270,7 @@ class Plugin
      *
      * @return string
      */
-    public function getPluginIdentifier()
-    {
+    public function getPluginIdentifier() {
         foreach ($this->getPluginProperties() as $prop) {
             /** @var PluginProperties $prop */
             if ($prop->getPropertyKey() === 'plugin_identifier') {
@@ -327,8 +286,7 @@ class Plugin
      *
      * @return PluginProperties[]
      */
-    public function getPluginConfigParams()
-    {
+    public function getPluginConfigParams() {
         $properties = array();
         foreach ($this->getPluginProperties() as $prop) {
             /** @var PluginProperties $prop */
@@ -353,33 +311,31 @@ class Plugin
      *
      * @return string|null
      */
-    public function getPropertyValue($propertyKey)
-    {
+    public function getPropertyValue($propertyKey) {
         foreach ($this->getPluginProperties() as $property) {
             if ($property->getPropertyKey() === $propertyKey) {
                 return $property->getPropertyValue();
             }
         }
 
-        return;
+        return null;
     }
 
     /**
      * Get a Property object.
-     * 
+     *
      * @param type $propertyKey
      *
      * @return PluginProperty|null
      */
-    public function getProperty($propertyKey)
-    {
+    public function getProperty($propertyKey) {
         foreach ($this->getPluginProperties() as $property) {
             if ($property->getPropertyKey() === $propertyKey) {
                 return $property;
             }
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -387,8 +343,7 @@ class Plugin
      *
      * @return ArrayCollection|PluginProperty[]
      */
-    public function getDefinitionalProperties()
-    {
+    public function getDefinitionalProperties() {
         $properties = array();
 
         foreach ($this->getPluginConfigParams() as $prop) {
@@ -414,13 +369,12 @@ class Plugin
     }
 
     /**
-     * Convenience method. Get the plugin parameter names which are not 
+     * Convenience method. Get the plugin parameter names which are not
      * definitonal.
      *
      * @return ArrayCollection|PluginProperty[]
      */
-    public function getNonDefinitionalProperties()
-    {
+    public function getNonDefinitionalProperties() {
         $properties = array();
 
         foreach ($this->getPluginConfigParams() as $prop) {
@@ -450,8 +404,7 @@ class Plugin
      *
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
         return $this->getName().' version '.$this->getVersion();
     }
 
@@ -462,8 +415,7 @@ class Plugin
      *
      * @return Plugin
      */
-    public function setFilename($filename)
-    {
+    public function setFilename($filename) {
         $this->filename = $filename;
 
         return $this;
@@ -474,8 +426,7 @@ class Plugin
      *
      * @return string
      */
-    public function getFilename()
-    {
+    public function getFilename() {
         return $this->filename;
     }
 
@@ -486,8 +437,7 @@ class Plugin
      *
      * @return Plugin
      */
-    public function setVersion($version)
-    {
+    public function setVersion($version) {
         $this->version = $version;
 
         return $this;
@@ -498,8 +448,7 @@ class Plugin
      *
      * @return \int
      */
-    public function getVersion()
-    {
+    public function getVersion() {
         return $this->version;
     }
 
@@ -510,8 +459,7 @@ class Plugin
      *
      * @return Plugin
      */
-    public function setIdentifier($identifier)
-    {
+    public function setIdentifier($identifier) {
         $this->identifier = $identifier;
 
         return $this;
@@ -522,8 +470,7 @@ class Plugin
      *
      * @return string
      */
-    public function getIdentifier()
-    {
+    public function getIdentifier() {
         return $this->identifier;
     }
 
@@ -534,8 +481,7 @@ class Plugin
      *
      * @return Plugin
      */
-    public function addPln(Pln $plns)
-    {
+    public function addPln(Pln $plns) {
         $this->plns[] = $plns;
 
         return $this;
@@ -546,8 +492,7 @@ class Plugin
      *
      * @param Pln $plns
      */
-    public function removePln(Pln $plns)
-    {
+    public function removePln(Pln $plns) {
         $this->plns->removeElement($plns);
     }
 
@@ -556,8 +501,7 @@ class Plugin
      *
      * @return Collection
      */
-    public function getPlns()
-    {
+    public function getPlns() {
         return $this->plns;
     }
 }

@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
 use J20\Uuid\Uuid;
@@ -55,13 +31,12 @@ class ContentProviderController extends Controller
      * @Route("/", name="contentprovider")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @param Request $request
-     * 
+     *
      * @return array
      */
-    public function indexAction(Request $request)
-    {
+    public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:ContentProvider e';
         $query = $em->createQuery($dql);
@@ -83,13 +58,12 @@ class ContentProviderController extends Controller
      * @Route("/", name="contentprovider_create")
      * @Method("POST")
      * @Template("LOCKSSOMaticCrudBundle:ContentProvider:new.html.twig")
-     * 
+     *
      * @param Request $request
-     * 
+     *
      * @return RedirectResponse|array
      */
-    public function createAction(Request $request)
-    {
+    public function createAction(Request $request) {
         $entity = new ContentProvider();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
@@ -121,8 +95,7 @@ class ContentProviderController extends Controller
      *
      * @return Form The form
      */
-    private function createCreateForm(ContentProvider $entity)
-    {
+    private function createCreateForm(ContentProvider $entity) {
         $form = $this->createForm(
             new ContentProviderType(),
             $entity,
@@ -143,11 +116,10 @@ class ContentProviderController extends Controller
      * @Route("/new", name="contentprovider_new")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @return array
      */
-    public function newAction()
-    {
+    public function newAction() {
         $entity = new ContentProvider();
         $form = $this->createCreateForm($entity);
 
@@ -163,13 +135,12 @@ class ContentProviderController extends Controller
      * @Route("/{id}", name="contentprovider_show")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return array
      */
-    public function showAction($id)
-    {
+    public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
@@ -192,13 +163,12 @@ class ContentProviderController extends Controller
      * @Route("/{id}/edit", name="contentprovider_edit")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return array
      */
-    public function editAction($id)
-    {
+    public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
@@ -224,8 +194,7 @@ class ContentProviderController extends Controller
      *
      * @return Form The form
      */
-    private function createEditForm(ContentProvider $entity)
-    {
+    private function createEditForm(ContentProvider $entity) {
         $form = $this->createForm(
             new ContentProviderType(),
             $entity,
@@ -249,14 +218,13 @@ class ContentProviderController extends Controller
      * @Route("/{id}", name="contentprovider_update")
      * @Method("PUT")
      * @Template("LOCKSSOMaticCrudBundle:ContentProvider:edit.html.twig")
-     * 
+     *
      * @param Request $request
      * @param int $id
-     * 
+     *
      * @return array|RedirectResponse
      */
-    public function updateAction(Request $request, $id)
-    {
+    public function updateAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
@@ -291,13 +259,12 @@ class ContentProviderController extends Controller
      * confirmation, just deletes.
      *
      * @Route("/{id}/delete", name="contentprovider_delete")
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return RedirectRequest
      */
-    public function deleteAction($id)
-    {
+    public function deleteAction($id) {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
 
@@ -313,46 +280,37 @@ class ContentProviderController extends Controller
 
     /**
      * Creates a form to delete a ContentProvider entity by id.
-     * 
+     *
      * @todo I think this is unused.
      *
      * @param mixed $id The entity id
      *
      * @return Form The form
      */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-                ->setAction($this->generateUrl(
-                    'contentprovider_delete',
-                    array('id' => $id)
-                ))
-                ->setMethod('DELETE')
-                ->add('submit', 'submit', array('label' => 'Delete'))
-                ->getForm()
-        ;
+    private function createDeleteForm($id) {
+        return $this->createFormBuilder()->setAction($this->generateUrl(
+            'contentprovider_delete',
+            array('id' => $id)
+        ))->setMethod('DELETE')->add('submit', 'submit', array('label' => 'Delete'))->getForm();
     }
 
     /**
      * Create a sample CSV document for later import. Users
      * can edit the CSV file in a spreadsheet editor and
-     * add the necessary rows. The $id parameter is the 
+     * add the necessary rows. The $id parameter is the
      * database id for the content provider to create the deposit. Streams
      * the CSV file.
-     * 
+     *
      * @todo test this.
      *
-     * @param Request $request
      * @Route("/{id}/csv-sample", name="contentprovider_csv_sample")
      * @Method({"GET"})
-     * 
-     * @param Request $request
+     *
      * @param int $id
-     * 
+     *
      * @return Response
      */
-    public function csvSampleAction(Request $request, $id)
-    {
+    public function csvSampleAction($id) {
         $em = $this->getDoctrine()->getManager();
         $provider = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
         $params = array_merge(
@@ -374,12 +332,11 @@ class ContentProviderController extends Controller
 
     /**
      * Build a CSV import form.
-     * 
+     *
      * @param int $id
      * @return Form
      */
-    private function createImportForm($id)
-    {
+    private function createImportForm($id) {
         $formBuilder = $this->createFormBuilder();
         $formBuilder->add(
             'uuid',
@@ -397,9 +354,9 @@ class ContentProviderController extends Controller
         $formBuilder->add('file', 'file', array('label' => 'CSV File'));
         $formBuilder->add('submit', 'submit', array('label' => 'Import'));
         $formBuilder->setAction($this->generateUrl(
-                'contentprovider_csv_import',
-                array('id' => $id)
-            ));
+            'contentprovider_csv_import',
+            array('id' => $id)
+        ));
         $formBuilder->setMethod('POST');
 
         return $formBuilder->getForm();
@@ -407,13 +364,12 @@ class ContentProviderController extends Controller
 
     /**
      * Check a row to make sure it's correct and ready for import.
-     * 
+     *
      * @param array $record
      * @param Plugin $plugin
      * @throws BadRequestException
      */
-    private function precheckContent($record, Plugin $plugin)
-    {
+    private function precheckContent($record, Plugin $plugin) {
         foreach ($plugin->getDefinitionalProperties() as $property) {
             if (!array_key_exists($property, $record)) {
                 throw new BadRequestException("{$property} must have a value.");
@@ -423,14 +379,13 @@ class ContentProviderController extends Controller
 
     /**
      * Precheck the deposit CSV data before doing an import.
-     * 
+     *
      * @param array $csv
      * @param ContentProvider $provider
      * @throws HostMismatchException
      * @throws MaxUploadSizeExceededException
      */
-    private function precheckDeposit($csv, ContentProvider $provider)
-    {
+    private function precheckDeposit($csv, ContentProvider $provider) {
         $plugin = $provider->getPlugin();
         $permissionHost = $provider->getPermissionHost();
         foreach ($csv as $record) {
@@ -448,22 +403,25 @@ class ContentProviderController extends Controller
 
     /**
      * Get the CSV data from an upload form.
-     * 
+     *
      * @param Form $form
      * @return array
      */
-    private function getCsvData(Form $form)
-    {
+    private function getCsvData(Form $form) {
         $data = $form->getData();
         $dataFile = $data['file'];
         $fh = $dataFile->openFile();
-        $headers = array_map(function ($h) { return strtolower($h);}, $fh->fgetcsv());
+        $headers = array_map(function ($h) { return strtolower($h);
+
+        }, $fh->fgetcsv());
         $headerIdx = array_flip($headers);
         $records = array();
+
+        // @codingStandardsIgnoreLine
         while (($row = $fh->fgetcsv()) && (count($row) >= 2)) {
             $record = array();
             foreach ($headers as $header) {
-                if( ! isset($row[$headerIdx[$header]])) {
+                if(! isset($row[$headerIdx[$header]])) {
                     continue;
                 }
                 $record[$header] = $row[$headerIdx[$header]];
@@ -476,18 +434,17 @@ class ContentProviderController extends Controller
 
     /**
      * Import a CSV file.
-     * 
+     *
      * @Route("/{id}/csv", name="contentprovider_csv_import")
      * @Method({"GET", "POST"})
      * @Template()
-     * 
+     *
      * @param Request $request
      * @param int $id
-     * 
+     *
      * @return array|RedirectResponse
      */
-    public function csvAction(Request $request, $id)
-    {
+    public function csvAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
         $provider = $em->getRepository('LOCKSSOMaticCrudBundle:ContentProvider')->find($id);
         $requiredParams = $provider->getPlugin()->getDefinitionalProperties();
@@ -504,7 +461,7 @@ class ContentProviderController extends Controller
             $contentBuilder = $this->container->get('crud.builder.content');
             $auBuilder = $this->container->get('crud.builder.au');
             $idGenerator = $this->container->get('crud.au.idgenerator');
-            
+
             $deposit = $depositBuilder->fromForm($form, $provider, $em);
             foreach ($csv as $record) {
                 $content = $contentBuilder->fromArray($record);

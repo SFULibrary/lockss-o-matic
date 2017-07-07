@@ -22,8 +22,7 @@ class MessageController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function indexAction()
-    {
+    public function indexAction() {
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
 
@@ -43,8 +42,7 @@ class MessageController extends Controller
     /**
      * @Route("/clear", name="message_clear")
      */
-    public function clearMessagesAction()
-    {
+    public function clearMessagesAction() {
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
 

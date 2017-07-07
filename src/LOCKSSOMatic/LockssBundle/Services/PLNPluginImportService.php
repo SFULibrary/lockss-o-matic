@@ -6,14 +6,48 @@ use Doctrine\ORM\EntityManager;
 use Exception;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 use LOCKSSOMatic\CrudBundle\Entity\PluginProperty;
+use Monolog\Logger;
 use SimpleXMLElement;
 use SplFileInfo;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use ZipArchive;
 
+/**
+ * Symfony service to import a LOCKSS PLN plugin.
+ */
 class PLNPluginImportService
 {
+    /**
+     * Names of the prop strings in the plugin's XML configuration file which
+     * should be imported.
+     *
+     * @var array
+     */
+    private static $importPropStrings = array(
+        'au_name',
+        'au_permission_url',
+        'plugin_crawl_type',
+        'plugin_identifier',
+        'plugin_name',
+        'plugin_publishing_platform',
+        'plugin_status',
+        'plugin_version',
+        'plugin_parent',
+        'required_daemon_version',
+    );
+
+    /**
+     * List of the property lists which should be imported.
+     *
+     * @var array
+     */
+    private static $importPropLists = array(
+        'au_crawlrules',
+        'au_start_url',
+    );
+
     /**
      * @var EntityManager
      */
@@ -23,12 +57,33 @@ class PLNPluginImportService
      * @var ContainerInterface
      */
     private $container;
+
+    /**
+     * @var string
+     */
     private $jarDir;
+
+    /**
+     * @var Filesystem
+     */
     private $fs;
+
+    /**
+     * @var Logger
+     */
     private $logger;
 
-    public function setContainer(ContainerInterface $container = null)
-    {
+    /**
+     * {@inheritdoc}
+     *
+     * Derives a bunch of configuration from the container and may prevent the
+     * service from loading if the config fails.
+     *
+     * @param ContainerInterface $container
+     *
+     * @return boolean
+     */
+    public function setContainer(ContainerInterface $container = null) {
         $this->container = $container;
         $this->logger = $container->get('logger');
         $this->em = $container->get('doctrine')->getManager();
@@ -53,14 +108,17 @@ class PLNPluginImportService
     }
 
     /**
-     * @param SplFileInfo $jarInfo
+     * Import a plugin packaged up as a JAR file, and optionally copy the JAR
+     * file to the appropriate place.
      *
-     * @return Plugins
+     * @param SplFileInfo $jarInfo
+     * @param boolean $copy
+     *
+     * @return Plugin
      *
      * @throws Exception if an error occurs
      */
-    public function importJarFile(SplFileInfo $jarInfo, $copy = true)
-    {
+    public function importJarFile(SplFileInfo $jarInfo, $copy = true) {
         $zip = new ZipArchive();
         $res = $zip->open($jarInfo->getPathname());
         if ($res !== true) {
@@ -88,8 +146,7 @@ class PLNPluginImportService
      *
      * @return string
      */
-    public function getPluginPath($rawManifest)
-    {
+    public function getPluginPath($rawManifest) {
         $manifest = preg_replace('/\r\n/', "\n", $rawManifest);
         $blocks = preg_split('/\n\s*\n/s', $manifest);
 
@@ -122,8 +179,7 @@ class PLNPluginImportService
      *
      * @throws Exception
      */
-    public function findXmlPropString(SimpleXMLElement $xml, $propName)
-    {
+    public function findXmlPropString(SimpleXMLElement $xml, $propName) {
         $data = $xml->xpath("//entry[string[1]/text() = '{$propName}']/string[2]");
         if (count($data) === 1) {
             return $data[0];
@@ -144,8 +200,7 @@ class PLNPluginImportService
      *
      * @throws Exception
      */
-    public function findXmlPropElement(SimpleXMLElement $xml, $propName)
-    {
+    public function findXmlPropElement(SimpleXMLElement $xml, $propName) {
         $data = $xml->xpath("//entry[string[1]/text() = '{$propName}']/list");
         if (count($data) === 1) {
             return $data[0];
@@ -165,8 +220,7 @@ class PLNPluginImportService
      *
      * @return PluginProperty
      */
-    public function newPluginProperty(Plugin $plugin, $name, SimpleXMLElement $value = null)
-    {
+    public function newPluginProperty(Plugin $plugin, $name, SimpleXMLElement $value = null) {
         $property = new PluginProperty();
         $property->setPlugin($plugin);
         $property->setPropertyKey($name);
@@ -191,8 +245,18 @@ class PLNPluginImportService
         return $property;
     }
 
-    public function buildPlugin(SimpleXMLElement $xml, SplFileInfo $jarInfo, $copy)
-    {
+    /**
+     * Build a plugin entity and return it.
+     *
+     * @param SimpleXMLElement $xml
+     * @param SplFileInfo $jarInfo
+     * @param boolean $copy
+     *
+     * @return Plugin
+     *
+     * @throws Exception
+     */
+    public function buildPlugin(SimpleXMLElement $xml, SplFileInfo $jarInfo, $copy) {
         $pluginRepo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Plugin');
         $filename = $jarInfo->getFilename();
         if (get_class($jarInfo) === 'Symfony\Component\HttpFoundation\File\UploadedFile') {
@@ -227,33 +291,15 @@ class PLNPluginImportService
         return $plugin;
     }
 
-    private static $importPropStrings = array(
-        'au_name',
-        'au_permission_url',
-        'plugin_crawl_type',
-        'plugin_identifier',
-        'plugin_name',
-        'plugin_publishing_platform',
-        'plugin_status',
-        'plugin_version',
-        'plugin_parent',
-        'required_daemon_version',
-    );
-
-    private static $importPropLists = array(
-        'au_crawlrules',
-        'au_start_url',
-    );
-
     /**
      * Import the data from the plugin. Does not create content
      * owners for the plugins, that's handled by the titledb import
      * command.
      *
+     * @param Plugin $plugin
      * @param SimpleXMLElement $xml
      */
-    public function addProperties(Plugin $plugin, SimpleXMLElement $xml)
-    {
+    public function addProperties(Plugin $plugin, SimpleXMLElement $xml) {
         foreach (self::$importPropStrings as $prop) {
             $this->newPluginProperty($plugin, $prop, $this->findXmlPropString($xml, $prop));
         }

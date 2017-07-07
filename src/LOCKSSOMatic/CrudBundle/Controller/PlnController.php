@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
 use LOCKSSOMatic\CrudBundle\Entity\Keystore;
@@ -45,16 +21,17 @@ use Symfony\Component\HttpFoundation\Request;
 class PlnController extends Controller
 {
     /**
-     * Lists all Pln entities. Does pagination, even though there's 
+     * Lists all Pln entities. Does pagination, even though there's
      * probably never going to be more than 25 PLNs in a LOCKSSOMatic
      * instance.
+     *
+     * @param Request $request
      *
      * @Route("/", name="pln")
      * @Method("GET")
      * @Template()
      */
-    public function indexAction(Request $request)
-    {
+    public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:Pln e';
         $query = $em->createQuery($dql);
@@ -76,13 +53,12 @@ class PlnController extends Controller
      * @Route("/", name="pln_create")
      * @Method("POST")
      * @Template("LOCKSSOMaticCrudBundle:Pln:new.html.twig")
-     * 
+     *
      * @param Request $request
      *
      * @return array|RedirectResponse
      */
-    public function createAction(Request $request)
-    {
+    public function createAction(Request $request) {
         $entity = new Pln();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
@@ -111,8 +87,7 @@ class PlnController extends Controller
      *
      * @return Form The form
      */
-    private function createCreateForm(Pln $entity)
-    {
+    private function createCreateForm(Pln $entity) {
         $form = $this->createForm(
             new PlnType(),
             $entity,
@@ -133,11 +108,10 @@ class PlnController extends Controller
      * @Route("/new", name="pln_new")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @return array
      */
-    public function newAction()
-    {
+    public function newAction() {
         $entity = new Pln();
         $form = $this->createCreateForm($entity);
 
@@ -150,14 +124,15 @@ class PlnController extends Controller
     /**
      * Finds and displays a Pln entity.
      *
+     * @param int $id
+     *
      * @Route("/{id}", name="pln_show")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @return array
      */
-    public function showAction($id)
-    {
+    public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
@@ -180,13 +155,12 @@ class PlnController extends Controller
      * @Route("/{id}/edit", name="pln_edit")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return array
      */
-    public function editAction($id)
-    {
+    public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
@@ -212,8 +186,7 @@ class PlnController extends Controller
      *
      * @return Form The form
      */
-    private function createEditForm(Pln $entity)
-    {
+    private function createEditForm(Pln $entity) {
         $form = $this->createForm(
             new PlnType($entity),
             $entity,
@@ -237,14 +210,13 @@ class PlnController extends Controller
      * @Route("/{id}", name="pln_update")
      * @Method("PUT")
      * @Template("LOCKSSOMaticCrudBundle:Pln:edit.html.twig")
-     * 
+     *
      * @param Request $request
      * @param int $id
-     * 
+     *
      * @return array|RedirectResponse
      */
-    public function updateAction(Request $request, $id)
-    {
+    public function updateAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
@@ -277,14 +249,12 @@ class PlnController extends Controller
      * Deletes a Pln entity.
      *
      * @Route("/{id}/delete", name="pln_delete")
-     * 
-     * @param Request $request
+     *
      * @param int $id
-     * 
+     *
      * @return array|RedirectResponse
      */
-    public function deleteAction(Request $request, $id)
-    {
+    public function deleteAction($id) {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
 
@@ -305,31 +275,24 @@ class PlnController extends Controller
      *
      * @return Form The form
      */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-                        ->setAction($this->generateUrl('pln_delete', array('id' => $id)))
-                        ->setMethod('DELETE')
-                        ->add('submit', 'submit', array('label' => 'Delete'))
-                        ->getForm()
-        ;
+    private function createDeleteForm($id) {
+        return $this->createFormBuilder()->setAction($this->generateUrl('pln_delete', array('id' => $id)))->setMethod('DELETE')->add('submit', 'submit', array('label' => 'Delete'))->getForm();
     }
 
     /**
      * Show all of the users and how they can access the PLN.
-     * 
+     *
      * @Route("/{id}/access", name="pln_access")
      * @Template("LOCKSSOMaticCrudBundle:Pln:access.html.twig")
      *
      * @param type $id
-     * 
+     *
      * @return array
      */
-    public function showAccessAction($id)
-    {
+    public function showAccessAction($id) {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
-        if( ! $entity) {
+        if(! $entity) {
             throw $this->createNotFoundException('The PLN could not be found.');
         }
         $this->get('lom.access')->checkAccess('PLNADMIN', $entity);
@@ -344,12 +307,11 @@ class PlnController extends Controller
 
     /**
      * Create the form to edit the user access for the PLN.
-     * 
+     *
      * @param Pln $pln
      * @return Form the form
      */
-    private function createEditAccessForm(Pln $pln)
-    {
+    private function createEditAccessForm(Pln $pln) {
         $em = $this->getDoctrine()->getManager();
         $users = $em->getRepository('LOCKSSOMaticUserBundle:User')->findAll();
         $accessManager = $this->get('lom.access');
@@ -389,20 +351,19 @@ class PlnController extends Controller
 
     /**
      * Display a form to edit the user access to a PLN.
-     * 
+     *
      * @Route("/{id}/access/edit", name="pln_access_edit")
      * @Method("GET")
      * @Template("LOCKSSOMaticCrudBundle:Pln:accessEdit.html.twig")
      *
      * @param int $id
-     * 
+     *
      * @return array
      */
-    public function editAccessAction($id)
-    {
+    public function editAccessAction($id) {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
-        if( ! $pln) {
+        if(! $pln) {
             throw $this->createNotFoundException('The PLN was not found.');
         }
         $this->get('lom.access')->checkAccess('PLNADMIN', $pln);
@@ -416,12 +377,11 @@ class PlnController extends Controller
 
     /**
      * Update user access to the PLN.
-     * 
+     *
      * @param Request $request
      * @param Pln $pln
      */
-    private function updateAccess(Request $request, Pln $pln)
-    {
+    private function updateAccess(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
         $users = $em->getRepository('LOCKSSOMaticUserBundle:User')->findAll();
         $accessManager = $this->get('lom.access');
@@ -437,19 +397,18 @@ class PlnController extends Controller
     }
 
     /**
-     * Process the access update request and return a 
+     * Process the access update request and return a
      * redirect.
-     * 
+     *
      * @Route("/{id}/access/edit", name="pln_access_update")
      * @Method("POST")
      *
      * @param Request $request
      * @param int $id
-     * 
+     *
      * @return array|RedirectResponse
      */
-    public function updateAccessAction(Request $request, $id)
-    {
+    public function updateAccessAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
         $this->get('lom.access')->checkAccess('PLNADMIN', $pln);
@@ -475,19 +434,18 @@ class PlnController extends Controller
 
     /**
      * Show a list of the plugins associated with a PLN.
-     * 
+     *
      * @Route("/{id}/plugins", name="pln_plugins")
      * @Template("LOCKSSOMaticCrudBundle:Pln:plugins.html.twig")
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return array
      */
-    public function showPluginsAction($id)
-    {
+    public function showPluginsAction($id) {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
-        if( ! $pln) {
+        if(! $pln) {
             throw $this->createNotFoundException('The PLN could not be found.');
         }
         return array(
@@ -498,12 +456,11 @@ class PlnController extends Controller
     /**
      * Create a form to edit the plugins associated with a
      * PLN.
-     * 
+     *
      * @param Pln $pln
      * @return Form
      */
-    private function createEditPluginsForm(Pln $pln)
-    {
+    private function createEditPluginsForm(Pln $pln) {
         $options = array(
             'method' => 'POST',
             'action' => $this->generateUrl('pln_plugins_update', array(
@@ -525,17 +482,16 @@ class PlnController extends Controller
 
     /**
      * Display a form to edit the plugins associated with a PLN.
-     * 
+     *
      * @Route("/{id}/plugins/edit", name="pln_plugins_edit")
      * @Method("GET")
      * @Template("LOCKSSOMaticCrudBundle:Pln:pluginsEdit.html.twig");
      *
      * @param int $id
-     * 
+     *
      * @return array
      */
-    public function editPluginsAction($id)
-    {
+    public function editPluginsAction($id) {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
         $form = $this->createEditPluginsForm($pln);
@@ -548,19 +504,18 @@ class PlnController extends Controller
 
     /**
      * Update the plugins associated with a PLN.
-     * 
+     *
      * @Route("/{id}/plugins/update", name="pln_plugins_update")
      * @Method("POST")
-     * 
+     *
      * @todo Rejig the edit form. One select per plugin should be the way to go.
      *
      * @param Request $request
      * @param int $id
-     * 
+     *
      * @return RedirectResponse
      */
-    public function updatePluginsAction(Request $request, $id)
-    {
+    public function updatePluginsAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
         $form = $this->createEditPluginsForm($pln);
@@ -580,23 +535,22 @@ class PlnController extends Controller
      * Display information about the LOCKSS keystore, and
      * show a widget to upload a new keystore. Also handles
      * processing the form for post requests.
-     * 
+     *
      * @todo this method does too much. Split it up to smaller methods.
-     * 
+     *
      * @Route("/{id}/keystore", name="pln_keystore")
      * @Method({"GET", "POST"})
      * @Template()
      *
      * @param Request $request
      * @param int     $id
-     * 
+     *
      * @return array|RedirectResponse
      */
-    public function keystoreAction(Request $request, $id)
-    {
+    public function keystoreAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
-        if( ! $pln) {
+        if(! $pln) {
             throw $this->createNotFoundException('The PLN was not found.');
         }
         $keystore = $pln->getKeystore();
@@ -605,15 +559,12 @@ class PlnController extends Controller
             $keystore->setPln($pln);
         }
 
-        $form = $this->createFormBuilder()
-                ->add('filename', 'file', array(
+        $form = $this->createFormBuilder()->add('filename', 'file', array(
                     'mapped' => false,
                     'required' => true,
-                ))
-                ->add('submit', 'submit', array(
+        ))->add('submit', 'submit', array(
                     'label' => 'Save',
-                ))
-                ->getForm();
+        ))->getForm();
 
         $form->handleRequest($request);
         if ($form->isValid()) {

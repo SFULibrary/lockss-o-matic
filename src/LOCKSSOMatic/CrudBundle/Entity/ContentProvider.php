@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -100,7 +76,7 @@ class ContentProvider implements GetPlnInterface
     private $maxAuSize;
 
     /**
-     * The owner for the provider. Providers make deposit on behalf 
+     * The owner for the provider. Providers make deposit on behalf
      * of owners.
      *
      * @var ContentOwner
@@ -154,8 +130,10 @@ class ContentProvider implements GetPlnInterface
      */
     private $deposits;
 
-    public function __construct()
-    {
+    /**
+     * Build an empty content provider.
+     */
+    public function __construct() {
         $this->aus = new ArrayCollection();
         $this->deposits = new ArrayCollection();
     }
@@ -165,8 +143,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -177,8 +154,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function setUuid($uuid)
-    {
+    public function setUuid($uuid) {
         $this->uuid = strtoupper($uuid);
 
         return $this;
@@ -189,8 +165,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return string
      */
-    public function getUuid()
-    {
+    public function getUuid() {
         return strtoupper($this->uuid);
     }
 
@@ -201,8 +176,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function setPermissionurl($permissionurl)
-    {
+    public function setPermissionurl($permissionurl) {
         $this->permissionurl = $permissionurl;
 
         return $this;
@@ -213,19 +187,17 @@ class ContentProvider implements GetPlnInterface
      *
      * @return string
      */
-    public function getPermissionurl()
-    {
+    public function getPermissionurl() {
         return $this->permissionurl;
     }
 
     /**
-     * Convenience method to get the host holding the permission statement 
+     * Convenience method to get the host holding the permission statement
      * from the permission url.
-     * 
+     *
      * @return string
      */
-    public function getPermissionHost()
-    {
+    public function getPermissionHost() {
         return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
     }
 
@@ -236,8 +208,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -248,8 +219,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -260,8 +230,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function setMaxFileSize($maxFileSize)
-    {
+    public function setMaxFileSize($maxFileSize) {
         $this->maxFileSize = $maxFileSize;
 
         return $this;
@@ -272,8 +241,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return int
      */
-    public function getMaxFileSize()
-    {
+    public function getMaxFileSize() {
         return $this->maxFileSize;
     }
 
@@ -284,8 +252,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function setMaxAuSize($maxAuSize)
-    {
+    public function setMaxAuSize($maxAuSize) {
         $this->maxAuSize = $maxAuSize;
 
         return $this;
@@ -296,8 +263,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return int
      */
-    public function getMaxAuSize()
-    {
+    public function getMaxAuSize() {
         return $this->maxAuSize;
     }
 
@@ -308,8 +274,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function setContentOwner(ContentOwner $contentOwner = null)
-    {
+    public function setContentOwner(ContentOwner $contentOwner = null) {
         $this->contentOwner = $contentOwner;
         $contentOwner->addContentProvider($this);
 
@@ -321,8 +286,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentOwner
      */
-    public function getContentOwner()
-    {
+    public function getContentOwner() {
         return $this->contentOwner;
     }
 
@@ -333,8 +297,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function setPln(Pln $pln = null)
-    {
+    public function setPln(Pln $pln = null) {
         $this->pln = $pln;
         $pln->addContentProvider($this);
 
@@ -346,8 +309,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return Pln
      */
-    public function getPln()
-    {
+    public function getPln() {
         return $this->pln;
     }
 
@@ -358,8 +320,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function addAus(Au $aus)
-    {
+    public function addAus(Au $aus) {
         $this->aus[] = $aus;
 
         return $this;
@@ -372,8 +333,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentOwner
      */
-    public function setPlugin(Plugin $plugin = null)
-    {
+    public function setPlugin(Plugin $plugin = null) {
         $this->plugin = $plugin;
         if ($plugin !== null) {
             $plugin->addContentProvider($this);
@@ -387,8 +347,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return Plugin
      */
-    public function getPlugin()
-    {
+    public function getPlugin() {
         return $this->plugin;
     }
 
@@ -397,8 +356,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @param Au $aus
      */
-    public function removeAus(Au $aus)
-    {
+    public function removeAus(Au $aus) {
         $this->aus->removeElement($aus);
     }
 
@@ -407,18 +365,16 @@ class ContentProvider implements GetPlnInterface
      *
      * @return Collection
      */
-    public function getAus()
-    {
+    public function getAus() {
         return $this->aus;
     }
-    
+
     /**
      * Count the AUs associated with the provider.
-     * 
+     *
      * @return int
      */
-    public function countAus()
-    {
+    public function countAus() {
         return $this->aus->count();
     }
 
@@ -429,8 +385,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function addDeposit(Deposit $deposits)
-    {
+    public function addDeposit(Deposit $deposits) {
         $this->deposits[] = $deposits;
 
         return $this;
@@ -441,8 +396,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @param Deposit $deposits
      */
-    public function removeDeposit(Deposit $deposits)
-    {
+    public function removeDeposit(Deposit $deposits) {
         $this->deposits->removeElement($deposits);
     }
 
@@ -451,18 +405,16 @@ class ContentProvider implements GetPlnInterface
      *
      * @return ArrayCollection|Deposit[]
      */
-    public function getDeposits()
-    {
+    public function getDeposits() {
         return $this->deposits;
     }
 
     /**
      * Get all of the content items associated with the provider.
-     * 
+     *
      * @return Content[]
      */
-    public function getContent()
-    {
+    public function getContent() {
         $contentList = array();
         foreach ($this->deposits as $deposit) {
             $content = $deposit->getContent();
@@ -479,8 +431,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
         return $this->name;
     }
 }

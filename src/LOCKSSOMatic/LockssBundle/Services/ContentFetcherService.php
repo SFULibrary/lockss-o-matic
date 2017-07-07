@@ -11,6 +11,9 @@ use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
 use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
 
+/**
+ * Symfony Service to download content from a LOCKSS PLN.
+ */
 class ContentFetcherService
 {
 
@@ -34,28 +37,52 @@ class ContentFetcherService
      */
     private $hasher;
 
-    public function setLogger(Logger $logger)
-    {
+    /**
+     * Set the logger.
+     *
+     * @param Logger $logger
+     */
+    public function setLogger(Logger $logger) {
         $this->logger = $logger;
     }
 
-    public function setRegistry(Registry $registry)
-    {
+    /**
+     * Set the entity manager from the doctrine registry.
+     *
+     * @param Registry $registry
+     */
+    public function setRegistry(Registry $registry) {
         $this->em = $registry->getManager();
     }
 
-    public function setAuIdGenerator(AuIdGenerator $idGenerator)
-    {
+    /**
+     * Set the AU ID generator.
+     *
+     * @param AuIdGenerator $idGenerator
+     */
+    public function setAuIdGenerator(AuIdGenerator $idGenerator) {
         $this->idGenerator = $idGenerator;
     }
 
-    public function setHasher(ContentHasherService $hasher)
-    {
+    /**
+     * Set the content hashher service.
+     *
+     * @param ContentHasherService $hasher
+     */
+    public function setHasher(ContentHasherService $hasher) {
         $this->hasher = $hasher;
     }
 
-    public function download(Content $content, Box $box)
-    {
+    /**
+     * Download and return one content item from one box. Checks the hash to make sure it's
+     * exactly what's expected.
+     *
+     * @param Content $content
+     * @param Box $box
+     *
+     * @return resource a file handle
+     */
+    public function download(Content $content, Box $box) {
         $auid = $this->idGenerator->fromContent($content);
         $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/ContentService?wsdl";
         $fetchClient = new LockssSoapClient();
@@ -63,32 +90,37 @@ class ContentFetcherService
         $fetchClient->setOption('login', $box->getPln()->getUsername());
         $fetchClient->setOption('password', $box->getPln()->getPassword());
         $fetchClient->setOption('attachment_type', Helper::ATTACHMENTS_TYPE_MTOM);
-        
+
         $fetchResponse = $fetchClient->call('fetchFile', array(
             'auid' => $auid,
             'url' => $content->getUrl(),
         ));
-        
+
         if(strtoupper(hash($content->getChecksumType(), $fetchResponse->return->dataHandler)) !== strtoupper($content->getChecksumValue())) {
             $this->logger->warning("Download of cached content failed - Downloaded checksum does not match.");
             return;
         }
-        
+
         $tmpFile = tmpfile();
         fwrite($tmpFile, $fetchResponse->return->dataHandler);
         rewind($tmpFile);
+
         return $tmpFile;
     }
 
-    public function fetch(Content $content)
-    {
+    /**
+     * Fetches a content item from a randomly selected box in the network.
+     *
+     * @param Content $content
+     * @return resource a file handle
+     */
+    public function fetch(Content $content) {
         $pln = $content->getPln();
         $boxes = $pln->getBoxes()->toArray();
         shuffle($boxes);
 
-        //print "expected value: " . $content->getChecksumValue() . "\n";
         $file = null;
-        
+
         foreach ($boxes as $box) {
             $hash = $this->hasher->getChecksum($content->getChecksumType(), $content, $box);
             if ($hash !== $content->getChecksumValue()) {
@@ -97,7 +129,7 @@ class ContentFetcherService
             $file = $this->download($content, $box);
             if($file === null) {
                 continue;
-            }            
+            }
         }
         if($file === null) {
             $this->logger->error("Cannot find matching content on any LOCKSS box.");
@@ -105,5 +137,4 @@ class ContentFetcherService
         }
         return $file;
     }
-
 }

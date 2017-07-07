@@ -7,15 +7,44 @@ use Exception;
 use SoapFault;
 use stdClass;
 
+/**
+ * LOCKSS Soap client. Works around most of the shortcomings in the PHP SOAP
+ * system.
+ */
 class LockssSoapClient
 {
+    /**
+     * URL for the soap definitions
+     *
+     * @var string
+     */
     private $wsdl;
+
+    /**
+     * Soap client options array.
+     *
+     * @var array
+     */
     private $options;
+
+    /**
+     * Errors in the most recently executed SOAP call.
+     *
+     * @var array
+     */
     private $errors;
+
+    /**
+     * Clent to make the actual soap call.
+     *
+     * @var type
+     */
     private $client;
 
-    public function __construct()
-    {
+    /**
+     * Construct the LOCKSS client.
+     */
+    public function __construct() {
         $this->wsdl = null;
         $this->errors = array();
         $this->client = null;
@@ -30,63 +59,103 @@ class LockssSoapClient
         );
     }
 
-    public function setWsdl($wsdl)
-    {
+    /**
+     * Set the WSDL URL.
+     *
+     * @param string $wsdl
+     */
+    public function setWsdl($wsdl) {
         $this->wsdl = $wsdl;
     }
 
-    public function getWsdl()
-    {
+    /**
+     * Get the WSDL URL.
+     *
+     * @return string
+     */
+    public function getWsdl() {
         return $this->wsdl;
     }
 
-    public function setOption($key, $value)
-    {
+    /**
+     * Set an option
+     *
+     * @param string $key
+     * @param string $value
+     */
+    public function setOption($key, $value) {
         $this->options[$key] = $value;
     }
 
-    public function getOption($key)
-    {
+    /**
+     * Get an option.
+     *
+     * @param string $key
+     * @return string|null
+     */
+    public function getOption($key) {
         if (array_key_exists($key, $this->options)) {
             return $this->options[$key];
         }
 
-        return;
+        return null;
     }
 
-    public function getErrors()
-    {
+    /**
+     * Get the errors from the soap call as a string.
+     *
+     * @return type
+     */
+    public function getErrors() {
         return implode("\n", $this->errors);
     }
 
-    public function hasErrors()
-    {
+    /**
+     * Check if the soap call had errors.
+     *
+     * @return boolean
+     */
+    public function hasErrors() {
         return count($this->errors) > 0;
     }
 
-    public function soapErrorHandler($errno, $errmsg, $filename, $linenum, $vars)
-    {
-        $this->errors[] = "Soap Error: {$errmsg}";
+    /**
+     * Call back function to register one error.
+     *
+     * @param int $errno
+     * @param string $errmsg
+     * @param string $filename
+     * @param int $linenum
+     * @param mixed $vars
+     */
+    public function soapErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
+        $this->errors[] = "Soap Error: {$errno}: {$errmsg}";
     }
 
-    public function soapExceptionHandler(Exception $e)
-    {
-        // Symfony\Component\Debug\Debug enables its own exception handler
+    /**
+     * Callback function to register exceptions.
+     *
+     * @param Exception $e
+     */
+    public function soapExceptionHandler(Exception $e) {
         $this->errors[] = "Soap Exception: {$e->getMessage()}";
     }
-    
+
     /**
+     * Call a SOAP method. So gross.
+     *
      * @param string $method
      * @param array  $params
+     * @param array $attachments unused
      *
      * @return stdClass|stdClass[]
      */
-    public function call($method, $params = array(), $attachments = false)
-    {
+    public function call($method, $params = array(), $attachments = null) {
         $oldErrorHandler = set_error_handler(array($this, 'soapErrorHandler'));
         $oldExceptionHandler = set_exception_handler(array($this, 'soapExceptionHandler'));
         $response = null;
         try {
+            // @codingStandardsIgnoreLine
             $this->client = @new SoapClient($this->wsdl, $this->options);
             if($this->client) {
                 $response = $this->client->$method($params);
@@ -100,6 +169,8 @@ class LockssSoapClient
 
             // Symfony is particularily aggressive about getting at this error.
             set_error_handler('var_dump', 0); // Never called because of empty mask.
+
+            // @codingStandardsIgnoreLine
             @trigger_error('');
             restore_error_handler();
         } catch (Exception $e) {

@@ -7,10 +7,17 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
+/**
+ * Form for a user to edit her profile.
+ */
 class ProfileType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+    /**
+     * Build the form.
+     *
+     * @param FormBuilderInterface $builder
+     */
+    public function buildForm(FormBuilderInterface $builder) {
         $builder->add('email');
         $builder->add('fullname');
         $builder->add('institution');
@@ -22,13 +29,21 @@ class ProfileType extends AbstractType
         $builder->add('submit', 'submit');
     }
 
-    public function getName()
-    {
+    /**
+     * Get the form name.
+     *
+     * @return string
+     */
+    public function getName() {
         return 'lom_user_profile';
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
+    /**
+     * Set the default form options.
+     *
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
             'data_class' => "LOCKSSOMatic\UserBundle\Entity\User",
         ));

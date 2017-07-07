@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -41,7 +17,7 @@ class Pln
     /**
      * LOCKSS will only recognize these properties in an XML file if they
      * are lists.
-     * 
+     *
      * @todo In PHP >=5.6 this can be a const array.
      */
     private static $LIST_REQUIRED = array(
@@ -70,7 +46,7 @@ class Pln
 
     /**
      * Description of the PLN.
-     * 
+     *
      * @var string
      * @ORM\Column(name="description", type="text", nullable=true)
      */
@@ -115,7 +91,7 @@ class Pln
 
     /**
      * Java Keystore file.
-     * 
+     *
      * @var Keystore
      * @ORM\OneToOne(targetEntity="Keystore", inversedBy="pln")
      * @ORM\JoinColumn(name="keystore_id", referencedColumnName="id")
@@ -134,7 +110,7 @@ class Pln
     /**
      * List of content providers for this PLN. Each provider is associated with
      * exactly one PLN.
-     * 
+     *
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
      *
      * @var Pln[]
@@ -144,8 +120,7 @@ class Pln
     /**
      * Construct a PLN.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->aus = new ArrayCollection();
         $this->boxes = new ArrayCollection();
         $this->properties = array();
@@ -158,8 +133,7 @@ class Pln
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -170,8 +144,7 @@ class Pln
      *
      * @return Pln
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -182,18 +155,16 @@ class Pln
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
     /**
      * Synonym for getName().
-     * 
+     *
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
         return $this->name;
     }
 
@@ -204,8 +175,7 @@ class Pln
      *
      * @return Pln
      */
-    public function addAus(Au $aus)
-    {
+    public function addAus(Au $aus) {
         $this->aus[] = $aus;
 
         return $this;
@@ -216,8 +186,7 @@ class Pln
      *
      * @param Au $aus
      */
-    public function removeAus(Au $aus)
-    {
+    public function removeAus(Au $aus) {
         $this->aus->removeElement($aus);
     }
 
@@ -226,18 +195,16 @@ class Pln
      *
      * @return ArrayCollection|Au[]
      */
-    public function getAus()
-    {
+    public function getAus() {
         return $this->aus;
     }
 
     /**
      * Count the AUs in this PLN.
-     * 
+     *
      * @return int
      */
-    public function countAus()
-    {
+    public function countAus() {
         return $this->aus->count();
     }
 
@@ -248,8 +215,7 @@ class Pln
      *
      * @return Pln
      */
-    public function addBox(Box $boxes)
-    {
+    public function addBox(Box $boxes) {
         $this->boxes[] = $boxes;
 
         return $this;
@@ -260,8 +226,7 @@ class Pln
      *
      * @param Box $box
      */
-    public function removeBox(Box $box)
-    {
+    public function removeBox(Box $box) {
         $this->boxes->removeElement($box);
     }
 
@@ -270,8 +235,7 @@ class Pln
      *
      * @return ArrayCollection|Box[]
      */
-    public function getBoxes()
-    {
+    public function getBoxes() {
         return $this->boxes;
     }
 
@@ -283,8 +247,7 @@ class Pln
      *
      * @return Pln
      */
-    public function setProperty($key, $value)
-    {
+    public function setProperty($key, $value) {
         $this->properties[$key] = $value;
 
         return $this;
@@ -297,8 +260,7 @@ class Pln
      *
      * @return Pln
      */
-    public function deleteProperty($key)
-    {
+    public function deleteProperty($key) {
         unset($this->properties[$key]);
 
         return $this;
@@ -306,25 +268,24 @@ class Pln
 
     /**
      * Get a list of the property keys.
-     * 
+     *
      * @return string[]
      */
-    public function getPropertyKeys()
-    {
+    public function getPropertyKeys() {
         return array_keys($this->properties);
     }
 
     /**
-     * Get a property. If the property key is an array, or if it is in 
-     * self::$LIST_REQUIRED, or if $forceArray is true, the value returned 
+     * Get a property. If the property key is an array, or if it is in
+     * self::$LIST_REQUIRED, or if $forceArray is true, the value returned
      * will be an array.
      *
      * @param string $key
+     * @param boolean $forceArray
      *
      * @return string|array
      */
-    public function getProperty($key, $forceArray = false)
-    {
+    public function getProperty($key, $forceArray = false) {
         if (!array_key_exists($key, $this->properties)) {
             return;
         }
@@ -339,23 +300,21 @@ class Pln
     }
 
     /**
-     * Return all of the properties. It's best to use 
+     * Return all of the properties. It's best to use
      * getPropertyKeys()/getProperty($key) as that will respect self::$LIST_REQUIRED.
-     * 
+     *
      * @return array
      */
-    public function getProperties()
-    {
+    public function getProperties() {
         return $this->properties;
     }
 
     /**
      * Set all the properties in one go.
-     * 
+     *
      * @param type $properties
      */
-    public function setProperties($properties)
-    {
+    public function setProperties($properties) {
         $this->properties = $properties;
     }
 
@@ -366,8 +325,7 @@ class Pln
      *
      * @return Pln
      */
-    public function addContentProvider(ContentProvider $contentProvider)
-    {
+    public function addContentProvider(ContentProvider $contentProvider) {
         $this->contentProviders[] = $contentProvider;
 
         return $this;
@@ -378,8 +336,7 @@ class Pln
      *
      * @param ContentProvider $contentProvider
      */
-    public function removeContentProvider(ContentProvider $contentProvider)
-    {
+    public function removeContentProvider(ContentProvider $contentProvider) {
         $this->contentProviders->removeElement($contentProvider);
     }
 
@@ -388,8 +345,7 @@ class Pln
      *
      * @return ArrayCollection|ContentProvider[]
      */
-    public function getContentProviders()
-    {
+    public function getContentProviders() {
         return $this->contentProviders;
     }
 
@@ -398,8 +354,7 @@ class Pln
      *
      * @return Plugin[]
      */
-    public function getPlugins()
-    {
+    public function getPlugins() {
         $plugins = array();
         foreach ($this->getContentProviders() as $provider) {
             $plugin = $provider->getPlugin();
@@ -416,8 +371,7 @@ class Pln
      *
      * @return Pln
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
 
         return $this;
@@ -428,8 +382,7 @@ class Pln
      *
      * @return string
      */
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->description;
     }
 
@@ -440,8 +393,7 @@ class Pln
      *
      * @return Pln
      */
-    public function setKeystore(Keystore $keystore = null)
-    {
+    public function setKeystore(Keystore $keystore = null) {
         $this->keystore = $keystore;
 
         return $this;
@@ -452,8 +404,7 @@ class Pln
      *
      * @return Keystore
      */
-    public function getKeystore()
-    {
+    public function getKeystore() {
         return $this->keystore;
     }
 
@@ -464,8 +415,7 @@ class Pln
      *
      * @return Pln
      */
-    public function setUsername($username)
-    {
+    public function setUsername($username) {
         $this->username = $username;
 
         return $this;
@@ -476,8 +426,7 @@ class Pln
      *
      * @return string
      */
-    public function getUsername()
-    {
+    public function getUsername() {
         return $this->username;
     }
 
@@ -488,8 +437,7 @@ class Pln
      *
      * @return Pln
      */
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
 
         return $this;
@@ -500,8 +448,7 @@ class Pln
      *
      * @return string
      */
-    public function getPassword()
-    {
+    public function getPassword() {
         return $this->password;
     }
 }

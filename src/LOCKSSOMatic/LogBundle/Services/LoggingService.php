@@ -71,8 +71,7 @@ class LoggingService
      *
      * @param ContainerInterface $container
      */
-    public function setContainer(ContainerInterface $container)
-    {
+    public function setContainer(ContainerInterface $container) {
         $this->container = $container;
         if ($container->hasParameter('activity_log.enabled')) {
             $this->enabled = $container->getParameter('activity_log.enabled');
@@ -82,16 +81,14 @@ class LoggingService
     /**
      * Enable the activity log.
      */
-    public function enable()
-    {
+    public function enable() {
         $this->enabled = true;
     }
 
     /**
      * Disable the activity log.
      */
-    public function disable()
-    {
+    public function disable() {
         $this->enabled = false;
     }
 
@@ -100,8 +97,7 @@ class LoggingService
      *
      * @return Request
      */
-    private function getRequest()
-    {
+    private function getRequest() {
         if ($this->request === null) {
             $this->request = $this->container->get('request_stack')->getCurrentRequest();
         }
@@ -114,8 +110,7 @@ class LoggingService
      *
      * @return TokenStorage
      */
-    private function getTokenStorage()
-    {
+    private function getTokenStorage() {
         if ($this->tokenStorage === null) {
             $this->tokenStorage = $this->container->get('security.token_storage');
         }
@@ -128,8 +123,7 @@ class LoggingService
      *
      * @return EntityManager
      */
-    private function getEntityManager()
-    {
+    private function getEntityManager() {
         if ($this->em === null) {
             $this->em = $this->container->get('doctrine')->getManager();
         }
@@ -144,8 +138,7 @@ class LoggingService
      *
      * @param string $class
      */
-    public function ignoreClass($class)
-    {
+    public function ignoreClass($class) {
         $this->ignoredClasses[] = $class;
     }
 
@@ -156,8 +149,7 @@ class LoggingService
      *
      * @return type
      */
-    private function findStackFrame()
-    {
+    private function findStackFrame() {
         $trace = debug_backtrace();
         foreach ($trace as $f) {
             if (!array_key_exists('class', $f)) {
@@ -183,8 +175,7 @@ class LoggingService
      *
      * @param type $user
      */
-    public function overrideUser($user)
-    {
+    public function overrideUser($user) {
         $this->userOverride = $user;
     }
 
@@ -204,8 +195,7 @@ class LoggingService
      *
      * @return string
      */
-    public function getUser(array $details = array())
-    {
+    public function getUser(array $details = array()) {
         if ($this->userOverride !== null) {
             return $this->userOverride;
         }
@@ -231,18 +221,17 @@ class LoggingService
      * @param string $summary a brief message
      * @param array  $details array with message details.
      */
-    public function log($summary, array $details = array())
-    {
+    public function log($summary, array $details = array()) {
         if ($this->enabled === false) {
             return;
         }
         $entry = new LogEntry();
-        # set some defaults.
+        // set some defaults.
         $details = array_merge(array(
             'level' => 'info',
             'pln' => null,
             'message' => null,
-            ), $details);
+        ), $details);
 
         $frame = $this->findStackFrame();
 
@@ -274,8 +263,7 @@ class LoggingService
      *
      * @throws Exception
      */
-    private function doctrineLog(EventArgs $args, $details = array())
-    {
+    private function doctrineLog(EventArgs $args, $details = array()) {
         if ($args instanceof LifecycleEventArgs) {
             $entity = $args->getEntity();
             $id = $entity->getId();
@@ -307,8 +295,7 @@ class LoggingService
      *
      * @param LifecycleEventArgs $args
      */
-    public function postPersist(LifecycleEventArgs $args)
-    {
+    public function postPersist(LifecycleEventArgs $args) {
         $this->doctrineLog(
             $args,
             array(
@@ -323,8 +310,7 @@ class LoggingService
      *
      * @param LifecycleEventArgs $args
      */
-    public function postUpdate(LifecycleEventArgs $args)
-    {
+    public function postUpdate(LifecycleEventArgs $args) {
         $this->doctrineLog(
             $args,
             array(
@@ -345,8 +331,7 @@ class LoggingService
      *
      * @return type
      */
-    public function preRemove(LifecycleEventArgs $args)
-    {
+    public function preRemove(LifecycleEventArgs $args) {
         $entity = $args->getEntity();
         $class = get_class($entity);
         if (in_array($class, $this->ignoredClasses)) {
@@ -369,8 +354,7 @@ class LoggingService
      *
      * @return bool
      */
-    public function postFlush(PostFlushEventArgs $args)
-    {
+    public function postFlush(PostFlushEventArgs $args) {
         $removed = $this->container->get('session')->get('entity_removed');
         if ($removed === null) {
             return true;
@@ -408,8 +392,7 @@ class LoggingService
      *
      * @return resource
      */
-    public function export($header = true, $purge = false)
-    {
+    public function export($header = true, $purge = false) {
         $em = $this->getEntityManager();
         $em->getConnection()->getConfiguration()->setSQLLogger(null);
 
@@ -451,13 +434,9 @@ class LoggingService
      *   // do stuff with the log data, contains 100 entries in CSV.
      * }
      *
-     * @param bool $header include the CSV header
-     * @param bool $purge  remove the exported log entries
-     *
      * @return callback
      */
-    public function exportCallback($header = true, $purge = false)
-    {
+    public function exportCallback() {
         $em = $this->getEntityManager();
         $em->getConnection()->getConfiguration()->setSQLLogger(null);
 

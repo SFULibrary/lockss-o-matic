@@ -1,30 +1,6 @@
 <?php
 
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\LockssBundle\Command;
 
 use Doctrine\ORM\EntityManager;
@@ -42,7 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\Router;
 
 /**
- * Private Lockss network export command. Exports one or more lockss.xml 
+ * Private Lockss network export command. Exports one or more lockss.xml
  * config files.
  */
 class ExportConfigsCommand extends ContainerAwareCommand
@@ -85,8 +61,7 @@ class ExportConfigsCommand extends ContainerAwareCommand
     /**
      * {@inheritDocs}
      */
-    public function configure()
-    {
+    public function configure() {
         $this->setName('lom:export:configs');
         $this->setDescription('Write all the configuration data to files.');
         $this->addArgument(
@@ -98,10 +73,10 @@ class ExportConfigsCommand extends ContainerAwareCommand
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
+     * @param ContainerInterface $container
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
+    public function setContainer(ContainerInterface $container = null) {
         parent::setContainer($container);
         $this->em = $container->get('doctrine')->getManager();
         $this->logger = $container->get('logger');
@@ -114,12 +89,12 @@ class ExportConfigsCommand extends ContainerAwareCommand
 
     /**
      * Get a list of PLNs based on $plnIds or all PLNs.
-     * @param array plnIds
+     *
+     * @param array $plnIds
      *
      * @return Pln[]
      */
-    private function getPlns($plnIds = null)
-    {
+    private function getPlns($plnIds = null) {
         if ($plnIds === null || count($plnIds) === 0) {
             return $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findAll();
         }
@@ -128,19 +103,20 @@ class ExportConfigsCommand extends ContainerAwareCommand
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
+     *
+     * @param InputInterface $input
      */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+    public function execute(InputInterface $input) {
         $activityLog = $this->getContainer()->get('activity_log');
         $activityLog->disable();
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
-        
+
         if (!file_exists($this->fp->getLockssDir())) {
             $this->fs->mkdir($this->fp->getLockssDir());
         }
         $plnIds = $input->getArgument('pln');
-        
+
         // do this first, because it modifies the db.
         foreach ($this->getPlns($plnIds) as $pln) {
             $auUrls = $this->exportAus($pln);
@@ -152,7 +128,7 @@ class ExportConfigsCommand extends ContainerAwareCommand
         }
         $this->em->flush();
         $this->em->clear();
-        
+
         foreach ($this->getPlns($plnIds) as $pln) {
             $plnDir = $this->fp->getConfigsDir($pln);
             if (!file_exists($plnDir)) {
@@ -169,11 +145,10 @@ class ExportConfigsCommand extends ContainerAwareCommand
     /**
      * Update the list of peers. The updated list is stored as properties
      * in the PLN entity.
-     * 
+     *
      * @param Pln $pln
      */
-    public function updatePeerList(Pln $pln)
-    {
+    public function updatePeerList(Pln $pln) {
         $boxes = $pln->getBoxes();
         $list = array();
         foreach ($boxes as $box) {
@@ -185,23 +160,21 @@ class ExportConfigsCommand extends ContainerAwareCommand
     /**
      * Update the list of title.xml file URLs, and store that list as
      * a property in the PLN.
-     * 
+     *
      * @param Pln $pln
      * @param type $auUrls
      */
-    public function updateTitleDbs(Pln $pln, $auUrls)
-    {
+    public function updateTitleDbs(Pln $pln, $auUrls) {
         $pln->setProperty('org.lockss.titleDbs', $auUrls);
     }
 
     /**
      * Update the plugin registry list for the PLN and store the list as
      * a property in the PLN.
-     * 
+     *
      * @param Pln $pln
      */
-    public function updatePluginRegistries(Pln $pln)
-    {
+    public function updatePluginRegistries(Pln $pln) {
         $pln->setProperty('org.lockss.plugin.registries', $this->router->generate(
             'configs_plugin_list',
             array('plnId' => $pln->getId()),
@@ -211,11 +184,10 @@ class ExportConfigsCommand extends ContainerAwareCommand
 
     /**
      * Update the PLN keystore location and store that as a property in the PLN.
-     * 
+     *
      * @param Pln $pln
      */
-    public function updateKeystoreLocation(Pln $pln)
-    {
+    public function updateKeystoreLocation(Pln $pln) {
         if ($pln->getKeystore()) {
             $pln->setProperty('org.lockss.plugin.keystore.location', $this->router->generate(
                 'configs_plugin_keystore',
@@ -229,11 +201,10 @@ class ExportConfigsCommand extends ContainerAwareCommand
 
     /**
      * Update the PLN's authentication credentials.
-     * 
+     *
      * @param Pln $pln
      */
-    public function updateAuthentication(Pln $pln)
-    {
+    public function updateAuthentication(Pln $pln) {
         $prefix = 'org.lockss.ui.users.lomauth';
         $hash = hash('SHA256', $pln->getPassword());
         $pln->setProperty("{$prefix}.user", $pln->getUsername());
@@ -244,11 +215,10 @@ class ExportConfigsCommand extends ContainerAwareCommand
     /**
      * Export the PLN configuration file by exporting all of the properties
      * associated with the PLN.
-     * 
+     *
      * @param Pln $pln
      */
-    public function exportLockssXml(Pln $pln)
-    {
+    public function exportLockssXml(Pln $pln) {
         $twig = $this->getContainer()->get('templating');
         $xml = $twig->render(
             'LOCKSSOMaticLockssBundle:Configs:lockss.xml.twig',
@@ -262,12 +232,11 @@ class ExportConfigsCommand extends ContainerAwareCommand
 
     /**
      * Export the keystore file.
-     * 
+     *
      * @param Pln $pln
      * @return type
      */
-    public function exportKeystore(Pln $pln)
-    {
+    public function exportKeystore(Pln $pln) {
         $keystore = $pln->getKeystore();
         if (!$keystore) {
             return;
@@ -282,11 +251,10 @@ class ExportConfigsCommand extends ContainerAwareCommand
     /**
      * Export all of the LOCKSS plugins to the file system so that LOCKSS
      * can harvest them as needed.
-     * 
+     *
      * @param Pln $pln
      */
-    public function exportPlugins(Pln $pln)
-    {
+    public function exportPlugins(Pln $pln) {
         $path = $this->fp->getPluginsExportDir($pln);
         if (!$this->fs->exists($path)) {
             $this->fs->mkdir($path);
@@ -303,11 +271,10 @@ class ExportConfigsCommand extends ContainerAwareCommand
 
     /**
      * Export the manifest files for the PLN.
-     * 
+     *
      * @param Pln $pln
      */
-    public function exportManifests(Pln $pln)
-    {
+    public function exportManifests(Pln $pln) {
         // make this an iterator.
         foreach ($pln->getAus() as $au) {
             $manifestDir = $this->fp->getManifestDir($pln, $au->getContentprovider());
@@ -328,20 +295,19 @@ class ExportConfigsCommand extends ContainerAwareCommand
                 'content' => $iterator,
             ));
             $this->fs->dumpFile($manifestFile, $html);
-            
+
             $this->em->clear();
-            gc_collect_cycles();            
+            gc_collect_cycles();
         }
     }
 
     /**
      * Export the AU titledb.xml files, and return URLs for each exported file.
-     * 
+     *
      * @param Pln $pln
      * @return type
      */
-    public function exportAus(Pln $pln)
-    {
+    public function exportAus(Pln $pln) {
         $auUrls = array();
         foreach ($pln->getContentProviders() as $provider) {
             $titleDir = $this->fp->getTitleDbDir($pln, $provider);

@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -73,11 +49,11 @@ class Box implements GetPlnInterface
     private $port;
 
     /**
-     * The port to use for webservice requests - usually :80, but may be 
+     * The port to use for webservice requests - usually :80, but may be
      * different for testing.
      *
      * @var int
-     * @ORM\Column(name="ws_port", type="integer", nullable=false) 
+     * @ORM\Column(name="ws_port", type="integer", nullable=false)
      */
     private $webServicePort;
 
@@ -116,8 +92,7 @@ class Box implements GetPlnInterface
      * Build a new box, with protocol set to TCP, port 9729, and web service
      * port 8080.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->status = new ArrayCollection();
         $this->protocol = 'TCP';
         $this->port = 9729;
@@ -129,8 +104,7 @@ class Box implements GetPlnInterface
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -141,8 +115,7 @@ class Box implements GetPlnInterface
      *
      * @return Box
      */
-    public function setHostname($hostname)
-    {
+    public function setHostname($hostname) {
         $this->hostname = $hostname;
 
         return $this;
@@ -153,8 +126,7 @@ class Box implements GetPlnInterface
      *
      * @return string
      */
-    public function getHostname()
-    {
+    public function getHostname() {
         return $this->hostname;
     }
 
@@ -165,8 +137,7 @@ class Box implements GetPlnInterface
      *
      * @return Box
      */
-    public function setIpAddress($ipAddress)
-    {
+    public function setIpAddress($ipAddress) {
         $this->ipAddress = $ipAddress;
 
         return $this;
@@ -177,8 +148,7 @@ class Box implements GetPlnInterface
      *
      * @return string
      */
-    public function getIpAddress()
-    {
+    public function getIpAddress() {
         return $this->ipAddress;
     }
 
@@ -189,8 +159,7 @@ class Box implements GetPlnInterface
      *
      * @return Box
      */
-    public function setPln(Pln $pln = null)
-    {
+    public function setPln(Pln $pln = null) {
         $this->pln = $pln;
         $pln->addBox($this);
 
@@ -202,8 +171,7 @@ class Box implements GetPlnInterface
      *
      * @return Pln
      */
-    public function getPln()
-    {
+    public function getPln() {
         return $this->pln;
     }
 
@@ -214,8 +182,7 @@ class Box implements GetPlnInterface
      *
      * @return Box
      */
-    public function addStatus(BoxStatus $status)
-    {
+    public function addStatus(BoxStatus $status) {
         $this->status[] = $status;
 
         return $this;
@@ -226,16 +193,14 @@ class Box implements GetPlnInterface
      *
      * @param BoxStatus $status
      */
-    public function removeStatus(BoxStatus $status)
-    {
+    public function removeStatus(BoxStatus $status) {
         $this->status->removeElement($status);
     }
 
     /**
      * @return BoxStatus
      */
-    public function getCurrentStatus()
-    {
+    public function getCurrentStatus() {
         return $this->status->last();
     }
 
@@ -244,8 +209,7 @@ class Box implements GetPlnInterface
      *
      * @return Collection|BoxStatus
      */
-    public function getStatus()
-    {
+    public function getStatus() {
         return $this->status;
     }
 
@@ -256,8 +220,7 @@ class Box implements GetPlnInterface
      *
      * @return Box
      */
-    public function setProtocol($protocol)
-    {
+    public function setProtocol($protocol) {
         $this->protocol = $protocol;
 
         return $this;
@@ -268,8 +231,7 @@ class Box implements GetPlnInterface
      *
      * @return string
      */
-    public function getProtocol()
-    {
+    public function getProtocol() {
         return $this->protocol;
     }
 
@@ -280,8 +242,7 @@ class Box implements GetPlnInterface
      *
      * @return Box
      */
-    public function setPort($port)
-    {
+    public function setPort($port) {
         $this->port = $port;
 
         return $this;
@@ -292,8 +253,7 @@ class Box implements GetPlnInterface
      *
      * @return int
      */
-    public function getPort()
-    {
+    public function getPort() {
         return $this->port;
     }
 
@@ -303,8 +263,7 @@ class Box implements GetPlnInterface
      *
      * @param bool $force force the update, even if the ip is already known.
      */
-    public function resolveHostname($force = false)
-    {
+    public function resolveHostname($force = false) {
         if ($force === true || $this->ipAddress === null || $this->ipAddress === '') {
             $ip = gethostbyname($this->hostname);
             if ($ip !== $this->hostname) {
@@ -320,8 +279,7 @@ class Box implements GetPlnInterface
      *
      * @return Box
      */
-    public function setWebServicePort($webServicePort)
-    {
+    public function setWebServicePort($webServicePort) {
         $this->webServicePort = $webServicePort;
 
         return $this;
@@ -332,8 +290,7 @@ class Box implements GetPlnInterface
      *
      * @return int
      */
-    public function getWebServicePort()
-    {
+    public function getWebServicePort() {
         return $this->webServicePort;
     }
 }

@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -65,7 +41,7 @@ class Keystore
 
     /**
      * Original filename, as uploaded in the web form.
-     * 
+     *
      * @var string
      *
      * @ORM\Column(name="filename", type="string", length=255)
@@ -77,8 +53,7 @@ class Keystore
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -89,8 +64,7 @@ class Keystore
      *
      * @return Keystore
      */
-    public function setFilename($filename)
-    {
+    public function setFilename($filename) {
         $this->filename = $filename;
 
         return $this;
@@ -101,8 +75,7 @@ class Keystore
      *
      * @return string
      */
-    public function getFilename()
-    {
+    public function getFilename() {
         return $this->filename;
     }
 
@@ -113,8 +86,7 @@ class Keystore
      *
      * @return Keystore
      */
-    public function setPln(Pln $pln = null)
-    {
+    public function setPln(Pln $pln = null) {
         $this->pln = $pln;
 
         return $this;
@@ -125,8 +97,7 @@ class Keystore
      *
      * @return Pln
      */
-    public function getPln()
-    {
+    public function getPln() {
         return $this->pln;
     }
 
@@ -137,8 +108,7 @@ class Keystore
      *
      * @return Keystore
      */
-    public function setPath($path)
-    {
+    public function setPath($path) {
         $this->path = $path;
 
         return $this;
@@ -149,18 +119,16 @@ class Keystore
      *
      * @return string
      */
-    public function getPath()
-    {
+    public function getPath() {
         return $this->path;
     }
 
     /**
      * Synonym for getFilename()
-     * 
+     *
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
         return $this->filename;
     }
 }

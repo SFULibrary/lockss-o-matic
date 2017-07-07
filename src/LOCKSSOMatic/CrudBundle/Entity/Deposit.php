@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
@@ -72,7 +48,7 @@ class Deposit implements GetPlnInterface
      * The amount of agreement for the deposit's content URLs in the lockss boxes.
      *
      * @var float
-     * 
+     *
      * @ORM\Column(name="agreement", type="float", nullable=true)
      */
     private $agreement;
@@ -131,7 +107,7 @@ class Deposit implements GetPlnInterface
      * The statuses from LOCKSS for the deposit.
      *
      * @var DepositStatus
-     * 
+     *
      * @ORM\OneToMany(targetEntity="DepositStatus", mappedBy="deposit")
      */
     private $status;
@@ -139,8 +115,7 @@ class Deposit implements GetPlnInterface
     /**
      * Build a new deposit.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->content = new ArrayCollection();
         $this->status = new ArrayCollection();
     }
@@ -150,8 +125,7 @@ class Deposit implements GetPlnInterface
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -162,8 +136,7 @@ class Deposit implements GetPlnInterface
      *
      * @return Deposit
      */
-    public function setUuid($uuid)
-    {
+    public function setUuid($uuid) {
         $this->uuid = strtoupper($uuid);
 
         return $this;
@@ -174,8 +147,7 @@ class Deposit implements GetPlnInterface
      *
      * @return string
      */
-    public function getUuid()
-    {
+    public function getUuid() {
         return strtoupper($this->uuid);
     }
 
@@ -186,8 +158,7 @@ class Deposit implements GetPlnInterface
      *
      * @return Deposit
      */
-    public function setTitle($title)
-    {
+    public function setTitle($title) {
         $this->title = $title;
 
         return $this;
@@ -198,8 +169,7 @@ class Deposit implements GetPlnInterface
      *
      * @return string
      */
-    public function getTitle()
-    {
+    public function getTitle() {
         return $this->title;
     }
 
@@ -210,8 +180,7 @@ class Deposit implements GetPlnInterface
      *
      * @return Deposit
      */
-    public function setSummary($summary)
-    {
+    public function setSummary($summary) {
         $this->summary = $summary;
 
         return $this;
@@ -222,8 +191,7 @@ class Deposit implements GetPlnInterface
      *
      * @return string
      */
-    public function getSummary()
-    {
+    public function getSummary() {
         return $this->summary;
     }
 
@@ -234,8 +202,7 @@ class Deposit implements GetPlnInterface
      *
      * @return Deposit
      */
-    public function setDateDeposited($dateDeposited)
-    {
+    public function setDateDeposited($dateDeposited) {
         $this->dateDeposited = $dateDeposited;
 
         return $this;
@@ -246,8 +213,7 @@ class Deposit implements GetPlnInterface
      *
      * @return DateTime
      */
-    public function getDateDeposited()
-    {
+    public function getDateDeposited() {
         return $this->dateDeposited;
     }
 
@@ -258,8 +224,7 @@ class Deposit implements GetPlnInterface
      *
      * @return Deposit
      */
-    public function setContentProvider(ContentProvider $contentProvider = null)
-    {
+    public function setContentProvider(ContentProvider $contentProvider = null) {
         $this->contentProvider = $contentProvider;
         $contentProvider->addDeposit($this);
 
@@ -271,8 +236,7 @@ class Deposit implements GetPlnInterface
      *
      * @return ContentProvider
      */
-    public function getContentProvider()
-    {
+    public function getContentProvider() {
         return $this->contentProvider;
     }
 
@@ -283,8 +247,7 @@ class Deposit implements GetPlnInterface
      *
      * @return Deposit
      */
-    public function addContent(Content $content)
-    {
+    public function addContent(Content $content) {
         $this->content[] = $content;
 
         return $this;
@@ -295,18 +258,16 @@ class Deposit implements GetPlnInterface
      *
      * @param Content $content
      */
-    public function removeContent(Content $content)
-    {
+    public function removeContent(Content $content) {
         $this->content->removeElement($content);
     }
 
     /**
      * Count the content items in this deposit.
-     * 
+     *
      * @return int
      */
-    public function countContent()
-    {
+    public function countContent() {
         return $this->content->count();
     }
 
@@ -315,16 +276,14 @@ class Deposit implements GetPlnInterface
      *
      * @return ArrayCollection|Content[]
      */
-    public function getContent()
-    {
+    public function getContent() {
         return $this->content;
     }
 
     /**
      * Set the deposit date. It can't be altered once it's set.
      */
-    public function setDepositDate()
-    {
+    public function setDepositDate() {
         if ($this->dateDeposited === null) {
             $this->dateDeposited = new DateTime();
         }
@@ -337,8 +296,7 @@ class Deposit implements GetPlnInterface
      *
      * @return User
      */
-    public function setUser(User $user)
-    {
+    public function setUser(User $user) {
         $this->user = $user;
         $user->addDeposit($this);
 
@@ -350,16 +308,14 @@ class Deposit implements GetPlnInterface
      *
      * @return User|null
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->user;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getPln()
-    {
+    public function getPln() {
         return $this->getContentProvider()->getPln();
     }
 
@@ -370,8 +326,7 @@ class Deposit implements GetPlnInterface
      *
      * @return Deposit
      */
-    public function setAgreement($agreement)
-    {
+    public function setAgreement($agreement) {
         $this->agreement = $agreement;
 
         return $this;
@@ -382,8 +337,7 @@ class Deposit implements GetPlnInterface
      *
      * @return float
      */
-    public function getAgreement()
-    {
+    public function getAgreement() {
         return $this->agreement;
     }
 
@@ -394,8 +348,7 @@ class Deposit implements GetPlnInterface
      *
      * @return Deposit
      */
-    public function addStatus(DepositStatus $status)
-    {
+    public function addStatus(DepositStatus $status) {
         $this->status[] = $status;
 
         return $this;
@@ -406,8 +359,7 @@ class Deposit implements GetPlnInterface
      *
      * @param DepositStatus $status
      */
-    public function removeStatus(DepositStatus $status)
-    {
+    public function removeStatus(DepositStatus $status) {
         $this->status->removeElement($status);
     }
 
@@ -416,8 +368,7 @@ class Deposit implements GetPlnInterface
      *
      * @return Collection
      */
-    public function getStatus()
-    {
+    public function getStatus() {
         return $this->status;
     }
 }
