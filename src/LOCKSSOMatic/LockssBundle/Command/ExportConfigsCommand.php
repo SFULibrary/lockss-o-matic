@@ -132,10 +132,27 @@ class ExportConfigsCommand extends ContainerAwareCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $activityLog = $this->getContainer()->get('activity_log');
+        $activityLog->disable();
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
+        
         if (!file_exists($this->fp->getLockssDir())) {
             $this->fs->mkdir($this->fp->getLockssDir());
         }
         $plnIds = $input->getArgument('pln');
+        
+        // do this first, because it modifies the db.
+        foreach ($this->getPlns($plnIds) as $pln) {
+            $auUrls = $this->exportAus($pln);
+            $this->updatePeerList($pln);
+            $this->updateTitleDbs($pln, $auUrls);
+            $this->updateKeystoreLocation($pln);
+            $this->updatePluginRegistries($pln);
+            $this->updateAuthentication($pln);
+        }
+        $this->em->flush();
+        $this->em->clear();
+        
         foreach ($this->getPlns($plnIds) as $pln) {
             $plnDir = $this->fp->getConfigsDir($pln);
             if (!file_exists($plnDir)) {
@@ -145,15 +162,6 @@ class ExportConfigsCommand extends ContainerAwareCommand
             $this->exportKeystore($pln);
             $this->exportPlugins($pln);
             $this->exportManifests($pln);
-            $auUrls = $this->exportAus($pln);
-
-            $this->updatePeerList($pln);
-            $this->updateTitleDbs($pln, $auUrls);
-            $this->updateKeystoreLocation($pln);
-            $this->updatePluginRegistries($pln);
-            $this->updateAuthentication($pln);
-            $this->em->flush();
-
             $this->exportLockssXml($pln);
         }
     }
@@ -300,6 +308,7 @@ class ExportConfigsCommand extends ContainerAwareCommand
      */
     public function exportManifests(Pln $pln)
     {
+        // make this an iterator.
         foreach ($pln->getAus() as $au) {
             $manifestDir = $this->fp->getManifestDir($pln, $au->getContentprovider());
             if (!$this->fs->exists($manifestDir)) {
@@ -312,10 +321,16 @@ class ExportConfigsCommand extends ContainerAwareCommand
                 'auId' => $au->getId(),
             ));
             $manifestFile = $manifestDir.'/'.basename($manifestUrl);
+            $query = $this->em->createQuery('SELECT c FROM LOCKSSOMatic\CrudBundle\Entity\Content c WHERE c.au = :au');
+            $query->setParameter('au', $au);
+            $iterator = $query->iterate();
             $html = $this->twig->render('LOCKSSOMaticLockssBundle:Configs:manifest.html.twig', array(
-                'content' => $au->getContent(),
+                'content' => $iterator,
             ));
             $this->fs->dumpFile($manifestFile, $html);
+            
+            $this->em->clear();
+            gc_collect_cycles();            
         }
     }
 
