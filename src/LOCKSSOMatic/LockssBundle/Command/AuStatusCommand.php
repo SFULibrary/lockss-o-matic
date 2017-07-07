@@ -67,7 +67,7 @@ class AuStatusCommand extends ContainerAwareCommand
                 'auId' => $auid,
             ));
             if ($status === null) {
-                $this->logger->warning("{$wsdl} failed: " . implode("\n", $client->getErrors()));
+                $this->logger->warning("{$wsdl} failed: {$client->getErrors()}");
                 $errors[$box->getHostname().':'.$box->getWebServicePort()] = $client->getErrors();
             } else {
                 $statuses[$box->getHostname().':'.$box->getWebServicePort()] = get_object_vars($status->return);
