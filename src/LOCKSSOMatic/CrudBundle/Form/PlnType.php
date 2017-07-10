@@ -16,7 +16,7 @@ class PlnType extends AbstractType
      *
      * @param FormBuilderInterface $builder
      */
-    public function buildForm(FormBuilderInterface $builder) {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('name');
         $builder->add('description');
         $builder->add('username', 'text');

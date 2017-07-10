@@ -17,7 +17,7 @@ class BoxType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder) {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('hostname', 'text', array(
                 'required' => false,
                 'attr' => array(

@@ -16,7 +16,7 @@ class ContentOwnerType extends AbstractType
      *
      * @param FormBuilderInterface $builder
      */
-    public function buildForm(FormBuilderInterface $builder) {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('name')->add('emailAddress');
     }
 

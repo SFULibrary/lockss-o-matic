@@ -16,7 +16,7 @@ class AdminUserType extends AbstractType
      *
      * @param FormBuilderInterface $builder
      */
-    public function buildForm(FormBuilderInterface $builder) {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('email', 'email', array('label' => 'form.email', 'translation_domain' => 'FOSUserBundle'))->add('fullname')->add('institution')->add('enabled', 'checkbox', array(
                 'label' => 'Account Enabled',
         ))->add('roles', 'choice', array(

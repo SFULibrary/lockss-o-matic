@@ -17,7 +17,7 @@ class ProfileType extends AbstractType
      *
      * @param FormBuilderInterface $builder
      */
-    public function buildForm(FormBuilderInterface $builder) {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('email');
         $builder->add('fullname');
         $builder->add('institution');
