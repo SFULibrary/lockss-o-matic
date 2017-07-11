@@ -35,7 +35,7 @@ class ExportLogsCommand extends ContainerAwareCommand
      *
      * @param InputInterface  $input
      */
-    protected function execute(InputInterface $input) {
+    public function execute(InputInterface $input, OutputInterface $output) {
         $container = $this->getContainer();
         $actLog = $container->get('activity_log');
 

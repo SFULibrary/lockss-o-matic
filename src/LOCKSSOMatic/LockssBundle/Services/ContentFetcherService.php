@@ -116,7 +116,7 @@ class ContentFetcherService
      */
     public function fetch(Content $content) {
         $pln = $content->getPln();
-        $boxes = $pln->getBoxes()->toArray();
+        $boxes = $pln->getActiveBoxes()->toArray();
         shuffle($boxes);
 
         $file = null;

@@ -128,7 +128,7 @@ class DepositDetailsCommand extends ContainerAwareCommand
             $output->writeln($content->getUrl());
             $output->writeln("{$content->getChecksumValue()}:{$content->getChecksumType()}");
 
-            foreach ($deposit->getPln()->getBoxes() as $box) {
+            foreach ($deposit->getPln()->getActiveBoxes() as $box) {
                 $checksum = $this->getBoxChecksum($box, $content);
                 $output->writeln("{$checksum}:{$box->getHostname()}");
             }

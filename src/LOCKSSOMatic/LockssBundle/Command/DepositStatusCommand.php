@@ -116,7 +116,7 @@ class DepositStatusCommand extends ContainerAwareCommand
      */
     protected function queryDeposit(Deposit $deposit) {
         $pln = $deposit->getPln();
-        $boxes = $pln->getBoxes();
+        $boxes = $pln->getActiveBoxes();
         $contents = $deposit->getContent();
 
         $total = count($boxes) * count($contents); // total number of checksums needed to match.
@@ -149,7 +149,7 @@ class DepositStatusCommand extends ContainerAwareCommand
      *
      * @param InputInterface $input
      */
-    public function execute(InputInterface $input) {
+    public function execute(InputInterface $input, OutputInterface $output) {
         $all = $input->getOption('all');
         $plnId = $input->getOption('pln');
         $dryRun = $input->getOption('dry-run');

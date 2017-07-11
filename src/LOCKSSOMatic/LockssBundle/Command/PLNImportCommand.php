@@ -64,7 +64,7 @@ class PLNImportCommand extends ContainerAwareCommand
      * @param InputInterface $input
      * @throws Exception
      */
-    public function execute(InputInterface $input) {
+    public function execute(InputInterface $input, OutputInterface $output) {
         $activityLog = $this->getContainer()->get('activity_log');
         $activityLog->disable();
 

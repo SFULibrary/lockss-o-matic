@@ -67,7 +67,7 @@ class DepositFetchCommand extends ContainerAwareCommand
      * @return Box[]
      */
     public function loadBoxes(Pln $pln) {
-        $boxes = $pln->getBoxes()->toArray();
+        $boxes = $pln->getActiveBoxes()->toArray();
         shuffle($boxes);
         return $boxes;
     }

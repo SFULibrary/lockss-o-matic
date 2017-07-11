@@ -85,7 +85,7 @@ class Pln
      *
      * @ORM\OneToMany(targetEntity="Box", mappedBy="pln");
      *
-     * @var Box[]
+     * @var ArrayCollection|Box[]
      */
     private $boxes;
 
@@ -237,6 +237,12 @@ class Pln
      */
     public function getBoxes() {
         return $this->boxes;
+    }
+    
+    public function getActiveBoxes() {
+        return $this->boxes->filter(function(Box $box) {
+            return $box->getActive();
+        });
     }
 
     /**

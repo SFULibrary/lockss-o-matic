@@ -67,6 +67,10 @@ class ContentHasherService
      * @return string|array
      */
     public function getChecksum($type, Content $content, Box $box) {
+        if( ! $box->getActive()) {
+            $this->logger->error("Box {$box->getHostname()} is not active.");
+            return '*';
+        }
         $pln = $content->getPln();
         $auid = $this->idGenerator->fromContent($content);
         $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/HasherService?wsdl";

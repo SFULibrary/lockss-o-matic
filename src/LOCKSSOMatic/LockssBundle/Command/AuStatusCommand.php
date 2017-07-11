@@ -67,7 +67,7 @@ class AuStatusCommand extends ContainerAwareCommand
     protected function checkAu(Au $au) {
         $auid = $this->idGenerator->fromAu($au);
         $pln = $au->getPln();
-        $boxes = $pln->getBoxes();
+        $boxes = $pln->getActiveBoxes();
         $statuses = array();
         $errors = array();
         foreach ($boxes as $box) {
@@ -112,7 +112,7 @@ class AuStatusCommand extends ContainerAwareCommand
      *
      * @param InputInterface $input
      */
-    public function execute(InputInterface $input) {
+    public function execute(InputInterface $input, OutputInterface $output) {
         $iterator = $this->getAus($input->getOption('pln'));
         foreach ($iterator as $row) {
             $au = $row[0];

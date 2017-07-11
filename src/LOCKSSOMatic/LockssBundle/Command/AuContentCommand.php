@@ -82,7 +82,7 @@ class AuContentCommand extends ContainerAwareCommand
                 'auId' => $auid,
             ));
             $output->writeln("AU {$au->getId()} on box {$box->getHostname()} content:");
-            foreach($statusResponse['return'] as $id => $url) {
+            foreach($statusResponse->return as $id => $url) {
                 $output->writeln("{$id}: {$url}");
             }
         } catch (Exception $e) {
@@ -99,6 +99,10 @@ class AuContentCommand extends ContainerAwareCommand
     public function execute(InputInterface $input, OutputInterface $output) {
         $au = $this->em->find('LOCKSSOMaticCrudBundle:Au', $input->getArgument('au'));
         $box = $this->em->find('LOCKSSOMaticCrudBundle:Box', $input->getArgument('box'));
+        if( ! $box->getActive()) {
+            $output->writeln("Box {$box->getHostname()} is not active.");
+            return;
+        }
         $this->listAu($au, $box, $output);
     }
 }

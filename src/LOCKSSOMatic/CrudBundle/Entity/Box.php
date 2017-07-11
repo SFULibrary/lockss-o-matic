@@ -87,6 +87,15 @@ class Box implements GetPlnInterface
      * @var Collection|BoxStatus
      */
     private $status;
+    
+    /**
+     * True if the box is active. If the box is inactive, LOCKSSOMatic will
+     * not attempt to interact with it. Defaults to true.
+     *
+     * @var boolean
+     * @ORM\Column(name="active", type="boolean", nullable=false, options={"default": true}) 
+     */
+    private $active;
 
     /**
      * Build a new box, with protocol set to TCP, port 9729, and web service
@@ -97,6 +106,7 @@ class Box implements GetPlnInterface
         $this->protocol = 'TCP';
         $this->port = 9729;
         $this->webServicePort = 80;
+        $this->active = true;
     }
 
     /**
@@ -292,5 +302,26 @@ class Box implements GetPlnInterface
      */
     public function getWebServicePort() {
         return $this->webServicePort;
+    }
+    
+    /**
+     * Get active.
+     * 
+     * @return boolean
+     */
+    public function getActive() {
+        return $this->active;
+    }
+
+    /**
+     * Set active.
+     * 
+     * @param boolean $active
+     * @return $this
+     */
+    public function setActive($active) {
+        $this->active = (bool)$active;
+        
+        return $this;
     }
 }

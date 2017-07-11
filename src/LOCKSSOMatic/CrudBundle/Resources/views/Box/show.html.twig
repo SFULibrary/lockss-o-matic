@@ -52,6 +52,10 @@
                 <td><a href="http://{{ entity.hostname}}:{{ entity.webServicePort}}">{{ entity.hostname }}</a></td>
             </tr>
             <tr>
+                <th>Active</th>
+                <td>{% if entity.active %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
                 <th>Protocol</th>
                 <td>{{ entity.protocol }}</td>
             </tr>

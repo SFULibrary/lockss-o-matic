@@ -65,11 +65,16 @@ class BoxStatusCommand extends ContainerAwareCommand
      */
     protected function getBoxes($plnIds = null) {
         if ($plnIds === null || count($plnIds) === 0) {
-            return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findAll();
+            return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findBy(array(
+                'active' => true,
+            ));
         }
         $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findById($plnIds);
 
-        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findByPln($plns);
+        return $this->em->getRepository('LOCKSSOMaticCrudBundle:Box')->findBy(array(
+            'pln' => $plns,
+            'active' => true,
+        ));
     }
 
     /**
@@ -78,7 +83,7 @@ class BoxStatusCommand extends ContainerAwareCommand
      * @param InputInterface $input
      * @return null
      */
-    public function execute(InputInterface $input) {
+    public function execute(InputInterface $input, OutputInterface $output) {
         $plnIds = $input->getOption('pln');
         foreach ($this->getBoxes($plnIds) as $box) {
             $wsdl = "http://{$box->getHostname()}:{$box->getWebservicePort()}/ws/DaemonStatusService?wsdl";

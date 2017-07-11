@@ -96,6 +96,10 @@ class ListAusCommand extends ContainerAwareCommand
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $box = $this->em->find('LOCKSSOMaticCrudBundle:Box', $input->getArgument('box'));
+        if( ! $box->getActive()) {
+            $output->writeln("Box {$box->getHostname()} is not active.");
+            return;
+        }
         $this->listAus($box, $output);
     }
 }
