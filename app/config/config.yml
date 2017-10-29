@@ -125,6 +125,9 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: LOCKSSOMatic\UserBundle\Entity\User
+    from_email: 
+        sender_name: No Reply
+        address: noreply@example.com
     profile:
         form:
             type:

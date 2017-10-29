@@ -83,12 +83,17 @@ class ContentFetcherService
      * @return resource a file handle
      */
     public function download(Content $content, Box $box) {
+        $pln = $content->getPln();
+        if($pln !== $box->getPln()) {
+            $this->logger->error("Cannot download content from a box on a different PLN.");
+            return;
+        }
         $auid = $this->idGenerator->fromContent($content);
         $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/ContentService?wsdl";
         $fetchClient = new LockssSoapClient();
         $fetchClient->setWsdl($wsdl);
-        $fetchClient->setOption('login', $box->getPln()->getUsername());
-        $fetchClient->setOption('password', $box->getPln()->getPassword());
+        $fetchClient->setOption('login', $pln->getUsername());
+        $fetchClient->setOption('password', $pln->getPassword());
         $fetchClient->setOption('attachment_type', Helper::ATTACHMENTS_TYPE_MTOM);
 
         $fetchResponse = $fetchClient->call('fetchFile', array(
@@ -96,6 +101,11 @@ class ContentFetcherService
             'url' => $content->getUrl(),
         ));
 
+        if($fetchResponse === null) {
+            $this->logger->error("Cannot download content. " . $fetchClient->getErrors());
+            return;
+        }
+        
         if(strtoupper(hash($content->getChecksumType(), $fetchResponse->return->dataHandler)) !== strtoupper($content->getChecksumValue())) {
             $this->logger->warning("Download of cached content failed - Downloaded checksum does not match.");
             return;
@@ -123,7 +133,8 @@ class ContentFetcherService
 
         foreach ($boxes as $box) {
             $hash = $this->hasher->getChecksum($content->getChecksumType(), $content, $box);
-            if ($hash !== $content->getChecksumValue()) {
+            if (strtolower($hash) !== strtolower($content->getChecksumValue())) {
+                print "got: {$hash} expected {$content->getChecksumValue()}\n";
                 continue;
             }
             $file = $this->download($content, $box);

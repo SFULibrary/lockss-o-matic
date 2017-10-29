@@ -3,12 +3,13 @@
 
 namespace LOCKSSOMatic\LockssBundle\Command;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
-use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
+use LOCKSSOMatic\LockssBundle\Services\ContentFetcherService;
 use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -37,6 +38,11 @@ class DepositFetchCommand extends ContainerAwareCommand
      * @var AuIdGenerator
      */
     private $idGenerator;
+    
+    /**
+     * @var ContentFetcherService
+     */
+    private $fetcher;
 
     /**
      * {@inheritDoc}
@@ -56,7 +62,8 @@ class DepositFetchCommand extends ContainerAwareCommand
         parent::setContainer($container);
         $this->logger = $container->get('logger');
         $this->em = $container->get('doctrine')->getManager();
-        $this->idGenerator = $this->getContainer()->get('crud.au.idgenerator');
+        $this->idGenerator = $container->get('crud.au.idgenerator');
+        $this->fetcher = $container->get('lockss.content.fetcher');
     }
 
     /**
@@ -96,7 +103,7 @@ class DepositFetchCommand extends ContainerAwareCommand
         $auid = $this->idGenerator->fromAu($deposit->getContent()->first()->getAu());
 
         foreach($deposit->getContent() as $content) {
-
+            $this->fetcher->fetch($content);
         }
     }
 
