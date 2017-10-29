@@ -5,6 +5,7 @@ namespace LOCKSSOMatic\LockssBundle\Command;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
+use LOCKSSOMatic\CoreBundle\Services\FilePaths;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\CrudBundle\Entity\Pln;
@@ -43,6 +44,11 @@ class DepositFetchCommand extends ContainerAwareCommand
      * @var ContentFetcherService
      */
     private $fetcher;
+    
+    /**
+     * @var FilePaths
+     */
+    private $filePaths;
 
     /**
      * {@inheritDoc}
@@ -64,6 +70,7 @@ class DepositFetchCommand extends ContainerAwareCommand
         $this->em = $container->get('doctrine')->getManager();
         $this->idGenerator = $container->get('crud.au.idgenerator');
         $this->fetcher = $container->get('lockss.content.fetcher');
+        $this->filePaths = $container->get('lom.filepaths');
     }
 
     /**
@@ -93,17 +100,24 @@ class DepositFetchCommand extends ContainerAwareCommand
     /**
      * Download a deposit from the network.
      *
-     * @todo I thought this was finished.
-     *
      * @param Deposit $deposit
      */
     protected function fetchDeposit(Deposit $deposit) {
-        $pln = $deposit->getPln();
-        $boxes = $this->loadBoxes($pln);
-        $auid = $this->idGenerator->fromAu($deposit->getContent()->first()->getAu());
-
         foreach($deposit->getContent() as $content) {
-            $this->fetcher->fetch($content);
+            $file = $this->fetcher->fetch($content);
+            if( ! $file) {
+                return;
+            }
+            $path = $this->filePaths->getDownloadContentPath($content);
+            $dir = pathinfo($path, PATHINFO_DIRNAME);
+            if( !file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $fh = fopen($path, 'wb');
+            while($data = fread($file, 1024*64)) {
+                fwrite($fh, $data);
+            }
+            $this->logger->notice("wrote to " . $path);
         }
     }
 
@@ -120,7 +134,7 @@ class DepositFetchCommand extends ContainerAwareCommand
 
         foreach($deposits as $deposit) {
             $this->logger->notice("Fetching {$deposit->getUuid()}");
-            $result = $this->fetchDeposit($deposit);
+            $this->fetchDeposit($deposit);
         }
     }
 }
