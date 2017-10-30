@@ -209,7 +209,7 @@ class ExportConfigsCommand extends ContainerAwareCommand
         $hash = hash('SHA256', $pln->getPassword());
         $pln->setProperty("{$prefix}.user", $pln->getUsername());
         $pln->setProperty("{$prefix}.password", "SHA-256:$hash");
-        $pln->setProperty("{$prefix}.roles", 'debugRole');
+        $pln->setProperty("{$prefix}.roles", 'accessContentRole');
     }
 
     /**
