@@ -82,7 +82,7 @@ class ContentFetcherService
      *
      * @return resource a file handle
      */
-    public function download(Content $content, Box $box) {
+    public function download(Content $content, Box $box, $username = null, $password = null) {
         $pln = $content->getPln();
         if($pln !== $box->getPln()) {
             $this->logger->error("Cannot download content from a box on a different PLN.");
@@ -92,8 +92,13 @@ class ContentFetcherService
         $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/ContentService?wsdl";
         $fetchClient = new LockssSoapClient();
         $fetchClient->setWsdl($wsdl);
-        $fetchClient->setOption('login', $pln->getUsername());
-        $fetchClient->setOption('password', $pln->getPassword());
+        if($username && $password) {
+            $fetchClient->setOption('login', $username);
+            $fetchClient->setOption('password', $password);
+        } else {
+            $fetchClient->setOption('login', $pln->getUsername());
+            $fetchClient->setOption('password', $pln->getPassword());
+        }
         $fetchClient->setOption('attachment_type', Helper::ATTACHMENTS_TYPE_MTOM);
 
         $fetchResponse = $fetchClient->call('fetchFile', array(
@@ -124,7 +129,7 @@ class ContentFetcherService
      * @param Content $content
      * @return resource a file handle
      */
-    public function fetch(Content $content) {
+    public function fetch(Content $content, $boxId = null, $username = null, $password = null) {
         $pln = $content->getPln();
         $boxes = $pln->getActiveBoxes()->toArray();
         shuffle($boxes);
@@ -132,12 +137,15 @@ class ContentFetcherService
         $file = null;
 
         foreach ($boxes as $box) {
+            if($boxId && $box->getId() != $boxId) {
+                continue;
+            }
             $hash = $this->hasher->getChecksum($content->getChecksumType(), $content, $box);
             if (strtolower($hash) !== strtolower($content->getChecksumValue())) {
                 print "got: {$hash} expected {$content->getChecksumValue()}\n";
                 continue;
             }
-            $file = $this->download($content, $box);
+            $file = $this->download($content, $box, $username, $password);
             if($file === null) {
                 continue;
             }

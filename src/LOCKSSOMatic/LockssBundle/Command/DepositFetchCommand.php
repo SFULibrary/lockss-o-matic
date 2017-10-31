@@ -15,6 +15,7 @@ use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -56,6 +57,9 @@ class DepositFetchCommand extends ContainerAwareCommand
     public function configure() {
         $this->setName('lom:deposit:fetch');
         $this->setDescription('Fetch one or more deposits from the PLN.');
+        $this->addOption('boxId', null, InputOption::VALUE_REQUIRED, "Use this box ID");
+        $this->addOption('username', 'u', InputOption::VALUE_REQUIRED, "Use this username.");
+        $this->addOption('password', 'p', InputOption::VALUE_REQUIRED, "Use this password.");
         $this->addArgument('uuids', InputArgument::IS_ARRAY, 'One or more deposit UUIDs to fetch.');
     }
 
@@ -102,9 +106,9 @@ class DepositFetchCommand extends ContainerAwareCommand
      *
      * @param Deposit $deposit
      */
-    protected function fetchDeposit(Deposit $deposit) {
+    protected function fetchDeposit(Deposit $deposit, $boxId = null, $username = null, $password = null) {
         foreach($deposit->getContent() as $content) {
-            $file = $this->fetcher->fetch($content);
+            $file = $this->fetcher->fetch($content, $boxId, $username, $password);
             if( ! $file) {
                 return;
             }
@@ -129,12 +133,16 @@ class DepositFetchCommand extends ContainerAwareCommand
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $uuids = $input->getArgument('uuids');
+        $boxId = $input->getOption('boxId');
+        $username = $input->getOption('username');
+        $password = $input->getOption('password');
+        
         $deposits = $this->getDeposits($uuids);
         $this->logger->notice("Fetching " . count($deposits) . " deposit(s)");
 
         foreach($deposits as $deposit) {
             $this->logger->notice("Fetching {$deposit->getUuid()}");
-            $this->fetchDeposit($deposit);
+            $this->fetchDeposit($deposit, $boxId, $username, $password);
         }
     }
 }
