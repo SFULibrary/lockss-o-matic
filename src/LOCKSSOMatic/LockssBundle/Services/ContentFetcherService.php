@@ -72,7 +72,7 @@ class ContentFetcherService
     public function setHasher(ContentHasherService $hasher) {
         $this->hasher = $hasher;
     }
-
+    
     /**
      * Download and return one content item from one box. Checks the hash to make sure it's
      * exactly what's expected.
@@ -111,14 +111,21 @@ class ContentFetcherService
             return;
         }
         
-        if(strtoupper(hash($content->getChecksumType(), $fetchResponse->return->dataHandler)) !== strtoupper($content->getChecksumValue())) {
-            $this->logger->warning("Download of cached content failed - Downloaded checksum does not match.");
-            return;
-        }
-
         $tmpFile = tmpfile();
         fwrite($tmpFile, $fetchResponse->return->dataHandler);
         rewind($tmpFile);
+        
+        $context = hash_init($content->getChecksumType());
+        while(($data = fread($tmpFile, 64 * 1024))) {
+            hash_update($context, $data);
+        }
+        $hash = hash_final($context);
+        rewind($hash);
+        
+        if($hash !== $content->getChecksumValue()) {
+            $this->logger->warning("Download of cached content failed - Downloaded checksum does not match.");
+            return;
+        }
 
         return $tmpFile;
     }
