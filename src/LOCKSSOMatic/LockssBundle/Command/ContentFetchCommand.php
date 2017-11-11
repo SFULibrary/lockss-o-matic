@@ -18,8 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * @todo this doesn't seem finished.
  */
-class ContentFetchCommand extends ContainerAwareCommand
-{
+class ContentFetchCommand extends ContainerAwareCommand {
 
     /**
      * @var EntityManager
@@ -52,7 +51,7 @@ class ContentFetchCommand extends ContainerAwareCommand
     public function configure() {
         $this->setName('lom:content:fetch');
         $this->setDescription('Fetch one or more deposits from the PLN.');
-        $this->addArgument('uuids', InputArgument::IS_ARRAY, 'One or more deposit UUIDs to fetch.');
+        $this->addArgument('ids', InputArgument::IS_ARRAY, 'One or more content URL database IDs to fetch.');
     }
 
     /**
@@ -77,19 +76,26 @@ class ContentFetchCommand extends ContainerAwareCommand
      * @return null
      */
     public function execute(InputInterface $input, OutputInterface $output) {
-        $content = $this->em->find('LOCKSSOMaticCrudBundle:Content', 1982);
-        $file = $this->fetcher->fetch($content);
-        if($file === null) {
-            return;
-        }
-        $path = $this->fp->getDownloadContentPath($content);
-        $dir = dirname($path);
-        if(!file_exists($dir)) {
-            $this->fs->mkdir($dir);
-        }
-        $fh = fopen($path, 'wb');
-        while($data = fread($file, 64 * 1024)) {
-            fwrite($fh, $data);
+        $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Content');
+        $contentItems = $repo->findBy(array(
+            'id' => $input->getArgument('ids'),
+        ));
+        foreach ($contentItems as $content) {
+            print "Fetching content {$content->getId()}\n";
+            $file = $this->fetcher->fetch($content);
+            if ($file === null) {
+                return;
+            }
+            $path = $this->fp->getDownloadContentPath($content);
+            $dir = dirname($path);
+            if (!file_exists($dir)) {
+                $this->fs->mkdir($dir);
+            }
+            $fh = fopen($path, 'wb');
+            while ($data = fread($file, 64 * 1024)) {
+                fwrite($fh, $data);
+            }
         }
     }
+
 }

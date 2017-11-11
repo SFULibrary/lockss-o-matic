@@ -120,7 +120,7 @@ class ContentFetcherService
             hash_update($context, $data);
         }
         $hash = hash_final($context);
-        rewind($hash);
+        rewind($tmpFile);
         
         if($hash !== $content->getChecksumValue()) {
             $this->logger->warning("Download of cached content failed - Downloaded checksum does not match.");
