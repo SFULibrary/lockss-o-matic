@@ -149,12 +149,13 @@ class ContentFetcherService
             }
             $hash = $this->hasher->getChecksum($content->getChecksumType(), $content, $box);
             if (strtolower($hash) !== strtolower($content->getChecksumValue())) {
-                print "got: {$hash} expected {$content->getChecksumValue()}\n";
+                $this->logger->warning("Hash mismatch on box {$box->getHostname()} for deposit {$content->getDeposit()->getUuid()}. Expected {$content->getChecksumValue()} got {$hash}.");
                 continue;
             }
             $file = $this->download($content, $box, $username, $password);
-            if($file === null) {
-                continue;
+            if($file !== null) {
+                // only need the first one that matches.
+                break;
             }
         }
         if($file === null) {
