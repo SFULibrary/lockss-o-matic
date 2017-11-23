@@ -125,6 +125,7 @@ class ExportConfigsCommand extends ContainerAwareCommand
             $this->updateKeystoreLocation($pln);
             $this->updatePluginRegistries($pln);
             $this->updateAuthentication($pln);
+            $this->updateProps($pln);
         }
         $this->em->flush();
         $this->em->clear();
@@ -210,6 +211,12 @@ class ExportConfigsCommand extends ContainerAwareCommand
         $pln->setProperty("{$prefix}.user", $pln->getUsername());
         $pln->setProperty("{$prefix}.password", "SHA-256:$hash");
         $pln->setProperty("{$prefix}.roles", 'accessContentRole');
+    }
+    
+    public function updateProps(Pln $pln) {
+        $prefix = 'org.lockss.contentui';
+        $pln->setProperty("{$prefix}.start", $pln->getEnableContentUi() ? "true" : "false");
+        $pln->setProperty("{$prefix}.port", $pln->getContentPort());
     }
 
     /**

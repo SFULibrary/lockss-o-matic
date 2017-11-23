@@ -70,6 +70,22 @@ class Pln
      * @ORM\Column(name="password", type="string", length=64, nullable=true)
      */
     private $password;
+    
+    /**
+     * If true, the lockss ContentUI subsystem will be enabled.
+     * 
+     * @var boolean
+     * @ORM\Column(name="enable_content_ui", type="boolean", nullable=false)
+     */
+    private $enableContentUi;
+
+    /**
+     * Unix port for the the content server to listen on, if enabled.
+     *
+     * @var integer
+     * @ORM\Column(name="content_port", type="integer", nullable=false);
+     */
+    private $contentPort;
 
     /**
      * A list of all AUs in the PLN. Probably very large.
@@ -85,7 +101,7 @@ class Pln
      *
      * @ORM\OneToMany(targetEntity="Box", mappedBy="pln");
      *
-     * @var ArrayCollection|Box[]
+     * @var Collection|Box[]
      */
     private $boxes;
 
@@ -121,6 +137,8 @@ class Pln
      * Construct a PLN.
      */
     public function __construct() {
+        $this->enableContentUi = false;
+        $this->contentPort = 8080;
         $this->aus = new ArrayCollection();
         $this->boxes = new ArrayCollection();
         $this->properties = array();
@@ -456,5 +474,53 @@ class Pln
      */
     public function getPassword() {
         return $this->password;
+    }
+
+    /**
+     * Set enableContentUi
+     *
+     * @param boolean $enableContentUi
+     *
+     * @return Pln
+     */
+    public function setEnableContentUi($enableContentUi)
+    {
+        $this->enableContentUi = $enableContentUi;
+
+        return $this;
+    }
+
+    /**
+     * Get enableContentUi
+     *
+     * @return boolean
+     */
+    public function getEnableContentUi()
+    {
+        return $this->enableContentUi;
+    }
+
+    /**
+     * Set contentPort
+     *
+     * @param integer $contentPort
+     *
+     * @return Pln
+     */
+    public function setContentPort($contentPort)
+    {
+        $this->contentPort = $contentPort;
+
+        return $this;
+    }
+
+    /**
+     * Get contentPort
+     *
+     * @return integer
+     */
+    public function getContentPort()
+    {
+        return $this->contentPort;
     }
 }

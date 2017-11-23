@@ -10,6 +10,9 @@ use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
 use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Stream\Stream;
 
 /**
  * Symfony Service to download content from a LOCKSS PLN.
@@ -88,46 +91,30 @@ class ContentFetcherService
             $this->logger->error("Cannot download content from a box on a different PLN.");
             return;
         }
-        $auid = $this->idGenerator->fromContent($content);
-        $wsdl = "http://{$box->getHostname()}:{$box->getWebServicePort()}/ws/ContentService?wsdl";
-        $fetchClient = new LockssSoapClient();
-        $fetchClient->setWsdl($wsdl);
-        if($username && $password) {
-            $fetchClient->setOption('login', $username);
-            $fetchClient->setOption('password', $password);
-        } else {
-            $fetchClient->setOption('login', $pln->getUsername());
-            $fetchClient->setOption('password', $pln->getPassword());
-        }
-        $fetchClient->setOption('attachment_type', Helper::ATTACHMENTS_TYPE_MTOM);
-
-        $fetchResponse = $fetchClient->call('fetchFile', array(
-            'auid' => $auid,
-            'url' => $content->getUrl(),
-        ));
-
-        if($fetchResponse === null) {
-            $this->logger->error("Cannot download content. " . $fetchClient->getErrors());
-            return;
-        }
+        $filepath = tempnam(sys_get_temp_dir(), 'lom-cfs-');
         
-        $tmpFile = tmpfile();
-        fwrite($tmpFile, $fetchResponse->return->dataHandler);
-        rewind($tmpFile);
+        $url = "http://{$box->getHostname()}:{$box->getPln()->getContentPort()}/ServeContent";
+        $client = new Client();
+        $client->get($url, [
+            'query' => ['url' => $content->getUrl()],
+            'save_to' => $filepath,
+        ]);
+        
+        $fh = fopen($filepath, 'rb');
         
         $context = hash_init($content->getChecksumType());
-        while(($data = fread($tmpFile, 64 * 1024))) {
+        while(($data = fread($fh, 64 * 1024))) {
             hash_update($context, $data);
         }
         $hash = hash_final($context);
-        rewind($tmpFile);
+        rewind($fh);
         
         if($hash !== $content->getChecksumValue()) {
             $this->logger->warning("Download of cached content failed - Downloaded checksum does not match.");
             return;
         }
-
-        return $tmpFile;
+        $this->logger->error("Saved to {$filepath}.");
+        return $fh;
     }
 
     /**
