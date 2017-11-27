@@ -113,7 +113,6 @@ class ContentFetcherService
             $this->logger->warning("Download of cached content failed - Downloaded checksum does not match.");
             return;
         }
-        $this->logger->error("Saved to {$filepath}.");
         return $fh;
     }
 
