@@ -107,7 +107,10 @@ class LockssSoapClient
      * @return type
      */
     public function getErrors() {
-        return implode("\n", $this->errors);
+        $errors = array_map(function($s){
+            return str_replace("\n", "", $s);            
+        }, array_filter($this->errors));
+        return implode("\n\n", $errors);
     }
 
     /**

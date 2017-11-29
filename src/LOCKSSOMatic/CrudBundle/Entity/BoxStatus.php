@@ -194,6 +194,14 @@ class BoxStatus implements GetPlnInterface
 
         return $this;
     }
+    
+    public function appendErrors($errors) {
+        if($this->errors === nulll) {
+            $this->errors = $errors;
+        } else {
+            $this->errors = "\n\n" . $errors;
+        }        
+    }
 
     /**
      * Get errors.

@@ -98,9 +98,10 @@ class BoxStatusCommand extends ContainerAwareCommand
      */
     protected function createBoxStatus(Box $box) {
         $boxStatus = new BoxStatus();
-        $this->em->persist($boxStatus);
+        $boxStatus->setSuccess(false); 
         $boxStatus->setBox($box);
         $boxStatus->setQueryDate(new DateTime());
+        $this->em->persist($boxStatus);
         return $boxStatus;
     }
     
@@ -125,24 +126,63 @@ class BoxStatusCommand extends ContainerAwareCommand
     
     protected function triggerError(LockssSoapClient $client, Box $box, BoxStatus $boxStatus) {
         $this->logger->warning("{$box->getHostname()} status failed: {$client->getErrors()}");
-        $boxStatus->setSuccess(false);
         $boxStatus->setErrors($client->getErrors());
-        // send email here.
     }
     
+    /**
+     * @param array $response
+     * @param Box $box
+     * @param BoxStatus $boxStatus
+     */
     protected function checkCaches($response, Box $box, BoxStatus $boxStatus) {
         foreach ($response as $cacheResponse) {
             $cacheStatus = new CacheStatus();
             $cacheStatus->setBoxStatus($boxStatus);
             $cacheStatus->setResponse(get_object_vars($cacheResponse));
-            dump($cacheStatus);
             if ($cacheResponse->percentageFull > 0.90) {
                 $this->logger->warning("{$box->getHostname()} has cache {$cacheResponse->repositorySpaceId} which is more than 90% full.");
+                $boxStatus->appendErrors("Cache {$cacheResponse->repositorySpaceId} which is more than 90% full.");
             }
             $this->em->persist($cacheStatus);
             $boxStatus->addCache($cacheStatus);
         }
         $boxStatus->setSuccess(true);
+    }
+    
+    public function notifyAdmin(Box $box, BoxStatus $boxStatus) {
+        $templating = $this->getContainer()->get('templating');
+        
+        if( ! $box->getSendNotifications() || ! $box->getContactEmail()) {
+            return;
+        }
+        $subject = $this->getContainer()->getParameter('lom_boxstatus_subject');
+        $message = new \Swift_Message($subject, null, 'text/plain', '7bit');
+        $message->setTo($box->getContactEmail());
+        $message->setFrom($this->getContainer()->getParameter('lom_boxstatus_sender'));
+        $message->setBody($templating->render('LOCKSSOMaticLockssBundle:Emails:box_error.text.twig', array(
+            'box' => $box,
+            'boxStatus' => $boxStatus,
+            'contact' => $this->getContainer()->getParameter('lom_boxstatus_contact'),
+        )));
+        //$this->getContainer()->get('mailer')->send($message);
+        print $message;
+    }
+    
+    /**
+     * @param Box $box
+     * @return BoxStatus
+     */
+    public function getBoxStatus(Box $box) {
+        $client = $this->getClient($box);
+        $boxStatus = $this->createBoxStatus($box);
+        $response = $this->getStatus($client, $box);
+
+        if ($response === null) {
+            $this->triggerError($client, $box, $boxStatus);
+        } else {
+            $this->checkCaches($response, $box, $boxStatus);
+        }
+        return $boxStatus;
     }
 
     /**
@@ -152,19 +192,16 @@ class BoxStatusCommand extends ContainerAwareCommand
      * @return null
      */
     public function execute(InputInterface $input, OutputInterface $output) {
+        $dryRun = $input->getOption('dry-run');
         $plnIds = $input->getOption('pln');
         foreach ($this->getBoxes($plnIds) as $box) {
-            $client = $this->getClient($box);
-            $boxStatus = $this->createBoxStatus($box);
-            $response = $this->getStatus($client, $box);
-
-            if ($response === null) {
-                $this->triggerError($client, $box, $boxStatus);
-                continue;
+            $this->logger->notice("checking {$box->getHostname()}");            
+            $boxStatus = $this->getBoxStatus($box);
+            if( ! $boxStatus->getSuccess() && ! $dryRun) {
+                $this->notifyAdmin($box, $boxStatus);
             }
-            $this->checkCaches($response, $box, $boxStatus);
         }
-        if ($input->getOption('dry-run')) {
+        if ($dryRun) {
             return;
         }
         $this->em->flush();
