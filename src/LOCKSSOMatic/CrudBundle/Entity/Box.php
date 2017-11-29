@@ -138,6 +138,7 @@ class Box implements GetPlnInterface
         $this->port = 9729;
         $this->webServicePort = 80;
         $this->active = true;
+        $this->sendNotifications = false;
     }
 
     /**
