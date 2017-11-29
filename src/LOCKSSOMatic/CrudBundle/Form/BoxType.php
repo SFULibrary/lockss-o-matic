@@ -45,6 +45,31 @@ class BoxType extends AbstractType {
                 'help' => 'LOCKSSOMatic will look up the IP address if it is blank.',
             )
         ));
+        $builder->add('contactName', 'text', array(
+            'required' => false,
+            'attr' => array(
+                'help' => 'Name of the box admin.',
+            )
+        ));        
+        $builder->add('contactEmail', 'email', array(
+            'required' => false,
+            'attr' => array(
+                'help' => 'Email address for the box admin.',
+            )
+        ));
+        $builder->add('sendNotifications', 'choice', array(
+            'label' => 'Send Notifications',
+            'choices' => array(
+                'Yes' => true,
+                'No' => false,
+            ),
+            'attr' => array(
+                'help' => 'Should LOCKSSOMatic send notifications to the box admin if the box is unreachable?'
+            ),
+            'expanded' => true,
+            'choices_as_values' => true,
+        ));
+        
         $builder->add('port', 'text', array(
             'label' => 'LOCKSS Port',
             'attr' => array(
