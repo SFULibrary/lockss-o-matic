@@ -128,7 +128,6 @@ class Builder implements ContainerAwareInterface
             $menu['admin']->setChildrenAttribute('class', 'dropdown-menu');
 
             $menu['admin']->addChild('Users', array('route' => 'admin_user'));
-            $menu['admin']->addChild('Access logs', array('route' => 'log'));
         }
 
         return $menu;

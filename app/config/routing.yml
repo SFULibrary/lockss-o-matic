@@ -13,11 +13,6 @@ locksso_matic_import_export:
     type:     annotation
     prefix:   /
 
-locksso_matic_log:
-    resource: "@LOCKSSOMaticLogBundle/Controller/"
-    type:     annotation
-    prefix:   /
-
 locksso_matic_crud:
     resource: "@LOCKSSOMaticCrudBundle/Controller/"
     type:     annotation
