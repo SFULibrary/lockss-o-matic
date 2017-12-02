@@ -5,20 +5,19 @@ namespace LOCKSSOMatic\LockssBundle\Services;
 use BeSimple\SoapCommon\Helper;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Stream\Stream;
 use LOCKSSOMatic\CrudBundle\Entity\Box;
 use LOCKSSOMatic\CrudBundle\Entity\Content;
 use LOCKSSOMatic\CrudBundle\Service\AuIdGenerator;
 use LOCKSSOMatic\LockssBundle\Utilities\LockssSoapClient;
 use Monolog\Logger;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Stream\Stream;
 
 /**
  * Symfony Service to download content from a LOCKSS PLN.
  */
-class ContentFetcherService
-{
+class ContentFetcherService {
 
     /**
      * @var Logger
@@ -75,7 +74,7 @@ class ContentFetcherService
     public function setHasher(ContentHasherService $hasher) {
         $this->hasher = $hasher;
     }
-    
+
     /**
      * Download and return one content item from one box. Checks the hash to make sure it's
      * exactly what's expected.
@@ -87,29 +86,35 @@ class ContentFetcherService
      */
     public function download(Content $content, Box $box, $username = null, $password = null) {
         $pln = $content->getPln();
-        if($pln !== $box->getPln()) {
+        if ($pln !== $box->getPln()) {
             $this->logger->error("Cannot download content from a box on a different PLN.");
             return;
         }
         $filepath = tempnam(sys_get_temp_dir(), 'lom-cfs-');
-        
+
         $url = "http://{$box->getHostname()}:{$box->getPln()->getContentPort()}/ServeContent";
         $client = new Client();
-        $client->get($url, [
-            'query' => ['url' => $content->getUrl()],
-            'save_to' => $filepath,
-        ]);
-        
+
+        try {
+            $client->get($url, [
+                'query' => ['url' => $content->getUrl()],
+                'save_to' => $filepath,
+            ]);
+        } catch (RequestException $e) {
+            $this->logger->error("Cannot download content from {$box->getHostname()}: {$e->getMessage()}");
+            return;
+        }
+
         $fh = fopen($filepath, 'rb');
-        
+
         $context = hash_init($content->getChecksumType());
-        while(($data = fread($fh, 64 * 1024))) {
+        while (($data = fread($fh, 64 * 1024))) {
             hash_update($context, $data);
         }
         $hash = hash_final($context);
         rewind($fh);
-        
-        if($hash !== $content->getChecksumValue()) {
+
+        if ($hash !== $content->getChecksumValue()) {
             $this->logger->warning("Download of cached content failed - Downloaded checksum does not match.");
             return;
         }
@@ -130,7 +135,7 @@ class ContentFetcherService
         $file = null;
 
         foreach ($boxes as $box) {
-            if($boxId && $box->getId() != $boxId) {
+            if ($boxId && $box->getId() != $boxId) {
                 continue;
             }
             $hash = $this->hasher->getChecksum($content->getChecksumType(), $content, $box);
@@ -139,15 +144,16 @@ class ContentFetcherService
                 continue;
             }
             $file = $this->download($content, $box, $username, $password);
-            if($file !== null) {
+            if ($file !== null) {
                 // only need the first one that matches.
                 break;
             }
         }
-        if($file === null) {
+        if ($file === null) {
             $this->logger->error("Cannot find matching content on any LOCKSS box.");
             return;
         }
         return $file;
     }
+
 }
