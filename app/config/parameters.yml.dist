@@ -52,3 +52,9 @@ parameters:
 
     # LOCKSSOMatic stores content downloaded from lockss caches here
     lom_cached_download_dir: cached
+
+    # Subject and sender to use when sending box status email notifications
+    lom_boxstatus_subject: PKP PLN Box Status
+    lom_boxstatus_sender: noreply@pkp-pln.lib.sfu.ca
+    lom_boxstatus_contact: pkppln@example.com
+

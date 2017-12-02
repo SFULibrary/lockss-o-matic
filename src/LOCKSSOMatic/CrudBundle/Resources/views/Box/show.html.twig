@@ -52,8 +52,23 @@
                 <td><a href="http://{{ entity.hostname}}:{{ entity.webServicePort}}">{{ entity.hostname }}</a></td>
             </tr>
             <tr>
+                <th>Ipaddress</th>
+                <td>{{ entity.ipAddress }}</td>
+            </tr>
+            <tr>
                 <th>Active</th>
                 <td>{% if entity.active %}Yes{% else %}No{% endif %}</td>
+            </tr>            
+            <tr>
+                <th>Contact</th>
+                <td>
+                    {{ entity.contactName }} 
+                    {% if entity.contactEmail %}<a href="mailto:{{ entity.contactEmail }}">{{entity.contactEmail }}</a>{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Send Notifications</th>
+                <td>{% if entity.sendNotifications %}Yes{% else %}No{% endif %}</td>
             </tr>
             <tr>
                 <th>Protocol</th>
@@ -66,10 +81,6 @@
             <tr>
                 <th>Web Service &amp; SOAP Port</th>
                 <td>{{ entity.webServicePort }}</td>
-            </tr>
-            <tr>
-                <th>Ipaddress</th>
-                <td>{{ entity.ipAddress }}</td>
             </tr>
             <tr>
                 <th>Pln</th>

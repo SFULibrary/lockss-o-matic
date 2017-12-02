@@ -5,6 +5,7 @@ namespace LOCKSSOMatic\CrudBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A box in a network.
@@ -78,6 +79,36 @@ class Box implements GetPlnInterface
      * })
      */
     private $pln;
+    
+    /**
+     * Name of the box admin.
+     *
+     * @var string
+     *
+     * @ORM\Column(name="contact_name", type="string", length=255, nullable=true)
+     */
+    private $contactName;
+    
+    /**
+     * Email address for the box admin.
+     *
+     * @var string
+     *
+     * @ORM\Column(name="contact_email", type="string", length=64, nullable=true)
+     * @Assert\Email(
+     *  strict = true
+     * )
+     */
+    private $contactEmail;
+    
+    /**
+     * If true, send the contact email a notification if the box is down or 
+     * otherwise unreachable.
+     *
+     * @var boolean
+     * @ORM\Column(name="send_notifications", type="boolean", nullable=false, options={"default": false}) 
+     */
+    private $sendNotifications;
 
     /**
      * Timestamped list of box status query results.
@@ -107,6 +138,7 @@ class Box implements GetPlnInterface
         $this->port = 9729;
         $this->webServicePort = 80;
         $this->active = true;
+        $this->sendNotifications = false;
     }
 
     /**
@@ -323,5 +355,77 @@ class Box implements GetPlnInterface
         $this->active = (bool)$active;
         
         return $this;
+    }
+
+    /**
+     * Set contactName
+     *
+     * @param string $contactName
+     *
+     * @return Box
+     */
+    public function setContactName($contactName)
+    {
+        $this->contactName = $contactName;
+
+        return $this;
+    }
+
+    /**
+     * Get contactName
+     *
+     * @return string
+     */
+    public function getContactName()
+    {
+        return $this->contactName;
+    }
+
+    /**
+     * Set contactEmail
+     *
+     * @param string $contactEmail
+     *
+     * @return Box
+     */
+    public function setContactEmail($contactEmail)
+    {
+        $this->contactEmail = $contactEmail;
+
+        return $this;
+    }
+
+    /**
+     * Get contactEmail
+     *
+     * @return string
+     */
+    public function getContactEmail()
+    {
+        return $this->contactEmail;
+    }
+
+    /**
+     * Set sendNotifications
+     *
+     * @param boolean $sendNotifications
+     *
+     * @return Box
+     */
+    public function setSendNotifications($sendNotifications)
+    {
+        $this->sendNotifications = $sendNotifications;
+
+        return $this;
+    }
+
+    /**
+     * Get sendNotifications
+     *
+     * @return boolean
+     */
+    public function getSendNotifications()
+    {
+        return $this->sendNotifications;
     }
 }
