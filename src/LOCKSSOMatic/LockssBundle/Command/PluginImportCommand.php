@@ -65,9 +65,6 @@ class PluginImportCommand extends ContainerAwareCommand
      * @param InputInterface  $input
      */
     public function execute(InputInterface $input, OutputInterface $output) {
-        $activityLog = $this->getContainer()->get('activity_log');
-        $activityLog->disable();
-
         /** @var Logger $logger */
         $logger = $this->getLogger();
 

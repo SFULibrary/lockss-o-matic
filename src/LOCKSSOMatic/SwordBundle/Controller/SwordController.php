@@ -40,11 +40,6 @@ class SwordController extends Controller
     private $namespaces;
 
     /**
-     * @var LoggingService
-     */
-    private $activityLog;
-
-    /**
      * @var Logger
      */
     private $swordLog;
@@ -63,7 +58,6 @@ class SwordController extends Controller
      */
     public function setContainer(ContainerInterface $container = null) {
         parent::setContainer($container);
-        $this->activityLog = $this->container->get('activity_log');
         $this->swordLog = $this->container->get('monolog.logger.sword');
     }
 
@@ -202,9 +196,6 @@ class SwordController extends Controller
         $plugin = $provider->getPlugin();
         $checksumMethods = $this->container->getParameter('lockss_checksums');
 
-        $this->activityLog->overrideUser($obh);
-        $this->activityLog->log('Requested service document.');
-        $this->activityLog->overrideUser(null);
         $response = $this->render(
             'LOCKSSOMaticSwordBundle:Sword:serviceDocument.xml.twig',
             array(
@@ -327,7 +318,6 @@ class SwordController extends Controller
         $em = $this->getDoctrine()->getManager();
         $provider = $this->getContentProvider($providerUuid);
 
-        $this->activityLog->overrideUser($providerUuid);
         $atomEntry = $this->getSimpleXML($request->getContent());
         $this->precheckDeposit($atomEntry, $provider);
 
@@ -353,7 +343,6 @@ class SwordController extends Controller
         }
 
         $em->flush();
-        $this->activityLog->overrideUser(null);
 
         $response = $this->renderDepositReceipt($provider, $deposit);
         $editIri = $this->get('router')->generate(
@@ -502,7 +491,6 @@ class SwordController extends Controller
      */
     public function editDepositAction(Request $request, $providerUuid, $depositUuid) {
         $this->swordLog->notice("edit - {$providerUuid} - {$depositUuid}");
-        $this->activityLog->overrideUser($providerUuid);
 
         $provider = $this->getContentProvider($providerUuid);
         $deposit = $this->getDeposit($depositUuid);
@@ -523,7 +511,6 @@ class SwordController extends Controller
             ++$updated;
         }
 
-        $this->activityLog->overrideUser(null);
         $response = $this->renderDepositReceipt($provider, $deposit);
         $editIri = $this->get('router')->generate(
             'sword_reciept',

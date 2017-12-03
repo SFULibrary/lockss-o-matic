@@ -65,9 +65,6 @@ class PLNImportCommand extends ContainerAwareCommand
      * @throws Exception
      */
     public function execute(InputInterface $input, OutputInterface $output) {
-        $activityLog = $this->getContainer()->get('activity_log');
-        $activityLog->disable();
-
         $id = $input->getArgument('id');
         $pln = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($id);
         if ($pln === null) {
@@ -78,7 +75,6 @@ class PLNImportCommand extends ContainerAwareCommand
         $this->importProperties($pln, $xml);
 
         $this->em->flush();
-        $activityLog->enable();
     }
 
     /**
