@@ -442,10 +442,7 @@ class SwordController extends Controller
         }
         fclose($file);
         fclose($handle);
-
         $response = new BinaryFileResponse($tmp);
-        $response->setContentDisposition('attachment', $filename);
-        $response->setStatusCode(Response::HTTP_OK);
         $response->deleteFileAfterSend(true);
         return $response;
     }
