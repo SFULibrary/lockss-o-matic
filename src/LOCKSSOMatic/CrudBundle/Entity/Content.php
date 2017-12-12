@@ -49,7 +49,7 @@ class Content implements GetPlnInterface
      *
      * @var int
      *
-     * @ORM\Column(name="size", type="integer", nullable=true)
+     * @ORM\Column(name="size", type="bigint", nullable=true)
      */
     private $size;
 

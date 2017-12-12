@@ -62,7 +62,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @var int
      *
-     * @ORM\Column(name="max_file_size", type="integer", nullable=true)
+     * @ORM\Column(name="max_file_size", type="bigint", nullable=true)
      */
     private $maxFileSize;
 
@@ -71,7 +71,7 @@ class ContentProvider implements GetPlnInterface
      *
      * @var int
      *
-     * @ORM\Column(name="max_au_size", type="integer", nullable=true)
+     * @ORM\Column(name="max_au_size", type="bigint", nullable=true)
      */
     private $maxAuSize;
 
