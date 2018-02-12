@@ -111,13 +111,13 @@
         </div>
     </div>
     <ul>
-        {% for key in entity.getPropertyKeys %}
+        {% for key in entity.getPropertyKeys|sort %}
             <li>
                 {{ key }}:
                 {% set value = entity.getProperty(key) %}
                 {% if value is iterable %}
                     <ul>
-                        {% for v in value %}
+                        {% for v in value|sort %}
                             <li>{{ v }}</li>
                             {% endfor %}
                     </ul>

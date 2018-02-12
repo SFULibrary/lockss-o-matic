@@ -42,7 +42,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for key in pln.getPropertyKeys %}
+            {% for key in pln.getPropertyKeys|sort %}
                 <tr>
                     <th>
                         {{ key }}
@@ -51,7 +51,7 @@
                         {% set value = pln.getProperty(key) %}
                         {% if value is iterable %}
                             <ul>
-                                {% for v in value %}
+                                {% for v in value|sort %}
                                     <li>{{ v }}</li>
                                     {% endfor %}
                             </ul>
