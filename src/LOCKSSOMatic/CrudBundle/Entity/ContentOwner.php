@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -80,8 +56,7 @@ class ContentOwner
     /**
      * Build a new content owner.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->contentProviders = new ArrayCollection();
     }
 
@@ -90,8 +65,7 @@ class ContentOwner
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -102,8 +76,7 @@ class ContentOwner
      *
      * @return ContentOwner
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -114,8 +87,7 @@ class ContentOwner
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -126,8 +98,7 @@ class ContentOwner
      *
      * @return ContentOwner
      */
-    public function setEmailAddress($emailAddress)
-    {
+    public function setEmailAddress($emailAddress) {
         $this->emailAddress = $emailAddress;
 
         return $this;
@@ -138,13 +109,16 @@ class ContentOwner
      *
      * @return string
      */
-    public function getEmailAddress()
-    {
+    public function getEmailAddress() {
         return $this->emailAddress;
     }
 
-    public function __toString()
-    {
+    /**
+     * Give a string representation of the owner, which is the owner's name.
+     *
+     * @return string
+     */
+    public function __toString() {
         return $this->name;
     }
 
@@ -155,8 +129,7 @@ class ContentOwner
      *
      * @return ContentOwner
      */
-    public function addContentProvider(ContentProvider $contentProviders)
-    {
+    public function addContentProvider(ContentProvider $contentProviders) {
         $this->contentProviders[] = $contentProviders;
 
         return $this;
@@ -167,8 +140,7 @@ class ContentOwner
      *
      * @param ContentProvider $contentProviders
      */
-    public function removeContentProvider(ContentProvider $contentProviders)
-    {
+    public function removeContentProvider(ContentProvider $contentProviders) {
         $this->contentProviders->removeElement($contentProviders);
     }
 
@@ -177,8 +149,7 @@ class ContentOwner
      *
      * @return Collection
      */
-    public function getContentProviders()
-    {
+    public function getContentProviders() {
         return $this->contentProviders;
     }
 }

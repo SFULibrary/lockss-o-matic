@@ -1,36 +1,12 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Content Properties are hierarchial.
- * 
+ *
  * @todo can this be a serialized array? Can it really be that simple?
  *
  * @ORM\Table(name="content_properties")
@@ -90,8 +66,7 @@ class ContentProperty implements GetPlnInterface
     /**
      * Build a new content property.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->isList = false;
     }
 
@@ -100,8 +75,7 @@ class ContentProperty implements GetPlnInterface
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -112,8 +86,7 @@ class ContentProperty implements GetPlnInterface
      *
      * @return PlnProperty
      */
-    public function setPropertyKey($propertyKey)
-    {
+    public function setPropertyKey($propertyKey) {
         $this->propertyKey = $propertyKey;
 
         return $this;
@@ -124,8 +97,7 @@ class ContentProperty implements GetPlnInterface
      *
      * @return string
      */
-    public function getPropertyKey()
-    {
+    public function getPropertyKey() {
         return $this->propertyKey;
     }
 
@@ -136,8 +108,7 @@ class ContentProperty implements GetPlnInterface
      *
      * @return PlnProperty
      */
-    public function setPropertyValue($propertyValue)
-    {
+    public function setPropertyValue($propertyValue) {
         if (is_array($propertyValue)) {
             $this->isList = true;
             $this->propertyValue = serialize($propertyValue);
@@ -154,8 +125,7 @@ class ContentProperty implements GetPlnInterface
      *
      * @return array|string
      */
-    public function getPropertyValue()
-    {
+    public function getPropertyValue() {
         if ($this->isList) {
             return unserialize($this->propertyValue);
         }
@@ -168,8 +138,7 @@ class ContentProperty implements GetPlnInterface
      *
      * @return bool
      */
-    public function isList()
-    {
+    public function isList() {
         return $this->isList;
     }
 
@@ -180,8 +149,7 @@ class ContentProperty implements GetPlnInterface
      *
      * @return ContentProperty
      */
-    public function setContent(Content $content = null)
-    {
+    public function setContent(Content $content = null) {
         $this->content = $content;
         $content->addContentProperty($this);
 
@@ -193,17 +161,14 @@ class ContentProperty implements GetPlnInterface
      *
      * @return Content
      */
-    public function getContent()
-    {
+    public function getContent() {
         return $this->content;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getPln()
-    {
+    public function getPln() {
         return $this->getContent()->getPln();
     }
-
 }

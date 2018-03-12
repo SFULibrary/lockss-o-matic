@@ -52,8 +52,10 @@ class User extends BaseUser
      */
     private $messages;
 
-    public function __construct()
-    {
+    /**
+     * Construct a new user.
+     */
+    public function __construct() {
         parent::__construct();
         $this->fullname = '';
         $this->institution = '';
@@ -61,8 +63,12 @@ class User extends BaseUser
         $this->messages = new ArrayCollection();
     }
 
-    public function setEmail($email)
-    {
+    /**
+     * Set the user's email.
+     *
+     * @param string $email
+     */
+    public function setEmail($email) {
         parent::setEmail($email);
         $this->setUsername($email);
     }
@@ -72,8 +78,7 @@ class User extends BaseUser
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -84,8 +89,7 @@ class User extends BaseUser
      *
      * @return User
      */
-    public function setFullname($fullname)
-    {
+    public function setFullname($fullname) {
         $this->fullname = $fullname;
 
         return $this;
@@ -96,8 +100,7 @@ class User extends BaseUser
      *
      * @return string
      */
-    public function getFullname()
-    {
+    public function getFullname() {
         return $this->fullname;
     }
 
@@ -108,8 +111,7 @@ class User extends BaseUser
      *
      * @return User
      */
-    public function setInstitution($institution)
-    {
+    public function setInstitution($institution) {
         $this->institution = $institution;
 
         return $this;
@@ -120,8 +122,7 @@ class User extends BaseUser
      *
      * @return string
      */
-    public function getInstitution()
-    {
+    public function getInstitution() {
         return $this->institution;
     }
 
@@ -132,8 +133,7 @@ class User extends BaseUser
      *
      * @return User
      */
-    public function addDeposit(Deposit $deposits)
-    {
+    public function addDeposit(Deposit $deposits) {
         $this->deposits[] = $deposits;
 
         return $this;
@@ -144,8 +144,7 @@ class User extends BaseUser
      *
      * @param Deposit $deposits
      */
-    public function removeDeposit(Deposit $deposits)
-    {
+    public function removeDeposit(Deposit $deposits) {
         $this->deposits->removeElement($deposits);
     }
 
@@ -154,8 +153,7 @@ class User extends BaseUser
      *
      * @return Deposit[]
      */
-    public function getDeposits()
-    {
+    public function getDeposits() {
         return $this->deposits;
     }
 
@@ -166,8 +164,7 @@ class User extends BaseUser
      *
      * @return User
      */
-    public function addMessage(Message $messages)
-    {
+    public function addMessage(Message $messages) {
         $this->messages[] = $messages;
 
         return $this;
@@ -178,18 +175,18 @@ class User extends BaseUser
      *
      * @param Message $messages
      */
-    public function removeMessage(Message $messages)
-    {
+    public function removeMessage(Message $messages) {
         $this->messages->removeElement($messages);
     }
 
     /**
-     * Get messages.
+     * Get messages, including the messages already seen if $seen is true.
+     *
+     * @param boolean $seen
      *
      * @return Message[]
      */
-    public function getMessages($seen = null)
-    {
+    public function getMessages($seen = null) {
         if ($seen === null) {
             return $this->messages;
         }

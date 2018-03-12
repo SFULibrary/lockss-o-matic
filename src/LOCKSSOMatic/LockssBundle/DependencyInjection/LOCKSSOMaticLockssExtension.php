@@ -16,9 +16,11 @@ class LOCKSSOMaticLockssExtension extends Extension
 {
     /**
      * {@inheritdoc}
+     *
+     * @param array $configs
+     * @param ContainerBuilder $container
      */
-    public function load(array $configs, ContainerBuilder $container)
-    {
+    public function load(array $configs, ContainerBuilder $container) {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 

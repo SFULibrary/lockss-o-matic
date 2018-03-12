@@ -47,6 +47,22 @@
                 <td>(not shown)</td>
             </tr>
             <tr>
+                <th>Content UI</th>
+                <td>
+                    {% if entity.enableContentUi %}
+                        <ul>
+                            {% for box in entity.boxes %}
+                                <li>
+                                    http://{{ box.hostname }}:{{ entity.contentPort }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <i>Disabled</i>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
                 <th>Key store</th>
                 <td><a href="{{ url('configs_plugin_keystore', {'plnId': entity.id}) }}">{{ url('configs_plugin_keystore', {'plnId': entity.id}) }}</a></td>
             </tr>
@@ -95,13 +111,13 @@
         </div>
     </div>
     <ul>
-        {% for key in entity.getPropertyKeys %}
+        {% for key in entity.getPropertyKeys|sort %}
             <li>
                 {{ key }}:
                 {% set value = entity.getProperty(key) %}
                 {% if value is iterable %}
                     <ul>
-                        {% for v in value %}
+                        {% for v in value|sort %}
                             <li>{{ v }}</li>
                             {% endfor %}
                     </ul>

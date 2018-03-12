@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
 use LOCKSSOMatic\CrudBundle\Entity\ContentOwner;
@@ -49,13 +25,12 @@ class ContentOwnerController extends Controller
      * @Route("/", name="contentowner")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @param Request $request
-     * 
+     *
      * @return array
      */
-    public function indexAction(Request $request)
-    {
+    public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $dql = 'SELECT e FROM LOCKSSOMaticCrudBundle:ContentOwner e';
         $query = $em->createQuery($dql);
@@ -70,19 +45,19 @@ class ContentOwnerController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new ContentOwner entity.
      *
      * @Route("/", name="contentowner_create")
      * @Method("POST")
      * @Template("LOCKSSOMaticCrudBundle:ContentOwner:new.html.twig")
-     * 
+     *
      * @param Request $request
-     * 
+     *
      * @return array|RedirectResponse
      */
-    public function createAction(Request $request)
-    {
+    public function createAction(Request $request) {
         $entity = new ContentOwner();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
@@ -109,8 +84,7 @@ class ContentOwnerController extends Controller
      *
      * @return Form The form
      */
-    private function createCreateForm(ContentOwner $entity)
-    {
+    private function createCreateForm(ContentOwner $entity) {
         $form = $this->createForm(new ContentOwnerType(), $entity, array(
             'action' => $this->generateUrl('contentowner_create'),
             'method' => 'POST',
@@ -127,11 +101,10 @@ class ContentOwnerController extends Controller
      * @Route("/new", name="contentowner_new")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @return array
      */
-    public function newAction()
-    {
+    public function newAction() {
         $entity = new ContentOwner();
         $form = $this->createCreateForm($entity);
 
@@ -147,13 +120,12 @@ class ContentOwnerController extends Controller
      * @Route("/{id}", name="contentowner_show")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return array
      */
-    public function showAction($id)
-    {
+    public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')->find($id);
@@ -176,13 +148,12 @@ class ContentOwnerController extends Controller
      * @Route("/{id}/edit", name="contentowner_edit")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return array
      */
-    public function editAction($id)
-    {
+    public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')->find($id);
@@ -208,8 +179,7 @@ class ContentOwnerController extends Controller
      *
      * @return Form The form
      */
-    private function createEditForm(ContentOwner $entity)
-    {
+    private function createEditForm(ContentOwner $entity) {
         $form = $this->createForm(new ContentOwnerType(), $entity, array(
             'action' => $this->generateUrl('contentowner_update', array('id' => $entity->getId())),
             'method' => 'PUT',
@@ -219,20 +189,20 @@ class ContentOwnerController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing ContentOwner entity.
      *
      * @Route("/{id}", name="contentowner_update")
      * @Method("PUT")
      * @Template("LOCKSSOMaticCrudBundle:ContentOwner:edit.html.twig")
-     * 
+     *
      * @param Request $request
      * @param int $id
-     * 
+     *
      * @return array|RedirectResponse
      */
-    public function updateAction(Request $request, $id)
-    {
+    public function updateAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')->find($id);
@@ -257,19 +227,18 @@ class ContentOwnerController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a ContentOwner entity. Does not do any
      * confirmation checking.
      *
      * @Route("/{id}/delete", name="contentowner_delete")
-     * 
-     * @param Request $request 
+     *
      * @param int $id
-     * 
+     *
      * @return RedirectResponse
      */
-    public function deleteAction(Request $request, $id)
-    {
+    public function deleteAction($id) {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')->find($id);
 
@@ -290,13 +259,7 @@ class ContentOwnerController extends Controller
      *
      * @return Form The form
      */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('contentowner_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
+    private function createDeleteForm($id) {
+        return $this->createFormBuilder()->setAction($this->generateUrl('contentowner_delete', array('id' => $id)))->setMethod('DELETE')->add('submit', 'submit', array('label' => 'Delete'))->getForm();
     }
 }

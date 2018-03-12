@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 
 namespace LOCKSSOMatic\LockssBundle\Command;
 
@@ -49,10 +25,11 @@ class PluginImportCommand extends ContainerAwareCommand
     private $em;
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
+     *
+     * @param ContainerInterface $container
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
+    public function setContainer(ContainerInterface $container = null) {
         parent::setContainer($container);
         $this->em = $container->get('doctrine')->getManager();
     }
@@ -60,30 +37,25 @@ class PluginImportCommand extends ContainerAwareCommand
     /**
      * Configure the command by adding arguments.
      */
-    protected function configure()
-    {
-        $this->setName('lom:import:plugin')
-            ->setDescription('Import PLN plugins.')
-            ->addOption(
-                'nocopy',
-                null,
-                InputOption::VALUE_NONE,
-                'Do not copy the plugin .jar file.'
-            )
-            ->addArgument(
-                'plugin_files',
-                InputArgument::IS_ARRAY,
-                'Local path to the folder containing the PLN plugin JAR files?'
-            );
+    protected function configure() {
+        $this->setName('lom:import:plugin')->setDescription('Import PLN plugins.')->addOption(
+            'nocopy',
+            null,
+            InputOption::VALUE_NONE,
+            'Do not copy the plugin .jar file.'
+        )->addArgument(
+            'plugin_files',
+            InputArgument::IS_ARRAY,
+            'Local path to the folder containing the PLN plugin JAR files?'
+        );
     }
 
     /**
      * Get a logger to do some logging.
-     * 
+     *
      * @return Logger
      */
-    protected function getLogger()
-    {
+    protected function getLogger() {
         return $this->getContainer()->get('logger');
     }
 
@@ -91,13 +63,8 @@ class PluginImportCommand extends ContainerAwareCommand
      * Execute the command.
      *
      * @param InputInterface  $input
-     * @param OutputInterface $output
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $activityLog = $this->getContainer()->get('activity_log');
-        $activityLog->disable();
-
+    public function execute(InputInterface $input, OutputInterface $output) {
         /** @var Logger $logger */
         $logger = $this->getLogger();
 

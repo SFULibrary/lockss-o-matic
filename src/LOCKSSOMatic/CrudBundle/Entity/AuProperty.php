@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -100,8 +76,7 @@ class AuProperty implements GetPlnInterface
     /**
      * Construct an AU property.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->children = new ArrayCollection();
     }
 
@@ -110,8 +85,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -122,8 +96,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return AuProperty
      */
-    public function setPropertyKey($propertyKey)
-    {
+    public function setPropertyKey($propertyKey) {
         $this->propertyKey = $propertyKey;
 
         return $this;
@@ -134,8 +107,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return string
      */
-    public function getPropertyKey()
-    {
+    public function getPropertyKey() {
         return $this->propertyKey;
     }
 
@@ -146,8 +118,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return AuProperty
      */
-    public function setPropertyValue($propertyValue)
-    {
+    public function setPropertyValue($propertyValue) {
         $this->propertyValue = $propertyValue;
 
         return $this;
@@ -158,8 +129,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return string
      */
-    public function getPropertyValue()
-    {
+    public function getPropertyValue() {
         return $this->propertyValue;
     }
 
@@ -170,8 +140,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return AuProperty
      */
-    public function setParent(AuProperty $parent = null)
-    {
+    public function setParent(AuProperty $parent = null) {
         $this->parent = $parent;
         if ($parent !== null) {
             $parent->addChild($this);
@@ -185,8 +154,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return AuProperty
      */
-    public function getParent()
-    {
+    public function getParent() {
         return $this->parent;
     }
 
@@ -195,8 +163,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return bool
      */
-    public function hasParent()
-    {
+    public function hasParent() {
         return $this->parent !== null;
     }
 
@@ -207,8 +174,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return AuProperty
      */
-    public function setAu(Au $au = null)
-    {
+    public function setAu(Au $au = null) {
         $this->au = $au;
         $au->addAuProperty($this);
 
@@ -220,8 +186,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return Au
      */
-    public function getAu()
-    {
+    public function getAu() {
         return $this->au;
     }
 
@@ -232,8 +197,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return AuProperty
      */
-    public function addChild(AuProperty $children)
-    {
+    public function addChild(AuProperty $children) {
         $this->children[] = $children;
 
         return $this;
@@ -244,8 +208,7 @@ class AuProperty implements GetPlnInterface
      *
      * @param AuProperty $children
      */
-    public function removeChild(AuProperty $children)
-    {
+    public function removeChild(AuProperty $children) {
         $this->children->removeElement($children);
     }
 
@@ -254,8 +217,7 @@ class AuProperty implements GetPlnInterface
      *
      * @return Collection
      */
-    public function getChildren()
-    {
+    public function getChildren() {
         return $this->children;
     }
 
@@ -264,16 +226,14 @@ class AuProperty implements GetPlnInterface
      *
      * @return bool
      */
-    public function hasChildren()
-    {
+    public function hasChildren() {
         return count($this->children) > 0;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getPln()
-    {
+    public function getPln() {
         return $this->getAu()->getPln();
     }
 }

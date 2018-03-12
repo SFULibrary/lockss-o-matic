@@ -8,7 +8,7 @@ use LOCKSSOMatic\UserBundle\Entity\User;
 /**
  * Custom user manipulator which adds support for fullname and institution, which
  * are not part of the stock FOSUserBundle.
- * 
+ *
  * http://stackoverflow.com/questions/11595261/override-symfony2-console-commands
  */
 class UserManipulator
@@ -20,8 +20,12 @@ class UserManipulator
      */
     private $userManager;
 
-    public function __construct(UserManagerInterface $userManager)
-    {
+    /**
+     * Construct the manipulator.
+     *
+     * @param UserManagerInterface $userManager
+     */
+    public function __construct(UserManagerInterface $userManager) {
         $this->userManager = $userManager;
     }
 
@@ -37,8 +41,7 @@ class UserManipulator
      *
      * @return User
      */
-    public function create($email, $password, $fullname, $institution, $active, $superadmin)
-    {
+    public function create($email, $password, $fullname, $institution, $active, $superadmin) {
         $user = $this->userManager->createUser();
         $user->setEmail($email);
         $user->setPlainPassword($password);

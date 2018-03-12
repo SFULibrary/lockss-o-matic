@@ -18,6 +18,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
+ * Controller for all the LOCKSS boxes to interact with.
+ *
  * @Route("/plnconfigs")
  */
 class ConfigsController extends Controller
@@ -32,17 +34,30 @@ class ConfigsController extends Controller
      */
     private $fp;
 
-    public function setContainer(ContainerInterface $container = null)
-    {
+    /**
+     * Set the DI container.
+     *
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container = null) {
         parent::setContainer($container);
         $this->logger = $this->get('monolog.logger.lockss');
         $this->fp = $container->get('lom.filepaths');
     }
 
-    private function checkIp(Request $request, Pln $pln)
-    {
+    /**
+     * Check that the IP a request came from matches a box on the requested PLN.
+     *
+     * @param Request $request
+     * @param Pln $pln
+     *
+     * @throws AccessDeniedHttpException
+     */
+    private function checkIp(Request $request, Pln $pln) {
         $ip = $request->getClientIp();
-        $allowed = array_map(function (Box $box) {return $box->getIpAddress();}, $pln->getBoxes()->toArray());
+        $allowed = array_map(function (Box $box) {return $box->getIpAddress();
+
+        }, $pln->getBoxes()->toArray());
         $env = $this->container->get('kernel')->getEnvironment();
         if ($env === 'dev' || $env === 'test') {
             $allowed[] = '127.0.0.1';
@@ -59,18 +74,17 @@ class ConfigsController extends Controller
 
     /**
      * @Route(
-     *  "/{plnId}/properties/lockss.{_format}", 
+     *  "/{plnId}/properties/lockss.{_format}",
      *  name="configs_lockss",
      *  requirements={
      *      "_format": "xml"
      *  }
      * )
-     * 
+     *
      * @param Request $request
      * @param string  $plnId
      */
-    public function lockssAction(Request $request, $plnId)
-    {
+    public function lockssAction(Request $request, $plnId) {
         $this->logger->notice("lockss.xml - {$plnId} - {$request->getClientIp()}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
@@ -86,10 +100,21 @@ class ConfigsController extends Controller
     }
 
     /**
+     * Get a titleDB for a PLN.
+     *
      * @Route("/{plnId}/titledbs/{ownerId}/{providerId}/{filename}", name="configs_titledb")
+     *
+     * @param Request $request
+     * @param int $plnId
+     * @param int $ownerId
+     * @param int $providerId
+     * @param string $filename
+     *
+     * @return BinaryFileResponse
+     *
+     * @throws NotFoundHttpException
      */
-    public function titleDbAction(Request $request, $plnId, $ownerId, $providerId, $filename)
-    {
+    public function titleDbAction(Request $request, $plnId, $ownerId, $providerId, $filename) {
         $this->logger->notice("titledb - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$filename}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
@@ -106,10 +131,21 @@ class ConfigsController extends Controller
     }
 
     /**
+     * Get an AU manifest.
+     *
      * @Route("/{plnId}/manifests/{ownerId}/{providerId}/manifest_{auId}.html", name="configs_manifest")
+     *
+     * @param Request $request
+     * @param int $plnId
+     * @param int $ownerId
+     * @param int $providerId
+     * @param int $auId
+     *
+     * @return BinaryFileResponse
+     *
+     * @throws NotFoundHttpException
      */
-    public function manifestAction(Request $request, $plnId, $ownerId, $providerId, $auId)
-    {
+    public function manifestAction(Request $request, $plnId, $ownerId, $providerId, $auId) {
         $this->logger->notice("manifest - {$plnId} - {$request->getClientIp()} - {$ownerId} - {$providerId} - {$auId}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
@@ -125,14 +161,15 @@ class ConfigsController extends Controller
     }
 
     /**
+     * Get the LOCKSS keystore, used to verify LOCKSS plugin jar files.
+     *
      * @Route("/{plnId}/plugins/lockss.keystore", name="configs_plugin_keystore")
      * @Method("GET")
-     * 
+     *
      * @param Request $request
      * @param type    $plnId
      */
-    public function keystoreAction(Request $request, $plnId)
-    {
+    public function keystoreAction(Request $request, $plnId) {
         $this->logger->notice("keystore - {$plnId} - {$request->getClientIp()}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
@@ -152,17 +189,18 @@ class ConfigsController extends Controller
     }
 
     /**
+     * List the available plugins.
+     *
      * @Route("/{plnId}/plugins/index.html", name="configs_plugin_list")
      * @Route("/{plnId}/plugins/")
      * @Route("/{plnId}/plugins")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @param Request $request
      * @param string  $plnId
      */
-    public function pluginListAction(Request $request, $plnId)
-    {
+    public function pluginListAction(Request $request, $plnId) {
         $this->logger->notice("pluginList - {$plnId} - {$request->getClientIp()}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);
@@ -174,15 +212,16 @@ class ConfigsController extends Controller
     }
 
     /**
+     * Fetch a plugin.
+     *
      * @Route("/{plnId}/plugins/{filename}", name="configs_plugin")
      * @Method("GET")
      *
      * @param Request $request
-     * @param $plnId
-     * @param $filename
+     * @param int $plnId
+     * @param string $filename
      */
-    public function pluginAction(Request $request, $plnId, $filename)
-    {
+    public function pluginAction(Request $request, $plnId, $filename) {
         $this->logger->notice("plugin - {$plnId} - {$request->getClientIp()} - {$filename}");
         $em = $this->getDoctrine()->getManager();
         $pln = $em->getRepository('LOCKSSOMaticCrudBundle:Pln')->find($plnId);

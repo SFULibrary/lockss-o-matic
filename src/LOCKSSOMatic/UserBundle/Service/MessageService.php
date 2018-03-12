@@ -9,6 +9,9 @@ use LOCKSSOMatic\UserBundle\Entity\User;
 use Monolog\Logger;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
+/**
+ * Provide some basic messaging.
+ */
 class MessageService
 {
     /**
@@ -26,23 +29,40 @@ class MessageService
      */
     private $tokenStorage;
 
-    public function setLogger(Logger $logger)
-    {
+    /**
+     * Set the logger.
+     *
+     * @param Logger $logger
+     */
+    public function setLogger(Logger $logger) {
         $this->logger = $logger;
     }
 
-    public function setRegistry(Registry $registry)
-    {
+    /**
+     * Set the entity manager by way of the Doctrine registry.
+     *
+     * @param Registry $registry
+     */
+    public function setRegistry(Registry $registry) {
         $this->em = $registry->getManager();
     }
 
-    public function setTokenStorage(TokenStorage $tokenStorage)
-    {
+    /**
+     * Set the token storage for the current user.
+     *
+     * @param TokenStorage $tokenStorage
+     */
+    public function setTokenStorage(TokenStorage $tokenStorage) {
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function send($content, User $user = null)
-    {
+    /**
+     * Send $content to $user.
+     *
+     * @param string $content
+     * @param User $user
+     */
+    public function send($content, User $user = null) {
         $message = new Message();
         $message->setContent($content);
         if ($user === null) {

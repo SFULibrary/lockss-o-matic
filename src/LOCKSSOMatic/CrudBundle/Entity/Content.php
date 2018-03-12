@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
@@ -50,7 +26,7 @@ class Content implements GetPlnInterface
 
     /**
      * The URL for the content.
-     * 
+     *
      * @todo is 255 long enough?
      *
      * @var string
@@ -73,7 +49,7 @@ class Content implements GetPlnInterface
      *
      * @var int
      *
-     * @ORM\Column(name="size", type="integer", nullable=true)
+     * @ORM\Column(name="size", type="bigint", nullable=true)
      */
     private $size;
 
@@ -109,7 +85,7 @@ class Content implements GetPlnInterface
 
     /**
      * True if the content should be recrawled.
-     * 
+     *
      * @todo is this used anywhere?
      *
      * @var bool
@@ -144,7 +120,7 @@ class Content implements GetPlnInterface
 
     /**
      * The contentProperties associated with this content.
-     * 
+     *
      * @ORM\OneToMany(targetEntity="ContentProperty", mappedBy="content")
      *
      * @var ArrayCollection
@@ -154,8 +130,7 @@ class Content implements GetPlnInterface
     /**
      * Build a new Content item.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->contentProperties = new ArrayCollection();
     }
 
@@ -164,8 +139,7 @@ class Content implements GetPlnInterface
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -176,8 +150,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function setUrl($url)
-    {
+    public function setUrl($url) {
         $this->url = $url;
 
         return $this;
@@ -188,8 +161,7 @@ class Content implements GetPlnInterface
      *
      * @return string
      */
-    public function getUrl()
-    {
+    public function getUrl() {
         return $this->url;
     }
 
@@ -200,8 +172,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function setTitle($title)
-    {
+    public function setTitle($title) {
         $this->title = $title;
 
         return $this;
@@ -212,8 +183,7 @@ class Content implements GetPlnInterface
      *
      * @return string
      */
-    public function getTitle()
-    {
+    public function getTitle() {
         return $this->title;
     }
 
@@ -224,8 +194,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function setSize($size)
-    {
+    public function setSize($size) {
         if ($size !== '') {
             $this->size = $size;
         }
@@ -238,8 +207,7 @@ class Content implements GetPlnInterface
      *
      * @return int
      */
-    public function getSize()
-    {
+    public function getSize() {
         return $this->size;
     }
 
@@ -250,8 +218,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function setDateDeposited($dateDeposited)
-    {
+    public function setDateDeposited($dateDeposited) {
         $this->dateDeposited = $dateDeposited;
 
         return $this;
@@ -262,8 +229,7 @@ class Content implements GetPlnInterface
      *
      * @return DateTime
      */
-    public function getDateDeposited()
-    {
+    public function getDateDeposited() {
         return $this->dateDeposited;
     }
 
@@ -274,8 +240,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function setChecksumType($checksumType)
-    {
+    public function setChecksumType($checksumType) {
         $this->checksumType = $checksumType;
 
         return $this;
@@ -286,8 +251,7 @@ class Content implements GetPlnInterface
      *
      * @return string
      */
-    public function getChecksumType()
-    {
+    public function getChecksumType() {
         return $this->checksumType;
     }
 
@@ -298,8 +262,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function setChecksumValue($checksumValue)
-    {
+    public function setChecksumValue($checksumValue) {
         $this->checksumValue = $checksumValue;
 
         return $this;
@@ -310,8 +273,7 @@ class Content implements GetPlnInterface
      *
      * @return string
      */
-    public function getChecksumValue()
-    {
+    public function getChecksumValue() {
         return $this->checksumValue;
     }
 
@@ -322,8 +284,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function setRecrawl($recrawl)
-    {
+    public function setRecrawl($recrawl) {
         $this->recrawl = $recrawl;
 
         return $this;
@@ -334,8 +295,7 @@ class Content implements GetPlnInterface
      *
      * @return bool
      */
-    public function getRecrawl()
-    {
+    public function getRecrawl() {
         return $this->recrawl;
     }
 
@@ -346,8 +306,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function setDeposit(Deposit $deposit = null)
-    {
+    public function setDeposit(Deposit $deposit = null) {
         $this->deposit = $deposit;
         if ($deposit !== null) {
             $deposit->addContent($this);
@@ -361,8 +320,7 @@ class Content implements GetPlnInterface
      *
      * @return Deposit
      */
-    public function getDeposit()
-    {
+    public function getDeposit() {
         return $this->deposit;
     }
 
@@ -373,8 +331,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function setAu(Au $au = null)
-    {
+    public function setAu(Au $au = null) {
         $this->au = $au;
         if ($au !== null) {
             $au->addContent($this);
@@ -388,16 +345,14 @@ class Content implements GetPlnInterface
      *
      * @return Au
      */
-    public function getAu()
-    {
+    public function getAu() {
         return $this->au;
     }
 
     /**
      * Set the deposit date. It cannot be changed once it is set.
      */
-    public function setDepositDate()
-    {
+    public function setDepositDate() {
         if ($this->dateDeposited === null) {
             $this->dateDeposited = new DateTime();
         }
@@ -410,8 +365,7 @@ class Content implements GetPlnInterface
      *
      * @return Content
      */
-    public function addContentProperty(ContentProperty $contentProperties)
-    {
+    public function addContentProperty(ContentProperty $contentProperties) {
         $this->contentProperties[] = $contentProperties;
 
         return $this;
@@ -422,26 +376,24 @@ class Content implements GetPlnInterface
      *
      * @param ContentProperty $contentProperties
      */
-    public function removeContentProperty(ContentProperty $contentProperties)
-    {
+    public function removeContentProperty(ContentProperty $contentProperties) {
         $this->contentProperties->removeElement($contentProperties);
     }
 
     /**
      * Check if the content has a given property.
-     * 
+     *
      * @param string $key
-     * 
+     *
      * @return bool
      */
-    public function hasContentProperty($key)
-    {
+    public function hasContentProperty($key) {
         return $this->contentProperties->containsKey($key);
     }
 
     /**
      * Convenience method. Get the filename of the content from the URL.
-     * 
+     *
      * @return string
      */
     public function getFilename() {
@@ -453,21 +405,19 @@ class Content implements GetPlnInterface
      *
      * @return Collection|ContentProperty
      */
-    public function getContentProperties()
-    {
+    public function getContentProperties() {
         return $this->contentProperties;
     }
 
     /**
      * Get the value of a content property, optionally encoded to
      * LOCKSS standards.
-     * 
+     *
      * @param string $key
      * @param bool $encoded
      * @return string
      */
-    public function getContentPropertyValue($key, $encoded = false)
-    {
+    public function getContentPropertyValue($key, $encoded = false) {
         $value = null;
         foreach ($this->getContentProperties() as $prop) {
             if ($prop->getPropertyKey() === $key) {
@@ -490,8 +440,7 @@ class Content implements GetPlnInterface
     /**
      * {@inheritdoc}
      */
-    public function getPln()
-    {
+    public function getPln() {
         return $this->getDeposit()->getContentProvider()->getPln();
     }
 }

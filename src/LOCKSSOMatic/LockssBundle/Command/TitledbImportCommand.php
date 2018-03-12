@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\LockssBundle\Command;
 
 use Doctrine\ORM\EntityManager;
@@ -42,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Private Lockss network plugin import command-line.
- * 
+ *
  * @todo is the use case for this still valid?
  */
 class TitledbImportCommand extends ContainerAwareCommand
@@ -53,10 +29,11 @@ class TitledbImportCommand extends ContainerAwareCommand
     private $em;
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
+     *
+     * @param ContainerInterface $container
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
+    public function setContainer(ContainerInterface $container = null) {
         parent::setContainer($container);
         $this->em = $container->get('doctrine')->getManager();
     }
@@ -64,37 +41,32 @@ class TitledbImportCommand extends ContainerAwareCommand
     /**
      * {@inheritDocs}
      */
-    public function configure()
-    {
-        $this->setName('lom:import:titledb')
-            ->setDescription('Import PLN titledb file.')
-            ->addArgument(
-                'providerId',
-                InputArgument::REQUIRED,
-                'ID of the content provider for the titles.'
-            )
-            ->addArgument(
-                'titledbs',
-                InputArgument::IS_ARRAY,
-                'Local path(s) to the titledb xml file.'
-            );
+    public function configure() {
+        $this->setName('lom:import:titledb')->setDescription('Import PLN titledb file.')->addArgument(
+            'providerId',
+            InputArgument::REQUIRED,
+            'ID of the content provider for the titles.'
+        )->addArgument(
+            'titledbs',
+            InputArgument::IS_ARRAY,
+            'Local path(s) to the titledb xml file.'
+        );
     }
 
     /**
      * @return Logger
      */
-    protected function getLogger()
-    {
+    protected function getLogger() {
         return $this->getContainer()->get('logger');
     }
 
     /**
      * {@inheritDocs}
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
-        $activityLog = $this->getContainer()->get('activity_log');
-        $activityLog->disable();
+    public function execute(InputInterface $input, OutputInterface $output) {
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $titleFiles = $input->getArgument('titledbs');
@@ -113,13 +85,12 @@ class TitledbImportCommand extends ContainerAwareCommand
 
     /**
      * Process one titledb XML file.
-     * 
+     *
      * @param string $file
      * @param OutputInterface $output
      * @param string $providerId
      */
-    protected function processFile($file, OutputInterface $output, $providerId)
-    {
+    protected function processFile($file, OutputInterface $output, $providerId) {
         $xml = simplexml_load_file($file);
         $titles = $xml->xpath('//lockss-config/property[@name="org.lockss.title"]/property');
         $count = count($titles);
@@ -146,13 +117,12 @@ class TitledbImportCommand extends ContainerAwareCommand
 
     /**
      * Report the progress of the import to the shell.
-     * 
+     *
      * @param int $processed
      * @param int $total
      * @param OutputInterface $output
      */
-    protected function reportProgress($processed, $total, $output)
-    {
+    protected function reportProgress($processed, $total, $output) {
         $this->em->flush();
         $this->em->clear();
         gc_collect_cycles();
@@ -164,12 +134,11 @@ class TitledbImportCommand extends ContainerAwareCommand
 
     /**
      * Process one title
-     * 
+     *
      * @param SimpleXMLElement $title
      * @param ContentProvider $provider
      */
-    protected function processTitle(SimpleXMLElement $title, ContentProvider $provider)
-    {
+    protected function processTitle(SimpleXMLElement $title, ContentProvider $provider) {
         $au = $this->buildAu($title);
         $au->setContentprovider($provider);
         $au->setPln($provider->getPln());
@@ -181,14 +150,13 @@ class TitledbImportCommand extends ContainerAwareCommand
 
     /**
      * Build an AU.
-     * 
+     *
      * @todo This should use AuBuilder.
-     * 
+     *
      * @param SimpleXMLElement $title
      * @return Au
      */
-    public function buildAu(SimpleXMLElement $title)
-    {
+    public function buildAu(SimpleXMLElement $title) {
         $au = new Au();
         $au->setComment('AU created by import command.');
         $au->setPlugin($this->getPlugin($title));
@@ -203,12 +171,11 @@ class TitledbImportCommand extends ContainerAwareCommand
 
     /**
      * Build child properties of a property.
-     * 
+     *
      * @param SimpleXMLElement $xml
      * @param AuProperty $parent
      */
-    public function buildChildProperties(SimpleXMLElement $xml, AuProperty $parent = null)
-    {
+    public function buildChildProperties(SimpleXMLElement $xml, AuProperty $parent = null) {
         foreach ($xml->xpath('property') as $x) {
             $child = new AuProperty();
             $child->setPropertyKey((string) $x->attributes()->name);
@@ -221,14 +188,13 @@ class TitledbImportCommand extends ContainerAwareCommand
 
     /**
      * Find a property value in some XML.
-     * 
+     *
      * @param SimpleXMLElement $xml
      * @param string $name
-     * @return string 
+     * @return string
      * @throws Exception
      */
-    public function getPropertyValue(SimpleXMLElement $xml, $name)
-    {
+    public function getPropertyValue(SimpleXMLElement $xml, $name) {
         $nodes = $xml->xpath("property[@name='{$name}']/@value");
         if (count($nodes) === 0) {
             return;
@@ -241,14 +207,13 @@ class TitledbImportCommand extends ContainerAwareCommand
 
     /**
      * Get the plugin for a title. Plugins are cached in the static $pluginCache.
-     * 
+     *
      * @staticvar array $pluginCache
      * @param SimpleXMLElement $xml
      * @return array
      * @throws Exception
      */
-    public function getPlugin(SimpleXMLElement $xml)
-    {
+    public function getPlugin(SimpleXMLElement $xml) {
         // cache the plugins for speed.
         static $pluginCache = array();
 
@@ -271,23 +236,21 @@ class TitledbImportCommand extends ContainerAwareCommand
 
     /**
      * Get a content owner. They are cached in the static $ownerCache.
-     * 
+     *
      * @staticvar array $ownerCache
      * @param type $name
      * @return ContentOwner|array
      */
-    public function getContentOwner($name)
-    {
+    public function getContentOwner($name) {
         static $ownerCache = array();
 
         if (array_key_exists($name, $ownerCache) && $this->em->contains($ownerCache[$name])) {
             return $ownerCache[$name];
         }
 
-        $owner = $this->em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')
-            ->findOneBy(array(
-            'name' => $name,
-            ));
+        $owner = $this->em->getRepository('LOCKSSOMaticCrudBundle:ContentOwner')->findOneBy(array(
+                'name' => $name,
+        ));
         if ($owner === null) {
             $owner = new ContentOwner();
             $owner->setName($name);

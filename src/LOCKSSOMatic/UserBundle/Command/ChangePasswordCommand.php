@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the FOSUserBundle package.
- *
- * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace LOCKSSOMatic\UserBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -17,23 +8,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * ChangePasswordCommand.
+ * Change a user's password.
  */
 class ChangePasswordCommand extends ContainerAwareCommand
 {
     /**
-     * @see Command
+     * {@inheritdoc}
      */
-    protected function configure()
-    {
-        $this
-            ->setName('fos:user:change-password')
-            ->setDescription('Change the password of a user.')
-            ->setDefinition(array(
+    protected function configure() {
+        $this->setName('fos:user:change-password')->setDescription('Change the password of a user.')->setDefinition(array(
                 new InputArgument('email', InputArgument::REQUIRED, 'The email'),
                 new InputArgument('password', InputArgument::REQUIRED, 'The password'),
-            ))
-            ->setHelp(<<<EOT
+        ))->setHelp(<<<EOT
 The <info>fos:user:change-password</info> command changes the password of a user:
 
   <info>php app/console fos:user:change-password user@example.com</info>
@@ -45,14 +31,16 @@ You can alternatively specify the password as a second argument:
   <info>php app/console fos:user:change-password user@example.com mypassword</info>
 
 EOT
-            );
+        );
     }
 
     /**
-     * @see Command
+     * {@inheritdoc}
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         $email = $input->getArgument('email');
         $password = $input->getArgument('password');
 
@@ -63,10 +51,12 @@ EOT
     }
 
     /**
-     * @see Command
+     * {@inheritdoc}
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
+    protected function interact(InputInterface $input, OutputInterface $output) {
         if (!$input->getArgument('email')) {
             $email = $this->getHelper('dialog')->askAndValidate(
                 $output,

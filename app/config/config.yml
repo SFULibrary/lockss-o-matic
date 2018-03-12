@@ -29,6 +29,7 @@ framework:
     session:
         # handler_id set to null will use default session handler from php.ini
         handler_id:  ~
+        name: wclom
     fragments:       ~
     http_method_override: true
 
@@ -124,6 +125,9 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: LOCKSSOMatic\UserBundle\Entity\User
+    from_email: 
+        sender_name: No Reply
+        address: noreply@example.com
     profile:
         form:
             type:

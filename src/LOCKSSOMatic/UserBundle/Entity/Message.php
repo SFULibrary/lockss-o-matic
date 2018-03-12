@@ -53,8 +53,10 @@ class Message
      */
     private $created;
 
-    public function __construct()
-    {
+    /**
+     * Construct a new message.
+     */
+    public function __construct() {
         $this->seen = false;
         $this->created = new DateTime();
     }
@@ -64,8 +66,7 @@ class Message
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -76,8 +77,7 @@ class Message
      *
      * @return Message
      */
-    public function setSeen($seen)
-    {
+    public function setSeen($seen) {
         $this->seen = $seen;
 
         return $this;
@@ -88,8 +88,7 @@ class Message
      *
      * @return bool
      */
-    public function getSeen()
-    {
+    public function getSeen() {
         return $this->seen;
     }
 
@@ -100,8 +99,7 @@ class Message
      *
      * @return Message
      */
-    public function setContent($content)
-    {
+    public function setContent($content) {
         $this->content = $content;
 
         return $this;
@@ -112,8 +110,7 @@ class Message
      *
      * @return string
      */
-    public function getContent()
-    {
+    public function getContent() {
         return $this->content;
     }
 
@@ -122,8 +119,7 @@ class Message
      *
      * @return DateTime
      */
-    public function getCreated()
-    {
+    public function getCreated() {
         return $this->created;
     }
 
@@ -134,8 +130,7 @@ class Message
      *
      * @return Message
      */
-    public function setUser(User $user = null)
-    {
+    public function setUser(User $user = null) {
         $this->user = $user;
 
         return $this;
@@ -146,8 +141,7 @@ class Message
      *
      * @return User
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->user;
     }
 }

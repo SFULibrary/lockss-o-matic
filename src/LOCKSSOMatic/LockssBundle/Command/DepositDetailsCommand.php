@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\LockssBundle\Command;
 
 use Doctrine\ORM\EntityManager;
@@ -62,8 +38,7 @@ class DepositDetailsCommand extends ContainerAwareCommand
     /**
      * {@inheritDoc}
      */
-    public function configure()
-    {
+    public function configure() {
         $this->setName('lom:deposit:details');
         $this->setDescription('Check that the deposits in LOCKSS have the same checksum.');
         $this->addArgument('depositId', InputArgument::REQUIRED, 'The database ID of the deposit.');
@@ -71,9 +46,10 @@ class DepositDetailsCommand extends ContainerAwareCommand
 
     /**
      * {@inheritDoc}
+     *
+     * @param ContainerInterface $container
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
+    public function setContainer(ContainerInterface $container = null) {
         parent::setContainer($container);
         $this->logger = $container->get('logger');
         $this->em = $container->get('doctrine')->getManager();
@@ -82,13 +58,12 @@ class DepositDetailsCommand extends ContainerAwareCommand
 
     /**
      * Get the checksum of a content item in a lockss box via SOAP calls.
-     * 
+     *
      * @param Box $box
      * @param Content $content
      * @return string|array
      */
-    protected function getBoxChecksum(Box $box, Content $content)
-    {
+    protected function getBoxChecksum(Box $box, Content $content) {
         $auid = $this->idGenerator->fromContent($content);
         $checksumType = $content->getChecksumType();
 
@@ -124,12 +99,13 @@ class DepositDetailsCommand extends ContainerAwareCommand
     }
 
     /**
-     * Get the deposits to check.
-     * 
+     * Get the deposits to check based on database IDs.
+     *
+     * @param int $id database ID.
+     *
      * @return Deposit
      */
-    protected function getDeposit($id)
-    {
+    protected function getDeposit($id) {
         $deposit = $this->em->find('LOCKSSOMaticCrudBundle:Deposit', $id);
 
         return $deposit;
@@ -137,9 +113,11 @@ class DepositDetailsCommand extends ContainerAwareCommand
 
     /**
      * {@inheritDoc}
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+    public function execute(InputInterface $input, OutputInterface $output) {
         $id = $input->getArgument('depositId');
         $deposit = $this->getDeposit($id);
         if (!$deposit) {
@@ -150,7 +128,7 @@ class DepositDetailsCommand extends ContainerAwareCommand
             $output->writeln($content->getUrl());
             $output->writeln("{$content->getChecksumValue()}:{$content->getChecksumType()}");
 
-            foreach ($deposit->getPln()->getBoxes() as $box) {
+            foreach ($deposit->getPln()->getActiveBoxes() as $box) {
                 $checksum = $this->getBoxChecksum($box, $content);
                 $output->writeln("{$checksum}:{$box->getHostname()}");
             }

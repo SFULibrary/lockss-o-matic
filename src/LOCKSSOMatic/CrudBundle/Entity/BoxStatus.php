@@ -1,29 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Entity;
 
 use DateTime;
@@ -66,21 +42,21 @@ class BoxStatus implements GetPlnInterface
 
     /**
      * @var bool
-     * 
+     *
      * @ORM\Column(name="success", type="boolean")
      */
     private $success;
 
     /**
      * @var Collection|CacheStatus
-     * 
+     *
      * @ORM\OneToMany(targetEntity="CacheStatus", mappedBy="boxStatus", orphanRemoval=true)
      */
     private $caches;
 
     /**
      * @var string
-     * 
+     *
      * @ORM\Column(name="errors", type="text", nullable=true)
      */
     private $errors;
@@ -88,8 +64,7 @@ class BoxStatus implements GetPlnInterface
     /**
      * Build a new box status.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->success = false;
         $this->caches = array();
     }
@@ -97,8 +72,7 @@ class BoxStatus implements GetPlnInterface
     /**
      * {@inheritDocs}
      */
-    public function getPln()
-    {
+    public function getPln() {
         return $this->box->getPln();
     }
 
@@ -107,8 +81,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -119,8 +92,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return BoxStatus
      */
-    public function setQueryDate(\DateTime $queryDate)
-    {
+    public function setQueryDate(\DateTime $queryDate) {
         $this->queryDate = $queryDate;
 
         return $this;
@@ -131,8 +103,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return \DateTime
      */
-    public function getQueryDate()
-    {
+    public function getQueryDate() {
         return $this->queryDate;
     }
 
@@ -143,8 +114,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return BoxStatus
      */
-    public function setBox(Box $box = null)
-    {
+    public function setBox(Box $box = null) {
         $this->box = $box;
 
         return $this;
@@ -155,8 +125,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return Box
      */
-    public function getBox()
-    {
+    public function getBox() {
         return $this->box;
     }
 
@@ -167,8 +136,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return BoxStatus
      */
-    public function setSuccess($success)
-    {
+    public function setSuccess($success) {
         $this->success = $success;
 
         return $this;
@@ -179,8 +147,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return bool
      */
-    public function getSuccess()
-    {
+    public function getSuccess() {
         return $this->success;
     }
 
@@ -191,8 +158,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return BoxStatus
      */
-    public function addCache(CacheStatus $cache)
-    {
+    public function addCache(CacheStatus $cache) {
         $this->caches[] = $cache;
 
         return $this;
@@ -203,8 +169,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @param CacheStatus $cache
      */
-    public function removeCache(CacheStatus $cache)
-    {
+    public function removeCache(CacheStatus $cache) {
         $this->caches->removeElement($cache);
     }
 
@@ -213,8 +178,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return Collection
      */
-    public function getCaches()
-    {
+    public function getCaches() {
         return $this->caches;
     }
 
@@ -225,11 +189,18 @@ class BoxStatus implements GetPlnInterface
      *
      * @return BoxStatus
      */
-    public function setErrors($errors)
-    {
+    public function setErrors($errors) {
         $this->errors = $errors;
 
         return $this;
+    }
+    
+    public function appendErrors($errors) {
+        if($this->errors === nulll) {
+            $this->errors = $errors;
+        } else {
+            $this->errors = "\n\n" . $errors;
+        }        
     }
 
     /**
@@ -237,8 +208,7 @@ class BoxStatus implements GetPlnInterface
      *
      * @return string
      */
-    public function getErrors()
-    {
+    public function getErrors() {
         return $this->errors;
     }
 }

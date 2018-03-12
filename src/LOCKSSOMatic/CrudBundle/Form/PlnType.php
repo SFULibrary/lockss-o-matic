@@ -1,56 +1,53 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2014-2016. Michael Joyce <ubermichael@gmail.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace LOCKSSOMatic\CrudBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class PlnType extends AbstractType
-{
+/**
+ * Build a form for editing one PLN.
+ */
+class PlnType extends AbstractType {
+
     /**
      * Build a PLN edit form. Adds fields to $builder in-place.
-     * 
+     *
      * @param FormBuilderInterface $builder
-     * @param array                $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('name');
         $builder->add('description');
         $builder->add('username', 'text');
         $builder->add('password', 'password');
+        $builder->add('enableContentUi', 'choice', array(
+            'expanded' => true,
+            'multiple' => false,
+            'label' => 'Content UI',
+            'choices' => array(
+                '1' => 'Enabled',
+                '0' => 'Disabled',
+            ),
+            'attr' => array(
+                'help' => 'This enables the Content UI port for all the boxes in the PLN.'
+                . ' If you enable this feature, you should also set the org.lockss.proxy.access.ip.include property on the PLN.'
+            ),
+        ));
+        $builder->add('contentPort', null, array(
+            'attr' => array(
+                'help' => 'This sets the Content UI port for all the boxes in the PLN. Defaults to 8080.'
+            ),
+        ));
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDocs}
+     *
+     * @param OptionsResolverInterface $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
+    public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
             'data_class' => 'LOCKSSOMatic\CrudBundle\Entity\Pln',
         ));
@@ -59,8 +56,8 @@ class PlnType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
+    public function getName() {
         return 'lockssomatic_crudbundle_pln';
     }
+
 }
