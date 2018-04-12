@@ -324,6 +324,7 @@ class SwordController extends Controller
         $depositBuilder = $this->container->get('crud.builder.deposit');
         $contentBuilder = $this->container->get('crud.builder.content');
         $idGenerator = $this->container->get('crud.au.idgenerator');
+        
         $deposit = $depositBuilder->fromSimpleXML($atomEntry, $em);
         $deposit->setContentProvider($provider);
         foreach ($atomEntry->xpath('lom:content') as $node) {

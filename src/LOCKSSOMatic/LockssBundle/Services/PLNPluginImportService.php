@@ -216,7 +216,7 @@ class PLNPluginImportService
      *
      * @param Plugin                  $plugin
      * @param string                  $name
-     * @param string|SimpleXMLElement $value
+     * @param SimpleXMLElement        $value
      *
      * @return PluginProperty
      */
