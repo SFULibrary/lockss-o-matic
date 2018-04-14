@@ -2,7 +2,7 @@
 
 namespace LOCKSSOMatic\CrudBundle\Controller;
 
-use J20\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Plugin;
 use LOCKSSOMatic\CrudBundle\Form\ContentProviderType;
@@ -71,7 +71,7 @@ class ContentProviderController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             if ($entity->getUuid() === null || $entity->getUuid() === '') {
-                $entity->setUuid(Uuid::v4());
+                $entity->setUuid(Uuid::uuid4());
             }
             $em->persist($entity);
             $em->flush();

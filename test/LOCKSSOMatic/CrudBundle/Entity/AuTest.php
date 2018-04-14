@@ -83,7 +83,7 @@ class AuTest extends AbstractTestCase
         $this->assertEquals(0, $this->au->getContentSize());
     }
     
-    public function testStatusNull() {
-        $this->assertNull($this->au->status());
-    }
+//    public function testStatusNull() {
+//        $this->assertNull($this->au->status());
+//    }
 }
