@@ -96,7 +96,7 @@ class Au implements GetPlnInterface
     /**
      * Timestamped list of AU status records.
      *
-     * @ORM\OneToMany(targetEntity="AuStatus", mappedBy="au")
+     * @ORM\OneToMany(targetEntity="AuStatus", mappedBy="au", fetch="EXTRA_LAZY")
      *
      * @var AuStatus[]|Collection
      */
@@ -106,9 +106,9 @@ class Au implements GetPlnInterface
      * List of all content deposited to the AU. This is a LOCKSSOMatic-specific
      * field.
      *
-     * @ORM\OneToMany(targetEntity="Content", mappedBy="au")
+     * @ORM\OneToMany(targetEntity="Content", mappedBy="au", fetch="EXTRA_LAZY")
      *
-     * @var Content[]
+     * @var Collection|Content[]
      */
     private $content;
 
@@ -392,6 +392,10 @@ class Au implements GetPlnInterface
     public function getAuStatus() {
         return $this->auStatus;
     }
+    
+    public function getRecentAuStatus() {
+        return $this->auStatus[$this->auStatus->count()-1];
+    }
 
     /**
      * Add content.
@@ -437,21 +441,6 @@ class Au implements GetPlnInterface
         }
 
         return $size;
-    }
-
-    /**
-     * This doesn't seem to do anything at all. Odd that. Is it even used?
-     *
-     * @todo is this function used?
-     *
-     * @return string
-     */
-    public function status() {
-        if (count($this->auStatus) > 0) {
-            return '';
-        }
-
-        return null;
     }
 
     /**

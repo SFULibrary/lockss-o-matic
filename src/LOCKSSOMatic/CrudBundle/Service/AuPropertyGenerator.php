@@ -192,9 +192,6 @@ class AuPropertyGenerator
 
         $root = $this->buildProperty($au, $rootName);
 
-        // config params are used to build other properties. So set them first.
-        $offset = 0;
-
         $properties = array_merge(
             $au->getPlugin()->getDefinitionalProperties(),
             $au->getPlugin()->getNonDefinitionalProperties()
@@ -211,7 +208,7 @@ class AuPropertyGenerator
             } else {
                 $value = $content->getContentPropertyValue($property);
             }
-            $grouping = $this->buildProperty($au, 'param.'.($index + 1 + $offset), null, $root);
+            $grouping = $this->buildProperty($au, 'param.'.($index + 1), null, $root);
             $this->buildProperty($au, 'key', $property, $grouping);
             $this->buildProperty($au, 'value', $value, $grouping);
         }

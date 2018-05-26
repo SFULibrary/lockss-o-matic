@@ -164,7 +164,7 @@ class BoxStatusCommand extends ContainerAwareCommand
             'boxStatus' => $boxStatus,
             'contact' => $this->getContainer()->getParameter('lom_boxstatus_contact'),
         )));
-        //$this->getContainer()->get('mailer')->send($message);
+        $this->getContainer()->get('mailer')->send($message);
         print $message;
     }
     

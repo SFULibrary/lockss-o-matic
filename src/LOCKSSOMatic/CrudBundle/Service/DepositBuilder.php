@@ -5,11 +5,11 @@ namespace LOCKSSOMatic\CrudBundle\Service;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
-use J20\Uuid\Uuid;
 use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
 use LOCKSSOMatic\CrudBundle\Entity\Deposit;
 use LOCKSSOMatic\SwordBundle\Utilities\Namespaces;
 use Monolog\Logger;
+use Ramsey\Uuid\Uuid;
 use SimpleXMLElement;
 use Symfony\Component\Form\Form;
 
@@ -108,7 +108,7 @@ class DepositBuilder
         if (array_key_exists('uuid', $data) && $data['uuid'] !== null && $data['uuid'] !== '') {
             $deposit->setUuid($data['uuid']);
         } else {
-            $deposit->setUuid(Uuid::v4());
+            $deposit->setUuid(Uuid::uuid4());
         }
 
         /* @var SplFileInfo $dataFile */
