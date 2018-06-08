@@ -9,7 +9,7 @@ operating normally.
 The LOCKSS-O-Matic web application acts as the "admin server" for the PLN,
 which means that the LOCKSS boxes in the network use it as the source for the
 configuration files that govern what content they harvest and preserve.
-LOCKSS-O-Matic derives these configration files from its interaction with
+LOCKSS-O-Matic derives these configuration files from its interaction with
 other applications (known as content providers) or from humans registering
 content to be preserved using a set of in-browser tools. LOCKSS-O-Matic
 implements the [SWORD](http://swordapp.org/) protocol to communicate with
