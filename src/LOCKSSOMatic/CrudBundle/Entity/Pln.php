@@ -382,6 +382,9 @@ class Pln
         $plugins = array();
         foreach ($this->getContentProviders() as $provider) {
             $plugin = $provider->getPlugin();
+            if( ! $plugin) {
+                continue;
+            }
             $plugins[$plugin->getIdentifier()] = $plugin;
         }
 
