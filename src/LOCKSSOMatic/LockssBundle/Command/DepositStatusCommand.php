@@ -87,7 +87,7 @@ class DepositStatusCommand extends ContainerAwareCommand
      * @param boolean $all
      * @param int $limit
      * @param int $plnId
-     * @return Deposit[]|Collection
+     * @return Deposit[]|Iterator
      */
     protected function getDeposits($all, $limit, $plnId) {
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Deposit');
@@ -104,7 +104,7 @@ class DepositStatusCommand extends ContainerAwareCommand
         $qb->orderBy('d.id', 'DESC');
         $qb->setMaxResults($limit);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->iterate();
     }
 
     /**
@@ -159,10 +159,12 @@ class DepositStatusCommand extends ContainerAwareCommand
         $dryRun = $input->getOption('dry-run');
         $limit = $input->getOption('limit');
 
-        $deposits = $this->getDeposits($all, $limit, $plnId);
-        $this->logger->notice('Checking deposit status for '.count($deposits).' deposits.');
+        $iterator = $this->getDeposits($all, $limit, $plnId);
+        $this->logger->notice('Checking deposit status for iteratordeposits.');
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
-        foreach ($deposits as $deposit) {
+        foreach ($iterator as $row) {
+            $deposit = $row[0];
             $result = $this->queryDeposit($deposit);
             $this->logger->notice("{$deposit->getPln()->getId()} - {$result[0]} - {$deposit->getUUid()}");
             if ($dryRun) {
