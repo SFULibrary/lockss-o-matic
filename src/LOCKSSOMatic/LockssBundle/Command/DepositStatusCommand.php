@@ -163,10 +163,18 @@ class DepositStatusCommand extends ContainerAwareCommand
         $this->logger->notice('Checking deposit status for iteratordeposits.');
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
+        $n = 0;
         foreach ($iterator as $row) {
+            $n++;
             $deposit = $row[0];
             $result = $this->queryDeposit($deposit);
-            $this->logger->notice("{$deposit->getPln()->getId()} - {$result[0]} - {$deposit->getUUid()}");
+            $this->logger->notice("{$n}: {$deposit->getPln()->getId()} - {$result[0]} - {$deposit->getUUid()}");
+
+            $memory = sprintf('%dM', memory_get_usage() / (1024 * 1024));
+            $available = ini_get('memory_limit');
+
+            $this->logger->notice(" - using {$memory} of {$available}");
+
             if ($dryRun) {
                 continue;
             }
@@ -180,6 +188,7 @@ class DepositStatusCommand extends ContainerAwareCommand
 
             $this->em->persist($status);
             $this->em->flush();
+            gc_collect_cycles();
         }
     }
 }

@@ -54,7 +54,7 @@ class LockssSoapClient
             'soap_version' => SOAP_1_1,
             'trace' => true,
             'exceptions' => true,
-            'cache' => WSDL_CACHE_BOTH,
+            'cache' => WSDL_CACHE_NONE,
             'authentication'  => SOAP_AUTHENTICATION_BASIC,
         );
     }
@@ -108,7 +108,7 @@ class LockssSoapClient
      */
     public function getErrors() {
         $errors = array_map(function($s){
-            return str_replace("\n", "", $s);            
+            return str_replace("\n", "", $s);
         }, array_filter($this->errors));
         return implode("\n\n", $errors);
     }
@@ -163,6 +163,10 @@ class LockssSoapClient
             if($this->client) {
                 $response = $this->client->$method($params);
             }
+            // There's a memory leak in either \BeSimple\SoapClient or its
+            // parent \SoapClient. Either way, this is necessary to clean up
+            // the memory. Sigh.
+            unset($this->client);
         } catch (SoapFault $e) {
             $this->errors[] = "Soap Fault: {$e->getMessage()}";
             if ($this->client) {
