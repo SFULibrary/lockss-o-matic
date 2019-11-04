@@ -1,0 +1,10 @@
+title: "LOCKSSOMatic"
+source: src
+destination: docs/api
+visibilityLevels: [public, protected]
+baseUrl: http://lib-lom.lib.sfu.ca
+annotationGroups: [todo]
+php: true
+todo: true
+    
+    
