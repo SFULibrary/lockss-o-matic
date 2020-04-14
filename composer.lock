@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "06fc32b40dcf2bb146d47a0a191c79ca",
+    "content-hash": "2c4665e559006ad0bffb5b8215c90ebe",
     "packages": [
         {
             "name": "ass/xmlsecurity",
@@ -1003,12 +1003,12 @@
             "version": "v2.5.14",
             "source": {
                 "type": "git",
-                "url": "https://github.com/doctrine/doctrine2.git",
+                "url": "https://github.com/doctrine/orm.git",
                 "reference": "810a7baf81462a5ddf10e8baa8cb94b6eec02754"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/810a7baf81462a5ddf10e8baa8cb94b6eec02754",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/810a7baf81462a5ddf10e8baa8cb94b6eec02754",
                 "reference": "810a7baf81462a5ddf10e8baa8cb94b6eec02754",
                 "shasum": ""
             },
@@ -2033,12 +2033,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Problematic/ProblematicAclManagerBundle.git",
-                "reference": "a4382d158bf3d4007c1944aa38765cb04d1f560d"
+                "reference": "a63da9017d8e5ca2f41a858c01abb21105661403"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Problematic/ProblematicAclManagerBundle/zipball/a4382d158bf3d4007c1944aa38765cb04d1f560d",
-                "reference": "a4382d158bf3d4007c1944aa38765cb04d1f560d",
+                "url": "https://api.github.com/repos/Problematic/ProblematicAclManagerBundle/zipball/a63da9017d8e5ca2f41a858c01abb21105661403",
+                "reference": "a63da9017d8e5ca2f41a858c01abb21105661403",
                 "shasum": ""
             },
             "require": {
@@ -2072,7 +2072,7 @@
             "keywords": [
                 "ACL management"
             ],
-            "time": "2016-03-11T14:33:16+00:00"
+            "time": "2019-08-12T18:06:17+00:00"
         },
         {
             "name": "psr/log",
@@ -2591,6 +2591,7 @@
                 "compression",
                 "minification"
             ],
+            "abandoned": "symfony/webpack-encore-pack",
             "time": "2017-07-14T07:26:46+00:00"
         },
         {
@@ -3353,64 +3354,6 @@
             "time": "2018-03-29T19:57:20+00:00"
         },
         {
-            "name": "friendsofphp/php-cs-fixer",
-            "version": "v1.13.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/FriendsOfPHP/PHP-CS-Fixer.git",
-                "reference": "387e4c86c9dc0e1e4c475291fc114ec45b98e624"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/387e4c86c9dc0e1e4c475291fc114ec45b98e624",
-                "reference": "387e4c86c9dc0e1e4c475291fc114ec45b98e624",
-                "shasum": ""
-            },
-            "require": {
-                "ext-tokenizer": "*",
-                "php": "^5.3.6 || >=7.0 <7.2",
-                "sebastian/diff": "^1.1",
-                "symfony/console": "^2.3 || ^3.0",
-                "symfony/event-dispatcher": "^2.1 || ^3.0",
-                "symfony/filesystem": "^2.1 || ^3.0",
-                "symfony/finder": "^2.1 || ^3.0",
-                "symfony/process": "^2.3 || ^3.0",
-                "symfony/stopwatch": "^2.5 || ^3.0"
-            },
-            "conflict": {
-                "hhvm": "<3.9"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.5|^5",
-                "satooshi/php-coveralls": "^1.0"
-            },
-            "bin": [
-                "php-cs-fixer"
-            ],
-            "type": "application",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\CS\\": "Symfony/CS/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dariusz Rumiński",
-                    "email": "dariusz.ruminski@gmail.com"
-                },
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "A tool to automatically fix PHP code style",
-            "time": "2017-09-11T14:11:16+00:00"
-        },
-        {
             "name": "liip/functional-test-bundle",
             "version": "1.9.5",
             "source": {
@@ -4067,6 +4010,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2015-10-02T06:51:40+00:00"
         },
         {
@@ -4225,6 +4169,7 @@
             "keywords": [
                 "phpdoc"
             ],
+            "abandoned": true,
             "time": "2016-06-07T16:36:49+00:00"
         },
         {

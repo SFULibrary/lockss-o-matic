@@ -72,6 +72,14 @@ class Deposit implements GetPlnInterface
     private $dateDeposited;
 
     /**
+     * The date the deposit's status was last checked.
+     *
+     * @var DateTime
+     * @ORM\Column(name="checked", type="datetime", nullable=true)
+     */
+    private $checked;
+
+    /**
      * The content provider that created the deposit.s.
      *
      * @var ContentProvider
@@ -365,10 +373,17 @@ class Deposit implements GetPlnInterface
 
     /**
      * Get status.
-     *
-     * @return Collection
+     * @return string
      */
     public function getStatus() {
         return $this->status;
+    }
+
+    public function getChecked() {
+        return $this->checked;
+    }
+
+    public function setChecked($checked) {
+        $this->checked = $checked;
     }
 }

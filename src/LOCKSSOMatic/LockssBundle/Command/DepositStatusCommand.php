@@ -93,18 +93,37 @@ class DepositStatusCommand extends ContainerAwareCommand
         $repo = $this->em->getRepository('LOCKSSOMaticCrudBundle:Deposit');
         $qb = $repo->createQueryBuilder('d');
         if (!$all) {
-            $qb->where('d.agreement <> 1');
-            $qb->orWhere('d.agreement is null');
+            $qb->where('d.agreement <> 1 OR d.agreement IS NULL');
+            $qb->andWhere('d.checked IS NULL OR DATE_DIFF(:now, d.checked) > 1');
+            $qb->setParameter('now', new DateTime());
         }
         if ($plnId !== null) {
             $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findOneBy(array('id' => $plnId));
             $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
             $qb->setParameter('pln', $plns);
         }
-        $qb->orderBy('d.id', 'DESC');
+        $qb->orderBy('d.checked');
+        $qb->addOrderBy('d.id', 'DESC');
         $qb->setMaxResults($limit);
 
         return $qb->getQuery()->iterate();
+    }
+
+    protected function countDeposits($all, $plnId) {
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('COUNT(d) as ct')->from('LOCKSSOMaticCrudBundle:Deposit', 'd');
+
+        if (!$all) {
+            $qb->where('d.agreement <> 1 OR d.agreement IS NULL');
+            $qb->andWhere('d.checked IS NULL OR DATE_DIFF(:now, d.checked) > 1');
+            $qb->setParameter('now', new DateTime());
+        }
+        if ($plnId !== null) {
+            $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findOneBy(array('id' => $plnId));
+            $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
+            $qb->setParameter('pln', $plns);
+        }
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -155,8 +174,12 @@ class DepositStatusCommand extends ContainerAwareCommand
         $dryRun = $input->getOption('dry-run');
         $limit = $input->getOption('limit');
 
+        $count = $this->countDeposits($all, $plnId);
         $iterator = $this->getDeposits($all, $limit, $plnId);
-        $this->logger->notice('Checking deposit status for iteratordeposits.');
+        $this->logger->notice("{$count} deposits to check.");
+        if($limit) {
+            $this->logger->notice("A limit of {$limit} deposits will be checked.");
+        }
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $n = 0;
@@ -166,16 +189,12 @@ class DepositStatusCommand extends ContainerAwareCommand
             $result = $this->queryDeposit($deposit);
             $this->logger->notice("{$n}: {$deposit->getPln()->getId()} - {$result[0]} - {$deposit->getUUid()}");
 
-            $memory = sprintf('%dM', memory_get_usage() / (1024 * 1024));
-            $available = ini_get('memory_limit');
-
-            $this->logger->notice(" - using {$memory} of {$available}");
-
             if ($dryRun) {
                 continue;
             }
 
             $deposit->setAgreement($result[0]);
+            $deposit->setChecked(new DateTime());
             $status = new DepositStatus();
             $status->setDeposit($deposit);
             $status->setQueryDate(new DateTime());

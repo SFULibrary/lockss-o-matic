@@ -19,3 +19,4 @@ cached
 docs/src/build
 /nbproject
 phpunit.xml
+.idea
